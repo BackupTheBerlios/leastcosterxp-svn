@@ -937,7 +937,7 @@ if Kanalbuendelung then
  if ((length(kontingente) > 0) and (kontingente[kontingentindex].freikb > 0) and (kontingentindex > -1))
  then begin result:= true; exit; end;
 
- //aktuelle Freisekundenanzahl ermitteln
+ //aktuelle Freisekundenanzahl ermitteln -> wichtig: nachdem auf Volumenkontingente geprüft wurde
  if ((length(kontingente) > 0) and (kontingentindex > -1) and (kontingente[kontingentindex].Freisekunden > 0)) then
  begin
    if ((takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
