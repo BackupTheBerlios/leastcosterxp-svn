@@ -790,14 +790,13 @@ var bisher_gesurft, bisher_takt: Longint;
 begin
 if tarif ='' then exit; //keine Daten ?!?
 
-
 bisher_gesurft:= SettingsTraffic.ReadInteger(Tarif,'Surfdauer',0);
 bisher_takt:= SettingsTraffic.ReadInteger(Tarif,'Surfdauer_Takt',0);
 bisher_up:= SettingsTraffic.ReadFloat(Tarif,'Upload',0);
 bisher_down:= SettingsTraffic.ReadFloat(Tarif,'Download',0);
 
-if bisher_gesurft = 0 then
-   SettingsTraffic.WriteDateTime(Tarif,'seit', now);
+//start des Zählers setzen
+if bisher_gesurft = 0 then SettingsTraffic.WriteDateTime(Tarif,'seit', now);
 
 SettingsTraffic.WriteInteger(Tarif,'Surfdauer',dauer + bisher_gesurft); //in sekunden
 SettingsTraffic.WriteInteger(Tarif,'Surfdauer_Takt',dauer_takt + bisher_takt); //in sekunden
@@ -829,7 +828,7 @@ with Hauptfenster do begin
 
 
     kontingente[i].LastReset   := dateof(SettingsTraffic.ReadDateTime(kontis.strings[i],'seit',incmonth(now,-1) ) );
-
+    //wenn Reset gemacht werden muss
     if (Dateof(now) >= kontingente[i].Nextreset) then
     begin
      if ((kontingente[i].FreiSekunden <> 0) or (kontingente[i].FreikB <> 0 )) then  SettingsTraffic.EraseSection(kontis.strings[i]);
@@ -847,7 +846,7 @@ with Hauptfenster do begin
       until IsValidDate(yearof(date),monthof(date),tag);
       SettingsKontingente.WriteDate(kontis.strings[i],'NextReset',date);
     end
-    else
+    else //wenn alte Daten noch gültig (nächster Reste liegt in der Zukunft
     begin
 //         showmessage(inttostr(kontingente[i].freisekunden));
          kontingente[i].FreiSekunden:= kontingente[i].FreiSekunden -  SettingsTraffic.ReadInteger(kontis.strings[i],'Surfdauer_takt',0);
