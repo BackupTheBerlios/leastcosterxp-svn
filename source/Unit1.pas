@@ -958,10 +958,6 @@ if Assigned(floatingW) then
 
  if Autodiscled.ledon then
     begin //verbindung trennen
-{     //vor dem Vergleich immer das aktuelle Datum enstellen, falls das Datum wechselt
-      xxx -> geht nciht da sonst nicht 0h getrennt würde
-     trennticker.Date:= dateof(now);
-}
     //nur wenn 5 sec vor eingestelltem Zeitpunkt, dann trennen
      if (autodisconnect.useDelay and trennask.checked )then delaytime:= disconnectseconds+autodisconnect.delay
      else delaytime:= disconnectseconds;

@@ -848,7 +848,7 @@ with Hauptfenster do begin
     end
     else //wenn alte Daten noch gültig (nächster Reste liegt in der Zukunft
     begin
-//         showmessage(inttostr(kontingente[i].freisekunden));
+//         showmessage(kontingente[i].tarif + ' ' + inttostr(kontingente[i].freisekunden));
          kontingente[i].FreiSekunden:= kontingente[i].FreiSekunden -  SettingsTraffic.ReadInteger(kontis.strings[i],'Surfdauer_takt',0);
 //         showmessage(inttostr(kontingente[i].freisekunden));
          kontingente[i].FreikB:= kontingente[i].FreikB -  SettingsTraffic.ReadFloat(kontis.strings[i],'Download',0);
@@ -949,7 +949,13 @@ if Kanalbuendelung then
        kontingente[kontingentindex].Freisekunden:= kontingente[kontingentindex].Freisekunden - taktlaenge;
 
     //diese Funktion beenden, wenn keine Kosten berechnet werden müssen
-    if (kontingente[kontingentindex].Freisekunden > 0) then begin result:= true; exit; end
+    if (kontingente[kontingentindex].Freisekunden > 0) then
+    begin
+      result:= true;
+      Takt1.Tag:= dauer mod Taktlaenge; //alten Wert merken damit Taktberechnung funtioniert !!!
+      Takt2.Tag:= dauer2 mod Taktlaenge;
+      exit;
+    end
     else kontingente[kontingentindex].Freisekunden:= 0;
  end;
 

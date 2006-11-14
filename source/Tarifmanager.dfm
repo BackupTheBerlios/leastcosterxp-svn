@@ -162,7 +162,7 @@ object TaVerwaltung: TTaVerwaltung
     Top = 39
     Width = 297
     Height = 461
-    ActivePage = TabSheet2
+    ActivePage = TabSheet1
     MultiLine = True
     Style = tsFlatButtons
     TabOrder = 6
@@ -330,7 +330,7 @@ object TaVerwaltung: TTaVerwaltung
           Width = 130
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ItemIndex = 0
           TabOrder = 8
           Text = 'Minutentakt'
@@ -549,7 +549,7 @@ object TaVerwaltung: TTaVerwaltung
       end
       object Freikontingente: TGroupBox
         Left = 0
-        Top = 247
+        Top = 18
         Width = 289
         Height = 226
         Align = alTop
@@ -785,7 +785,7 @@ object TaVerwaltung: TTaVerwaltung
       end
       object Verbrauch: TGroupBox
         Left = 0
-        Top = 473
+        Top = 244
         Width = 289
         Height = 179
         Align = alTop
@@ -810,7 +810,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object Label16: TLabel
           Left = 86
-          Top = 85
+          Top = 94
           Width = 150
           Height = 13
           Alignment = taRightJustify
@@ -826,7 +826,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object Label17: TLabel
           Left = 86
-          Top = 115
+          Top = 114
           Width = 150
           Height = 13
           Alignment = taRightJustify
@@ -842,7 +842,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object Label18: TLabel
           Left = 15
-          Top = 85
+          Top = 94
           Width = 68
           Height = 13
           Caption = 'Empfangen '
@@ -855,7 +855,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object Label19: TLabel
           Left = 15
-          Top = 115
+          Top = 114
           Width = 55
           Height = 13
           Caption = 'Gesendet'
@@ -871,6 +871,7 @@ object TaVerwaltung: TTaVerwaltung
           Top = 56
           Width = 27
           Height = 13
+          Hint = '... ohne Ber'#252'cksichtigung der Taktung.'
           Align = alCustom
           Caption = 'Zeit '
           Font.Charset = DEFAULT_CHARSET
@@ -889,6 +890,38 @@ object TaVerwaltung: TTaVerwaltung
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object Label12: TLabel
+          Left = 16
+          Top = 75
+          Width = 63
+          Height = 13
+          Hint = '... in diesem Wert ist die Taktung ber'#252'cksichtigt'
+          Caption = 'Verbrauch '
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+        end
+        object Label23: TLabel
+          Left = 86
+          Top = 75
+          Width = 150
+          Height = 13
+          Alignment = taRightJustify
+          AutoSize = False
+          Constraints.MaxWidth = 150
+          Constraints.MinWidth = 150
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
           ParentFont = False
@@ -966,7 +999,7 @@ object TaVerwaltung: TTaVerwaltung
         Left = 0
         Top = 17
         Width = 289
-        Height = 230
+        Height = 1
         Align = alTop
         Caption = 'Freikontingente'
         TabOrder = 3
@@ -974,8 +1007,8 @@ object TaVerwaltung: TTaVerwaltung
         object Label14: TLabel
           Left = 2
           Top = 15
-          Width = 250
-          Height = 26
+          Width = 285
+          Height = 213
           Align = alClient
           Alignment = taCenter
           Caption = 'W'#228'hrend Sie online sind, k'#246'nnen Sie keine Kontingente verwalten.'

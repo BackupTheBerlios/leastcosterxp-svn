@@ -112,6 +112,8 @@ type
     Eingabemode: TPanel;
     tarifliste_size: TPanel;
     PBar: TProgressBar;
+    Label12: TLabel;
+    Label23: TLabel;
     procedure tarifliste_sizeClick(Sender: TObject);
     procedure EingabemodeClick(Sender: TObject);
     procedure ApplicationEvents1Deactivate(Sender: TObject);
@@ -1392,6 +1394,8 @@ begin
    label16.Caption:= Format('%10.3n',[bisher_down/factor/1000 *1000]);
    label17.Caption:= Format('%10.3n',[bisher_up/factor/1000 *1000]);
 
+   label23.caption:= Format('%.0f min',[SettingsTraffic.ReadInteger(konti_tarif.caption,'Surfdauer_Takt',0)/60]);
+   
    radio_zeitClick(self);
 end;
 end;
@@ -1402,10 +1406,37 @@ PageControl1change(self);
 end;
 
 procedure TTaVerwaltung.resetClick(Sender: TObject);
+var index,i: integer;
+    TarifName: string;
 begin
+//bestehende Kontingente suchen
+   index:= -1;
+   TarifName:= '';
+   with hauptfenster do
+     for i:= 0 to length(kontingente)-1 do
+      if (kontingente[i].tarif = tarifbox.items.Strings[tarifbox.itemindex]) then
+        begin index:= i; TarifName:=kontingente[i].tarif; break; end;
+//fragen ob wirklich zurückzusetzen
+if index > -1 then
+  if (MessageBox(0, 'Mit dem Zurücksetzen der Zähler werden bestehende Kontingente wieder aktiviert. '+#13+#10+'Wirklich zurücksetzen ?', 'Achtung: Zähler-Reset !', MB_ICONWARNING or MB_YESNO or MB_SETFOREGROUND or MB_DEFBUTTON1) in [idNo]) then
+  exit; //wenn nein -> raus hier !
+
 if tarifbox.items.count > 0 then
  begin
+     //Traffic-Daten löschen
      SettingsTraffic.EraseSection(tarifbox.items.Strings[tarifbox.itemindex]);
+
+     // Frei-Kontingent wieder zurücksetzen
+     // da Zähler wieder auf 0 stehen, stehen wieder die vollen Kontingente zur Verfügung
+    if index > -1 then
+     with hauptfenster do
+      begin
+        kontingente[index].FreiSekunden := 60*60 * SettingsKontingente.ReadInteger(TarifName,'Freistunden',0) + 60* SettingsKontingente.ReadInteger(TarifName,'Freiminuten',0);
+        kontingente[index].ResetTag     := SettingsKontingente.ReadInteger(TarifName,'Tag',1);
+        kontingente[index].FreikB       := SettingsKontingente.ReadFloat(TarifName,'Freivolumen',0);
+        kontingente[index].MB_both      := SettingsKontingente.ReadBool(TarifName,'FreivolumenBoth',true);
+      end;
+
      PageControl1Change(self);
  end;
 end;
