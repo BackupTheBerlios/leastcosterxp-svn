@@ -156,7 +156,7 @@ with hauptfenster do
 end;
 
 procedure MainMenueClick(sender: TObject);
-var lcx, lcz: boolean;
+var lcx: boolean;
     FileName, mailtext: String;
 begin
 with hauptfenster do
@@ -313,48 +313,26 @@ with hauptfenster do
   if sender = MM2_7_1 then
   begin
 
-   lcx:= false; lcz:= false;
+   lcx:= false;
    try //Dateiendung lcz und lcx installieren
-    if InstallExt('.lcz', 'LeastCosterXPZip', 'LeastCosterXP Tarifarchiv', ParamStr(0), '%1',0)
-     then lcz:= true;
-
     if InstallExt('.lcx', 'LeastCosterXP Xport', 'LeastCosterXP Tarifdatei', ParamStr(0), '%1',0)
      then lcx:= true;
 
-    if lcx and lcz then
-     Showmessage('Dateiendungen .lcz und .lcx konnten erfolgreich registriert werden.')
-    else
-     if not lcz and not lcx then
-    Showmessage('Dateiendungen .lcz und .lcx konnten NICHT erfolgreich registriert werden.')
-    else
-    if not lcz and lcx then
-    Showmessage('Dateiendung .lcx konnten erfolgreich registriert werden.'+#13#10 + 'Fehler beim Registrieren der Endung .lcz.')
-    else
-    if lcz and not lcx then
-    Showmessage('Dateiendung .lcz konnten erfolgreich registriert werden.'+#13#10 + 'Fehler beim Registrieren der Endung .lcx.')
+    if lcx then
+    Showmessage('Dateiendung .lcx konnten erfolgreich registriert werden.');
 
    except end;
   end
   else
   if sender = MM2_7_2 then
   begin
-    lcz:= false;
     lcx:= false;
-    if UnInstallExt('.lcz') then lcz:= true;
     if UnInstallExt('.lcx') then lcx:= true;
 
-    if lcx and lcz then
-    Showmessage('Dateiendungen .lcz und .lcx konnten erfolgreich gelöscht werden werden.')
-    else
-    if not lcz and not lcx then
-    Showmessage('Dateiendungen .lcz und .lcx konnten NICHT erfolgreich gelöscht werden.')
-    else
-    if not lcz and lcx then
-    Showmessage('Dateiendung .lcx konnten erfolgreich gelöscht werden.'+#13#10 + 'Fehler beim Löschen der Endung .lcz.')
-    else
-    if lcz and not lcx then
-    Showmessage('Dateiendung .lcz konnten erfolgreich gelöscht werden.'+#13#10 + 'Fehler beim Löschen der Endung .lcx.')
-   end
+    if lcx then
+    Showmessage('Dateiendung .lcx konnten erfolgreich gelöscht werden.');
+
+  end
    else
    if sender = MM3_1 then //Einstellungen
    begin

@@ -183,7 +183,6 @@ var
   TaVerwaltung: TTaVerwaltung;
   myident: string;
 
-
 implementation
 
 uses Unit3, Unit1, tarifverw, auswertung, math, GridEvents;
@@ -207,8 +206,8 @@ var i: integer;
 begin
 for i:= 0 to length(hauptfenster.tarife)-1 do
  begin
-    tempname:= Hauptfenster.Tarife[i].Tarif;
-    if tempname=oldname then Hauptfenster.Tarife[i].Tarif:= newname;
+    tempname:= Hauptfenster.Tarife[i].Data.Tarif;
+    if tempname=oldname then Hauptfenster.Tarife[i].Data.Tarif:= newname;
   end;
 end;
 
@@ -218,7 +217,7 @@ begin
   Result:= true;
   for i:= 0 to length(hauptfenster.tarife)-1 do
    with TaVerwaltung do
-   if hauptfenster.tarife[i].Tarif = tarifbox.items.Strings[tarifbox.itemindex] then
+   if hauptfenster.tarife[i].Data.Tarif = tarifbox.items.Strings[tarifbox.itemindex] then
    begin
     Result := false;
     break;
@@ -471,21 +470,21 @@ begin
 setlength(hauptfenster.tarife, length(hauptfenster.tarife)+1);
 with hauptfenster.tarife[length(hauptfenster.tarife)-1] do
 begin
- Tarif:=TaName.text;
- Beginn:= timetostr(TaStart.time);
- Ende:= timetostr(TaEnd.time);
- Nummer:= TaNumber.text;
- Preis:= TaPrice.Text;
- Einwahl:= TaEinwahl.Text;
- takt:= TaTakt.Text;
- User:= TaUser.Text;
- Passwort:= TaPass.text;
- Webseite:=TaWebsite.text;
- Tag:= temptag;
- eingetragen:= Datetostr(Dateof(now));
- validfrom  := Datetostr(TaStarts.Date);
- expires    := Datetostr(TaExpires.Date);
- DeleteWhenExpires:= TaDelEnd.checked;
+ Data.Tarif:=TaName.text;
+ Data.Beginn:= TaStart.time;
+ Data.Ende:= TaEnd.time;
+ Data.Nummer:= TaNumber.text;
+ Data.Preis:= StrToFloat(TaPrice.Text);
+ Data.Einwahl:= StrToFloat(TaEinwahl.Text);
+ Data.takt:= TaTakt.Text;
+ Data.User:= TaUser.Text;
+ Data.Passwort:= TaPass.text;
+ Data.Webseite:=TaWebsite.text;
+ Data.Tag:= temptag;
+ Data.eingetragen:= Dateof(now);
+ Data.validfrom  := TaStarts.Date;
+ Data.expires    := TaExpires.Date;
+ Data.DeleteWhenExpires:= TaDelEnd.checked;
  ident      := taname.Text + identadd;
 end;
  //neuen Tarif hinzufügen - wenn noch nicht drin
@@ -503,9 +502,7 @@ written:= true;
 end;
 until written = true
 else //ident zum ändern
-hauptfenster.tarife[myidentindex].beginn:= timetostr(TaStart.time);
-
-
+hauptfenster.tarife[myidentindex].Data.beginn:= TaStart.time;
 
 if myident='' then
 begin
@@ -534,7 +531,6 @@ begin
 end;
 
 button2.Click; //Felder löschen
-myident:= '';
 button1.caption:='&Tarif hinzufügen';
 tarifboxCloseUp(self);
 changedvalues.Free;
@@ -663,7 +659,7 @@ end;}
 
 for i:= 0 to length(hauptfenster.Tarife) -1  do
 begin
-temp:= hauptfenster.Tarife[i].tarif;
+temp:= hauptfenster.Tarife[i].Data.tarif;
 if (tarifbox.Items.IndexOf(temp)=-1) then Tarifbox.Items.Append(temp);
 end;
 
@@ -728,26 +724,26 @@ btime:= gettickcount;
 
 for i:= 0 to length(hauptfenster.tarife)-1 do
 begin
-  if hauptfenster.tarife[i].tarif = Tarifbox.Items.Strings[Tarifbox.ItemIndex] then
+  if hauptfenster.tarife[i].Data.tarif = Tarifbox.Items.Strings[Tarifbox.ItemIndex] then
   begin
      rows := rows+1;
-     Tarifliste.Cells[0,rows] := hauptfenster.tarife[i].Tag;
-     Tarifliste.Cells[1,rows] := hauptfenster.tarife[i].Beginn;
-     Tarifliste.Cells[2,rows] := hauptfenster.tarife[i].Ende;
-     Tarifliste.Cells[3,rows] := hauptfenster.tarife[i].Preis;
-     Tarifliste.Cells[4,rows] := hauptfenster.tarife[i].Einwahl;
-     Tarifliste.Cells[5,rows] := hauptfenster.tarife[i].Takt;
-     Tarifliste.Cells[6,rows] := hauptfenster.tarife[i].Nummer;
-     Tarifliste.Cells[7,rows] := hauptfenster.tarife[i].User;
-     Tarifliste.Cells[8,rows] := hauptfenster.tarife[i].Passwort;
-     Tarifliste.Cells[9,rows] := hauptfenster.tarife[i].Webseite;
-     Tarifliste.Cells[10,rows] := hauptfenster.tarife[i].validfrom;
-     Tarifliste.Cells[11,rows] := hauptfenster.tarife[i].expires;
-     Tarifliste.Cells[12,rows] := hauptfenster.tarife[i].eingetragen;
+     Tarifliste.Cells[0,rows] := hauptfenster.tarife[i].Data.Tag;
+     Tarifliste.Cells[1,rows] := TimeToStr(hauptfenster.tarife[i].Data.Beginn);
+     Tarifliste.Cells[2,rows] := TimeToStr(hauptfenster.tarife[i].Data.Ende);
+     Tarifliste.Cells[3,rows] := FloatToStr(hauptfenster.tarife[i].Data.Preis);
+     Tarifliste.Cells[4,rows] := FloatToStr(hauptfenster.tarife[i].Data.Einwahl);
+     Tarifliste.Cells[5,rows] := hauptfenster.tarife[i].Data.Takt;
+     Tarifliste.Cells[6,rows] := hauptfenster.tarife[i].Data.Nummer;
+     Tarifliste.Cells[7,rows] := hauptfenster.tarife[i].Data.User;
+     Tarifliste.Cells[8,rows] := hauptfenster.tarife[i].Data.Passwort;
+     Tarifliste.Cells[9,rows] := hauptfenster.tarife[i].Data.Webseite;
+     Tarifliste.Cells[10,rows] := DateToStr(hauptfenster.tarife[i].Data.validfrom);
+     Tarifliste.Cells[11,rows] := DateToStr(hauptfenster.tarife[i].Data.expires);
+     Tarifliste.Cells[12,rows] := DateToStr(hauptfenster.tarife[i].Data.eingetragen);
      Tarifliste.Cells[13,rows] := hauptfenster.tarife[i].ident;
-     Tarifliste.Cells[16,rows] := hauptfenster.tarife[i].Tag;
+     Tarifliste.Cells[16,rows] := hauptfenster.tarife[i].Data.Tag;
 
-     if hauptfenster.tarife[i].DeleteWhenExpires then
+     if hauptfenster.tarife[i].Data.DeleteWhenExpires then
      Tarifliste.cells[14,rows] := 'ja' else Tarifliste.cells[14,rows] := 'nein';
 
      if rows>1 then Tarifliste.RowCount:= tarifliste.rowcount+1;
@@ -771,27 +767,11 @@ begin
  changeindex:= false;
  button4.Caption:= 'Eintrag &löschen';
 
-{ if tarifbox.Items.Count > 0 then
- begin
- if length(hauptfenster.tarife) > 0 then
-  for j:= tarifbox.items.count-1 downto 0 do  //gehe alle Tarife durch
-   for i:= 0 to length(hauptfenster.tarife)-1 do //gehe die Datenbank durch
-   if hauptfenster.tarife[i].Tarif = tarifbox.items.strings[j] then break
-   else
-   if (i = length(hauptfenster.tarife) -1) then
-   begin
-        if tarifbox.ItemIndex = j then changeindex:= true;
-        tarifbox.items.Delete(j);
-   end;
- end;
-}
-// showmessage(inttostr(gettickcount - time));
-
  if changeindex then tarifbox.itemindex:= 0;
 
  AddItemstoTarifListe;
  if tarifbox.Items.Count > 0 then
- ChangeData;
+  ChangeData;
 end;
 
 procedure TTaVerwaltung.Button2Click(Sender: TObject);
@@ -849,9 +829,7 @@ ganztagsclick(self);
 end;
 
 function TTaVerwaltung.isDataValid(tag: string; myident: string): boolean;
-var //liste: TMeminifile;
-    //items: TStringlist;
-    i: integer;
+var i: integer;
     temptime, temptimeend: TDateTime;
     ergebnis: boolean;
     mo,di,mi,don,fr,sa,so,feiertag: string;
@@ -877,27 +855,22 @@ if ansicontainstext(tag,'[Sa]') then sa:= '[Sa]';
 if ansicontainstext(tag,'[So]') then so:= '[So]';
 if ansicontainstext(tag,'[feiertags]') then feiertag:= '[feiertags]';
 
-
-//liste:= TMeminifile.Create(extractfilepath(paramstr(0))+'Tarife.ini');
-//items:= TStringlist.Create;
-//liste.ReadSections(items);
-
 ergebnis:= true;
 
 //if items.Count> 0 then
 if (length(Hauptfenster.Tarife)> 0) then
   for i:=0 to length(Hauptfenster.Tarife)-1 do
   begin
-  expdate:= strtoDate(Hauptfenster.Tarife[i].expires);//  liste.ReadDate(items.Strings[i],'expires',EncodeDate(1970,01,01));
+  expdate:= Hauptfenster.Tarife[i].Data.expires;//  liste.ReadDate(items.Strings[i],'expires',EncodeDate(1970,01,01));
   //namen finden
-  if ( (TaName.text = Hauptfenster.Tarife[i].Tarif )
+  if ( (TaName.text = Hauptfenster.Tarife[i].Data.Tarif )
   //und prüfen ob es derselbe Eintrag ist
   and (myident <> Hauptfenster.Tarife[i].ident)
   and (TaStarts.date < expdate)
   )
   then
   begin
-  vglstring:= Hauptfenster.Tarife[i].tag;
+  vglstring:= Hauptfenster.Tarife[i].Data.tag;
    if ( //wenn der Tag enthalten ist
         ( vglstring = tag))
         or (ansicontainstext(vglstring,mo))
@@ -911,8 +884,8 @@ if (length(Hauptfenster.Tarife)> 0) then
         )
    then
      begin
-      anfang      := strtotime(Hauptfenster.Tarife[i].beginn);//liste.ReadTime(items.strings[i],'Beginn',EncodeTime(0,0,0,0));
-      ende        := strtotime(Hauptfenster.Tarife[i].ende);//liste.ReadTime(items.strings[i],'Ende',EncodeTime(0,0,0,0));
+      anfang      := Hauptfenster.Tarife[i].Data.beginn;
+      ende        := Hauptfenster.Tarife[i].Data.ende;
       temptime   := EncodeDate(1970,01,01) + anfang;
       temptimeend:= EncodeDate(1970,01,01) + ende;
 
@@ -934,23 +907,15 @@ if (length(Hauptfenster.Tarife)> 0) then
      end;
   end;
   end;
-//items.Free;
-//liste.free;
-
 isdatavalid:= ergebnis;
 end;
 
 procedure TTaVerwaltung.DeleteSelection(line: integer);
 var ident: string;
-   // ini: TMemInifile;
     i: integer;
 begin
 if tarifbox.Items.Count = 0 then exit;
 ident:= tarifliste.Cells[13,line];
-{ini:= TMeminifile.Create(extractfilepath(paramstr(0))+'Tarife.ini');
-ini.EraseSection(ident);
-ini.UpdateFile;
-ini.free;  }
 
 //in der Datenbank löschen
 for i:= 0 to length(hauptfenster.tarife)-1 do
@@ -958,13 +923,12 @@ if Hauptfenster.tarife[i].ident = ident then
 begin
 //letzten an die Stelle kopieren
 Hauptfenster.tarife[i]:= hauptfenster.tarife[length(hauptfenster.tarife)-1];
-//Länge des Arraya kürzen
+//Länge des Arrays kürzen
 setlength(hauptfenster.tarife, length(hauptfenster.tarife)-1);
 break;
 end;
 
 end;
-
 
 procedure TTaVerwaltung.Button4Click(Sender: TObject);
 var name: string;
@@ -1002,6 +966,7 @@ if hauptfenster.german then button1.Caption:= '&speichern';
 
 Taname.text:= tarifbox.Items.Strings[tarifbox.itemindex];
 myident:= tarifliste.Cells[13, tarifliste.row];
+
 try
  TaStart.time:= strtotime(tarifliste.Cells[1,tarifliste.row]);
  except
@@ -1153,16 +1118,12 @@ hauptfenster.MainMenueClick(Hauptfenster.MM1_1);
 end;
 
 procedure TTaVerwaltung.ButDelExpClick(Sender: TObject);
-var index: integer;
 begin
-index:=0;
-LoescheAbgelaufeneTarife;
-//LadeTarife;
-tarifliste.Rows[1].Clear;
-tarifbox.Clear;
-AddItemsToTarifbox(index);
-AddItemsToTarifbox(0);
-tarifboxcloseup(sender);
+  LoescheAbgelaufeneTarife;
+  tarifliste.Rows[1].Clear;
+  tarifbox.Clear;
+  AddItemsToTarifbox(0);
+  tarifboxcloseup(sender);
 end;
 
 procedure TTaVerwaltung.Panel1MouseMove(Sender: TObject;
@@ -1193,12 +1154,10 @@ postop := y;
 end;
 
 procedure TTaVerwaltung.ChangeValue(anfang: integer; ende:integer; Bezeichner, WertalsString: string);
-var //ini: TMemInifile;
-    i,k, myidentindex: integer;
+var i,k, myidentindex: integer;
     tempname: string;
 begin
      myidentindex:= 0;
-   //  ini:= TMeminifile.create(Extractfilepath(paramstr(0)) + 'Tarife.ini');
      for i:= anfang to ende do
      begin
 
@@ -1211,52 +1170,48 @@ begin
                       break;
                   end;
 
-        //  ini.WriteString(tempname,Bezeichner, WertalsString);
-
           if Bezeichner = 'Tarif' then
-          hauptfenster.tarife[myidentindex].Tarif:= WertAlsString
+          hauptfenster.tarife[myidentindex].Data.Tarif:= WertAlsString
           else
           if Bezeichner = 'Beginn' then
-          hauptfenster.tarife[myidentindex].Beginn:= wertalsString
+          hauptfenster.tarife[myidentindex].Data.Beginn:= StrToTime(wertalsString)
           else
           if Bezeichner = 'Ende' then
-          hauptfenster.tarife[myidentindex].Ende:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.Ende:= StrToTime(wertalsstring)
           else
           if Bezeichner = 'Nummer' then
-          hauptfenster.tarife[myidentindex].Nummer:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.Nummer:= wertalsstring
           else
           if Bezeichner = 'Preis' then
-          hauptfenster.tarife[myidentindex].Preis:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.Preis:= StrToFloat(wertalsstring)
           else
           if Bezeichner = 'Einwahl' then
-          hauptfenster.tarife[myidentindex].Einwahl:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.Einwahl:= StrToFloat(wertalsstring)
           else
           if Bezeichner = 'Takt' then
-          hauptfenster.tarife[myidentindex].Takt:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.Takt:= wertalsstring
           else
           if Bezeichner = 'User' then
-          hauptfenster.tarife[myidentindex].User:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.User:= wertalsstring
           else
           if Bezeichner = 'Passwort' then
-          hauptfenster.tarife[myidentindex].Passwort:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.Passwort:= wertalsstring
           else
           if Bezeichner = 'Webseite' then
-          hauptfenster.tarife[myidentindex].Webseite:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.Webseite:= wertalsstring
           else
           if Bezeichner = 'start' then
-          hauptfenster.tarife[myidentindex].validfrom:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.validfrom:= StrToDate(wertalsstring)
           else
           if Bezeichner = 'expires' then
-          hauptfenster.tarife[myidentindex].expires:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.expires:= StrToDate(wertalsstring)
           else
           if Bezeichner = 'Tag' then
-          hauptfenster.tarife[myidentindex].Tag:= wertalsstring
+          hauptfenster.tarife[myidentindex].Data.Tag:= wertalsstring
           else
           if Bezeichner = 'DeleteWhenExpires' then
-          hauptfenster.tarife[myidentindex].DeleteWhenExpires:= strtobool(wertalsstring);
+          hauptfenster.tarife[myidentindex].Data.DeleteWhenExpires:= strtobool(wertalsstring);
      end;
-//     ini.UpdateFile;
-//     ini.free;
 end;
 
 
@@ -1276,7 +1231,7 @@ procedure TTaVerwaltung.ButkopierenClick(Sender: TObject);
 begin
 
 if tarifliste.Row < 1 then exit;
-if hauptfenster.german then button1.Caption:= '&Tarif hinzufügen';
+button1.Caption:= '&Tarif hinzufügen';
 
 myident:= '';
 
@@ -1480,14 +1435,20 @@ procedure TTaVerwaltung.DelAllClick(Sender: TObject);
 var FileName: String;
 
 begin
-FileName:= ExtractFilepath(paramstr(0)) + 'Tarife.ini';
 
 if hauptfenster.isonline then errormsg.caption:= '''Alles löschen'' nicht möglich im Online-Modus.';
 
-if ( FileExists(FileName) and (not hauptfenster.isonline) ) then
+if  not hauptfenster.isonline then
   if MessageDlg('Wollen Sie die Tarifdatenbank, Kontingente und Zähler wirklich löschen ?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
   begin
-    DeleteFile(FileName);
+
+    //Tarife.lcx löschen
+    FileName:= ExtractFilepath(paramstr(0)) + 'Tarife.lcx';
+    if FileExists(FileName) then DeleteFile(FileName);
+
+    //Tarife.ini löschen
+    FileName:= ExtractFilepath(paramstr(0)) + 'Tarife.ini';
+    if FileExists(FileName) then DeleteFile(FileName);
 
     SettingsKontingente.Clear;
     SettingsTraffic.Clear;

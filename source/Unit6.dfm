@@ -18,7 +18,6 @@ object wndlist: Twndlist
   OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
@@ -78,6 +77,7 @@ object wndlist: Twndlist
       ExtendedSelect = False
       ItemHeight = 13
       MultiSelect = True
+      Sorted = True
       TabOrder = 0
     end
     object Memo1: TMemo
@@ -183,41 +183,12 @@ object wndlist: Twndlist
     end
     object Progress: TProgressBar
       Left = 96
-      Top = 112
+      Top = 128
       Width = 150
       Height = 17
       TabOrder = 4
       Visible = False
     end
-    object Progress2: TProgressBar
-      Left = 96
-      Top = 136
-      Width = 150
-      Height = 17
-      TabOrder = 5
-      Visible = False
-    end
-  end
-  object Zip: TZipMaster
-    AddOptions = []
-    AddStoreSuffixes = [assGIF, assPNG, assZ, assZIP, assZOO, assARC, assLZH, assARJ, assTAZ, assTGZ, assLHA, assRAR, assACE, assCAB, assGZ, assGZIP, assJAR, assEXE, assJPG, assJPEG, ass7Zp, assMP3, assWMV, assWMA, assDVR, assAVI]
-    Dll_Load = False
-    ExtrOptions = []
-    KeepFreeOnAllDisks = 0
-    KeepFreeOnDisk1 = 0
-    MaxVolumeSize = 0
-    PasswordReqCount = 1
-    SFXOptions = []
-    SFXOverWriteMode = OvrConfirm
-    SFXPath = 'DZSFXUS.bin'
-    SpanOptions = []
-    Trace = False
-    Unattended = False
-    Verbose = False
-    Version = '1.79.04.01'
-    VersionInfo = '1.79.04.01'
-    Left = 240
-    Top = 168
   end
   object SaveDialog: TSaveDialog
     DefaultExt = 'csv'

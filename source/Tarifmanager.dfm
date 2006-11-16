@@ -39,7 +39,7 @@ object TaVerwaltung: TTaVerwaltung
     object Caption: TLabel
       Left = 6
       Top = 6
-      Width = 721
+      Width = 136
       Height = 24
       Align = alTop
       Alignment = taCenter
@@ -113,7 +113,7 @@ object TaVerwaltung: TTaVerwaltung
       Left = 1
       Top = 1
       Width = 384
-      Height = 40
+      Height = 13
       Align = alClient
       Alignment = taCenter
       Color = clBtnFace
@@ -330,7 +330,7 @@ object TaVerwaltung: TTaVerwaltung
           Width = 130
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           ItemIndex = 0
           TabOrder = 8
           Text = 'Minutentakt'
@@ -1007,8 +1007,8 @@ object TaVerwaltung: TTaVerwaltung
         object Label14: TLabel
           Left = 2
           Top = 15
-          Width = 285
-          Height = 213
+          Width = 250
+          Height = 26
           Align = alClient
           Alignment = taCenter
           Caption = 'W'#228'hrend Sie online sind, k'#246'nnen Sie keine Kontingente verwalten.'
@@ -1038,7 +1038,7 @@ object TaVerwaltung: TTaVerwaltung
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ItemHeight = 13
+    ItemHeight = 0
     ParentFont = False
     Sorted = True
     TabOrder = 7

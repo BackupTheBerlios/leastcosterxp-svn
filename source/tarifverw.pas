@@ -199,6 +199,26 @@ begin
  Hauptfenster.Scores[IndexOfScores(tarif)].erfolgreich:= 0;
 end;
 
+procedure extractDate(line: string;var d,m,y: integer);
+var temp: string;
+begin
+//Tag rausholen
+temp:= line;
+delete(temp,3, length(line));
+d:= strtoint(temp);
+
+//Monat rausholen
+temp:= line;
+delete(temp,1, 3);//tag mit Punkt löschen
+delete(temp,3, length(line));
+m:= strtoint(temp);
+
+//Jahr rausholen
+temp:= line;
+delete(temp,1, 6);//alles vor dem Jahr löschen
+y:= strtoint(temp);
+end;
+
 procedure Ladetarife;
 var sections: TStringlist;
     i, k: integer;
@@ -209,13 +229,18 @@ var sections: TStringlist;
     zeile: string;
     count: integer;
     UpdateFile: boolean;
+    dd,mm,yy: integer;
+    Datei: file of Ttarif;
+    DatenSatz: TTarif;
 begin
  UpdateFile:= false;
  
- if not fileexists(extractfilepath(paramstr(0))+'Tarife.ini') then exit;
+ //if not fileexists(extractfilepath(paramstr(0))+'Tarife.ini') then exit;
 
  setlength(hauptfenster.tarife,0);
 
+if fileexists(extractfilepath(paramstr(0))+'Tarife.ini') then
+begin
  Zeilen:= TStringList.Create;
  zeilen.LoadFromFile(extractfilepath(paramstr(0))+'Tarife.ini');
 
@@ -224,11 +249,15 @@ begin
  begin
 
   zeile:= zeilen.strings[i];
+  dd:=0;
+  mm:=0;
+  yy:=0;
 
    if ((zeile='') or (zeile =' ') or ( (zeile[1]='/') and (zeile[2]='/') )) then
    begin
    end
    else
+   //neue Section
    if (   (zeile[1]= '[') and (zeile[length(zeile)] =']')  ) then
    begin
     count:= count+1;
@@ -236,23 +265,24 @@ begin
     delete(zeile,1,1);
     delete(zeile,length(zeile),1);
     hauptfenster.tarife[count-1].ident:= zeile;
+    hauptfenster.tarife[count-1].Data.Editor:= '';
 
-   with hauptfenster.tarife[count-1] do
+   with hauptfenster.tarife[count-1].data do
    begin
     Tarif         := '';
-    Beginn        := TimetoStr(EncodeTime(0,0,0,0));
-    Ende          := TimetoStr(EncodeTime(0,0,0,0));;
+    Beginn        := EncodeTime(0,0,0,0);
+    Ende          := EncodeTime(0,0,0,0);;
     Nummer        := '0';
-    Preis         := '0';
-    Einwahl       := '0';
+    Preis         := 0.0;
+    Einwahl       := 0.0;
     Takt          := '60/60';
     User          := '';
     Passwort      := '';
     Webseite      := '';
     Tag           := '';
-    eingetragen   := datetostr(EncodeDate(1970,02,02));
-    validfrom     := datetostr(EncodeDate(1970,02,02));
-    expires       := datetostr(EncodeDate(1970,02,02));
+    eingetragen   := EncodeDate(1970,02,02);
+    validfrom     := EncodeDate(1970,02,02);
+    expires       := EncodeDate(1970,02,02);
     DeleteWhenExpires:= false;
    end;
 
@@ -261,101 +291,129 @@ begin
    if ansicontainsstr(zeile,'Tarif=') then
    begin
     delete(zeile,1,6);
-    hauptfenster.tarife[count-1].Tarif:= Zeile;//trim(zeile);
+    hauptfenster.tarife[count-1].Data.Tarif:= Zeile;//trim(zeile);
    end
    else
    if ansicontainsstr(zeile,'Beginn=') then
    begin
     delete(zeile,1,7);
-    hauptfenster.tarife[count-1].Beginn:= zeile;//trim(zeile);
+    hauptfenster.tarife[count-1].Data.Beginn:= StrTotime(zeile);//trim(zeile);
    end
       else
    if ansicontainsstr(zeile,'Ende=') then
    begin
     delete(zeile,1,5);
-    hauptfenster.tarife[count-1].Ende:= trim(zeile);
+    hauptfenster.tarife[count-1].Data.Ende:= StrTotime(trim(zeile));
    end
       else
    if ansicontainsstr(zeile,'Nummer=') then
    begin
     delete(zeile,1,7);
-    hauptfenster.tarife[count-1].Nummer:= trim(zeile);
+    hauptfenster.tarife[count-1].Data.Nummer:= trim(zeile);
    end
    else
    if ansicontainsstr(zeile,'Preis=') then
    begin
     delete(zeile,1,6);
-    hauptfenster.tarife[count-1].Preis:= trim(zeile);
+    hauptfenster.tarife[count-1].Data.Preis:= strtofloat(trim(zeile));
    end
    else
    if ansicontainsstr(zeile,'Einwahl=') then
    begin
     delete(zeile,1,8);
-    hauptfenster.tarife[count-1].Einwahl:= trim(zeile);
+    hauptfenster.tarife[count-1].Data.Einwahl:= strtofloat(trim(zeile));
    end
    else
    if ansicontainsstr(zeile,'Takt=') then
    begin
     delete(zeile,1,5);
-    hauptfenster.tarife[count-1].Takt:= trim(zeile);
+    hauptfenster.tarife[count-1].Data.Takt:= trim(zeile);
    end
    else
    if ansicontainsstr(zeile,'User=') then
    begin
     delete(zeile,1,5);
-    hauptfenster.tarife[count-1].User:= trim(zeile);
+    hauptfenster.tarife[count-1].Data.User:= trim(zeile);
    end
       else
    if ansicontainsstr(zeile,'Passwort=') then
    begin
     delete(zeile,1,9);
-    hauptfenster.tarife[count-1].Passwort:= trim(zeile);
+    hauptfenster.tarife[count-1].Data.Passwort:= trim(zeile);
    end
    else
    if ansicontainsstr(zeile,'Webseite=') then
    begin
     delete(zeile,1,9);
-    hauptfenster.tarife[count-1].Webseite:= trim(zeile);;
+    hauptfenster.tarife[count-1].Data.Webseite:= trim(zeile);;
    end
    else
    if ansicontainsstr(zeile,'Tag=') then
    begin
     delete(zeile,1,4);
-    hauptfenster.tarife[count-1].Tag:= trim(zeile);;
+    hauptfenster.tarife[count-1].Data.Tag:= trim(zeile);;
    end
    else
    if ansicontainsstr(zeile,'eingetragen=') then
    begin
     delete(zeile,1,12);
-    hauptfenster.tarife[count-1].eingetragen:= trim(zeile);
+    zeile:= trim(zeile);
+    ExtractDate(zeile, dd,mm,yy);
+    hauptfenster.tarife[count-1].Data.eingetragen:= EncodeDate(yy,mm,dd);
    end
    else
    if ansicontainsstr(zeile,'start=') then
    begin
     delete(zeile,1,6);
-    hauptfenster.tarife[count-1].validfrom:= trim(zeile);
+    zeile:= trim(zeile);
+    ExtractDate(zeile, dd,mm,yy);
+    hauptfenster.tarife[count-1].Data.validfrom:=  EncodeDate(yy,mm,dd);
    end
    else
    if ansicontainsstr(zeile,'expires=') then
    begin
     delete(zeile,1,8);
-    hauptfenster.tarife[count-1].expires:= trim(zeile);
+    zeile:= trim(zeile);
+    ExtractDate(zeile, dd,mm,yy);
+    hauptfenster.tarife[count-1].Data.expires:= EncodeDate(yy,mm,dd);
    end
    else
    if ansicontainsstr(zeile,'DeleteWhenExpires=') then
    begin
-    if zeile='DeleteWhenExpires=0' then hauptfenster.tarife[count-1].DeleteWhenExpires:= false
-    else hauptfenster.tarife[count-1].DeleteWhenExpires:= true;
+    if zeile='DeleteWhenExpires=0' then hauptfenster.tarife[count-1].Data.DeleteWhenExpires:= false
+    else hauptfenster.tarife[count-1].Data.DeleteWhenExpires:= true;
    end;
    zeile:= '';
  end;
 zeilen.free;
+//nach dem Einlesen löschen
+DeleteFile(PChar(extractfilepath(paramstr(0))+'Tarife.ini'));
+//lcx-Datei schreiben
+WriteTarifeToHD;
+end
+else //lcx nur laden, wenn keine Tarife.ini vorhanden war
+if FileExists(extractfilepath(paramstr(0))+'Tarife.lcx') then
+begin
+  assignfile(Datei,extractfilepath(paramstr(0))+'Tarife.lcx');
+  reset(datei);
+  count:= 0;
+  while not EOF(Datei) do
+  begin
+    read(Datei, DatenSatz);
+    count:= count+1;
+    setlength(hauptfenster.tarife, count);
+    Hauptfenster.tarife[count-1].Data:= DatenSatz;
+    Hauptfenster.tarife[count-1].ident:= DatenSatz.Tarif + inttostr(count);
+    Hauptfenster.tarife[count-1].Data.Editor:= '';
+  end;
+  closefile(datei);
+end;
 
 //abgelaufene Tarife löschen
 for i:= (length(hauptfenster.tarife) -1) downto 0  do
 begin
- expDate             := strtodate(hauptfenster.tarife[i].expires);
- DeleteWhenExpireDate:= hauptfenster.tarife[i].DeleteWhenExpires;
+ expDate             := hauptfenster.tarife[i].Data.expires;
+ DeleteWhenExpireDate:= hauptfenster.tarife[i].Data.DeleteWhenExpires;
 
  if (DeleteWhenExpireDate and (expDate < Dateof(now))) then
  begin
@@ -373,11 +431,11 @@ SettingsKontingente.ReadSections(sections);
 for k:= 0 to sections.count-1 do
 for i:= 0 to length(hauptfenster.tarife) -1 do
 begin
- if sections.strings[k] = hauptfenster.tarife[i].tarif then break
+ if sections.strings[k] = hauptfenster.tarife[i].Data.tarif then break
  else
  begin
   if (i = length(hauptfenster.tarife) -1) then
-   if sections.strings[k] <> hauptfenster.tarife[i].tarif then SettingsKontingente.EraseSection(sections.strings[k]);
+   if sections.strings[k] <> hauptfenster.tarife[i].Data.tarif then SettingsKontingente.EraseSection(sections.strings[k]);
  end;
 end;
 sections.free;
@@ -388,11 +446,11 @@ SettingsTraffic.ReadSections(sections);
 for k:= 0 to sections.count-1 do
 for i:= 0 to length(hauptfenster.tarife) -1 do
 begin
- if sections.strings[k] = hauptfenster.tarife[i].tarif then break
+ if sections.strings[k] = hauptfenster.tarife[i].Data.tarif then break
  else
  begin
   if (i = length(hauptfenster.tarife) -1) then
-   if sections.strings[k] <> hauptfenster.tarife[i].tarif then SettingsTraffic.EraseSection(sections.strings[k]);
+   if sections.strings[k] <> hauptfenster.tarife[i].Data.tarif then SettingsTraffic.EraseSection(sections.strings[k]);
  end;
 end;
 
@@ -405,11 +463,11 @@ lengthS:= 0;
 with Hauptfenster do
  for i:= 0 to length(tarife)-1 do
  begin
-  if not InScores(tarife[i].Tarif) then
+  if not InScores(tarife[i].Data.Tarif) then
   begin
    inc(lengthS);
    setlength(Scores, lengthS);
-   Scores[lengthS-1].Name       := tarife[i].Tarif;
+   Scores[lengthS-1].Name       := tarife[i].Data.Tarif;
    Scores[lengthS-1].gesamt     := SettingsScores.ReadInteger(Scores[lengthS-1].Name,'DialedAll',0);
    Scores[lengthS-1].erfolgreich:= SettingsScores.ReadInteger(Scores[lengthS-1].Name,'Dialed',0);
    Scores[lengthS-1].state      := SettingsScores.ReadInteger(Scores[lengthS-1].Name,'State',0);
@@ -519,23 +577,23 @@ check1:= false;
 check2:= false;
 //Bedingungen, damit der Tarif angezeigt wird
 //a) Anfang der Gültigkeit
- if strtodate(hauptfenster.tarife[i].validfrom) > dateof(tarifzeit) then continue;
+ if hauptfenster.tarife[i].Data.validfrom > dateof(tarifzeit) then continue;
 //b) Einwahlgebühr ?
- if ((strtofloat(hauptfenster.tarife[i].Einwahl) <> 0.0) and (not hauptfenster.ConnectionCostVisible)) then continue;
+ if ((hauptfenster.tarife[i].Data.Einwahl <> 0.0) and (not hauptfenster.ConnectionCostVisible)) then continue;
 
- if ansicontainsstr(hauptfenster.tarife[i].tag,daystring) then
+ if ansicontainsstr(hauptfenster.tarife[i].Data.tag,daystring) then
  begin
   //wenn datumsgrenze überchritten wird
   if (dateof(tarifzeit)<>dateof(incminute(tarifzeit,setdauer))) then
   begin
      //wenn Tarif ganztägig
-    if ( ((dateof(tarifzeit) +strtotime(hauptfenster.tarife[i].Ende)) ) = ( dateof(tarifzeit) +strtotime(hauptfenster.tarife[i].Beginn) ) )
-            and (ansicontainsstr(hauptfenster.tarife[i].Tag,tomorrowstring)) then check1:= true;
+    if ( ((dateof(tarifzeit) +hauptfenster.tarife[i].Data.Ende) ) = ( dateof(tarifzeit) +hauptfenster.tarife[i].Data.Beginn ) )
+            and (ansicontainsstr(hauptfenster.tarife[i].Data.Tag,tomorrowstring)) then check1:= true;
          //wenn Tarif die Datumsgrenze überschreitet
-      if  ( ( dateof(tarifzeit) + strtotime(hauptfenster.tarife[i].Beginn) ) < tarifzeit ) then
-       if ( ansicontainsstr(hauptfenster.tarife[i].tag,tomorrowstring) ) then
-        if  (dateof(tarifzeit) +strtotime(hauptfenster.tarife[i].Beginn))>(dateof(tarifzeit) + strtotime(hauptfenster.tarife[i].Ende) ) then
-          if  ( dateof(incday(tarifzeit,1)) + strtotime(hauptfenster.tarife[i].Ende) ) >(incminute(tarifzeit,setdauer))
+      if  ( ( dateof(tarifzeit) + hauptfenster.tarife[i].Data.Beginn ) < tarifzeit ) then
+       if ( ansicontainsstr(hauptfenster.tarife[i].Data.tag,tomorrowstring) ) then
+        if  (dateof(tarifzeit) +hauptfenster.tarife[i].Data.Beginn)>(dateof(tarifzeit) + hauptfenster.tarife[i].Data.Ende ) then
+          if  ( dateof(incday(tarifzeit,1)) + hauptfenster.tarife[i].Data.Ende ) >(incminute(tarifzeit,setdauer))
             then check2:= true;
 
   if check1 or check2 then
@@ -544,20 +602,20 @@ check2:= false;
   else //wenn am selben Tag | Datumsgrenze wird nicht überschritten
   begin
    //Tarifende ist am selben tag   | ende >= beginn
-   if ( (dateof(tarifzeit) +strtotime(hauptfenster.tarife[i].Ende)) >= (dateof(tarifzeit) +strtotime(hauptfenster.tarife[i].Beginn) ) )
+   if ( (dateof(tarifzeit) +hauptfenster.tarife[i].Data.Ende) >= (dateof(tarifzeit) +hauptfenster.tarife[i].Data.Beginn ) )
    then
    begin
-     if( ( (dateof(tarifzeit) + strtotime(hauptfenster.tarife[i].Beginn) < (tarifzeit))
-      and (incminute(tarifzeit,setdauer) < (dateof(tarifzeit) + (strtotime(hauptfenster.tarife[i].Ende)) )))
+     if( ( (dateof(tarifzeit) + hauptfenster.tarife[i].Data.Beginn < (tarifzeit))
+      and (incminute(tarifzeit,setdauer) < (dateof(tarifzeit) + hauptfenster.tarife[i].Data.Ende )))
          //oder wenn ganztags
-          or ( strtotime(hauptfenster.tarife[i].Beginn) = strtotime(hauptfenster.tarife[i].Ende) ) )
+          or ( hauptfenster.tarife[i].Data.Beginn = hauptfenster.tarife[i].Data.Ende ) )
           then
             loadlistaddline({ini,sections,}rows,i,Einwahl,Preis, tarifzeit, setdauer);
    end
    else //das ende des Tarifs ist an anderem Tag als Beginn| wenn ende < beginn
    begin
-     if ( (dateof(tarifzeit) + strtotime(hauptfenster.tarife[i].Beginn)  < (tarifzeit))
-     or (dateof(tarifzeit) + strtotime(hauptfenster.tarife[i].Ende) > (incminute(tarifzeit,setdauer) ) ))
+     if ( (dateof(tarifzeit) + hauptfenster.tarife[i].Data.Beginn  < (tarifzeit))
+     or (dateof(tarifzeit) + hauptfenster.tarife[i].Data.Ende > (incminute(tarifzeit,setdauer) ) ))
           then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
     end;
   end;
@@ -598,26 +656,26 @@ with hauptfenster do
 begin
   rows := rows+1;
 
-  liste.Cells[1,rows] := tarife[i].Tarif;
-  liste.Cells[2,rows] := tarife[i].Beginn;
-  liste.Cells[3,rows] := tarife[i].Ende;
-  liste.Cells[4,rows] := Format('%.2f',[strtofloat(tarife[i].Preis)]);
-  liste.Cells[5,rows] := Format('%.2f',[strtofloat(tarife[i].Einwahl)]);
-  liste.Cells[6,rows] := tarife[i].Takt;
+  liste.Cells[1,rows] := tarife[i].Data.Tarif;
+  liste.Cells[2,rows] := TimeToStr(tarife[i].Data.Beginn);
+  liste.Cells[3,rows] := TimeToStr(tarife[i].Data.Ende);
+  liste.Cells[4,rows] := Format('%.2f',[tarife[i].Data.Preis]);
+  liste.Cells[5,rows] := Format('%.2f',[tarife[i].Data.Einwahl]);
+  liste.Cells[6,rows] := tarife[i].Data.Takt;
 
-  liste.Cells[8,rows] := tarife[i].Nummer;
-  liste.Cells[9,rows] := tarife[i].User;
-  liste.Cells[10,rows] := tarife[i].Passwort;
-  liste.Cells[11,rows] := tarife[i].Webseite;
-  liste.Cells[12,rows] := tarife[i].validfrom;
-  liste.Cells[13,rows] := tarife[i].expires;
-  liste.Cells[14,rows] := tarife[i].eingetragen;
+  liste.Cells[8,rows] := tarife[i].Data.Nummer;
+  liste.Cells[9,rows] := tarife[i].Data.User;
+  liste.Cells[10,rows] := tarife[i].Data.Passwort;
+  liste.Cells[11,rows] := tarife[i].Data.Webseite;
+  liste.Cells[12,rows] := DateToStr(tarife[i].Data.validfrom);
+  liste.Cells[13,rows] := DateToStr(tarife[i].Data.expires);
+  liste.Cells[14,rows] := DateToStr(tarife[i].Data.eingetragen);
 
-  tarif:= tarife[i].Tarif;
+  tarif:= tarife[i].Data.Tarif;
   getScores(tarif, DialAll, Dials, state, ScoreIndex);
   liste.cells[15,rows]:= inttostr(DialAll);{gesamversuche}
   liste.cells[16,rows]:= inttostr(Dials); {erfolgreiche}
-  liste.Cells[17, rows]:= tarife[i].Tag;
+  liste.Cells[17, rows]:= tarife[i].Data.Tag;
 
   if (DialAll> 0) then score := 1.- dials/DialAll
                   else score := 1.;
@@ -689,17 +747,17 @@ with hauptfenster do
 for i:= 0 to length(tarife)-1 do
 begin
  if ( //nur true, wenn ergebnis positiv
-    (onlineset.Tarif = tarife[i].Tarif)
+    (onlineset.Tarif = tarife[i].Data.Tarif)
   and
-    (onlineset.vbegin = tarife[i].Beginn)
+    (onlineset.vbegin = TimeToStr(tarife[i].Data.Beginn))
   and
-    (onlineset.vend = tarife[i].Ende)
+    (onlineset.vend = TimeToStr(tarife[i].Data.Ende))
   and
-    (onlineset.Rufnummer = tarife[i].Nummer)
+    (onlineset.Rufnummer = tarife[i].Data.Nummer)
   and
-    (onlineset.Preis = tarife[i].Preis)
+    (onlineset.Preis = FloatToStr(tarife[i].Data.Preis))
   and
-    (onlineset.Einwahl = tarife[i].Einwahl)
+    (onlineset.Einwahl = FloatToStr(tarife[i].Data.Einwahl))
     )
   then begin result:= true; break; end;
 
@@ -752,7 +810,7 @@ for i := hauptfenster.liste.RowCount-1 downto 1   do
 // in der Datenbank löschen
 with Hauptfenster do
 for i:= length(Tarife)-1 downto 0 do
-if (Deletelist.IndexOf(Tarife[i].Tarif) > -1) then
+if (Deletelist.IndexOf(Tarife[i].Data.Tarif) > -1) then
 begin
   tarife[i] := Tarife[length(tarife) -1]; //letzten Datensatz an stelle
   setlength(tarife, length(tarife)-1); //um eine Stelle kürzen
@@ -771,7 +829,7 @@ begin
 //in der Datenbank löschen
 for i:= length(hauptfenster.tarife)-1 downto 0 do
 begin
- vgldate:= strtodate(hauptfenster.tarife[i].expires);
+ vgldate:= hauptfenster.tarife[i].Data.expires;
  if vgldate < dateof(now) then
   begin
    hauptfenster.tarife[i] := hauptfenster.Tarife[length(hauptfenster.tarife) -1]; //letzten Datensatz an stelle
@@ -872,11 +930,11 @@ begin
  //im speicher ändern
  with hauptfenster do
  for i:= 0 to length(hauptfenster.tarife) -1 do
- if  (changelist.IndexOf(Tarife[i].Tarif) <> -1) then
+ if  (changelist.IndexOf(Tarife[i].Data.Tarif) <> -1) then
  begin
-  Tarife[i].expires:= DatetoStr(Datum);
+  Tarife[i].Data.expires:= Datum;
   if Datum > Dateof(now) then
-   Tarife[i].validfrom:= DatetoStr(Dateof(now)); //gültig ab ist dann heute
+   Tarife[i].Data.validfrom:= Dateof(now); //gültig ab ist dann heute
  end;
 
  changelist.free;
@@ -977,36 +1035,18 @@ if Kanalbuendelung then
 end;
 
 procedure WriteTarifeToHD;
-var text: textfile;
-    fName: string;
+var fName: string;
     i: integer;
+    Datei: file of TTarif;
 begin
-fName:= ExtractfilePath(paramstr(0)) + 'Tarife.ini';
-assignfile(text,fName);
-rewrite(text);
+  fName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
+  assignfile(Datei,fName);
+  rewrite(Datei);
 
-for i:= 0 to length(hauptfenster.tarife)-1 do
-begin
+  for i:= 0 to length(hauptfenster.tarife)-1 do
+   write(Datei,hauptfenster.tarife[i].Data);
 
- writeln(text,'['+hauptfenster.tarife[i].ident +']');
- writeln(text,'Tarif='+hauptfenster.tarife[i].Tarif);
- writeln(text,'Beginn='+hauptfenster.tarife[i].Beginn);
- writeln(text,'Ende='+hauptfenster.tarife[i].Ende);
- writeln(text,'Nummer='+hauptfenster.tarife[i].Nummer);
- writeln(text,'Preis='+hauptfenster.tarife[i].Preis);
- writeln(text,'Einwahl='+hauptfenster.tarife[i].Einwahl);
- writeln(text,'Takt='+hauptfenster.tarife[i].Takt);
- writeln(text,'User='+hauptfenster.tarife[i].User);
- writeln(text,'Passwort=',hauptfenster.tarife[i].Passwort);
- writeln(text,'Webseite=',hauptfenster.tarife[i].Webseite);
- writeln(text,'Tag=',hauptfenster.tarife[i].tag);
- writeln(text,'eingetragen=',hauptfenster.tarife[i].eingetragen);
- writeln(text,'expires=',hauptfenster.tarife[i].expires);
- if hauptfenster.tarife[i].DeleteWhenExpires then
-  writeln(text,'DeleteWhenExpires=1');
- writeln(text,'start=',hauptfenster.tarife[i].validfrom);
-end;
-closefile(text);
+  closefile(Datei);
 end;
 
 end.

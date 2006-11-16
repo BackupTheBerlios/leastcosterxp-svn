@@ -27,9 +27,21 @@ type
 
 //Tarifliste
   TTarif = record
-    Tarif, Beginn, Ende, Nummer,Preis, Einwahl,Takt, User,Passwort, Webseite, Tag, eingetragen,validfrom, expires, ident: String;
+    Tarif: String[50];
+    Tag: String[39];
+    Nummer,User,Passwort, Editor: String[20];
+    Webseite: String[70];
+    Takt: String[5];
+    Preis, Einwahl: real;
+    Beginn, Ende: TTime;
+    eingetragen,validfrom, expires:TDate;
     DeleteWhenExpires: boolean;
   end;
+
+  TTarif2 = record
+    Data: TTarif;
+    ident: String[70];
+   end;
 
 //Rss - Reader
   TInhalt = record
@@ -474,7 +486,7 @@ type
       startwithimport:boolean;
       importfilename: string;
       rss_update: integer;
-      tarife: array of TTarif;
+      tarife: array of TTarif2;
       lookforward: integer;
       selfdial: boolean;
       noFeeds: boolean;
@@ -1532,9 +1544,6 @@ Reg.RootKey := HKEY_CLASSES_ROOT;
 
 //Dateiendung lcz und lcx installieren
  try
- if not reg.keyexists('.lcz') then
- InstallExt('.lcz', 'LeastCosterXPZip', 'LeastCosterXP Tarifarchiv', ParamStr(0), '%1',0);
-
  if not reg.KeyExists('.lcx') then
  InstallExt('.lcx', 'LeastCosterXP Xport', 'LeastCosterXP Tarifdatei', ParamStr(0), '%1',0);
 
@@ -1745,12 +1754,16 @@ var con: TmemInifile;
     sr : TSearchRec;
     F: string;
     ple: TIniFile;
+    reg: TRegistry;
 begin
 closeallowed:= false;
 autoclose:= false;
 ConnHandle:= 0;
 Disconnecting:= false;
 neuladen:= false;
+
+//lcz-Dateien wieder unregistrieren -> nicht mehr nötig
+if reg.keyexists('.lcz') then UnInstallExt('.lcz');
 
 Rssread:= TRss.Create;
 
@@ -4011,7 +4024,7 @@ begin
 
        if isonline then
        begin
-        params :=  Ansireplacestr(params,'%DB',ExtractFilepath(Paramstr(0)) + 'Tarife.ini');
+        params :=  Ansireplacestr(params,'%DB',ExtractFilepath(Paramstr(0)) + 'Tarife.lcx');
         params :=  Ansireplacestr(params,'%IP',hauptfenster.IPAdress);
         params :=  Ansireplacestr(params,'%Tarif',Hauptfenster.onlineset.Tarif);
        end;
