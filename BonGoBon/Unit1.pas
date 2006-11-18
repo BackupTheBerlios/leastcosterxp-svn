@@ -47,6 +47,20 @@ uses
   BMDThread, AppEvnts;
 
 type
+
+//Tarifliste
+  TTarif = record
+    Tarif: String[70];
+    Tag: String[39];
+    Nummer,User,Passwort, Editor: String[40];
+    Webseite: String[150];
+    Takt: String[5];
+    Preis, Einwahl: real;
+    Beginn, Ende: TTime;
+    eingetragen,validfrom, expires:TDate;
+    DeleteWhenExpires: boolean;
+  end;
+
   TForm1 = class(TForm)
     Http: THttpCli;
     Label1: TLabel;
@@ -64,6 +78,8 @@ type
     FlatButton2: TFlatButton;
     BMDThread1: TBMDThread;
     ApplicationEvents1: TApplicationEvents;
+    ResetB: TFlatButton;
+    procedure ResetBClick(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure BMDThread1Terminate(Sender: TObject; Thread: TBMDExecuteThread;
       var Data: Pointer);
@@ -87,6 +103,7 @@ type
   public
     { Public declarations }
   end;
+  
   function DownloadStart(var lastdate:TDateTime; http:THttpCli):boolean  ;
   function DownloadResume(http:THttpCli) :boolean ;
   function GetFileVersion(Path: string): string;
@@ -95,9 +112,62 @@ var
   Form1: TForm1;
 
 implementation
-uses RegExpr, StrUtils, DateUtils, IniFiles;
+uses RegExpr, StrUtils, DateUtils, IniFiles, zlib;
 
 {$R *.dfm}
+procedure Compress(InputFileName, OutputFileName: string);
+var InputStream, OutputStream: TFileStream;
+  CompressionStream: ZLib.TCompressionStream;
+begin
+  InputStream:=TFileStream.Create(InputFileName, fmOpenRead);
+  try
+    OutputStream:=TFileStream.Create(OutputFileName, fmCreate);
+    try
+      CompressionStream:=TCompressionStream.Create(clMax, OutputStream);
+      try
+        CompressionStream.CopyFrom(InputStream, InputStream.Size);
+      finally
+        CompressionStream.Free;
+      end;
+    finally
+      OutputStream.Free;
+    end;
+  finally
+    InputStream.Free;
+  end;
+end;
+
+procedure Decompress(InputFileName, OutputFileName: string);
+var InputStream, OutputStream: TFileStream;
+  DeCompressionStream: ZLib.TDeCompressionStream;
+  Buf: array[0..4095] of Byte;
+  Count: Integer;
+begin
+  InputStream:=TFileStream.Create(InputFileName, fmOpenRead);
+  try
+    OutputStream:=TFileStream.Create(OutputFileName, fmCreate);
+    try
+      DecompressionStream := TDecompressionStream.Create(InputStream);
+      try
+        while true do
+        begin
+          Count := DecompressionStream.Read(Buf[0], SizeOf(Buf));
+          if Count = 0 then
+            break
+          else
+            OutputStream.Write(Buf[0], Count);
+        end;
+      finally
+        DecompressionStream.Free;
+      end;
+    finally
+      OutputStream.Free;
+    end;
+  finally
+    InputStream.Free;
+  end;
+end;
+
 
 procedure TForm1.WMNCHitTest (var M: TWMNCHitTest);
 begin
@@ -108,16 +178,20 @@ end;
 
 procedure TForm1.BonGoParse(txtinput:TStringStream);
 var r    : TRegExpr;
-    txt :TStringStream;
-    F    : TFileStream;
     i    : integer;
     split: TStringlist;
-    Tarif, Beginn, Ende, gilt : String;
+    Beginn, Ende, gilt : String;
     preis, einwahl: string;
     tag  : integer;
-    delete: boolean;
 
+    DatenSatz: TTarif;
+    Tarife: array of TTarif;
+    Datei: file of TTarif;
+
+    fname, cname: string;
 begin
+
+ setlength(Tarife,0);
 
  r:= TRegExpr.Create;
  status.simpletext:= 'Lese ' + ExtractFileName(http.URL) + ' (' +datetimetostr(lastdate)+' )';
@@ -128,9 +202,6 @@ begin
  r.Expression:= #10;   //Zeilentrenner ist in diesem Fall nur #10, da unix-Datei
  r.Split(txtinput.DataString,Split); //zeilenweise aufsplitten
 
-
- txt:= TStringStream.Create('');
-
  Progress.Max:= split.Count-1;
  Progress.position:= 0;
  progress.Refresh;
@@ -138,25 +209,30 @@ begin
  for i:= 0 to SPlit.count -1 do
  begin
 
-   r.Expression:= '(.*)  (.*)  (\d)  (\d{1,2})  (\d{1,2})  (.*)  (.*)  (.*)  (\d*)  (.*)  (.*)  (.*)';
+  r.Expression:= '(.*)  (.*)  (\d)  (\d{1,2})  (\d{1,2})  (.*)  (.*)  (.*)  (\d*)  (.*)  (.*)  (.*)';
 
   //wenn der String matched
   if r.exec(split.strings[i]) then
   begin
-   tarif := r.Replace(split.Strings[i], '$1 $2', true);
+   Datensatz.tarif := r.Replace(split.Strings[i], '$1 $2', true);
+
    Beginn := r.Replace(split.Strings[i], '$4', true);
    if strtoint(beginn) < 10 then beginn:= '0'+Beginn
    else if beginn = '24' then beginn:= '00';
+   DatenSatz.Beginn := EncodeTime(strToint(beginn),0,0,0);
 
    Ende:= r.Replace(split.Strings[i], '$5', true);
    if strtoint(Ende) < 10 then ende:= '0'+Ende
    else if ende = '24' then ende:= '00';
+   DatenSatz.Ende   := EncodeTime(StrToInt(ende),0,0,0);
 
    Preis:= r.Replace(split.Strings[i], '$6', true);
-   preis:= AnsiReplaceStr(Preis,Thousandseparator, Decimalseparator);
+   preis:= AnsiReplaceStr(Preis,ThousandSeparator, DecimalSeparator);
+   DatenSatz.Preis   := StrToFloat(Preis);
 
    Einwahl:= r.Replace(split.Strings[i], '$7', true);
-   Einwahl:= AnsiReplaceStr(Einwahl,Thousandseparator, Decimalseparator);
+   Einwahl:= AnsiReplaceStr(Einwahl,ThousandSeparator, DecimalSeparator);
+   DatenSatz.Einwahl:= StrToFloat(einwahl);
 
    tag:= strtoint(r.Replace(split.Strings[i], '$3', true));
    case (tag) of
@@ -166,93 +242,103 @@ begin
     3: gilt:= '[So]';
     4: gilt:= '[Mo][Di][Mi][Do][Fr][Sa][So][feiertags]';
    end;
+   Datensatz.Tag         := gilt;
+   DatenSatz.Nummer      := r.Replace(split.Strings[i], '$9', true);
+   DatenSatz.Takt        := r.Replace(split.Strings[i], '$8', true);
+   DatenSatz.User        := r.Replace(split.Strings[i], '$10', true);
+   DatenSatz.Passwort    := r.Replace(split.Strings[i], '$11', true);
+   DatenSatz.Webseite    := r.Replace(split.Strings[i], '$12', true);
+   DatenSatz.eingetragen := dateof(lastdate);
+   DatenSatz.expires     := dateof(incDay(lastdate,2));
+   DatenSatz.validfrom   := dateof(lastdate);
 
-   split.Strings[i] := r.Replace(split.Strings[i],
-                      '[BonGo '+tarif+ ' ' +datetimetostr(now)+' '+Inttostr(i)+']' + #13#10
-                      +'Tarif='+tarif + #13#10
-                      +'Beginn='+beginn+':00:00' +#13#10
-                      +'Ende='+ende+':00:00' + #13#10
-                      +'Nummer=$9' +#13#10
-                      +'Preis='+Preis + #13#10
-                      +'Einwahl='+Einwahl + #13#10
-                      +'Takt=$8'+#13#10
-                      +'User=$10'+#13#10
-                      +'Passwort=$11'+#13#10
-                      +'Webseite=$12'+#13#10
-                      +'Tag='+gilt+#13#10
-                      +'eingetragen='+DateToStr(dateof(lastdate))+#13#10
-                      +'expires='+DateToStr(dateof(incDay(lastdate,2)))+#13#10
-                      +'start='+DateToStr(dateof(lastdate)) + #13#10
-                       , true);
+   DatenSatz.Editor      := 'BonGo';
+   DatenSatz.DeleteWhenExpires:= false;
 
-  if((maxP.Value >= strtofloat(preis)) and ( maxE.Value >= strtofloat(Einwahl))) then txt.WriteString(split.strings[i]);
-  end;
+    //wenn Tarif innerhalb der Bedingungen, dann mitnehmen
+    if((maxP.Value >= DatenSatz.Preis) and ( maxE.Value >= DatenSatz.Einwahl)) then
+    begin
+      //neue Länge setzen
+      setlength(Tarife,length(Tarife)+1);
+      //an der neuen freien Stelle hinzufügen
+      Tarife[length(Tarife)-1]  := DatenSatz;
+    end;
+  end;  //Ende der Match-Bedingung
 
-  progress.position:= i;
- end;
+    progress.position:= i;
+ end;  //ende der BonogDatei
 
  split.Clear;
- status.simpletext:= 'Suche Tarife.ini';
+ status.simpletext:= 'Suche Tarife.lcx';
 
 
  //ab hier die alten Tarife einlesen
- if fileexists('..\..\Tarife.ini') then
+ if fileexists('..\..\Tarife.lcx') then
  begin
+   cname:='..\..\Tarife.lcx';
+   fname:=changeFileExt(fname, '.$$$');
+   Decompress(cname, fname);
 
-   Split.LoadFromFile('..\..\Tarife.ini');
+   assignFile(Datei,fname);
+   ReSet(Datei);
 
-   RenameFile('..\..\Tarife.ini','..\..\Tarife.ini.bak');
+   Progress.min:= 0;
+   Progress.Max:= FileSize(Datei);
    
-   delete:= false;
-   progress.max:= Split.Count-1;
-   Progress.position:= 0;
-   progress.Refresh;
-   status.simpletext:= 'Lese Tarife.ini';
-
-   for i:= 0 to Split.Count-1 do
-   begin
-    //testtext:=     ;
-    //wenn neuer tarif, nachschauen ob er gelöscht werden muss
-     r.expression:= '^\[.*\]';
-     if r.Exec(split.strings[i]) then
-     begin
-      r.Expression:= '\[BonGo';
-      if r.exec(Split.Strings[i]) then
-        delete:= true
-      else delete:= false; //nur löschen, wenn BonGo-Tarif
-     end;
-
-    // tarife übernehmen
-    if not delete then begin
-     txt.WriteString(split.strings[i]+#13#10);
-     //testint:=testint+1;
-     //form2.Memo1.Lines.Add(IntToStr(i)+' ' +split.strings[i]);
+   while not eof(Datei) do
+    begin
+     Read(Datei, Datensatz);
+//     showmessage(Datensatz.Editor + ' ' + inttostr(length(Tarife)));
+     //nur speichern wenn nicht schon ein Bongotarif
+     if not (DatenSatz.Editor = 'BonGo') then
+      begin //anhängen
+        //neue Länge setzen
+          setlength(Tarife,length(Tarife)+1);
+        //an der neuen freien Stelle hinzufügen
+          Tarife[length(Tarife)-1] := DatenSatz;
+      end;
+      Progress.Position:= Progress.Position + 1;
     end;
-    progress.position:= i;
-   end;
-    //form2.Memo1.Lines.Add('Insgesat: '+IntToStr(Split.Count)+' Behalten: '+IntToStr(testint));
- end;
+   closefile(Datei);
+   DeleteFile(fname);
+   RenameFile('..\..\Tarife.lcx','..\..\Tarife.lcx.bak');
+ end; //if fileExists
 
  //abspeichern
-  status.simpletext:= 'Schreibe neue Tarife.ini ...';
-  txt.Position:=0;
-  F   := TFileStream.Create('..\..\Tarife.ini', fmCreate);
-  f.CopyFrom(txt, txt.Size);
-  f.free;
-  txt.free;
+  status.simpletext:= 'Schreibe neue Tarife.lcx ...';
+  if length(Tarife) > 0 then
+  begin
+
+    cname:='..\..\Tarife.lcx';
+    fname:=changeFileExt(fname, '.$$$');
+
+    assignFile(Datei,fname);
+    ReWrite(Datei);
+
+    Progress.min:= 0;
+    Progress.Max:= length(tarife);
+
+    For i:= 0 to length(tarife)-1 do
+    begin
+      write(Datei, Tarife[i]);
+      progress.position:= Progress.Position + 1;
+    end;
+
+    CloseFile(Datei);
+    Compress(fname, cname);
+    DeleteFile(fname);
+  end;
 
  //Sicherungskopie löschen
- if fileexists('..\..\Tarife.ini.bak') then deletefile('..\..\Tarife.ini.bak');
+ if fileexists('..\..\Tarife.lcx.bak') then deletefile('..\..\Tarife.lcx.bak');
  
  split.Free;
 
  r.Free;
- status.simpletext:= 'Tarife.ini erstellt.';
+ status.simpletext:= 'Tarife.lcx erstellt.';
 end;
 
 procedure TForm1.StartClick(Sender: TObject);
-var
-    datum: TDateTime;
 begin
  BMDThread1.Start;
 end;
@@ -344,6 +430,7 @@ begin
  MaxP.Enabled:= false;
  MaxE.Enabled:= false;
  Start.Enabled:= false;
+ ResetB.enabled:= false;
 
  Progress.Min     := 0;
  progress.Max     := 100;
@@ -362,6 +449,7 @@ begin
       MaxP.Enabled:= true;
       MaxE.Enabled:= true;
       Start.Enabled:= true;
+      ResetB.Enabled:= true;
 
       // schließen wenn nicht im manullen Modus
       if form1.tag=2 then form1.close;
@@ -387,6 +475,7 @@ begin
  MaxP.Enabled:= true;
  MaxE.Enabled:= true;
  Start.Enabled:= true;
+ ResetB.Enabled:= true;
 
  txt.free;
 
@@ -398,7 +487,6 @@ function DownloadStart(var lastdate:TDateTime; http:THttpCli):boolean  ;
 var r: TRegExpr;
     TempString: String;
     unix: Cardinal;
-    datum: TDateTime;
 begin
   Result := false;
 
@@ -491,6 +579,11 @@ begin
   end;
   FreeMem(lpVerInfo, dwInfoSize);
 
+end;
+
+procedure TForm1.ResetBClick(Sender: TObject);
+begin
+ lastdate:= EncodeDate(1970,01,02) + timeof(now);
 end;
 
 end.

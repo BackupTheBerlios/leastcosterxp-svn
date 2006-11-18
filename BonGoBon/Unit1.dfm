@@ -115,9 +115,9 @@ object Form1: TForm1
   end
   object Start: TFlatButton
     Left = 8
-    Top = 32
+    Top = 37
     Width = 97
-    Height = 65
+    Height = 45
     Caption = 'Start'
     TabStop = True
     TabOrder = 0
@@ -160,6 +160,15 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 5
     OnClick = FlatButton2Click
+  end
+  object ResetB: TFlatButton
+    Left = 8
+    Top = 84
+    Width = 97
+    Height = 18
+    Caption = 'Reset'
+    TabOrder = 6
+    OnClick = ResetBClick
   end
   object Http: THttpCli
     URL = 'http://www.bongosoft.de/Preistabelle-lang.txt'
