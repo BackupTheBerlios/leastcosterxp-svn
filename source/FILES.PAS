@@ -2,7 +2,7 @@ UNIT Files;
 
 
 INTERFACE
-uses Windows , SysUtils, Registry, Classes, shellapi;
+uses Windows , SysUtils, Registry, Classes, shellapi, zlib;
 
 function DelDir(Dir : String) : Boolean;
 function InstallExt(Extension, ExtDescription, FileDescription,
@@ -16,6 +16,8 @@ procedure datei_erzeugen(FileName:string);
 procedure ini_anhaengen(zeile: string);
 procedure verzeichnis_erzeugen(FolderName: string);
 function DeleteFileToRecycleBin(const AFile: string): boolean;
+procedure Compress(InputFileName, OutputFileName: string);
+procedure Decompress(InputFileName, OutputFileName: string);
 
 IMPLEMENTATION
 
@@ -245,6 +247,58 @@ begin
   Result := SHFileOperation(Operation) = 0;
 end;
 
+procedure Compress(InputFileName, OutputFileName: string);
+var InputStream, OutputStream: TFileStream;
+  CompressionStream: ZLib.TCompressionStream;
+begin
+  InputStream:=TFileStream.Create(InputFileName, fmOpenRead);
+  try
+    OutputStream:=TFileStream.Create(OutputFileName, fmCreate);
+    try
+      CompressionStream:=TCompressionStream.Create(clMax, OutputStream);
+      try
+        CompressionStream.CopyFrom(InputStream, InputStream.Size);
+      finally
+        CompressionStream.Free;
+      end;
+    finally
+      OutputStream.Free;
+    end;
+  finally
+    InputStream.Free;
+  end;
+end;
+
+procedure Decompress(InputFileName, OutputFileName: string);
+var InputStream, OutputStream: TFileStream;
+  DeCompressionStream: ZLib.TDeCompressionStream;
+  Buf: array[0..4095] of Byte;
+  Count: Integer;
+begin
+  InputStream:=TFileStream.Create(InputFileName, fmOpenRead);
+  try
+    OutputStream:=TFileStream.Create(OutputFileName, fmCreate);
+    try
+      DecompressionStream := TDecompressionStream.Create(InputStream);
+      try
+        while true do
+        begin
+          Count := DecompressionStream.Read(Buf[0], SizeOf(Buf));
+          if Count = 0 then
+            break
+          else
+            OutputStream.Write(Buf[0], Count);
+        end;
+      finally
+        DecompressionStream.Free;
+      end;
+    finally
+      OutputStream.Free;
+    end;
+  finally
+    InputStream.Free;
+  end;
+end;
 
 
 

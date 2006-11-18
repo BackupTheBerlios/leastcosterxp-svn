@@ -33,7 +33,6 @@ object PriceWarning: TPriceWarning
     Font.Height = -15
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ParentBackground = True
     ParentFont = False
     TabOrder = 0
     object info2: TLabel

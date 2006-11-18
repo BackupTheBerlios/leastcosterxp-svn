@@ -1,7 +1,7 @@
 unit tarifverw;
 
 interface
-uses grids,controls, GridEvents, floating;
+uses grids,controls, GridEvents, floating, files;
 
 procedure watchoutforcheaperprice(checktime: TDateTime);
 function IndexOfScores(tarif: string): integer;
@@ -44,8 +44,8 @@ with hauptfenster do
 
   if not (liste.cells[1,1] ='') then
   begin
-   if onlineset.preis <> '' then price_now:= strtofloat(onlineset.Preis)
-                            else price_now:= -1;
+   if (onlineset.preis <> -1.0) then price_now:= onlineset.Preis
+                            else price_now:= -1.0;
    price_then:= strtofloat(liste.cells[4,1]);
 
    thisprice_then   := 'unbekannt';
@@ -68,19 +68,21 @@ with hauptfenster do
    begin
      Application.CreateForm(TPriceWarning, PriceWarning);
      PriceWarning.warn.Caption:= 'Jetzt wird''s teurer. Ab ' + liste.cells[2,1]+' ist der billigste Tarif '''+ UpperCase(liste.cells[1,1])+''' . Er kostet '+liste.cells[4,1]+'( +'+liste.cells[5,1]+ ') pro Minute.';
-     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vend +')';
+//     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'(' + onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vend +')';
+     PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
+
      PriceWarning.info2.Caption:= 'Der Preis ab  ' + thisprice_when + ' ist ' + thisprice_then +'.';
-     Pricewarning.trennen2.Caption:= 'Um ' + onlineset.vend + ' trennen';
+     Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
      Pricewarning.Timer1.enabled:= true;
      Pricewarning.Show;
      SetWindowPos(pricewarning.handle,hwnd_topmost,pricewarning.left,pricewarning.Top,pricewarning.Width,pricewarning.Height,{swp_noactivate+swp_nomove+}swp_nosize);
-     onlineset.wechsel:= dateof(checktime) + strtotime(onlineset.vend);
+     onlineset.wechsel:= dateof(checktime) + onlineset.vend;
      if thisprice_then <> 'unbekannt' then
         begin
              onlineset.wechselpreis   := strtofloat(thisprice_then);
              onlineset.wechseleinwahl := strtofloat(thiseinwahl_then);
-             onlineset.vbegin         := liste.cells[2,i];
-             onlineset.vend           := liste.cells[3,i];
+             onlineset.vbegin         := StrToTime(liste.cells[2,i]);
+             onlineset.vend           := StrToTime(liste.cells[3,i]);
              onlineset.tag            := liste.cells[17,i];
         end
         else begin onlineset.wechselpreis := -1.; onlineset.wechseleinwahl:= 0; end;
@@ -90,20 +92,21 @@ with hauptfenster do
    begin
      Application.CreateForm(TPriceWarning, PriceWarning);
      PriceWarning.warn.Caption:= 'Ab ' + liste.cells[2,1]+' steht der Tarif '''+ UpperCase(liste.cells[1,1])+''' zur Verfügung. Er kostet '+liste.cells[4,1]+'( +'+liste.cells[5,1]+ ') pro Minute.';
-     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
+//     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
+     PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
      PriceWarning.info2.Caption:= 'Der Preis ab  ' + thisprice_when  + ' ist ' + thisprice_then +'.';
-     Pricewarning.trennen2.Caption:= 'Um ' + onlineset.vend + ' trennen';
+     Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
      Pricewarning.Timer1.enabled:= true;
      Pricewarning.Show;
      SetWindowPos(pricewarning.handle,hwnd_topmost,pricewarning.left,pricewarning.Top,pricewarning.Width,pricewarning.Height,{swp_noactivate+swp_nomove+}swp_nosize);
      if onlineset.vend <> onlineset.vbegin then //nur wenn nicht ganztags
-     onlineset.wechsel:= dateof(checktime) + strtotime(onlineset.vend);
+     onlineset.wechsel:= dateof(checktime) + onlineset.vend;
      if thisprice_then <> 'unbekannt' then
         begin
              onlineset.wechselpreis   := strtofloat(thisprice_then);
              onlineset.wechseleinwahl := strtofloat(thiseinwahl_then);
-             onlineset.vbegin         := liste.cells[2,i];
-             onlineset.vend           := liste.cells[3,i];
+             onlineset.vbegin         := StrToTime(liste.cells[2,i]);
+             onlineset.vend           := StrToTime(liste.cells[3,i]);
              onlineset.tag            := liste.cells[17,i];
         end
        else begin onlineset.wechselpreis := -1.; onlineset.wechseleinwahl:=0; end;
@@ -113,9 +116,10 @@ with hauptfenster do
    begin
      Application.CreateForm(TPriceWarning, PriceWarning);
      PriceWarning.warn.Caption:= 'Ab ' + liste.cells[2,1]+' steht der Tarif '''+ UpperCase(liste.cells[1,1])+''' zur Verfügung. Er kostet '+liste.cells[4,1]+'( +'+liste.cells[5,1]+ ') pro Minute.';
-     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
+//     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
+     PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
      PriceWarning.info2.Caption:= 'Der Preis ab  ' + thisprice_when  + ' ist ' + thisprice_then +'.';
-     Pricewarning.trennen2.Caption:= 'Um ' + onlineset.vend + ' trennen';
+     Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
      Pricewarning.Timer1.enabled:= true;
      Pricewarning.Show;
      SetWindowPos(pricewarning.handle,hwnd_topmost,pricewarning.left,pricewarning.Top,pricewarning.Width,pricewarning.Height,{swp_noactivate+swp_nomove+}swp_nosize);
@@ -123,16 +127,17 @@ with hauptfenster do
      onlineset.tag  := liste.cells[17,i];
 
      if onlineset.vend <> onlineset.vbegin then //nur wenn nicht ganztags
-     onlineset.wechsel:= dateof(checktime) + strtotime(onlineset.vend);
+     onlineset.wechsel:= dateof(checktime) + onlineset.vend;
    end;
  end
   else //erste Zeile ist leer
   begin
     Application.CreateForm(TPriceWarning, PriceWarning);
-    PriceWarning.warn.Caption:= 'Es ist kein Tarif bekannt, der nach ' + onlineset.endzeit+'gilt !';
-    PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
+    PriceWarning.warn.Caption:= 'Es ist kein Tarif bekannt, der nach ' + TimeToStr(onlineset.endzeit)+'gilt !';
+//    PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
+    PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
     PriceWarning.info2.Caption:= '';
-    Pricewarning.trennen2.Caption:= 'Um ' + onlineset.vend + ' trennen';
+    Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
     Pricewarning.Timer1.enabled:= true;
     Pricewarning.Show;
     Pricewarning.bringtofront;
@@ -234,9 +239,7 @@ var sections: TStringlist;
     DatenSatz: TTarif;
 begin
  UpdateFile:= false;
- 
- //if not fileexists(extractfilepath(paramstr(0))+'Tarife.ini') then exit;
-
+ //Rücksetzen des Arrays
  setlength(hauptfenster.tarife,0);
 
 if fileexists(extractfilepath(paramstr(0))+'Tarife.ini') then
@@ -394,7 +397,8 @@ end
 else //lcx nur laden, wenn keine Tarife.ini vorhanden war
 if FileExists(extractfilepath(paramstr(0))+'Tarife.lcx') then
 begin
-  assignfile(Datei,extractfilepath(paramstr(0))+'Tarife.lcx');
+  DeCompress(extractfilepath(paramstr(0))+'Tarife.lcx',extractfilepath(paramstr(0))+'Tarife.$$$');
+  assignfile(Datei,extractfilepath(paramstr(0))+'Tarife.$$$');
   reset(datei);
   count:= 0;
   while not EOF(Datei) do
@@ -404,9 +408,9 @@ begin
     setlength(hauptfenster.tarife, count);
     Hauptfenster.tarife[count-1].Data:= DatenSatz;
     Hauptfenster.tarife[count-1].ident:= DatenSatz.Tarif + inttostr(count);
-    Hauptfenster.tarife[count-1].Data.Editor:= '';
   end;
   closefile(datei);
+  DeleteFile(PChar(extractfilepath(paramstr(0))+'Tarife.$$$'));
 end;
 
 //abgelaufene Tarife löschen
@@ -749,15 +753,15 @@ begin
  if ( //nur true, wenn ergebnis positiv
     (onlineset.Tarif = tarife[i].Data.Tarif)
   and
-    (onlineset.vbegin = TimeToStr(tarife[i].Data.Beginn))
+    (onlineset.vbegin = tarife[i].Data.Beginn)
   and
-    (onlineset.vend = TimeToStr(tarife[i].Data.Ende))
+    (onlineset.vend = tarife[i].Data.Ende)
   and
     (onlineset.Rufnummer = tarife[i].Data.Nummer)
   and
-    (onlineset.Preis = FloatToStr(tarife[i].Data.Preis))
+    (onlineset.Preis = tarife[i].Data.Preis)
   and
-    (onlineset.Einwahl = FloatToStr(tarife[i].Data.Einwahl))
+    (onlineset.Einwahl = tarife[i].Data.Einwahl)
     )
   then begin result:= true; break; end;
 
@@ -947,8 +951,8 @@ procedure Tarifwechseln;
 begin
 with hauptfenster do
 begin
-     onlineset.preis:= floattostr(onlineset.wechselpreis);
-     onlineset.einwahl:= floattostr(onlineset.wechseleinwahl);
+     onlineset.preis:= onlineset.wechselpreis;
+     onlineset.einwahl:= onlineset.wechseleinwahl;
      onlineset.einwahl2:= onlineset.wechseleinwahl;
      onlineset.wechselpreis:= 0;
      onlineset.wechseleinwahl:= 0;
@@ -956,9 +960,9 @@ begin
      if assigned(floatingW) then
      begin
       if (onlineset.vbegin=onlineset.vend) then edtime.text:='ganztags'
-       else edtime.text:= onlineset.vbegin +'-'+onlineset.vend;
+       else edtime.text:= TimeToStr(onlineset.vbegin) +'-'+TimeToStr(onlineset.vend);
       floatingW.valid.caption:= edtime.text;
-      floatingW.preis.caption:= onlineset.preis + ' c/min';
+      floatingW.preis.caption:= Format('%.2f c/min',[onlineset.preis]);
      end;
 end;
 end;
@@ -973,7 +977,7 @@ begin
   Tarifwechseln;
 
  //wenn der preis unbekannt ist, dann negativ, dann aber Fehler melden
- if (strtofloat(onlineset.preis) < 0) then
+ if (onlineset.preis < 0) then
  begin
       result:= false;
       exit;
@@ -1020,7 +1024,7 @@ if Kanalbuendelung then
  if ((takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
    or (taktlaenge = 1                   )) then
      //Kosten:= bisherige Kosten + Kosten/s * taktlaenge
-     onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + strtofloat(onlineset.Preis)/60/100 * taktlaenge;
+     onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
      //alten Wert merken
    Takt1.Tag:= dauer mod Taktlaenge;
 
@@ -1028,18 +1032,20 @@ if Kanalbuendelung then
  if ( (takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
      or (taktlaenge = 1                    ))  then
      //Kosten:= bisherige Kosten + Kosten/s * taktlaenge
-     onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + strtofloat(onlineset.Preis)/60/100 * taktlaenge;
+     onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
      //alten Wert merken
    Takt2.Tag:= dauer2 mod Taktlaenge;
  end;
 end;
 
 procedure WriteTarifeToHD;
-var fName: string;
+var fName,cName: string;
     i: integer;
     Datei: file of TTarif;
 begin
-  fName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
+  fName:= ExtractfilePath(paramstr(0)) + 'Tarife.$$$';
+  cName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
+
   assignfile(Datei,fName);
   rewrite(Datei);
 
@@ -1047,6 +1053,9 @@ begin
    write(Datei,hauptfenster.tarife[i].Data);
 
   closefile(Datei);
+  Compress(fName, cName);
+  DeleteFile(PChar(fName));
+
 end;
 
 end.

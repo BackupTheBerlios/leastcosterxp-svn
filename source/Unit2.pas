@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, StdCtrls, Buttons, ExtCtrls, StrUtils,
   Spin, Grids, shellapi, files, inifiles,webserv1,
-  ICSMD5, ValEdit,mmsystem, ComCtrls, ZipMstr,magsubs1;
+  ICSMD5, ValEdit,mmsystem, ComCtrls, magsubs1;
 
 var editpath: string;
 
@@ -212,7 +212,6 @@ type
     DFUE2: TButton;
     keepfiles_one: TCheckBox;
     TabSheet10: TTabSheet;
-    Zip: TZipMaster;
     GroupBox24: TGroupBox;
     unregister: TButton;
     register: TButton;
@@ -481,7 +480,7 @@ var
 
 implementation
 
-uses Unit1, addons, registry, floating, DateUtils;
+uses Unit1, addons, registry, floating, DateUtils, ZLIBArchive;
 
 
 {$R *.dfm}
@@ -2628,15 +2627,14 @@ end;
 
 procedure TLCXPSettings.registerClick(Sender: TObject);
 var folder: string;
+    arch: TZLBArchive;
 begin
- open.Filter:= 'zip|*.zip';
+ open.Filter:= 'LeastCosterXP PlugIn|*.lcp';
  if open.execute then
  begin
-  zip.DLLDirectory:= Extractfilepath(Paramstr(0));
-  zip.ZipFileName:= open.FileName;
 
-  folder:= ExtractFileName(open.FileName);
-  folder:= AnsiReplaceText(folder,'.zip','');
+  folder:= ExtractFileName(open.FileName);  //Dateiname
+  folder:= AnsiReplaceText(folder,'.lcp',''); //-> Ordner extrahieren
 
   if not directoryExists(Extractfilepath(Paramstr(0)) + 'PlugIns') then
    mkdir(Extractfilepath(Paramstr(0)) + 'PlugIns');
@@ -2644,8 +2642,25 @@ begin
   if not directoryExists(Extractfilepath(Paramstr(0)) + 'PlugIns\'+folder) then
   begin
    mkdir(Extractfilepath(Paramstr(0)) + 'PlugIns\'+folder);
-   zip.ExtrBaseDir:= Extractfilepath(Paramstr(0)) + 'PlugIns\'+folder;
-   zip.extract;
+
+   //Kompressor erzeugen
+    arch := TZLBArchive.Create(Self);
+    with arch do
+    begin
+      Name := 'arch';
+      CompressionLevel := fcMaximum;
+      SavePaths := True;
+      ExtractWithPath:= true;
+    end;
+
+   arch.OpenArchive(open.filename);
+   try
+     arch.ExtractAll(Extractfilepath(Paramstr(0)) + 'PlugIns\'+folder);
+   finally
+     arch.CloseArchive;
+     arch.free;
+   end;
+
 
    hauptfenster.pluglist.Append(folder);
    Plugbox.Items.Append(folder);

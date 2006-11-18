@@ -63,7 +63,7 @@ act_file:='';
 
 //anfangsdatum in Dateinamen umwandeln
 try
-  datum_copy:=  strtodateTime(hauptfenster.onlineset.datum);
+  datum_copy:=  hauptfenster.onlineset.datum;
 except //falls das Datum nicht mehr identifiziert werden kann
   datum_copy:= now;
 end;
@@ -94,12 +94,12 @@ savedata:=  inttostr(linecount)
             + #9 + Datetostr(Dateof(Datum_copy))
             + #9 + TimeToStr(Timeof(Datum_copy))
             + #9 + Dauer
-            + #9 + Kosten
+            + #9 + FloatToStr(Kosten)
             + #9 + Tarif
-            + #9 + Endzeit
+            + #9 + TimeToStr(Endzeit)
             + #9 + Rufnummer;
 
-if ((Datum<>'') and (Dauer<>'') and (Kosten <> '') and (Tarif<>'')) then
+if (Tarif<>'') then
    append_data(ausgabepfad,filename, savedata, linecount);//, nof);
 end;
 

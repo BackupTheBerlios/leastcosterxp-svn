@@ -477,7 +477,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'Welches Modem wird verwendet, um ins Internet zu gehen ?'
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
@@ -520,7 +520,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'Welches Modem wird verwendet, um ins Internet zu gehen ?'
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           TabOrder = 3
@@ -654,7 +654,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = '... Liste aller bereits eingerichteten Programme.'
           DropDownCount = 20
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
@@ -1613,7 +1613,7 @@ object LCXPSettings: TLCXPSettings
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1901,7 +1901,7 @@ object LCXPSettings: TLCXPSettings
           Width = 170
           Height = 21
           Hint = 'W'#228'hlen Sie hier den User aus. '
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           Sorted = True
@@ -2258,28 +2258,6 @@ object LCXPSettings: TLCXPSettings
     Title = 'Pfad angeben'
     Left = 363
     Top = 544
-  end
-  object Zip: TZipMaster
-    AddOptions = []
-    AddStoreSuffixes = [assGIF, assPNG, assZ, assZIP, assZOO, assARC, assLZH, assARJ, assTAZ, assTGZ, assLHA, assRAR, assACE, assCAB, assGZ, assGZIP, assJAR, assEXE, assJPG, assJPEG, ass7Zp, assMP3, assWMV, assWMA, assDVR, assAVI]
-    Dll_Load = True
-    ExtrOptions = [ExtrDirNames, ExtrOverWrite, ExtrUpdate]
-    KeepFreeOnAllDisks = 0
-    KeepFreeOnDisk1 = 0
-    MaxVolumeSize = 0
-    Password = 'LeastCosterXP'
-    PasswordReqCount = 1
-    SFXOptions = []
-    SFXOverWriteMode = OvrConfirm
-    SFXPath = 'DZSFXUS.bin'
-    SpanOptions = []
-    Trace = False
-    Unattended = False
-    Verbose = False
-    Version = '1.79.04.01'
-    VersionInfo = '1.79.04.01'
-    Left = 332
-    Top = 114
   end
   object FontDialog1: TFontDialog
     Font.Charset = DEFAULT_CHARSET

@@ -251,8 +251,8 @@ with hauptfenster do
      Application.CreateForm(TfloatingW, floatingW);
      floatingW.tarif.caption:= onlineset.Tarif;//edtarif.text;
      if settings.ReadBool('OnlineInfo', 'AutoWidth', true) then floatingW.setwidth;
-     floatingW.valid.caption:= onlineset.vbegin + '-'+ onlineset.vend;//edtime.text;
-     floatingW.preis.caption:= onlineset.preis + ' c/min';
+     floatingW.valid.caption:= TimeToStr(onlineset.vbegin) + '-'+ TimeToStr(onlineset.vend);
+     floatingW.preis.caption:= Format('%.2f c/min',[onlineset.preis ]);
      floatingW.Show;
     end;
   end

@@ -78,7 +78,7 @@ end;
 
 procedure Twndlist.ClearImport;
 begin
-
+ if importfile <> '' then DeleteFile(ImportFile);
  if assigned(NotImported) then NotImported.Free;
  if assigned(NewDate) then NewDate.Free;
  if assigned(AllNames) then  AllNames.free;
@@ -120,6 +120,7 @@ var zeilen: TStringlist;
     neu: string;
     Datei: file of TTarif;
     Datensatz: TTarif;
+    FName, CName: String;
 begin
 
 savedialog.Title:= 'Tarif - Export';
@@ -136,7 +137,9 @@ begin
 
   if zeilen.count > 0 then //wenn mehr als eine Zeile selektiert
   begin
-    AssignFile(Datei,SaveDialog.FileName);
+    fName:= changeFileExt(SaveDialog.FileName,'.$$$');
+    cName:= SaveDialog.FileName;
+    AssignFile(Datei,fname);
     ReWrite(Datei);
     for i:= 0 to length(Hauptfenster.tarife) -1 do
      if (zeilen.IndexOf(Hauptfenster.tarife[i].Data.tarif) > -1) then
@@ -146,6 +149,10 @@ begin
         write(Datei,Datensatz);
      end;
     CloseFile(Datei);
+
+    Compress(fName, cName);
+    DeleteFile(PChar(fName));
+    
   end;  
   zeilen.free;
 
@@ -170,7 +177,7 @@ begin
   wndlist.Close;
 end;
 
-function tarifisvalid(name, DTag:string;DBeginn,DEnde: TTime; DStart, DExpires:TDate): boolean;
+function tarifisvalid(Tname, DTag:string;DBeginn,DEnde: TTime; DStart, DExpires:TDate): boolean;
 var i: integer;
     ergebnis: boolean;
     mo,di,mi,don,fr,sa,so,feiertag: string;
@@ -208,7 +215,7 @@ try
    if length(hauptfenster.tarife) > 0 then
    for i:= 0 to length(hauptfenster.tarife)-1 do
    //namen finden
-   if hauptfenster.tarife[i].Data.Tarif = name then
+   if hauptfenster.tarife[i].Data.Tarif = Tname then
    begin
     expdate:=    hauptfenster.tarife[i].Data.expires;
     startdate:=  hauptfenster.tarife[i].Data.validfrom;
@@ -246,9 +253,9 @@ try
          hauptfenster.tarife[i].Data.expires:= incDay(DStart,-1);
 
          //aufnehmen, wenn nicht schon gemacht
-         if wndlist.NewDate.indexof(name) = -1 then  wndlist.newdate.append(name);
+         if wndlist.NewDate.indexof(tname) = -1 then  wndlist.newdate.append(Tname);
          //löschen, wenn nicht schon gelöscht
-         if wndlist.allnames.IndexOf(name) > -1 then wndlist.allnames.Delete(wndlist.allnames.IndexOf(name));
+         if wndlist.allnames.IndexOf(tname) > -1 then wndlist.allnames.Delete(wndlist.allnames.IndexOf(tname));
 
          ergebnis:= true;
          end
@@ -289,7 +296,6 @@ if listbox.count > 0 then
     progress.min:=0;
     progress.max:=FileSize(datei)-1;
 
-    //showmessage(inttostr(FileSize(datei)));
     while not EOF(Datei) do
     begin
 
@@ -309,7 +315,8 @@ if listbox.count > 0 then
        begin
           if notimported.IndexOf(Datensatz.tarif) = -1 then
             begin
-              NotImported.Append(Datensatz.Tarif);
+              if (NotImported.IndexOf(Datensatz.Tarif)= -1) then
+                  NotImported.Append(Datensatz.Tarif);
               if AllNames.IndexOf(Datensatz.Tarif)> -1 then
                    AllNames.Delete(AllNames.IndexOf(DatenSatz.Tarif));
             end;
@@ -441,6 +448,7 @@ end;
 procedure Twndlist.FormShow(Sender: TObject);
 var DatenSatz: TTarif;
     Datei: file of TTarif;
+    fname, cname: string;
 begin
 hauptfenster.enabled:= false;
 listbox.Sorted:= true;
@@ -471,8 +479,12 @@ begin
      begin
      if opendialog.execute then
        begin
-            assignFile(Datei,OpenDialog.filename);
-            ImportFile:=OpenDialog.filename;
+            fname:= OpenDialog.FileName;
+            cname:= changeFileExt(fname,'.$$$');
+            DeCompress(fname,cname);
+            ImportFile:=cname;
+
+            assignFile(Datei,cname);
             Reset(datei);
             While not EOF(datei) do
             begin
@@ -496,9 +508,11 @@ begin
   else //Start with import
     if (lowercase(extractFileExt(hauptfenster.importfilename)) = '.lcx') then
         begin
-
-            assignFile(Datei,hauptfenster.importfilename);
-            ImportFile:=hauptfenster.importfilename;
+            fname:= hauptfenster.importfilename;
+            cname:= changeFileExt(fname,'.$$$');
+            DeCompress(fname,cname);
+            assignFile(Datei,cname);
+            ImportFile:=cname;
             Reset(datei);
             While not EOF(datei) do
             begin
@@ -534,11 +548,12 @@ keine.checked:= false;
 end;
 
 procedure TWndlist.WriteDataToHD;
-var fName: string;
+var fName,cname: string;
     i: integer;
     Datei: file of TTarif;
 begin
-fName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
+fName:= ExtractfilePath(paramstr(0)) + 'Tarife.tmp';
+cName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
 
 assignfile(Datei,fName);
 rewrite(Datei);
@@ -565,6 +580,8 @@ begin
 progress.position:= i;
 end;
 closefile(Datei);
+Compress(fName, cName);
+DeleteFile(PChar(fName));
 progress.visible:= false;
 end;
 
@@ -594,8 +611,6 @@ begin
        NotImported.Delete(NotImported.IndexOf(listbox.Items.strings[i]));
        progress.position:=progress.position + 1;
       end;
-
-
 
      //Schritt 2 : löschen der alten Tarife mit dem Namen
      if notImported.count > 0 then

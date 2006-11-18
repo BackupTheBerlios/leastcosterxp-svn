@@ -27,10 +27,10 @@ type
 
 //Tarifliste
   TTarif = record
-    Tarif: String[50];
+    Tarif: String[70];
     Tag: String[39];
-    Nummer,User,Passwort, Editor: String[20];
-    Webseite: String[70];
+    Nummer,User,Passwort, Editor: String[40];
+    Webseite: String[150];
     Takt: String[5];
     Preis, Einwahl: real;
     Beginn, Ende: TTime;
@@ -77,10 +77,10 @@ type
     end;
 
     Onlinewerte = record
-      Datum,Startzeit,Dauer,Kosten,Tarif,
-      Endzeit, Rufnummer,Preis, Einwahl, Takt,
-      vbegin, vend, Webseite, tag: string;
-      Einwahl2, kostenbisjetzt: real;
+      Startzeit,Dauer,Tarif,Rufnummer, Takt, Webseite, tag: string;
+      Datum: TDateTime;
+      vbegin, vend, Endzeit: TTime;
+      Einwahl2, kostenbisjetzt,Kosten,Preis,Einwahl: real;
       wechselpreis, wechseleinwahl: real;
       wechsel: TDatetime;
       upload, download: Cardinal;
@@ -564,20 +564,19 @@ var Http: THttpCli;
 begin
 
 http:= ThttpCli.Create(nil);
- //Zähler für die Einwahlen >>> Quelltext im Forum erfragen 
+
+ //Zähler für die Einwahlen >>> Quelltext im Forum erfragen
  http.URL:=  'http://darkempire.funpic.de/php/count/count.php?user=LCXP';
 
  outfile:= TStringStream.Create('');
-
-  try
-   http.RcvdStream := outfile;
+ http.RcvdStream := outfile;
+ try
    http.Get;
-  finally
-   outfile.free;
+ finally
    http.free;
-  end;
+   outfile.free;
+ end;
 
- // Shellexecute( handle, 'open', Pchar(ExtractFilepath(ParamStr(0)) + 'www\WebStart.htm'), nil, PChar(GetCurrentDir), SW_SHOW);
  if settings.readbool('Dialer','OpenWeb',true) then
    Shellexecute(0, 'open', Pchar(hauptfenster.onlineset.webseite), nil, nil, SW_SHOWmaximized);
 
@@ -882,17 +881,18 @@ begin//Onlinezeitmessung
  end else oCostlabel.Visible:= false;
 
  onlineset.Dauer:= ozeit.caption;
+ onlineset.Kosten:= -1.0; //wenn KOsten unbekannt, weil nicht selbst gewählt
 
  if selfdial then
  if noerror then
  begin
   OCostlabel.Font.Color:= clGreen;
   OCostLabel.Caption:= Format('%.4f',[onlineset.kostenbisjetzt])+ ' €';
-  onlineset.Kosten:= Format('%.5f',[onlineset.kostenbisjetzt]);
+  onlineset.Kosten:= onlineset.kostenbisjetzt;
  end
  else
  begin
-  onlineset.Kosten:= Format('%.5f',[onlineset.kostenbisjetzt]);
+  onlineset.Kosten:= onlineset.kostenbisjetzt;
   OCostlabel.Font.Color:= clRed;
   OCostLabel.Caption:= Format('> %.4f',[onlineset.kostenbisjetzt])+ ' €';
  end;
@@ -1105,8 +1105,8 @@ end;
       if (selfdial and( minutesbetween(oldtime, now) > 2)) then
       begin
 
-          beginn := Dateof(Now) + strtotime(onlineset.vbegin);
-          Ende   := Dateof(Now) + strtotime(onlineset.vend);
+          beginn := Dateof(Now) + onlineset.vbegin;
+          Ende   := Dateof(Now) + onlineset.vend;
 
           if Ende < beginn then incday(ende);
 
@@ -1115,12 +1115,13 @@ end;
 
            Application.CreateForm(TPriceWarning, PriceWarning);
            PriceWarning.warn.Caption:= 'Große Zeitdifferenz nach Atomzeitupdate : ' +timetostr(now-oldtime);
-           PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vend +')';
+//           PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vend +')';
+           PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
 
            if ((now > beginn) and (now < ende)) then
            begin
              PriceWarning.info2.Caption:= 'Der gewählte Tarif ist noch gültig. Trennen ist nicht nötig.';
-             Pricewarning.trennen2.Caption:= 'Um ' + onlineset.vend + ' trennen';
+             Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
              Pricewarning.Timer1.enabled:= true;
          end;
          if ((now < beginn) or (now > ende)) then
@@ -1251,7 +1252,7 @@ begin
   with hauptfenster do
     begin
      disconnect;
-     onlineset.Endzeit:= timetostr(timeof(now));
+     onlineset.Endzeit:= timeof(now);
      closertimer(nil); //Verbindung aufschreiben
 
      ClearRasEntry;
@@ -1580,7 +1581,7 @@ begin
     if (isonline and selfdial) then
     begin
      disconnect;
-     onlineset.Endzeit:= timetostr(timeof(now));
+     onlineset.Endzeit:= timeof(now);
      closertimer(nil);
 
      //Logfile schreiben
@@ -1761,6 +1762,7 @@ autoclose:= false;
 ConnHandle:= 0;
 Disconnecting:= false;
 neuladen:= false;
+isonline:= false;
 
 //lcz-Dateien wieder unregistrieren -> nicht mehr nötig
 if reg.keyexists('.lcz') then UnInstallExt('.lcz');
@@ -1914,7 +1916,6 @@ startwithimport:= false;
 importfilename:= '';
 selfdial:= false;
 webzugriff:= false;
-isonline:= false;
 rascheck:= true;
 writeme:= false;
 startcount:=0;
@@ -2213,10 +2214,10 @@ begin
    selfdial:= false;  //alles erledigt ... rücksetzen
    with onlineset do
    begin
-    Datum:= ''; Dauer:=''; Kosten:=''; tarif:='';
-    Einwahl:= ''; Rufnummer:=''; Preis:= ''; Einwahl:=''; takt:='';
-    webseite:= ''; vbegin:= ''; vend:= ''; tag:='';
-    wechsel:= EncodeDateTime(1970,01,01,0,0,0,0);//strtodatetime('01.01.1970 00:00:00');
+    Datum:= EncodeDateTime(1970,01,01,0,0,0,0); Dauer:=''; Kosten:=0.0; tarif:='';
+    Einwahl:= 0.0; Rufnummer:=''; Preis:= 0.0; takt:='';
+    webseite:= ''; vbegin:= EncodeTime(0,0,0,0); vend:= EncodeTime(0,0,0,0); tag:='';
+    wechsel:= EncodeDateTime(1970,01,01,0,0,0,0);
     kostenbisjetzt:= 0; wechselpreis:= 0; wechseleinwahl:= 0;
     Einwahl2:= 0;
     download:= 0; upload:= 0;
@@ -2389,7 +2390,7 @@ begin
   begin
   if setmultilink.checked then //wenn Kanalbuendelung
   begin
-   onlineset.kostenbisjetzt:= strtofloat(onlineset.einwahl); //Einwahl 1x mehr berechnen
+   onlineset.kostenbisjetzt:= onlineset.einwahl; //Einwahl 1x mehr berechnen
    MagRasCon.SubEntry:= 0;
   end
   else
@@ -2565,12 +2566,12 @@ end;
   dialing:= true;
   //Datensatz in den Speicher übernehmen
 
-  onlineset.Datum:= DateTimetoStr(now);
+  onlineset.Datum:= now;
   onlineset.Tarif:= liste.Cells[1,liste.row];
   onlineset.Rufnummer:= liste.Cells[8,liste.row];
-  onlineset.Preis:= liste.Cells[4,liste.row];
-  onlineset.Einwahl:= liste.Cells[5,liste.row];
-  onlineset.einwahl2:= strtofloat(onlineset.einwahl);
+  onlineset.Preis:= StrToFloat(liste.Cells[4,liste.row]);
+  onlineset.Einwahl:= StrToFloat(liste.Cells[5,liste.row]);
+  onlineset.einwahl2:= onlineset.einwahl;
   onlineset.Takt:= liste.Cells[6,liste.row];
   onlineset.tag:= liste.Cells[17,liste.row];
 
@@ -2591,8 +2592,8 @@ end;
     taktlaenge2:= 60; //wenn Fehler dann minutentakt annehmen
   end;
 
-  onlineset.vbegin:= liste.Cells[2,liste.row];
-  onlineset.vend:= liste.Cells[3,liste.row];
+  onlineset.vbegin:= StrToTime(liste.Cells[2,liste.row]);
+  onlineset.vend:= StrToTime(liste.Cells[3,liste.row]);
   onlineset.webseite:= liste.Cells[11,liste.row];
   onlineset.kostenbisjetzt:= 0;
   onlineset.wechsel:= incday(now, 10*365);
@@ -3040,8 +3041,8 @@ begin
              Application.CreateForm(TfloatingW, floatingW);
              floatingW.tarif.caption:= onlineset.Tarif;//edtarif.text;
             if settings.ReadBool('OnlineInfo', 'AutoWidth', true) then floatingW.setwidth;
-            floatingW.valid.caption:= onlineset.vbegin + '-'+ onlineset.vend;//edtime.text;
-            floatingW.preis.caption:= onlineset.preis + ' c/min';
+            floatingW.valid.caption:= TimeToStr(onlineset.vbegin) + '-'+ TimeToStr(onlineset.vend);
+            floatingW.preis.caption:= Format('%.2f  c/min',[onlineset.preis]);
             floatingW.Show;
            end;
 
@@ -3091,7 +3092,7 @@ begin
           DialHandle:= 0 ;
           disconnectStopped:= false;
           actofftime:= now;
-          onlineset.Endzeit:= timetostr(timeof(now));
+          onlineset.Endzeit:= timeof(now);
 
           isonline:= false;
           leerlauf.enabled:= false;
