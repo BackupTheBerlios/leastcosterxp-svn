@@ -142,9 +142,9 @@ begin
     AssignFile(Datei,fname);
     ReWrite(Datei);
     for i:= 0 to length(Hauptfenster.tarife) -1 do
-     if (zeilen.IndexOf(Hauptfenster.tarife[i].Data.tarif) > -1) then
+     if (zeilen.IndexOf(Hauptfenster.tarife[i].tarif) > -1) then
      begin
-        Datensatz:= Hauptfenster.tarife[i].Data;
+        Datensatz:= Hauptfenster.tarife[i];
         DatenSatz.Editor:= ''; //editor jetzt vergessen
         write(Datei,Datensatz);
      end;
@@ -215,13 +215,13 @@ try
    if length(hauptfenster.tarife) > 0 then
    for i:= 0 to length(hauptfenster.tarife)-1 do
    //namen finden
-   if hauptfenster.tarife[i].Data.Tarif = Tname then
+   if hauptfenster.tarife[i].Tarif = Tname then
    begin
-    expdate:=    hauptfenster.tarife[i].Data.expires;
-    startdate:=  hauptfenster.tarife[i].Data.validfrom;
-    vglstring:=  hauptfenster.tarife[i].Data.tag;
-    anfang:=     hauptfenster.tarife[i].Data.Beginn;
-    ende:=       hauptfenster.tarife[i].Data.Ende;
+    expdate:=    hauptfenster.tarife[i].expires;
+    startdate:=  hauptfenster.tarife[i].validfrom;
+    vglstring:=  hauptfenster.tarife[i].tag;
+    anfang:=     hauptfenster.tarife[i].Beginn;
+    ende:=       hauptfenster.tarife[i].Ende;
     temptime   := EncodeDate(1970,01,01) + anfang;
     temptimeend:= EncodeDate(1970,01,01) + ende;
 
@@ -250,7 +250,7 @@ try
       and (startdate < DStart ))//wenn der neue Tarif später beginnt
        then
         begin //neues expireDate
-         hauptfenster.tarife[i].Data.expires:= incDay(DStart,-1);
+         hauptfenster.tarife[i].expires:= incDay(DStart,-1);
 
          //aufnehmen, wenn nicht schon gemacht
          if wndlist.NewDate.indexof(tname) = -1 then  wndlist.newdate.append(Tname);
@@ -277,7 +277,6 @@ procedure Twndlist.batchimport;
 var i,pos, count: integer;
     Datei: file of TTarif;
     DatenSatz: TTarif;
-    rand: integer;
 begin
  count:= 0;
 if listbox.count > 0 then
@@ -305,11 +304,9 @@ if listbox.count > 0 then
      if (listbox.Items.IndexOf(Datensatz.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Datensatz.tarif)] then
        if tarifisvalid(Datensatz.tarif, Datensatz.Tag,Datensatz.Beginn,Datensatz.Ende,Datensatz.validfrom,Datensatz.Expires) then
        begin
-         rand:= random(100000);
          pos:= length(hauptfenster.tarife);
          setlength(hauptfenster.tarife, pos+1);
-         hauptfenster.tarife[pos].Data := Datensatz;
-         hauptfenster.tarife[pos].ident:= Datensatz.tarif+'_'+datetimetostr(now)+'_'+inttostr(rand);
+         hauptfenster.tarife[pos] := Datensatz;
        end
        else  //wenn Tarif nicht geschrieben wurde
        begin
@@ -439,7 +436,7 @@ begin
 
      for i:= 0 to length(hauptfenster.tarife)-1 do
        begin
-          temp:= hauptfenster.tarife[i].Data.tarif;
+          temp:= hauptfenster.tarife[i].tarif;
           if (listbox.Items.IndexOf(temp)=-1) then Listbox.Items.Append(temp);
        end;
      end;
@@ -564,13 +561,13 @@ progress.visible:= true;
 
 for i:= 0 to length(hauptfenster.tarife)-1 do
 begin
- write(Datei, Hauptfenster.tarife[i].Data); //Datensatz abspeichern
+ write(Datei, Hauptfenster.tarife[i]); //Datensatz abspeichern
 
  //neuen Tarif zu Scores hinzufügen - wenn noch nicht drin
- if IndexofScores(hauptfenster.tarife[i].Data.Tarif) = -1 then
+ if IndexofScores(hauptfenster.tarife[i].Tarif) = -1 then
  begin
   setlength(hauptfenster.Scores, length(hauptfenster.Scores)+1);
-  hauptfenster.Scores[length(hauptfenster.Scores)-1].Name:=hauptfenster.tarife[i].Data.Tarif; //neues in den Score aufnehmen
+  hauptfenster.Scores[length(hauptfenster.Scores)-1].Name:=hauptfenster.tarife[i].Tarif; //neues in den Score aufnehmen
   hauptfenster.Scores[length(hauptfenster.Scores)-1].erfolgreich:=0; //neues in den Score aufnehmen
   hauptfenster.Scores[length(hauptfenster.Scores)-1].gesamt:=0; //neues in den Score aufnehmen
   hauptfenster.Scores[length(hauptfenster.Scores)-1].State:=0; //neues in den Score aufnehmen
@@ -587,7 +584,7 @@ end;
 
 
 procedure Twndlist.NotImported_OverWriteClick(Sender: TObject);
-var i,j, count, rand: integer;
+var i,j, count: integer;
     Datei: File of TTarif;
     Datensatz: TTarif;
     posi: integer;
@@ -616,7 +613,7 @@ begin
      if notImported.count > 0 then
        with Hauptfenster do //Datensatz löschen
           for j:= length(Tarife)-1 downto 0 do
-             if NotImported.IndexOf(Tarife[j].Data.Tarif) > -1 then
+             if NotImported.IndexOf(Tarife[j].Tarif) > -1 then
                 begin
                    tarife[j] := Tarife[length(tarife) -1]; //letzten Datensatz an diese stelle
                    setlength(tarife, length(tarife)-1); //um eine Stelle kürzen
@@ -638,14 +635,12 @@ begin
        begin
         read(Datei, Datensatz);
         inc(count);
-          //wen in der NotImported-Liste dann jetzt importieren
+          //wenn in der NotImported-Liste dann jetzt importieren
          if (notimported.IndexOf(Datensatz.tarif) > -1) then
          begin
-           rand:= random(100000);
            posi:= length(hauptfenster.tarife);
            setlength(hauptfenster.tarife, posi+1);
-           hauptfenster.tarife[posi].Data := Datensatz;
-           hauptfenster.tarife[posi].ident:= Datensatz.tarif+'_'+datetimetostr(now)+'_'+inttostr(rand);
+           hauptfenster.tarife[posi] := Datensatz;
         end;
        progress.position:= count;
       end;

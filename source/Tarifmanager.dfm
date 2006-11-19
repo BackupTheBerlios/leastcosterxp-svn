@@ -39,7 +39,7 @@ object TaVerwaltung: TTaVerwaltung
     object Caption: TLabel
       Left = 6
       Top = 6
-      Width = 136
+      Width = 721
       Height = 24
       Align = alTop
       Alignment = taCenter
@@ -113,7 +113,7 @@ object TaVerwaltung: TTaVerwaltung
       Left = 1
       Top = 1
       Width = 384
-      Height = 13
+      Height = 40
       Align = alClient
       Alignment = taCenter
       Color = clBtnFace
@@ -330,7 +330,7 @@ object TaVerwaltung: TTaVerwaltung
           Width = 130
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ItemIndex = 0
           TabOrder = 8
           Text = 'Minutentakt'
@@ -1007,7 +1007,7 @@ object TaVerwaltung: TTaVerwaltung
         object Label14: TLabel
           Left = 2
           Top = 15
-          Width = 250
+          Width = 285
           Height = 26
           Align = alClient
           Alignment = taCenter
@@ -1038,7 +1038,7 @@ object TaVerwaltung: TTaVerwaltung
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ItemHeight = 0
+    ItemHeight = 13
     ParentFont = False
     Sorted = True
     TabOrder = 7
@@ -1133,16 +1133,6 @@ object TaVerwaltung: TTaVerwaltung
     TabOrder = 12
     OnClick = Button4Click
   end
-  object Edit1: TEdit
-    Left = 576
-    Top = 504
-    Width = 113
-    Height = 21
-    TabStop = False
-    ReadOnly = True
-    TabOrder = 13
-    Visible = False
-  end
   object tarifliste_size: TPanel
     Left = 397
     Top = 96
@@ -1151,7 +1141,7 @@ object TaVerwaltung: TTaVerwaltung
     Hint = 'Tabellengr'#246#223'e '#228'ndern'
     Caption = '>'
     ParentBackground = False
-    TabOrder = 14
+    TabOrder = 13
     OnClick = tarifliste_sizeClick
   end
   object PBar: TProgressBar
@@ -1160,7 +1150,7 @@ object TaVerwaltung: TTaVerwaltung
     Width = 150
     Height = 17
     Anchors = [akLeft, akTop, akRight]
-    TabOrder = 15
+    TabOrder = 14
     Visible = False
   end
   object blinker: TTimer

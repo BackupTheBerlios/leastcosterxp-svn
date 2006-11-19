@@ -912,18 +912,11 @@ begin
  atomserver.Assign(serverbox.items);
 
 //AutoCheck
- if autoread.Checked then
+ if not autoread.Checked then
  begin
-// for lauf:=4 to 9 do hauptfenster.Popupmenu1.Items.Items[lauf].Visible:= true;
- end
- else
- begin
-// for lauf:=4 to 9 do hauptfenster.Popupmenu1.Items.Items[lauf].Visible:= false;
-
   if ansicontainstext(hauptfenster.prog,'oleco') or ansicontainstext(hauptfenster.prog,'discountsurfer')
   then hauptfenster.Menu.items.Items[0].Items[3].Items[0].enabled:= true
   else hauptfenster.Menu.items.Items[0].Items[3].Items[0].enabled:= false;
-
  end;
 
   //Leere Zeilen in der Rsslist löschen
@@ -1425,7 +1418,6 @@ procedure TLCXPSettings.Button4Click(Sender: TObject);
 var filename: string;
     f: textfile;
 begin
-//if (not ansicontainstext(rsslist.Keys[RSSList.row],'LeastCosterXP')) then
 if (rsslist.Keys[RSSList.row]<>'LeastCosterXP') then
 begin
 filename:= extractfilepath(paramstr(0)) + 'RSS\'+rsslist.Keys[rsslist.row] + '.xml';

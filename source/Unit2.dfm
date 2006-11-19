@@ -38,7 +38,7 @@ object LCXPSettings: TLCXPSettings
     Top = 0
     Width = 439
     Height = 449
-    ActivePage = TabSheet3
+    ActivePage = TabSheet7
     Align = alTop
     MultiLine = True
     TabOrder = 0
@@ -1147,7 +1147,7 @@ object LCXPSettings: TLCXPSettings
           Top = 54
           Width = 145
           Height = 21
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 3
           Text = 'Serverliste'
           OnEnter = ServerboxEnter
@@ -1613,7 +1613,7 @@ object LCXPSettings: TLCXPSettings
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1901,7 +1901,7 @@ object LCXPSettings: TLCXPSettings
           Width = 170
           Height = 21
           Hint = 'W'#228'hlen Sie hier den User aus. '
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           Sorted = True

@@ -38,11 +38,6 @@ type
     DeleteWhenExpires: boolean;
   end;
 
-  TTarif2 = record
-    Data: TTarif;
-    ident: String[70];
-   end;
-
 //Rss - Reader
   TInhalt = record
     title, link: String;
@@ -486,7 +481,7 @@ type
       startwithimport:boolean;
       importfilename: string;
       rss_update: integer;
-      tarife: array of TTarif2;
+      tarife: array of TTarif;
       lookforward: integer;
       selfdial: boolean;
       noFeeds: boolean;
@@ -2687,7 +2682,7 @@ begin
  tarifverw.LadeTarife;
 
  if not disconnecting then
- if isonline and (onlineset.tarif <> '') and tarifverw.CheckOnlineset = false then //Tarif nicht mehr vorhanden
+ if isonline and (onlineset.tarif <> '') and (tarifverw.CheckOnlineset = false) then //Tarif nicht mehr vorhanden
  begin
    if assigned(disconnect_leerlauf) then disconnect_leerlauf.close;
     Application.CreateForm(Tdisconnect_leerlauf, disconnect_leerlauf);

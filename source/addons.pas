@@ -34,6 +34,8 @@ function CreateLink(const AFilename, ALNKFilename, ADescription: String) : Boole
 
 function DelDir(Dir : String) : Boolean;
 
+procedure Quick_Sort(var A: array of Integer);
+
 implementation
 
 function GetWinVersion: string;
@@ -265,6 +267,33 @@ begin
  Result := (ShFileOperation(FileOption) = 0);
 end;
 
+procedure Quick_Sort(var A: array of Integer);
 
+ procedure QuickSort(var A: array of Integer; iLo, iHi: Integer);
+ var
+   Lo, Hi, Mid, T: Integer;
+ begin
+   Lo := iLo;
+   Hi := iHi;
+   Mid := A[(Lo + Hi) div 2];
+   repeat
+     while A[Lo] < Mid do Inc(Lo);
+     while A[Hi] > Mid do Dec(Hi);
+     if Lo <= Hi then
+     begin
+       T := A[Lo];
+       A[Lo] := A[Hi];
+       A[Hi] := T;
+       Inc(Lo);
+       Dec(Hi);
+     end;
+   until Lo > Hi;
+   if Hi > iLo then QuickSort(A, iLo, Hi);
+   if Lo < iHi then QuickSort(A, Lo, iHi);
+ end;
+
+begin
+ QuickSort(A, Low(A), High(A));
+end;
 
 end.
