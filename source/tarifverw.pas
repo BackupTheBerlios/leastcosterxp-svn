@@ -199,7 +199,6 @@ end;
 
 procedure ResetSuspendScores(tarif: string);
 begin
-// Hauptfenster.Scores[IndexOfScores(tarif)].state:= 0;
  Hauptfenster.Scores[IndexOfScores(tarif)].gesamt:= 0;
  Hauptfenster.Scores[IndexOfScores(tarif)].erfolgreich:= 0;
 end;
@@ -263,31 +262,35 @@ begin
    //neue Section
    if (   (zeile[1]= '[') and (zeile[length(zeile)] =']')  ) then
    begin
-    count:= count+1;
-    setlength(hauptfenster.tarife, count);
-    delete(zeile,1,1);
-    delete(zeile,length(zeile),1);
-    hauptfenster.tarife[count-1].Editor:= '';
 
-   with hauptfenster.tarife[count-1] do
-   begin
-    Tarif         := '';
-    Beginn        := EncodeTime(0,0,0,0);
-    Ende          := EncodeTime(0,0,0,0);;
-    Nummer        := '0';
-    Preis         := 0.0;
-    Einwahl       := 0.0;
-    Takt          := '60/60';
-    User          := '';
-    Passwort      := '';
-    Webseite      := '';
-    Tag           := '';
-    eingetragen   := EncodeDate(1970,02,02);
-    validfrom     := EncodeDate(1970,02,02);
-    expires       := EncodeDate(1970,02,02);
-    DeleteWhenExpires:= false;
-   end;
+      if ansicontainstext(zeile,'[BonGo') then
+        hauptfenster.tarife[count-1].Editor:= 'BonGo'
+      else
+        hauptfenster.tarife[count-1].Editor:= '';
 
+      count:= count+1;
+      setlength(hauptfenster.tarife, count);
+      delete(zeile,1,1);
+      delete(zeile,length(zeile),1);
+
+      with hauptfenster.tarife[count-1] do
+       begin
+        Tarif         := '';
+        Beginn        := EncodeTime(0,0,0,0);
+        Ende          := EncodeTime(0,0,0,0);;
+        Nummer        := '0';
+        Preis         := 0.0;
+        Einwahl       := 0.0;
+        Takt          := '60/60';
+        User          := '';
+        Passwort      := '';
+        Webseite      := '';
+        Tag           := '';
+        eingetragen   := EncodeDate(1970,02,02);
+        validfrom     := EncodeDate(1970,02,02);
+        expires       := EncodeDate(1970,02,02);
+        DeleteWhenExpires:= false;
+      end;
    end
    else
    if ansicontainsstr(zeile,'Tarif=') then

@@ -477,7 +477,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'Welches Modem wird verwendet, um ins Internet zu gehen ?'
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
@@ -520,7 +520,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'Welches Modem wird verwendet, um ins Internet zu gehen ?'
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           TabOrder = 3
@@ -654,7 +654,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = '... Liste aller bereits eingerichteten Programme.'
           DropDownCount = 20
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
@@ -695,7 +695,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'In welchem Modus soll das Programm ausgef'#252'hrt werden ?'
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           Sorted = True
@@ -1147,7 +1147,7 @@ object LCXPSettings: TLCXPSettings
           Top = 54
           Width = 145
           Height = 21
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 3
           Text = 'Serverliste'
           OnEnter = ServerboxEnter
@@ -1613,7 +1613,7 @@ object LCXPSettings: TLCXPSettings
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1901,7 +1901,7 @@ object LCXPSettings: TLCXPSettings
           Width = 170
           Height = 21
           Hint = 'W'#228'hlen Sie hier den User aus. '
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           Sorted = True

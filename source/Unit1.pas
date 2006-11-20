@@ -567,10 +567,12 @@ http:= ThttpCli.Create(nil);
  http.RcvdStream := outfile;
  try
    http.Get;
- finally
-   http.free;
-   outfile.free;
+ except
+
  end;
+
+ http.free;
+ outfile.free;
 
  if settings.readbool('Dialer','OpenWeb',true) then
    Shellexecute(0, 'open', Pchar(hauptfenster.onlineset.webseite), nil, nil, SW_SHOWmaximized);

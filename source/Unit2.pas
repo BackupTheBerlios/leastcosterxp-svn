@@ -865,8 +865,8 @@ begin
    end;
 
 
-   settings.writeinteger('Onlinecheck','Vorschub',forwardtable.Value);
-   hauptfenster.lookforward:= forwardtable.Value;
+  settings.writeinteger('Onlinecheck','Vorschub',forwardtable.Value);
+  hauptfenster.lookforward:= forwardtable.Value;
 
   //Rss-Update
   settings.writeInteger('RSS','Update',Rssupdate.Value);
@@ -919,10 +919,24 @@ begin
   else hauptfenster.Menu.items.Items[0].Items[3].Items[0].enabled:= false;
  end;
 
-  //Leere Zeilen in der Rsslist löschen
+
+ //Leere Zeilen in der Rsslist löschen
  if rsslist.RowCount > 3 then
- for i:= rsslist.RowCount-2 downto 0 do
-         if rsslist.Strings[i] = '=' then rsslist.DeleteRow(i+1);
+ for i:= rsslist.RowCount-2 downto 1 do
+ begin
+     //leerzeichen entfernen
+      rsslist.Values[rsslist.Keys[i]]:= trim(rsslist.Values[rsslist.Keys[i]]);
+
+     //leere Bezeichner setzen
+     if (rsslist.Values[rsslist.Keys[i]] <> '')
+        and (rsslist.Values[rsslist.Keys[i]] <> 'http://')
+        and (rsslist.keys[i] = '')
+      then rsslist.Keys[i]:= 'RSS'+ inttostr(i);
+
+      if (rsslist.Strings[i] = '=')
+               then begin  rsslist.DeleteRow(i+1); end;
+ end;
+
  //abspeichern
  rsslist.Strings.SaveToFile(extractfilepath(paramstr(0)) + 'Rsslist.txt');
 

@@ -168,13 +168,13 @@ procedure AppendStatic(item_name:string; posi: integer);
 var items : TStringlist;
     r     : TRegExpr;
     item, link: string;
-    j     : integer;
+    j,count     : integer;
     bezeichner: string;
 begin
-
+  count:= 0;
   bezeichner:= item_name;
-  delete(bezeichner, length(bezeichner)-3, 4);
 
+  delete(bezeichner, length(bezeichner)-3, 4);
   hauptfenster.menu.Items.items[3].Add(NewItem(bezeichner,TextToShortCut(''),False,True,nil,0,'Item1'));
 
   items:= TStringlist.Create;
@@ -182,31 +182,39 @@ begin
 
       if fileexists(ExtractFilePath(paramstr(0))+'RSS\' + item_Name) then
        begin
-
         ITEMS.LoadFromFile(ExtractFilePath(paramstr(0))+'RSS\' + item_Name);
-
         r.Expression:= '^\"(.*)\"  \"(.*)"';
+
         with hauptfenster do
         begin
+
          if items.Count > 0 then
+
          for J:= 0 to items.Count -1 do
-         begin
-          setlength(RSSitems[posi],length(RSSItems[posi])+1);
+        	 if r.exec(items.strings[j]) then //nur wenn der String matched
+           begin
+	          inc(count);
 
-          item:= trim(r.replace(Items.strings[j], '$1', true));
-          link:= trim(r.replace(Items.strings[j], '$2', true));
+            setlength(RSSitems[posi],length(RSSItems[posi])+1);
 
-          menu.Items.items[3].items[posi].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
-          menu.Items.items[3].items[posi].items[j].Tag:= j;
+            item:= trim(r.replace(Items.strings[j], '$1', true));
+            link:= trim(r.replace(Items.strings[j], '$2', true));
 
-          Rssitems[posi][j].title:= item;
-          Rssitems[posi][j].link:= link;
-         end;
-       end;
-     end;
+            menu.Items.items[3].items[posi].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
+            menu.Items.items[3].items[posi].items[count].Tag:= count;
+
+
+            Rssitems[posi][count].title:= item;
+            Rssitems[posi][count].link:= link;
+
+           end;
+        end;
+      end;
+
 
     items.Free;
-    r.free; 
+    r.free;
+
 end;
 
 procedure TRSS.RSSNotify(Sender: TObject);
@@ -365,13 +373,13 @@ begin
        //Parsen der Datei
        begin
         ParseEasyXML(ExtractFilePath(paramstr(0))+'RSS\' + Name);
-        //xml-datei wieder löschen
+        //lml-datei wieder löschen
         if fileexists(ExtractFilePath(paramstr(0))+'RSS\' + Name) then deletefile(Pchar(ExtractFilePath(paramstr(0))+'RSS\' + Name));
         //Menü updaten
         delete(name, length(name)-3,4);
         AppendItem(name);
        end
-       else
+       else //wenn Download fehlgeschlagen
        begin
         //Menü updaten
         name:= ChangeFileExt(Name,'.lml');
