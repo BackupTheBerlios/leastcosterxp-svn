@@ -193,7 +193,7 @@ begin
          for J:= 0 to items.Count -1 do
         	 if r.exec(items.strings[j]) then //nur wenn der String matched
            begin
-	          inc(count);
+
 
             setlength(RSSitems[posi],length(RSSItems[posi])+1);
 
@@ -206,7 +206,7 @@ begin
 
             Rssitems[posi][count].title:= item;
             Rssitems[posi][count].link:= link;
-
+	          inc(count);
            end;
         end;
       end;

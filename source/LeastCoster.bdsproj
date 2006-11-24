@@ -158,7 +158,9 @@
 			<VersionInfoKeys Name="ProductName"></VersionInfoKeys>
 			<VersionInfoKeys Name="ProductVersion">1.3.8.0</VersionInfoKeys>
 			<VersionInfoKeys Name="Comments"></VersionInfoKeys>
-		</VersionInfoKeys>  <Excluded_Packages>
+		</VersionInfoKeys>  
+    
+    <Excluded_Packages>
       <Excluded_Packages Name="D:\Eigene Dateien\Borland Studio-Projekte\Bpl\SpecialStringGrid.bpl">(Unbenannt)</Excluded_Packages>
     </Excluded_Packages>
   </Delphi.Personality>

@@ -263,15 +263,16 @@ begin
    if (   (zeile[1]= '[') and (zeile[length(zeile)] =']')  ) then
    begin
 
+      count:= count+1;
+      setlength(hauptfenster.tarife, count);
+      delete(zeile,1,1);
+      delete(zeile,length(zeile),1);
+
       if ansicontainstext(zeile,'[BonGo') then
         hauptfenster.tarife[count-1].Editor:= 'BonGo'
       else
         hauptfenster.tarife[count-1].Editor:= '';
 
-      count:= count+1;
-      setlength(hauptfenster.tarife, count);
-      delete(zeile,1,1);
-      delete(zeile,length(zeile),1);
 
       with hauptfenster.tarife[count-1] do
        begin
