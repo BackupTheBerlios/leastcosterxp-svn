@@ -157,8 +157,6 @@ type
     MM1_1: TMenuItem;
     Aktualisieren_timer: TTimer;
     MM2_5: TMenuItem;
-    MM2_5_1: TMenuItem;
-    MM2_5_2: TMenuItem;
     smurf: TBitBtn;
     MM1_4: TMenuItem;
     MM1_8: TMenuItem;
@@ -171,7 +169,7 @@ type
     Reload: TTimer;
     MM5_1: TMenuItem;
     MM5_2: TMenuItem;
-    MM4: TMenuItem;
+    RSSMenu: TMenuItem;
     Rsstimer: TTimer;
     MM2_3_3: TMenuItem;
     LeastCosterXP1: TMenuItem;
@@ -218,7 +216,6 @@ type
     TS2_3: TMenuItem;
     TS2_4: TMenuItem;
     TS5: TMenuItem;
-    MM5_3: TMenuItem;
     WaitOnDisconnect: TTimer;
     ScoreTimer: TTimer;
     MM3_3: TMenuItem;
@@ -1963,7 +1960,8 @@ begin
   con:= TmeminiFile.Create(ExtractFilePath(paramStr(0))+ 'PlugIns\'+pluglist.Strings[i]+'\'+pluglist.Strings[i]+'.ini');
    if con.readbool('General','enabled', false)=true then
      if con.SectionExists('menu') then
-         menu.Items.items[1].items[7].Add(NewItem(pluglist.strings[i],TextToShortCut(''),False,True,PlugInClick,0,'Item1'));
+      mm2_8.Add(NewItem(pluglist.strings[i],TextToShortCut(''),False,True,PlugInClick,0,'Item1'));
+//     menu.Items.items[1].items[7]
   con.Free;
  end;
 
@@ -2029,8 +2027,8 @@ end;
       settings.writestring('lastdate','3','');
      end;
 
-  if not (path='') then Menu.items.Items[1].items[5].enabled:= true
-  else Menu.items.Items[1].items[5].enabled:= false;
+  //Fernsteuerung deaktivieren, wenn kein Programm eingetragen   
+  MM2_6.enabled:= not (path='');
 
   //letzten Basiszeitwert setzen
   surfdauer.Position:= settings.Readinteger('lasttime','base',15);
@@ -2133,7 +2131,7 @@ end;
  //Auto-Auswerten + Menueeintrag ausblenden
    if (settings.readbool('LeastCoster','autoread',false) and (prog <> '')) then
    begin
-    menu.Items.Items[0].Items[3].Items[0].Enabled:= true;
+    MM1_4_1.Enabled:= true;
     //nur ausführen, wenn Oleco zur Überwachung installiert
     if ansicontainstext(prog,'oleco.exe') or ansicontainstext(prog,'discountsurfer.exe') then
        Protokolle.OlecoImport(sender);
@@ -2149,10 +2147,9 @@ end;
        ple.Free;
      end;
   end
-  else
-   menu.items.items[0].items[3].items[0].enabled:= false;
+  else MM1_4_1.enabled:= false;
+   
   if datensaetze = settings.ReadInteger('lastdate','count',0) then writeme:= true;
-
 
   RSSRead.LoadRSSList;
 
@@ -3015,8 +3012,8 @@ begin
           Aktualisieren.Enabled:= false;
 
           //Ausblenden der OfflineElemente und Einblenden des online-Mode
-          modes.setOnlinemode;
-          
+           modes.setOnlinemode;
+
            DialBtn.Font.Color:= clRed;
            DialBtn.Font.Size:= 8;
            DialBtn.caption:= '&Trennen !';
@@ -3028,7 +3025,8 @@ begin
            hauptfenster.PopupMenu1.Items.Items[14].Visible:=true;
            Tray.IconIndex:=1; //Online-Tray-Symbol setzen
 
-           hauptfenster.menu.Items.Items[1].Items[2].Enabled:= true;
+           //Menü >Tools > Online
+           hauptfenster.MM2_3.Enabled:= true;
 
            //Onlineinfo zeigen
           if selfdial and settings.readbool('Onlineinfo','show', true )
@@ -3149,7 +3147,10 @@ begin
            webzugriff:= false;
 
            OCostlabel.Visible:= false;
-           hauptfenster.menu.Items.Items[1].Items[2].Enabled:= false;
+
+           //Menü >Tools > Online
+           hauptfenster.MM2_3.Enabled:= false;
+
            DialStatus.Text:= 'Verbindung getrennt. ('+timetostr(timeof(now))+')';
            reload.enabled:= true;
 
@@ -4153,16 +4154,16 @@ LedTime.Hint:= 'Atomzeit-Update um '+ timetostr(timeof(now)) + ' gestartet';
 
 if not isonline or (atomserver.count = 0) then
 begin //wenn offline tue nix
-      menu.Items.Items[1].Items[2].items[1].Enabled:= true;
+      MM2_3_2.Enabled:= true; //Atomzeitabgleich im Menü aktivieren
       timeupdaterunning:= false;
       exit;
 end;
 
-menu.Items.Items[1].Items[2].items[1].Enabled:= false;
+MM2_3_2.Enabled:= false; //Atomzeitabgleich im Menü deaktivieren
 
 if (IPAdress = '0.0.0.0') or (IPAdress='') then
 begin // wenn keine IP, dann setze eine Runde aus
-      menu.Items.Items[1].Items[2].items[1].Enabled:= true;
+      MM2_3_2.Enabled:= true; //Atomzeitabgleich im Menü aktivieren
       sntptimer.interval:= 5000;
       sntptimer.Enabled:= true;
       timeupdaterunning:= false;
@@ -4198,7 +4199,7 @@ end;
     if time.GetSNTP = true then
      begin
       writeln(log,datetimetostr(oldtime) +chr(9)+datetimetostr(now)+ chr(9)+timetostr(now-oldtime) + chr(9) + time.targethost);
-      menu.Items.Items[1].Items[2].items[1].Enabled:= true;
+      MM2_3_2.Enabled:= true; //Atomzeitabgleich im Menü aktivieren
 
       LEDTime.ColorOff:= cllime;
       LEDTime.ledon:= false;

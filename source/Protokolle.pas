@@ -508,9 +508,8 @@ Writeln(Importeur, ' EUR/Tag ');
           Writeln(Importeur,'</tr></table>');
         End;
        End;
-       Write(Importeur, '<br><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de">LeastCosterXP</a> von <a href="mailto:leastcosterxp-owner@yahoogroups.de"> Stefan Fruhner </a></b></font></p>');
+       Write(Importeur, '<br><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
        Writeln(Importeur,'</body></html>');
-
        Closefile(Importeur);
   end;
 

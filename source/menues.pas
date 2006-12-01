@@ -207,11 +207,9 @@ with hauptfenster do
   else
   if sender = MM1_9 then
   begin
-   //tray.hidemainform;
-   Hauptfenster.Visible:= false;
+   tray.hidemainform;
    if not noballoon then tray.ShowBalloonHint('Hinweis', 'Der LeastCoster ist nun im Tray minimiert.' + #13 +
-                                                             'Doppelklick zum maximieren.', bitInfo, 10);
-  end
+                                                          'Doppelklick zum maximieren.', bitInfo, 10);  end
   else
   if sender = MM1_10 then
   begin
@@ -231,6 +229,8 @@ with hauptfenster do
   else
   if sender = MM2_2_1 then //Monatsstatistik
   begin
+   Protokolle.CreateAllLogs;
+   Protokolle.WebAuswertungErstellen;
    ShellExecute(0,'open',Pchar(extractfilepath(paramstr(0))+'www\log\index.htm'),Pchar ('') ,nil,SW_SHOWNORMAL);
   end
   else
@@ -289,16 +289,10 @@ with hauptfenster do
    loadprogsoff;
   end
   else
-  if sender = MM2_5_1 then //Newsletteranmeldung
+  if sender = MM2_5 then //Newsletter
   begin
     ShellExecute(Application.Handle, 'open',
-    PChar('mailto:leastcosterxp-subscribe@yahoogroups.de?subject=leastcosterxp subscribe'), nil, nil, sw_ShowNormal);
-  end
-  else
-  if sender = MM2_5_2 then //Newsletterabmeldung
-  begin
-    ShellExecute(Application.Handle, 'open',
-    PChar('mailto:leastcosterxp-unsubscribe@yahoogroups.de?subject=leastcosterxp unsubscribe'), nil, nil, sw_ShowNormal);
+    PChar('https://lists.berlios.de/mailman/listinfo/leastcosterxp-news'), nil, nil, sw_ShowNormal);
   end
   else
   if sender = MM2_6 then   //Fernsteuerung testen
@@ -347,28 +341,12 @@ with hauptfenster do
     if not assigned(info) then
      begin
        Application.CreateForm(TInfo, Info);
-      info.show;
+       info.show;
      end;
    end
    else
    if sender = MM5_2 then //Hilfe
-   begin
-    if fileexists(Extractfilepath(paramstr(0)) + 'lcxp.chm') then
-    ShellExecute(Application.Handle, 'open',
-    PChar(Extractfilepath(paramstr(0)) + 'lcxp.chm'), nil, nil, sw_ShowNormal)
-      else showmessage('Hilfedatei lcxp.chm nicht gefunden !'+#13#10#13#10
-          +'Sie können die Datei im Internet unter http://www.leastcosterxp.de herunterladen oder online lesen.' +#13#10
-          +'(Ein Klick auf das Logo im Hauptfenster genügt.)');
-   end
-   else
-   if sender = MM5_3 then //Bug Report
-   begin
-    FileName:= ExtractFilePath(Paramstr(0)) + 'lcr.cfg';
-    mailtext:= 'WindowsVersion'+#9+': ' + GetWinVersion + #13#10 +
-           'Modems'+#9#9+':' + modemname + ' (' + modemtype + ') | ' + modemname2 + ' (' + modemtype2 +')'+ #13#10 +
-           'Fehlerbeschreibung:'+ #13#10;
-    hauptfenster.sendmail('Bug Report ' + datetimetostr(now),mailtext,'','','LeastCosterXP','leastcosterxp-owner@yahoogroups.de',FileName,extractfilename(FileName),true);
-   end
+    ShellExecute(Application.Handle, 'open',PChar('http://www.dsl-fuer-assamstadt.de/lcxp'), nil, nil, sw_ShowNormal)
    else
    if sender = MM7_1 then //standby
    begin

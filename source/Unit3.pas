@@ -968,7 +968,7 @@ begin
                                         else  write(f,'<td></td>');
   end;
   write(f,'</tr>');
-  writeln(f, '</table><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:leastcosterxp-owner@yahoogroups.de"> Stefan Fruhner </a></b></font></p></body></html>');
+  writeln(f, '</table><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p></body></html>');
   closefile(f);
 end; // Nach Tarif sortiert
 if sortedbytarif or sortedbyrufnummer then
@@ -1121,7 +1121,7 @@ else if sortedbyrufnummer then test := AnsiCompareText(vgl,grid.cells[rufnummer,
     writeln(f, ' }');
     writeln(f,'</script>');
     writeln(f,'   <p name="Zusammenfassung"></p>');
-    writeln(f,'<p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:leastcosterxp-owner@yahoogroups.de"> Stefan Fruhner </a></b></font></p></body></html>');
+    writeln(f,'<p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p></body></html>');
 
   closefile(f);
 end;

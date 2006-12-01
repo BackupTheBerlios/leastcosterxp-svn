@@ -609,7 +609,7 @@ writeln(f,'</tr>');
 writeln(f,'</table>');
 writeln(f,'<br>');
 
-writeln(f,'<p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de">LeastCosterXP</a> von <a href="mailto:leastcosterxp-owner@yahoogroups.de"> Stefan Fruhner </a></b></font></p>');
+writeln(f,'<p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
 writeln(f,'</body></html>');
 
 closefile(f);

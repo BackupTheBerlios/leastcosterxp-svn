@@ -87,9 +87,9 @@ begin
     with hauptfenster do
     begin
 
-     menu.Items.items[3].Add(NewItem(key,TextToShortCut(''),False,True,nil,0,'Item1'));
+     RSSMenu.Add(NewItem(key,TextToShortCut(''),False,True,nil,0,'Item1'));
 
-     pos:= menu.Items.items[3].count-1;
+     pos:= RSSMenu.count-1;
 
      f:= Extractfilepath(paramstr(0)) + 'RSS\'+key+'.lml';
      
@@ -105,8 +105,8 @@ begin
        item:= trim(r.replace(RSSRead.Itemlist.strings[i], '$1', true));
        link:= trim(r.replace(RSSRead.Itemlist.strings[i], '$2', true));
 
-       menu.Items.items[3].items[pos].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
-       menu.Items.items[3].items[pos].items[i].Tag:= i;
+       RSSMenu.items[pos].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
+       RSSMenu.items[pos].items[i].Tag:= i;
 
        Rssitems[pos][i].title:= item;
        Rssitems[pos][i].link:= link;
@@ -138,8 +138,8 @@ begin
             item:= trim(r.replace(lmlfile.strings[i], '$1', true));
             link:= trim(r.replace(lmlfile.strings[i], '$2', true));
 
-            menu.Items.items[3].items[pos].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
-            menu.Items.items[3].items[pos].items[oldi].Tag:= i;
+            RSSMenu.items[pos].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
+            RSSMenu.items[pos].items[oldi].Tag:= i;
 
             Rssitems[pos][oldi].title:= item;
             Rssitems[pos][oldi].link:= link;
@@ -175,7 +175,7 @@ begin
   bezeichner:= item_name;
 
   delete(bezeichner, length(bezeichner)-3, 4);
-  hauptfenster.menu.Items.items[3].Add(NewItem(bezeichner,TextToShortCut(''),False,True,nil,0,'Item1'));
+  hauptfenster.RSSMenu.Add(NewItem(bezeichner,TextToShortCut(''),False,True,nil,0,'Item1'));
 
   items:= TStringlist.Create;
   r:= TRegExpr.Create;
@@ -200,8 +200,8 @@ begin
             item:= trim(r.replace(Items.strings[j], '$1', true));
             link:= trim(r.replace(Items.strings[j], '$2', true));
 
-            menu.Items.items[3].items[posi].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
-            menu.Items.items[3].items[posi].items[count].Tag:= count;
+            RSSMenu.items[posi].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
+            RSSMenu.items[posi].items[count].Tag:= count;
 
 
             Rssitems[posi][count].title:= item;
@@ -254,17 +254,15 @@ begin
 
  //alle Items löschen
  with hauptfenster do
- if menu.Items.items[3].Count > 0 then
-  for i:= menu.Items.items[3].Count-1 downto 0 do
+ if RSSMenu.Count > 0 then
+  for i:= RSSMenu.Count-1 downto 0 do
   begin
-
-   if menu.items.Items[3].Items[i].count > 0 then
-      for j:= menu.items.Items[3].Items[i].count-1 downto 0 do
-      begin
-       menu.items.Items[3].items[i].items[j].Free;
-      end;
-
-   menu.items.Items[3].Delete(i);
+   //Unterelemente freigeben
+   if RSSMenu.Items[i].count > 0 then
+      for j:= RSSMenu.Items[i].count-1 downto 0 do
+       RSSMenu.items[i].items[j].Free;
+   //Menüpunkt freigeben
+   RSSMenu.Delete(i);
    setlength(RSSitems,0);
   end;
 
@@ -281,12 +279,12 @@ begin
 
        with hauptfenster do
        begin
-       menu.Items.items[3].Add(NewItem(item_Name,TextToShortCut(''),False,True,nil,0,'Item1'));
+       RSSMenu.Add(NewItem(item_Name,TextToShortCut(''),False,True,nil,0,'Item1'));
        setlength(RSSitems,length(RssItems) +1);
 
        item_name:= item_name + '.lml';
 
-       pos:= menu.Items.items[3].count-1;
+       pos:= RSSMenu.count-1;
        setlength(RSSitems[pos],0);
        end;
        
@@ -306,8 +304,8 @@ begin
           item:= trim(r.replace(Items.strings[j], '$1', true));
           link:= trim(r.replace(Items.strings[j], '$2', true));
 
-          menu.Items.items[3].items[pos].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
-          menu.Items.items[3].items[pos].items[j].Tag:= j;
+          RSSMenu.items[pos].Add(NewItem(item,TextToShortCut(''),False,True,RssRead.RssNotify,0,'Item1'));
+          RSSMenu.items[pos].items[j].Tag:= j;
 
           Rssitems[pos][j].title:= item;
           Rssitems[pos][j].link:= link;
@@ -342,17 +340,17 @@ begin
 
  //alle löschen
  with hauptfenster do
- if menu.Items.items[3].Count > 0 then
-  for i:= menu.Items.items[3].Count-1 downto 0 do
+ if RSSMenu.Count > 0 then
+  for i:= RSSMenu.Count-1 downto 0 do
   begin
 
-   if menu.items.Items[3].Items[i].count > 0 then
-     for j:= menu.items.Items[3].Items[i].count-1 downto 0 do
+   if RSSMenu.Items[i].count > 0 then
+     for j:= RSSMenu.Items[i].count-1 downto 0 do
      begin
-      menu.items.Items[3].items[i].items[j].Free;
+      RSSMenu.items[i].items[j].Free;
      end;
 
-   menu.items.Items[3].Delete(i);
+   RSSMenu.Delete(i);
   end;
 
  r:= TRegExpr.Create;

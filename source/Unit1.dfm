@@ -724,7 +724,7 @@ object Hauptfenster: THauptfenster
         Width = 177
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         Items.Strings = (
           'Tue nichts'
@@ -869,17 +869,6 @@ object Hauptfenster: THauptfenster
           OnClick = MainMenueClick
         end
       end
-      object MM2_5: TMenuItem
-        Caption = 'Newsletter'
-        object MM2_5_1: TMenuItem
-          Caption = 'anmelden'
-          OnClick = MainMenueClick
-        end
-        object MM2_5_2: TMenuItem
-          Caption = 'abmelden'
-          OnClick = MainMenueClick
-        end
-      end
       object MM2_6: TMenuItem
         Caption = '&Fernsteuerung testen'
         ShortCut = 16454
@@ -918,7 +907,7 @@ object Hauptfenster: THauptfenster
         Visible = False
       end
     end
-    object MM4: TMenuItem
+    object RSSMenu: TMenuItem
       Caption = '&RSS'
       object LeastCosterXP1: TMenuItem
         Caption = 'LeastCosterXP'
@@ -936,13 +925,13 @@ object Hauptfenster: THauptfenster
         ShortCut = 112
         OnClick = MainMenueClick
       end
-      object MM5_3: TMenuItem
-        Caption = '&Bug-Report'
-        OnClick = MainMenueClick
-      end
       object Donate: TMenuItem
         Caption = 'Spenden'
         OnClick = DonateClick
+      end
+      object MM2_5: TMenuItem
+        Caption = 'Newsletter'
+        OnClick = MainMenueClick
       end
     end
     object MM7: TMenuItem
@@ -1445,7 +1434,7 @@ object Hauptfenster: THauptfenster
     Interval = 500
     OnTimer = TimeTimer
     Left = 384
-    Top = 48
+    Top = 40
   end
   object MagRasCon: TMagRasCon
     SubEntry = 0

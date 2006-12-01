@@ -678,7 +678,7 @@ begin
   showmessage('Die Titelzeile von '+Extractfilename(Pfad.text)+' ist nicht eingetragen. Bitte korrigieren !!');
   exit;
   end
-  else hauptfenster.Menu.items.Items[1].items[5].enabled:= true;
+  else hauptfenster.MM2_6.enabled:= true;
  end
  else //wenn datei nicht existtiert
  begin
@@ -693,7 +693,7 @@ begin
      hauptfenster.smurf.visible:= false;
      hauptfenster.Oleco.visible:= false;
      hauptfenster.oleco.enabled:= false;
-     hauptfenster.Menu.items.Items[1].items[5].enabled:= false;
+     Hauptfenster.MM2_6.enabled:= false; //Fernsteurung im menu
    end
 
  end;
@@ -915,11 +915,9 @@ begin
  if not autoread.Checked then
  begin
   if ansicontainstext(hauptfenster.prog,'oleco') or ansicontainstext(hauptfenster.prog,'discountsurfer')
-  then hauptfenster.Menu.items.Items[0].Items[3].Items[0].enabled:= true
-  else hauptfenster.Menu.items.Items[0].Items[3].Items[0].enabled:= false;
+    then hauptfenster.MM1_4_1.enabled:= true else hauptfenster.MM1_4_1.enabled:= false;
  end;
-
-
+ 
  //Leere Zeilen in der Rsslist löschen
  if rsslist.RowCount > 3 then
  for i:= rsslist.RowCount-2 downto 1 do
@@ -1840,7 +1838,7 @@ begin
  if not rsslist.FindRow('LeastCosterXP', LeastCosterRow) then
  begin
  rsslist.row:= 1;
- rsslist.InsertRow('LeastCosterXP','http://rss.groups.yahoo.com/group/leastcosterxp/rss',false);
+ rsslist.InsertRow('LeastCosterXP','http://darkempire.funpic.de/phpBB2/rdf.php?f=3',false);
  end;
 end;
 

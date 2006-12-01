@@ -121,7 +121,7 @@ Writeln ( Sichte, '<table align="center" height="20" border=0 cellspacing="0" >'
 Writeln ( Sichte, '<tr><td>');
 Writeln ( Sichte, '</td></tr>');
 Writeln ( Sichte, '</table>');
-Write   ( Sichte, '<br><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:leastcosterxp-owner@yahoogroups.de"> Stefan Fruhner </a></b></font></p>');
+Write   ( Sichte, '<br><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
 Writeln ( Sichte, '</body></html>');
 Closefile(Sichte);
 End;
