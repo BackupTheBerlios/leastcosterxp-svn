@@ -449,7 +449,6 @@ type
 
     public
     { Public declarations }
-      isonline: boolean;
       Selected: array of boolean;
 
      //Rss im Menü
@@ -505,6 +504,7 @@ type
 
 var
   Hauptfenster: THauptfenster;
+  isonline: boolean; //OnlineStatus
   progcount, progcountoff: integer;
   zeit_min, zeit_std : string;
  // showtime: integer;

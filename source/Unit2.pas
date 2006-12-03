@@ -839,7 +839,7 @@ begin
   hauptfenster.AutoBase.position:= Autosurfdauer.position;
   hauptfenster.AutoDialEinwahl.Checked:= AutoConnectEinwahl.Checked;
 
-  if (assigned(floatingW)and (not hauptfenster.isonline)) then floatingW.Close;
+  if (assigned(floatingW)and (not isonline)) then floatingW.Close;
 
   //Atomzeit und Update
    settings.writeBool('Onlinecheck','Atomzeit',Atombox.Checked);

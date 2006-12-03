@@ -998,7 +998,7 @@ WriteTarifeToHD;
 
 hauptfenster.save_cfg;
 //tarifverw.LadeTarife;
-if not hauptfenster.isonline then tarifverw.Kontingente_Laden;
+if not isonline then tarifverw.Kontingente_Laden;
 
 hauptfenster.AktualisierenClick(self);
 hauptfenster.enabled:= true;
@@ -1270,8 +1270,8 @@ begin
 if ((PageControl1.ActivePage = TabSheet1) and (tarifbox.items.count > 0)) then
 begin
 
-  Freikontingente.visible:= not hauptfenster.isonline;
-  Freikontis_Online.visible:= hauptfenster.isonline;
+  Freikontingente.visible:= not isonline;
+  Freikontis_Online.visible:= isonline;
 
    //Kontingente
    konti_tarif.caption:= tarifbox.Items.Strings[tarifbox.itemindex];
@@ -1400,9 +1400,9 @@ var FileName: String;
 
 begin
 
-if hauptfenster.isonline then errormsg.caption:= '''Alles löschen'' nicht möglich im Online-Modus.';
+if isonline then errormsg.caption:= '''Alles löschen'' nicht möglich im Online-Modus.';
 
-if  not hauptfenster.isonline then
+if not isonline then
   if MessageDlg('Wollen Sie die Tarifdatenbank, Kontingente und Zähler wirklich löschen ?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
   begin
 

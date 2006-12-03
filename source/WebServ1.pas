@@ -744,7 +744,7 @@ begin
     if not assigned(shutter) then
     Application.CreateForm(Tshutter, shutter);
 
-    if hauptfenster.isonline then
+    if isonline then
     begin
       hauptfenster.disconnect;
       if not hauptfenster.noballoon then
@@ -1036,7 +1036,7 @@ begin
     end;
     end;
 
-  if hauptfenster.isonline then
+  if isonline then
     onzeit:= hauptfenster.ozeit.caption else onzeit:='';
 
     if status[1] <>' ' then status:= ' ' + status;
@@ -1101,7 +1101,7 @@ begin
     surfer:= hauptfenster.prog;
     if not (surfer='') then button:= '<INPUT TYPE="SUBMIT" NAME="Dialer" VALUE="' +surfer+ '">' else button:='';
 
-    if (hauptfenster.isonline=false) then
+    if not isonline then
     begin
     user:= ansireplacestr(clientcnx.Fparams,'=','');
     user:= ansireplacestr(user,'?','');
@@ -1309,7 +1309,7 @@ begin
     user:= ansireplacetext(user,'disconnect','');
     user:= ansireplacetext(user,'?','');
 
-    if hauptfenster.isonline then
+    if isonline then
     ClientCnx.AnswerString(Flags,
         '',                            { Default Status '200 OK'            }
         '',                            { Default Content-Type: text/html    }

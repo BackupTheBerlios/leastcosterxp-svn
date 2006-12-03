@@ -106,7 +106,7 @@ end;
 procedure TPriceWarning.Timer1Timer(Sender: TObject);
 begin
 timer1.enabled:= false;
-if not hauptfenster.isonline then close.Click;
+if not isonline then close.Click;
 timer1.tag:= timer1.tag-1;
 time.Caption:= inttostr(timer1.tag);
 if timer1.tag = 0 then

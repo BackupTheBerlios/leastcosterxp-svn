@@ -695,7 +695,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'In welchem Modus soll das Programm ausgef'#252'hrt werden ?'
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           Sorted = True
@@ -1613,7 +1613,7 @@ object LCXPSettings: TLCXPSettings
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1901,7 +1901,7 @@ object LCXPSettings: TLCXPSettings
           Width = 170
           Height = 21
           Hint = 'W'#228'hlen Sie hier den User aus. '
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           Sorted = True

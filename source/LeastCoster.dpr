@@ -1,11 +1,6 @@
 program LeastCoster;
 
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
   Forms,
   windows,
   StrUtils,

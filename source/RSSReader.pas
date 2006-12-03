@@ -420,7 +420,7 @@ begin
 
 if (not Hauptfenster.noFeeds) then
    begin
-    if (hauptfenster.isonline and (not hauptfenster.noballoon )) then hauptfenster.tray.showballoonHint('RSS-Update','Die RSS-Feeds wurden soeben aktualisiert.', bitINFO,10);
+    if (isonline and (not hauptfenster.noballoon )) then hauptfenster.tray.showballoonHint('RSS-Update','Die RSS-Feeds wurden soeben aktualisiert.', bitINFO,10);
     hauptfenster.ledtimer.enabled:= false;
     hauptfenster.ledrss.coloron:= clLime;
     hauptfenster.ledrss.ledon:= true;

@@ -480,6 +480,33 @@ with Hauptfenster do
 
 end;
 
+Procedure ClearList;
+begin
+  with hauptfenster.liste do
+  begin
+    rows[1].Clear;
+    rowcount:= 2;
+
+    Cells[1,0] := 'Tarif';
+    Cells[2,0] := 'Beginn';
+    Cells[3,0] := 'Ende';
+    Cells[4,0] := 'Preis';
+    Cells[5,0] := 'Einwahl';
+    Cells[6,0] := 'Takt';
+    Cells[7,0] := 'Kosten';
+    Cells[8,0] := 'Nummer';
+    Cells[9,0] := 'User';
+    Cells[10,0] := 'Passwort';
+    Cells[11,0] := 'Webseite';
+    Cells[12,0] := 'gilt seit';
+    Cells[13,0] := 'gilt bis';
+    Cells[14,0] := 'eingetragen';
+    Cells[15,0] := 'Score (alle)';
+    Cells[16,0] := 'Score (ok)';
+    Cells[17,0] := 'Tag';
+  end;
+end;
+
 procedure LoadList;
 var daystring, tomorrowstring: string;
     today, tomorrow: word;
@@ -491,146 +518,118 @@ var daystring, tomorrowstring: string;
     setdauer, lookforward: integer;
 begin
 
-lookforward:= hauptfenster.lookforward;
+  lookforward:= hauptfenster.lookforward;
+  ClearList; //Tarifliste löschen
 
-//with hauptfenster do
-begin
+  rows:=0;
 
-hauptfenster.liste.rows[1].Clear;
-hauptfenster.liste.rowcount:= 2;
-if hauptfenster.german then
-begin
-hauptfenster.liste.Cells[1,0] := 'Tarif';
-hauptfenster.liste.Cells[2,0] := 'Beginn';
-hauptfenster.liste.Cells[3,0] := 'Ende';
-hauptfenster.liste.Cells[4,0] := 'Preis';
-hauptfenster.liste.Cells[5,0] := 'Einwahl';
-hauptfenster.liste.Cells[6,0] := 'Takt';
-hauptfenster.liste.Cells[7,0] := 'Kosten';
-hauptfenster.liste.Cells[8,0] := 'Nummer';
-hauptfenster.liste.Cells[9,0] := 'User';
-hauptfenster.liste.Cells[10,0] := 'Passwort';
-hauptfenster.liste.Cells[11,0] := 'Webseite';
-hauptfenster.liste.Cells[12,0] := 'gilt seit';
-hauptfenster.liste.Cells[13,0] := 'gilt bis';
-hauptfenster.liste.Cells[14,0] := 'eingetragen';
-hauptfenster.liste.Cells[15,0] := 'Score (alle)';
-hauptfenster.liste.Cells[16,0] := 'Score (ok)';
-hauptfenster.liste.Cells[17,0] := 'Tag';
-end;
-rows:=0;
-
-if not hauptfenster.isonline then
-begin
-  tarifzeit:= now;
-  setdauer:= hauptfenster.surfdauer.position;
-end
-else
-begin
-  tarifzeit:= incminute(now,lookforward);
-  setdauer:= 1;
-end;
-
-if hauptfenster.beliebig_check.Checked then tarifzeit:= Dateof(hauptfenster.beliebig_date.DateTime) + timeof(hauptfenster.beliebig_time.Datetime);
-
-today:=dayoftheweek(Dateof(tarifzeit));
-tomorrow:=dayoftheweek(Dateof(incday(tarifzeit,1)));
-
-case today of
-1: daystring:= '[Mo]';
-2: daystring:= '[Di]';
-3: daystring:= '[Mi]';
-4: daystring:= '[Do]';
-5: daystring:= '[Fr]';
-6: daystring:= '[Sa]';
-7: daystring:= '[So]';
-end;
-
-case tomorrow of
-1: tomorrowstring:= '[Mo]';
-2: tomorrowstring:= '[Di]';
-3: tomorrowstring:= '[Mi]';
-4: tomorrowstring:= '[Do]';
-5: tomorrowstring:= '[Fr]';
-6: tomorrowstring:= '[Sa]';
-7: tomorrowstring:= '[So]';
-end;
-
-//heute feiertag ?
-feiercheck:= isFeiertag(Dateof(tarifzeit));
-if feiercheck<>'' then
-begin
-daystring:= '[feiertags]';
-hauptfenster.DateLabel.Caption:= '['+feiercheck + '] ' + datetimetostr(tarifzeit);
-end
-else
-hauptfenster.datelabel.Caption:= Daystring + ' ' + datetimetostr(tarifzeit);
-
-hauptfenster.DateLabel.refresh;
-hauptfenster.timeofliste:= tarifzeit;
-
-feiercheck:='';
-//morgen feiertag ?
-feiercheck:= isFeiertag(Dateof(incday(tarifzeit,1)));
-if feiercheck<>'' then tomorrowstring:= '[feiertags]';
-
-for i:= 0 to length(hauptfenster.tarife)-1 {sections.Count-1} do
-begin
-check1:= false;
-check2:= false;
-//Bedingungen, damit der Tarif angezeigt wird
-//a) Anfang der Gültigkeit
- if hauptfenster.tarife[i].validfrom > dateof(tarifzeit) then continue;
-//b) Einwahlgebühr ?
- if ((hauptfenster.tarife[i].Einwahl <> 0.0) and (not hauptfenster.ConnectionCostVisible)) then continue;
-
- if ansicontainsstr(hauptfenster.tarife[i].tag,daystring) then
- begin
-  //wenn datumsgrenze überchritten wird
-  if (dateof(tarifzeit)<>dateof(incminute(tarifzeit,setdauer))) then
+  if not isonline then
   begin
-     //wenn Tarif ganztägig
-    if ( ((dateof(tarifzeit) +hauptfenster.tarife[i].Ende) ) = ( dateof(tarifzeit) +hauptfenster.tarife[i].Beginn ) )
-            and (ansicontainsstr(hauptfenster.tarife[i].Tag,tomorrowstring)) then check1:= true;
-         //wenn Tarif die Datumsgrenze überschreitet
-      if  ( ( dateof(tarifzeit) + hauptfenster.tarife[i].Beginn ) < tarifzeit ) then
-       if ( ansicontainsstr(hauptfenster.tarife[i].tag,tomorrowstring) ) then
-        if  (dateof(tarifzeit) +hauptfenster.tarife[i].Beginn)>(dateof(tarifzeit) + hauptfenster.tarife[i].Ende ) then
-          if  ( dateof(incday(tarifzeit,1)) + hauptfenster.tarife[i].Ende ) >(incminute(tarifzeit,setdauer))
-            then check2:= true;
-
-  if check1 or check2 then
-    loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
+    tarifzeit:= now;
+    setdauer:= hauptfenster.surfdauer.position;
   end
-  else //wenn am selben Tag | Datumsgrenze wird nicht überschritten
+  else
   begin
-   //Tarifende ist am selben tag   | ende >= beginn
-   if ( (dateof(tarifzeit) +hauptfenster.tarife[i].Ende) >= (dateof(tarifzeit) +hauptfenster.tarife[i].Beginn ) )
-   then
-   begin
-     if( ( (dateof(tarifzeit) + hauptfenster.tarife[i].Beginn < (tarifzeit))
-      and (incminute(tarifzeit,setdauer) < (dateof(tarifzeit) + hauptfenster.tarife[i].Ende )))
-         //oder wenn ganztags
-          or ( hauptfenster.tarife[i].Beginn = hauptfenster.tarife[i].Ende ) )
-          then
-            loadlistaddline({ini,sections,}rows,i,Einwahl,Preis, tarifzeit, setdauer);
-   end
-   else //das ende des Tarifs ist an anderem Tag als Beginn| wenn ende < beginn
-   begin
-     if ( (dateof(tarifzeit) + hauptfenster.tarife[i].Beginn  < (tarifzeit))
-     or (dateof(tarifzeit) + hauptfenster.tarife[i].Ende > (incminute(tarifzeit,setdauer) ) ))
-          then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
-    end;
+    tarifzeit:= incminute(now,lookforward);
+    setdauer:= 1;
   end;
- end;
-end;
 
-//nach Kosten sortieren
-//Sort(liste,7,1,liste.RowCount, true, false);
+  if hauptfenster.beliebig_check.Checked then tarifzeit:= Dateof(hauptfenster.beliebig_date.DateTime) + timeof(hauptfenster.beliebig_time.Datetime);
+
+  today:=dayoftheweek(Dateof(tarifzeit));
+  tomorrow:=dayoftheweek(Dateof(incday(tarifzeit,1)));
+
+  case today of
+    1: daystring:= '[Mo]';
+    2: daystring:= '[Di]';
+    3: daystring:= '[Mi]';
+    4: daystring:= '[Do]';
+    5: daystring:= '[Fr]';
+    6: daystring:= '[Sa]';
+    7: daystring:= '[So]';
+  end;
+
+  case tomorrow of
+    1: tomorrowstring:= '[Mo]';
+    2: tomorrowstring:= '[Di]';
+    3: tomorrowstring:= '[Mi]';
+    4: tomorrowstring:= '[Do]';
+    5: tomorrowstring:= '[Fr]';
+    6: tomorrowstring:= '[Sa]';
+    7: tomorrowstring:= '[So]';
+  end;
+
+  //heute feiertag ?
+  feiercheck:= isFeiertag(Dateof(tarifzeit));
+  if feiercheck<>'' then
+  begin
+    daystring:= '[feiertags]';
+    hauptfenster.DateLabel.Caption:= '['+feiercheck + '] ' + datetimetostr(tarifzeit);
+  end
+  else
+  hauptfenster.datelabel.Caption:= Daystring + ' ' + datetimetostr(tarifzeit);
+
+  hauptfenster.DateLabel.refresh;
+  hauptfenster.timeofliste:= tarifzeit;
+
+  feiercheck:='';
+  //morgen feiertag ?
+  feiercheck:= isFeiertag(Dateof(incday(tarifzeit,1)));
+  if feiercheck<>'' then tomorrowstring:= '[feiertags]';
+
+  for i:= 0 to length(hauptfenster.tarife)-1 do
+  begin
+    check1:= false;
+    check2:= false;
+   //Bedingungen, damit der Tarif angezeigt wird
+   //a) Anfang der Gültigkeit
+     if hauptfenster.tarife[i].validfrom > dateof(tarifzeit) then continue;
+   //b) Einwahlgebühr ?
+     if ((hauptfenster.tarife[i].Einwahl > 0.0) and (not hauptfenster.ConnectionCostVisible)) then continue;
+
+     if ansicontainsstr(hauptfenster.tarife[i].tag,daystring) then
+     begin
+        //wenn datumsgrenze überchritten wird
+        if (dateof(tarifzeit)<>dateof(incminute(tarifzeit,setdauer))) then
+        begin
+             //wenn Tarif ganztägig
+              if ( ((dateof(tarifzeit) + timeof(hauptfenster.tarife[i].Ende)) ) = ( dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Beginn)) )
+                and (ansicontainsstr(hauptfenster.tarife[i].Tag,tomorrowstring)) then check1:= true;
+
+            //wenn Tarif die Datumsgrenze überschreitet
+              if  ( ( dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Beginn) ) < tarifzeit ) then
+                if ( ansicontainsstr(hauptfenster.tarife[i].tag,tomorrowstring) ) then
+                  if  (dateof(tarifzeit) +TimeOf(hauptfenster.tarife[i].Beginn))>(dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Ende) ) then
+                    if  ( dateof(incday(tarifzeit,1)) + timeof(hauptfenster.tarife[i].Ende)) >(incminute(tarifzeit,setdauer))
+                      then check2:= true;
+
+               if check1 or check2 then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
+        end
+         else //wenn am selben Tag | Datumsgrenze wird nicht überschritten
+         begin
+           //Tarifende ist am selben tag   | ende >= beginn
+            if ( (dateof(tarifzeit) + TimeOF(hauptfenster.tarife[i].Ende)) >= (dateof(tarifzeit) +TimeOF(hauptfenster.tarife[i].Beginn) ) )
+             then
+                begin
+                  if( ( (dateof(tarifzeit) + TimeOF(hauptfenster.tarife[i].Beginn) < (tarifzeit))
+                    and (incminute(tarifzeit,setdauer) < (dateof(tarifzeit) + Timeof(hauptfenster.tarife[i].Ende) )))
+                   //oder wenn ganztags
+                     or ( hauptfenster.tarife[i].Beginn = hauptfenster.tarife[i].Ende ) )
+                      then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
+                end
+               else //das ende des Tarifs ist an anderem Tag als Beginn| wenn ende < beginn
+               begin
+//                    showmessage(hauptfenster.tarife[i].tag + ' ' + DateTimeToStr(dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Beginn)) + ' ' + DateTimeToStr(dateof(tarifzeit) + Timeof(hauptfenster.tarife[i].Ende)));
+                    if ( (dateof(tarifzeit) + TimeOF(hauptfenster.tarife[i].Beginn)  <= tarifzeit)
+                      or (dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Ende) > (incminute(tarifzeit,setdauer) ) ))
+                      then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
+               end;
+         end;
+     end; //Ende von if ansicontains(tarif, daystring) ...
+    end;  //Ende der For-Schleife
 
 if not hauptfenster.beliebig_check.checked then
  Sort(hauptfenster.liste,hauptfenster.tarifprogress,7,1,hauptfenster.liste.RowCount, true, false);
-
 
 //Markierung der Tabelle
 setlength(hauptfenster.Selected, hauptfenster.Liste.RowCount);
@@ -642,10 +641,10 @@ hauptfenster.listeclick(nil);
 
 //Wechselmeldung
 if not hauptfenster.NoChangeWarning.checked then
-   if (hauptfenster.isonline and (not hauptfenster.warnung_gezeigt)) then
+   if (isonline and (not hauptfenster.warnung_gezeigt)) then
    if hauptfenster.selfdial and not hauptfenster.beliebig_check.checked then
    if (minuteof(now) = (59-lookforward+1)) then watchoutforcheaperprice(tarifzeit);
-end;
+
 end;
 
 

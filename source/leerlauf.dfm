@@ -35,13 +35,12 @@ object disconnect_leerlauf: Tdisconnect_leerlauf
     Font.Height = -15
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ParentBackground = True
     ParentFont = False
     TabOrder = 0
     object Label2: TLabel
       Left = 6
       Top = 38
-      Width = 226
+      Width = 192
       Height = 38
       Align = alTop
       Alignment = taCenter
@@ -58,7 +57,7 @@ object disconnect_leerlauf: Tdisconnect_leerlauf
     object Label1: TLabel
       Left = 6
       Top = 6
-      Width = 226
+      Width = 214
       Height = 16
       Align = alTop
       Alignment = taCenter
@@ -68,7 +67,7 @@ object disconnect_leerlauf: Tdisconnect_leerlauf
     object label3: TLabel
       Left = 6
       Top = 76
-      Width = 226
+      Width = 61
       Height = 16
       Align = alTop
       Alignment = taCenter
@@ -78,7 +77,7 @@ object disconnect_leerlauf: Tdisconnect_leerlauf
     object Label4: TLabel
       Left = 6
       Top = 22
-      Width = 226
+      Width = 67
       Height = 16
       Align = alTop
       Alignment = taCenter

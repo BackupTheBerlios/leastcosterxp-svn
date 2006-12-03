@@ -58,7 +58,7 @@ end;
 
 procedure Tdisconnect_leerlauf.Timer1Timer(Sender: TObject);
 begin
-if not hauptfenster.isonline then disconnect_leerlauf.Close;
+if not isonline then disconnect_leerlauf.Close;
 if usetimer then
 begin
  timer1.tag:= timer1.tag-1;
