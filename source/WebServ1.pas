@@ -1077,7 +1077,7 @@ begin
 
     user:= ansireplacestr(clientcnx.FParams,'=','');
 
-    if (secondsbetween(settings.ReadDateTime('server','dialtime', strtodatetime('01.01.3000 00:00:00')),now) < 300)
+    if (secondsbetween(settings.ReadDateTime('server','dialtime', EncodeDatetime(3000,1,1,0,0,0,0)),now) < 300)
     and not ansicontainstext(user,settings.ReadString('server','dialtimeuser','!_niemand_!')) then
     begin
      ClientCnx.AnswerString(Flags,
@@ -1093,7 +1093,7 @@ begin
           '<BODY bgcolor="#ebedfe"> '+
            '<p align=center valign=middle>Zugriff gesperrt, da bereits '+settings.ReadString('server','dialtimeuser','!_niemand_!')+
            ' diese Funktion nutzt.<br>Freigabe in : '+
-          inttostr(300 - secondsbetween(settings.ReadDateTime('server','dialtime', strtodatetime('01.01.3000 00:00:00')),now)) + ' s</p></BODY>' +
+          inttostr(300 - secondsbetween(settings.ReadDateTime('server','dialtime', EncodeDatetime(3000,1,1,0,0,0,0)),now)) + ' s</p></BODY>' +
         '</HTML>');
         exit;
     end;

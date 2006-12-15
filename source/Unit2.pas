@@ -241,6 +241,20 @@ type
     FontB: TButton;
     Label18: TLabel;
     OpenWebsite: TCheckBox;
+    AutoConnectInterval: TSpinEdit;
+    Label48: TLabel;
+    AutoD_start: TDateTimePicker;
+    AutoD_End: TDateTimePicker;
+    AutoD: TCheckBox;
+    Label51: TLabel;
+    AutoD_Day: TComboBox;
+    Button9: TButton;
+    Button11: TButton;
+    MainMenu1: TMainMenu;
+    AutoL: TValueListEditor;
+    procedure AutoDClick(Sender: TObject);
+    procedure Button11Click(Sender: TObject);
+    procedure Button9Click(Sender: TObject);
     procedure FontBClick(Sender: TObject);
 
     procedure beendenClick(Sender: TObject);
@@ -442,7 +456,7 @@ type
     procedure rightClick(Sender: TObject);
     procedure leftMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
-    procedure Button9Click(Sender: TObject);
+    procedure Button10Click(Sender: TObject);
     procedure noBalloonMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure MultilinkClick(Sender: TObject);
@@ -463,6 +477,7 @@ type
     procedure plugSettingsClick(Sender: TObject);
     procedure activateClick(Sender: TObject);
     Procedure PlugOnMouseUp;
+    procedure LoadAutoL;
 
    private
     { Private declarations }
@@ -480,10 +495,20 @@ var
 
 implementation
 
-uses Unit1, addons, registry, floating, DateUtils, ZLIBArchive;
-
+uses Unit1, addons, registry, floating, DateUtils, ZLIBArchive, RegExpr, tarifverw;
 
 {$R *.dfm}
+
+procedure TLCXPSettings.LoadAutoL;
+var i: integer;
+begin
+Autol.strings.Clear;
+for i:= 0 to length(Hauptfenster.AutoDialTimes) -1 do
+  AutoL.InsertRow(AutoD_day.Items.Strings[Hauptfenster.AutoDialTimes[i].tag],
+                       Timetostr(Hauptfenster.AutoDialTimes[i].von) + ' - ' +
+                       Timetostr(Hauptfenster.AutoDialTimes[i].bis),
+                      true);
+end;
 
 function CreateAutorunEntry(const AName, AFilename: String; const AKind: TAutorunKind; delete: boolean): Boolean;
 var
@@ -648,9 +673,8 @@ Var
   End;
 
 procedure TLCXPSettings.beendenClick(Sender: TObject);
-var i: integer;
+var i,j: integer;
 begin
-
  //Pfad Speichern
  if fileexists(Pfad.text) then
  begin
@@ -831,13 +855,20 @@ begin
   settings.writebool('AutoConnect','AutoReConnect',AutoReConnect.Checked);
   settings.writebool('AutoConnect','mitEinwahl',AutoConnectEinwahl.Checked);
   settings.writeinteger('AutoConnect','Basiszeit',AutoSurfdauer.position);
+  settings.writeinteger('AutoConnect','Interval', AutoConnectInterval.Value);
 
+  settings.WriteBool    ('AutoConnect','atTime', AutoD.Checked);
+  //die Einwahlzeiten speichern
+  SaveAutoDialTimes;
   hauptfenster.AutoSurfdauer      := AutoSurfdauer.position;
 
   hauptfenster.AutoDialLED.ledon:= AutoReConnect.Checked;
   hauptfenster.Autobasis.caption:= inttostr(AutosurfDauer.position div 60) + ' h '+ inttostr(AutosurfDauer.position mod 60) +' min';
   hauptfenster.AutoBase.position:= Autosurfdauer.position;
   hauptfenster.AutoDialEinwahl.Checked:= AutoConnectEinwahl.Checked;
+
+  Hauptfenster.AutoDialStatus.Visible:= settings.ReadBool('AutoConnect','atTime', false);
+  Hauptfenster.AutoDialStatus.LEDON:= settings.ReadBool('AutoConnect','atTime', false);
 
   if (assigned(floatingW)and (not isonline)) then floatingW.Close;
 
@@ -1618,7 +1649,7 @@ end;
 
 procedure TLCXPSettings.FormCreate(Sender: TObject);
 var leastcosterrow: integer;
-    code, i: integer;
+    code, i,j: integer;
     showtime: integer;
 begin
 
@@ -1816,7 +1847,13 @@ Setonlineinfowidth.checked:= settings.ReadBool('OnlineInfo', 'AutoWidth', true);
   AutoConnectOnStart.Checked := settings.Readbool('AutoConnect','AutoStartConnect',false);
   AutoReConnect.Checked      := settings.Readbool('AutoConnect','AutoReConnect',false);
   AutoConnectEinwahl.Checked := settings.Readbool('AutoConnect','mitEinwahl',false);
+  AutoConnectInterval.Value  := settings.Readinteger('AutoConnect','Interval', 60);
   AutoSurfdauer.Position     := settings.Readinteger('AutoConnect','Basiszeit',1);
+
+  AutoD.Checked       := settings.ReadBool    ('AutoConnect','atTime', false);
+  LoadAutoL;
+  Autodclick(self);
+
   Autosurfdauerchange(self);
 
 //Rss-Update
@@ -2438,7 +2475,7 @@ procedure TLCXPSettings.AutoConnectOnStartMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
 memo1.Text:= 'Auto-Verbinden bei Programmstart' +chr(13)+chr(10)
-              +'Beim Programmstart wird ein einziger Einwahlversuch unternommen. Ist Wiedereinwahl aktiv, so wird solange gewählt, bis der Rechner tatsächlich online ist.';
+              +'Beim Programmstart wird sofort begonnen zu wählen. Schlägt die Verbindung fehl, wird nach Ablauf des Einwahl-Intervals ein neuer Einwahlversuch gestartet.';
 end;
 
 procedure TLCXPSettings.AutoReConnectMouseMove(Sender: TObject;
@@ -2545,7 +2582,7 @@ if sender = right then
 
 end;
 
-procedure TLCXPSettings.Button9Click(Sender: TObject);
+procedure TLCXPSettings.Button10Click(Sender: TObject);
 begin
 if directoryexists(ExtractFilePath(ParamStr(0)) + 'BackUp') then
   Shellexecute( 0, nil, Pchar(ExtractFilePath(ParamStr(0)) + 'BackUp'), nil, nil, SW_SHOW)
@@ -2817,6 +2854,139 @@ begin
 
  end;
 end;
+end;
+
+function checkdays(key: string; S: TComboBox):boolean;
+begin
+result:= false;
+if (S.Items.Strings[S.itemindex] = Key)
+     or ((key = S.Items.Strings[7]) and (S.itemindex = 9)) //täglich > wochenende
+     or ((key = S.Items.Strings[7]) and (S.itemindex = 8)) //täglich > wochentags
+     or ((key = S.Items.Strings[9]) and (S.itemindex = 7)) //wochenende > täglich
+     or ((key = S.Items.Strings[8]) and (S.itemindex = 7)) //wochentags > täglich
+     or ((key = S.Items.Strings[7]) and (S.itemindex <= 6))//täglich > ein Tag
+     or ((key = S.Items.Strings[8]) and ((S.itemindex <= 4) ))//wochentags > ein Tag der Woche
+     or ((key = S.Items.Strings[9]) and ((S.itemindex = 5) or (S.itemindex = 6))) //wochenende > sa,So
+     or ((key = S.Items.Strings[0]) and ((S.itemindex = 7) or (S.itemindex = 8))) //montag > täglich, wochentags
+     or ((key = S.Items.Strings[1]) and ((S.itemindex = 7) or (S.itemindex = 8))) //Dienstag > täglich, wochentags
+     or ((key = S.Items.Strings[2]) and ((S.itemindex = 7) or (S.itemindex = 8))) //mittwoch > täglich, wochentags
+     or ((key = S.Items.Strings[3]) and ((S.itemindex = 7) or (S.itemindex = 8))) //Donnerstag > täglich, wochentags
+     or ((key = S.Items.Strings[4]) and ((S.itemindex = 7) or (S.itemindex = 8))) //Freitag > täglich, wochentags
+     or ((key = S.Items.Strings[5]) and ((S.itemindex = 7) or (S.itemindex = 9))) //Samstag > täglich, wochenEnde
+     or ((key = S.Items.Strings[6]) and ((S.itemindex = 7) or (S.itemindex = 9))) //Sonntag > täglich, wochenEnde
+  then result:= true;
+end;
+
+procedure TLCXPSettings.Button9Click(Sender: TObject);
+var i: integer;
+    check: boolean;
+    von, bis, start, ende: TDateTime;
+    r: Tregexpr;
+    s: TStringlist;
+    l: integer;
+begin
+
+start := Dateof(now) + timeof(AutoD_start.time);
+ende  := Dateof(now) + timeof(AutoD_end.time);
+if ende < start then ende:= incday(ende,1);
+
+r:= TRegExpr.Create;
+r.Expression:= ' - ';
+s:= TStringList.Create;
+
+check:= false;
+
+if (Autol.Keys[1] <> '') then
+  for i:= 1 to Autol.rowcount-1 do
+  begin
+   if checkdays(Autol.keys[i], AutoD_Day) then
+    begin
+      s.Clear;
+      r.Split(autol.Strings.ValueFromIndex[i-1],s);
+      von:=  Dateof(now) + strtotime(s.strings[0]);
+      bis:=  Dateof(now) + strtotime(s.strings[1]);
+
+      if bis < von then bis:= incday(bis,1);
+
+      if ( ((start >= von) and (start< bis))
+         or ((ende <= bis) and (ende > von))
+         or ((start = von) and (ende = bis)) )
+        then begin check:= true; break; end;
+     end;
+
+  end;
+
+if not check then
+ begin
+  l:= length(Hauptfenster.AuToDialTimes);
+  setlength(Hauptfenster.AuToDialTimes,l+1);
+  hauptfenster.AutoDialTimes[l].tag:= Autod_day.itemindex;
+  hauptfenster.AutoDialTimes[l].von:= AutoD_start.time;
+  hauptfenster.AutoDialTimes[l].bis:= AutoD_end.time;
+  loadAutoL;
+  Autol.Row:= Autol.RowCount-1;
+ end;
+s.free;
+r.Free;
+end;
+
+procedure TLCXPSettings.Button11Click(Sender: TObject);
+var i: integer;
+    check: boolean;
+    von, bis, start, ende: TDateTime;
+    r: Tregexpr;
+    s: TStringlist;
+    l: integer;
+    n: string;
+begin
+if (autol.row > 0) and (Autol.keys[1] <> '') then
+begin
+
+  r:= TRegExpr.Create;
+  r.Expression:= ' - ';
+  s:= TStringList.Create;
+
+  check:= false;
+
+  s.Clear;
+  r.Split(autol.Strings.ValueFromIndex[autol.row-1],s);
+  von :=  Dateof(now) + strtotime(s.strings[0]);
+  bis :=  Dateof(now) + strtotime(s.strings[1]);
+  n   :=  Autol.Keys[Autol.row];
+
+  if bis < von then bis:= incday(bis,1);
+
+  l:= length(Hauptfenster.AuToDialTimes);
+
+  for i:= l-1 downto 0 do
+  begin
+     start := Dateof(now) + timeof(Hauptfenster.AutoDialTimes[i].von);
+     ende  := Dateof(now) + timeof(Hauptfenster.AutoDialTimes[i].bis);
+     if ende < start then ende:= incday(ende,1);
+
+     if (start=von) and (ende=bis)
+         and (Hauptfenster.AutoDialTimes[i].tag = AutoD_Day.items.IndexOf(n))
+         then
+         begin
+          Hauptfenster.AutoDialTimes[i]:= Hauptfenster.AutoDialTimes[l-1];
+          setlength(Hauptfenster.AutoDialTimes, l-1);
+          break;
+         end;
+  end;
+  LoadAutoL;
+end;
+end;
+
+procedure TLCXPSettings.AutoDClick(Sender: TObject);
+begin
+AutoD_day.enabled   := AutoD.checked;
+AutoD_start.Enabled := AutoD.checked;
+AutoD_End.Enabled   := AutoD.checked;
+Autol.Enabled       := AutoD.checked;
+if not AutoD.checked then autol.font.Color:= clsilver else autol.font.Color:= clWindowText; 
+Button9.Enabled     := AutoD.checked;
+Button11.Enabled    := AutoD.checked;
+
 end;
 
 end.

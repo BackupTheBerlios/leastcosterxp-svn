@@ -24,6 +24,8 @@ procedure ResetExpireDate(Tarif: String;Datum: TDate);
 function computecosts(Kanalbuendelung: boolean): boolean;
 
 procedure WriteTarifeToHD;
+procedure LoadAutoDialTimes;
+procedure SaveAutoDialTimes;
 
 implementation
 
@@ -513,9 +515,10 @@ var daystring, tomorrowstring: string;
     i, rows: integer;
     preis, einwahl: real;
     feiercheck: string;
-    check1, check2: boolean;
+    gueltig: boolean;
     tarifzeit: TDateTime;
     setdauer, lookforward: integer;
+    TarifBeginn, TarifEnde: TDateTime;
 begin
 
   lookforward:= hauptfenster.lookforward;
@@ -579,53 +582,58 @@ begin
 
   for i:= 0 to length(hauptfenster.tarife)-1 do
   begin
-    check1:= false;
-    check2:= false;
+    gueltig:= false;
+
+    Tarifbeginn := dateof(tarifzeit) + timeof(hauptfenster.tarife[i].Beginn);
+    Tarifende   := dateof(tarifzeit) + timeof(hauptfenster.tarife[i].Ende);
+
    //Bedingungen, damit der Tarif angezeigt wird
    //a) Anfang der Gültigkeit
      if hauptfenster.tarife[i].validfrom > dateof(tarifzeit) then continue;
    //b) Einwahlgebühr ?
      if ((hauptfenster.tarife[i].Einwahl > 0.0) and (not hauptfenster.ConnectionCostVisible)) then continue;
 
+     //wenn der Tag gültig ist
      if ansicontainsstr(hauptfenster.tarife[i].tag,daystring) then
      begin
         //wenn datumsgrenze überchritten wird
         if (dateof(tarifzeit)<>dateof(incminute(tarifzeit,setdauer))) then
         begin
              //wenn Tarif ganztägig
-              if ( ((dateof(tarifzeit) + timeof(hauptfenster.tarife[i].Ende)) ) = ( dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Beginn)) )
-                and (ansicontainsstr(hauptfenster.tarife[i].Tag,tomorrowstring)) then check1:= true;
+              if ( TarifEnde = TarifBeginn )
+                and (ansicontainsstr(hauptfenster.tarife[i].Tag,tomorrowstring))
+                  then gueltig:= true;
 
             //wenn Tarif die Datumsgrenze überschreitet
-              if  ( ( dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Beginn) ) < tarifzeit ) then
+              if  ( TarifBeginn < tarifzeit ) then
                 if ( ansicontainsstr(hauptfenster.tarife[i].tag,tomorrowstring) ) then
-                  if  (dateof(tarifzeit) +TimeOf(hauptfenster.tarife[i].Beginn))>(dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Ende) ) then
+                  if  ( TarifBeginn > TarifEnde ) then
                     if  ( dateof(incday(tarifzeit,1)) + timeof(hauptfenster.tarife[i].Ende)) >(incminute(tarifzeit,setdauer))
-                      then check2:= true;
+                      then gueltig:= true;
 
-               if check1 or check2 then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
         end
          else //wenn am selben Tag | Datumsgrenze wird nicht überschritten
          begin
            //Tarifende ist am selben tag   | ende >= beginn
-            if ( (dateof(tarifzeit) + TimeOF(hauptfenster.tarife[i].Ende)) >= (dateof(tarifzeit) +TimeOF(hauptfenster.tarife[i].Beginn) ) )
-             then
+            if ( TarifEnde >= TarifBeginn) then
                 begin
-                  if( ( (dateof(tarifzeit) + TimeOF(hauptfenster.tarife[i].Beginn) < (tarifzeit))
-                    and (incminute(tarifzeit,setdauer) < (dateof(tarifzeit) + Timeof(hauptfenster.tarife[i].Ende) )))
+                  if( ( (TarifBeginn < tarifzeit)
+                    and (incminute(tarifzeit,setdauer) < TarifEnde ))
                    //oder wenn ganztags
-                     or ( hauptfenster.tarife[i].Beginn = hauptfenster.tarife[i].Ende ) )
-                      then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
+                     or ( TarifBeginn = TarifEnde ) )
+                      then gueltig:= true;
                 end
                else //das ende des Tarifs ist an anderem Tag als Beginn| wenn ende < beginn
                begin
-//                    showmessage(hauptfenster.tarife[i].tag + ' ' + DateTimeToStr(dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Beginn)) + ' ' + DateTimeToStr(dateof(tarifzeit) + Timeof(hauptfenster.tarife[i].Ende)));
-                    if ( (dateof(tarifzeit) + TimeOF(hauptfenster.tarife[i].Beginn)  <= tarifzeit)
-                      or (dateof(tarifzeit) + TimeOf(hauptfenster.tarife[i].Ende) > (incminute(tarifzeit,setdauer) ) ))
-                      then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
+                    if ( (TarifBeginn  <= tarifzeit)
+                      or (TarifEnde > (incminute(tarifzeit,setdauer) ) ))
+                        then gueltig:= true;
                end;
          end;
      end; //Ende von if ansicontains(tarif, daystring) ...
+
+    //hinzufügen
+    if gueltig then loadlistaddline(rows,i,Einwahl,Preis, tarifzeit, setdauer);
     end;  //Ende der For-Schleife
 
 if not hauptfenster.beliebig_check.checked then
@@ -766,7 +774,6 @@ begin
 end;
 
 end;
-
 
 function isFeiertag(date: TDate): string;
 var i: integer;
@@ -1054,6 +1061,45 @@ begin
   Compress(fName, cName);
   DeleteFile(PChar(fName));
 
+end;
+
+Procedure LoadAutoDialTimes;
+var f: file of TAutoDial;
+    n: string;
+    d: TAutoDial;
+    count: integer;
+begin
+n:= extractfilepath(paramstr(0))+'AutoDial.dat';
+if FileExists(n) then
+begin
+  assignfile(f,n);
+  reset(f);
+  count:= 0;
+  while not EOF(f) do
+  begin
+    read(f, d);
+    count:= count+1;
+    setlength(Hauptfenster.AutoDialTimes, count);
+    Hauptfenster.AutoDialTimes[count-1]:= d;
+  end;
+  closefile(f);
+end;
+end;
+
+procedure SaveAutoDialTimes;
+var n: string;
+    i: integer;
+    f: file of TAutoDial;
+begin
+  N:= ExtractfilePath(paramstr(0)) + 'AutoDial.dat';
+
+  assignfile(f,n);
+  rewrite(f);
+
+  for i:= 0 to length(Hauptfenster.AutodialTimes)-1 do
+   write(f,hauptfenster.AutoDialTimes[i]);
+
+  closefile(f);
 end;
 
 end.

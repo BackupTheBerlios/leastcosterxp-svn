@@ -1,6 +1,11 @@
 program LeastCoster;
 
 uses
+  madExcept,
+  madLinkDisAsm,
+  madListHardware,
+  madListProcesses,
+  madListModules,
   Forms,
   windows,
   StrUtils,
@@ -31,7 +36,8 @@ uses
   floating in 'floating.pas' {floatingW},
   menues in 'menues.pas',
   RSSReader in 'RSSReader.pas',
-  Protokolle in 'Protokolle.pas';
+  Protokolle in 'Protokolle.pas',
+  donation in 'donation.pas' {DonateWindow};
 
 {$R *.res}
 
@@ -44,6 +50,7 @@ begin
   Application.HelpFile := '';
   Application.CreateForm(THauptfenster, Hauptfenster);
   Application.CreateForm(TWebServForm, WebServForm);
+  Application.CreateForm(TDonateWindow, DonateWindow);
   Application.Run;
 
 end.

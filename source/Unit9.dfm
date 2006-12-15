@@ -32,7 +32,7 @@ object Info: TInfo
     object Label1: TLabel
       Left = 6
       Top = 6
-      Width = 131
+      Width = 411
       Height = 20
       Align = alTop
       Alignment = taCenter
@@ -47,16 +47,16 @@ object Info: TInfo
     object Label2: TLabel
       Left = 6
       Top = 305
-      Width = 172
+      Width = 411
       Height = 13
       Align = alTop
       Alignment = taCenter
       Caption = '( Verweise und Links sind klickbar ! )'
     end
     object copyright: TLabel
-      Left = 364
+      Left = 6
       Top = 375
-      Width = 53
+      Width = 411
       Height = 13
       Align = alBottom
       Alignment = taRightJustify
@@ -71,7 +71,7 @@ object Info: TInfo
     object Label3: TLabel
       Left = 6
       Top = 349
-      Width = 390
+      Width = 411
       Height = 26
       Align = alBottom
       Alignment = taCenter

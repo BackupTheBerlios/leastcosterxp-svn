@@ -520,8 +520,9 @@ Var Zwischenhandler:string;
     Tabs      :shortint;
     Lager     :Textfile;
     Punkt,haekchen:integer;
-    monat:string[2];
-    Jahr:string[4];
+//    monat:string[2];
+//    Jahr:string[4];
+    monat, jahr: integer;
     i: integer;
 Begin
  for i:=1 to 31 do begin
@@ -550,17 +551,17 @@ end;
      End
     Else Tabs:=tabs+1;
    End;
-  Punkt:=Dayof(strtoDate(Datum));
-  Monat:=copy(Datum,4,2);
-  Jahr:=copy(Datum,7,4);
+  Punkt:= Dayof(strtoDate(Datum));
+  Monat:= monthof(strtoDate(Datum));
+  Jahr := yearof(strtoDate(Datum));
 
   Lieferliste[Punkt].Tag:=strtoDate(Datum);
   Lieferliste[Punkt].Zeit:=Lieferliste[Punkt].Zeit+strtotime(Zeit);
   Lieferliste[Punkt].Kosten:=Lieferliste[Punkt].Kosten+strtofloat(Kosten);
   Lieferliste[Punkt].Verbindungen:=Lieferliste[Punkt].Verbindungen+1;
  Until Eof(Lager);
- For haekchen:=1 to daysinamonth(strtoint(jahr), strtoint(monat)) do
-   Lieferliste[haekchen].Tag:=strtodate((inttostr(haekchen))+'.'+Monat+'.'+Jahr);
+ For haekchen:=1 to daysinamonth(jahr, monat) do
+   Lieferliste[haekchen].Tag:= Dateof(encodeDate(Jahr,monat, haekchen)); // strtodate((inttostr(haekchen))+'.'+Monat+'.'+Jahr);
  
  Closefile(Lager);
 

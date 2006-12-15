@@ -1,5 +1,5 @@
 [GeneralSettings]
-HandleExceptions=0
+HandleExceptions=1
 AppendMapFileToBinary=0
 NoOwnMadExceptSettings=0
 CheckFileCrc=0

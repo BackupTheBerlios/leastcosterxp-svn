@@ -183,6 +183,18 @@ object Hauptfenster: THauptfenster
     OnMouseDown = LedRSSMouseDown
     OnMouseUp = LedRSSMouseUp
   end
+  object AutoDialStatus: TAMAdvLed
+    Left = 16
+    Top = 484
+    Width = 13
+    Height = 13
+    Hint = 'Auto-Einwahl'
+    ColorOff = clMaroon
+    OnLedStateChanged = AutoDialStatusLedStateChanged
+    OnClick = AutoDialStatusClick
+    OnMouseDown = LedRSSMouseDown
+    OnMouseUp = LedRSSMouseUp
+  end
   object Liste: TStringGrid
     Tag = -1
     Left = 10
@@ -505,6 +517,7 @@ object Hauptfenster: THauptfenster
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     Kind = dtkTime
+    ParseInput = True
     ParentFont = False
     TabOrder = 15
     Visible = False
@@ -724,7 +737,7 @@ object Hauptfenster: THauptfenster
         Width = 177
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         Items.Strings = (
           'Tue nichts'
@@ -737,8 +750,8 @@ object Hauptfenster: THauptfenster
     end
   end
   object setmultilink: TCheckBox
-    Left = 15
-    Top = 484
+    Left = 35
+    Top = 482
     Width = 97
     Height = 18
     Caption = 'Kanalb'#252'ndelung'
@@ -1110,7 +1123,7 @@ object Hauptfenster: THauptfenster
     Enabled = False
     Interval = 5000
     OnTimer = closerTimer
-    Left = 112
+    Left = 128
     Top = 488
   end
   object hider: TTimer
@@ -1431,7 +1444,6 @@ object Hauptfenster: THauptfenster
   end
   object Time: TTimer
     Enabled = False
-    Interval = 500
     OnTimer = TimeTimer
     Left = 384
     Top = 40

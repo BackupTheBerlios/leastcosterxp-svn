@@ -81,7 +81,11 @@ case disconnect_leerlauf.tag of
 //Auto-trennen
 1: hauptfenster.DisconnectStopped:= true;
 //AuoEinwahl
-2: hauptfenster.Status.SimpleText:= 'Auto-Einwahl deaktivert ('+ datetimetostr(now)+')';
+2: begin
+    hauptfenster.Status.SimpleText:= 'Auto-Einwahl deaktivert ('+ datetimetostr(now)+')';
+    Hauptfenster.AutoDialStatus.LEDOn:= false;
+    Hauptfenster.AutoDial.Enabled:= false;
+   end;
 end;
 disconnect_leerlauf.Close;
 end;
@@ -117,7 +121,6 @@ procedure Tdisconnect_leerlauf.TrennenClick(Sender: TObject);
 begin
 timer1.Tag:= 1;
 timer1timer(self);
-//disconnect_leerlauf.Close;
 end;
 
 procedure Tdisconnect_leerlauf.ConnectTimerTimer(Sender: TObject);

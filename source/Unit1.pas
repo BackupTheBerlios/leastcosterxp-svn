@@ -44,7 +44,12 @@ type
     checked: boolean;
   end;
 
-    proggys = record
+  TAutoDial = record
+    Tag: integer;
+    von, bis: TTime;
+  end;
+
+  proggys = record
       section,path,param,style, mintime,timeout: string;
       days: integer;
       date: TDate;
@@ -292,6 +297,10 @@ type
     S_14: TMenuItem;
     S_17: TMenuItem;
     ForceDial: TMenuItem;
+    AutoDialStatus: TAMAdvLed;
+    procedure AutoDialStatusLedStateChanged(Sender: TObject; LedOn: Boolean;
+      NumSwitch: Integer);
+    procedure AutoDialStatusClick(Sender: TObject);
     procedure ForceDialClick(Sender: TObject);
     procedure S_1Click(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -425,7 +434,6 @@ type
     mousedownrow: integer;
 
     timerstarted: boolean;
-
     disconnecting: boolean;
     oldtime: tDatetime;
     KontingenteWarned: boolean;
@@ -500,6 +508,7 @@ type
       TarifeDisabled,neuladen: boolean;
       pluglist: TStringlist;
       rssrunning: boolean; //läuft RSS-Update ?
+      AutoDialTimes: array of TAutoDial;
   end;
 
 var
@@ -545,7 +554,8 @@ implementation
 
 uses Unit2, Unit4, WebServ1, screen, shutdown, Unit3, tarifverw,
   Tarifmanager, Strutils,DateUtils, floating, unit8, Unit6, mmsystem,
-  leerlauf, StringRoutine, Unit7, Unit9, GridEvents, modes, menues, RSSReader, Protokolle, httpprot;
+  leerlauf, StringRoutine, Unit7, Unit9, GridEvents, modes, menues, RSSReader, Protokolle, httpprot,
+  donation;
 
 {$R *.dfm}
 
@@ -594,12 +604,12 @@ if not MinimizeOnClose then closeallowed:= true;
 
 canclose:= closeallowed;
 
-if closeallowed = false then
+if not closeallowed then
    begin
-      //tray.hidemainform;
-      hauptfenster.Visible:= false;
-      formhidden:= true;
-      if not noballoon then tray.ShowBalloonHint('Hinweis', 'Der LeastCoster ist nun im Tray minimiert.' + #13 +
+     //tray.hidemainform;
+     hauptfenster.Visible:= false;
+     formhidden:= true;
+     if not noballoon then tray.ShowBalloonHint('Hinweis', 'Der LeastCoster ist nun im Tray minimiert.' + #13 +
                                                              'Doppelklick zum maximieren.', bitInfo, 10);
    end
    else
@@ -623,9 +633,8 @@ if closeallowed = false then
      end else {AutoClose} canClose:= true;     
     end;
    end;
-   
-if canclose then
-    if assigned(RssRead.MyThread) then //wenn RSS-Update noch läuft
+
+  if canclose and assigned(RssRead.MyThread) then //wenn RSS-Update noch läuft
     begin
      canclose:= false; //beenden erstmal verbieten
      RSSRead.shutdown:= true; //herunterfahren im RSSReader erlauben
@@ -718,11 +727,8 @@ end;
 
 procedure THauptfenster.PlugInClick(Sender: TObject);
 begin
-with sender as TMenuItem do
-begin
- lastpluginclicked:= stripHotkey(caption);
+ lastpluginclicked:= stripHotkey((sender as TMenuItem).caption);
  StartPlugins('menu');
-end;
 end;
 
 procedure SetLEDs;
@@ -789,6 +795,102 @@ end;
 end;
 end;
 
+function CheckAutoConnect(var rest:integer): boolean;
+var DialDay: shortint;
+    DialStart, DialEnd: TDateTime;
+    i, day: integer;
+    n: TDateTime;
+
+begin
+ Result:= false;
+ if settings.ReadBool('AutoConnect','atTime', false) then
+ begin
+  n:= now;
+  day:= DayOfTheWeek(n);
+  for i:= 0 to length(hauptfenster.AutoDialTimes) -1 do
+  begin
+
+    DialDay  := Hauptfenster.AutodialTimes[i].tag;
+    DialStart:= Dateof(n) + Timeof(Hauptfenster.AutodialTimes[i].von);
+    DialEnd  := Dateof(n) + Timeof(Hauptfenster.AutodialTimes[i].bis);
+
+    If DialEnd <= DialStart then
+    begin
+      DialEnd:= incday(DialEnd, 1);
+      if dateof(n) = dateof(DialEnd) then
+      begin
+      day:= day-1; if day < 0 then day:= 6;
+      end;
+    end;
+    
+    case DialDay of
+    //   Mo-So
+      0..6:  if ((day = DialDay+1)
+                and ((n >= DialStart) and (n < DialEnd)) )
+                  then Result:= true;
+    //   daily
+      7:  if ((n >= DialStart) and (n < DialEnd))
+                then Result:= true;
+    //   weekday
+      8: if ( (Day < 6 )
+                and ((n >= DialStart) and (n < DialEnd)) )
+                  then Result:= true;
+    //   weekend
+      9: if ( (Day > 5)
+                and ((n >= DialStart) and (n < DialEnd)) )
+                  then Result:= true;
+      end;
+     if result then
+      begin
+        if (n < DialEnd) then rest:= secondsbetween(n, DialEnd) else rest:= 0;
+        break;
+      end;
+   end;
+ end;
+end;
+
+procedure TryAutoConnect;
+var restzeit: integer;
+    check: boolean;
+    delay: integer;
+begin
+if Hauptfenster.AutoDialStatus.LEDOn then
+begin
+
+ delay:= 10;
+ check:= CheckAutoConnect(restzeit);
+ 
+//Automatische Einwahl
+ if check and not isonline and (restzeit > 10 + delay) and (not Hauptfenster.dialing) then
+    begin
+       Hauptfenster.AutoDialEinwahl.checked:= settings.Readbool('AutoConnect','mitEinwahl',false);
+       Hauptfenster.AutoDialLed.ledon:= true;
+       if not Hauptfenster.AutoDial.enabled
+        then Hauptfenster.AutoDial.enabled:= true;
+    end
+  else
+  if check and (restzeit <= 10 + delay) then
+  begin
+   hauptfenster.autodial.enabled:= false; //falls der Timer noch läuft abschalten
+  //Automatisches Trennen
+   if assigned(disconnect_leerlauf) and (disconnect_leerlauf.Tag= 2) then
+     begin //wenn das Fenster noch am Einwählen ist
+      disconnect_leerlauf.close;
+     end
+   else
+   if not assigned(disconnect_leerlauf) and isonline then
+      begin
+           Application.CreateForm(Tdisconnect_leerlauf, disconnect_leerlauf);
+           disconnect_leerlauf.tag:= 1;
+           disconnect_leerlauf.usetimer:= true;
+           disconnect_leerlauf.timer1.tag:= delay;
+           disconnect_leerlauf.Label1.Caption:= 'Automatisches Trennen';
+           disconnect_leerlauf.Show;
+      end;
+  end;
+end;
+end;
+
 procedure THauptfenster.IsOntimerTimer(Sender: TObject);
 var h,m,s: word;
     delaytime, k, index: integer;
@@ -797,10 +899,23 @@ var h,m,s: word;
     noerror: boolean;
     beginn, ende: TDateTime;
 begin
-//isontimer.enabled:= false; //damit sich der Timer nicht selbst in die Quere kommt
-
 MagRasCon.GetConnections;
+//suche aktive Verbindungen > Achtung Win9x meldet Verbindungen als aktiv, die mit dem Wählen beginnen> Fehler werden nicht erkannt
 ConnCount := MagRasCon.Connections.Count;
+
+//wenn selbst gewählt und Win9x dann schauen ob wirklich connected
+if (ConnHandle=0) and (ConnCount >0) and (MagRasOSVersion = OSW9x) then
+  For index:= ConnCount-1 to 0 do
+    begin
+      //Status bestimmen
+      MagRasCon.GetConnectStatusEx(MagRasCon.Connections.RasConn(index),1);
+      //ConnCount runterzählen, wenn die Verbindung noch nicht aktiv
+      if MagRasCon.ConnectState < RASCS_Connected then
+      begin
+        dec(ConnCount);
+        MagRasCon.Connections.Delete(index);  //Eintrag in der Liste löschen
+      end;
+    end;
 
 If ((ConnHandle=0) and( ConnCount > 0)) then //wenn keine Connection bekannt war
 begin
@@ -820,6 +935,7 @@ end;
 
 MagRasCon.GetSubHandles(ConnHandle,2,SubHandle);
 
+//wenn Connection besteht, dann nachschauen auf welchem Kanal
 if ConnHandle > 0 then
 begin
   if MagRasOSVersion = OSW9x then
@@ -836,12 +952,14 @@ begin
   end;
 end;
 
+TryAutoConnect;
+
+//wenn keine Verbindung mehr besteht, dann alles trennen
 if ConnCount = 0 then
   begin
         if StatLED1.LEDon then StatLED1.LEDon:= false;
         if StatLED2.LEDon then StatLED2.LEDon:= false;
         if isonline then OnDisconnect; //wenn noch kein OnDisconnect kam, dann jetzt
-       isontimer.enabled:= true;
        exit;
    end;
 
@@ -990,7 +1108,7 @@ if Assigned(floatingW) then
 
      //wenn zeit zwischen Trennen und aktueller Zeit ausserhalb der Trennzeit dann Fenster aktivieren (Urzustand herstellen)
      if ((secondsbetween(trennticker.DateTime,now) > (delaytime)) and DisconnectStopped ) then DisconnectStopped:= false;
-    end;
+      end;
 //~~~~~~~~~~~~~~~~~ SPEED ~~~~~~~~~~~~~~~~~~~~~~~~~~
 // get performance info, element 0 is combined performance for all ports/conns
 // the three different platforms handle multiple calls differently
@@ -1102,7 +1220,7 @@ end;
           beginn := Dateof(Now) + onlineset.vbegin;
           Ende   := Dateof(Now) + onlineset.vend;
 
-          if Ende < beginn then incday(ende);
+          if Ende < beginn then Ende:= incday(ende,1);
 
         //WarnFenster freigeben, wenn es schon existiert
           If Assigned(PriceWarning) then Pricewarning.close.click;
@@ -1130,16 +1248,15 @@ end;
     end;
 
 oldtime:= now;
-isontimer.enabled:= true; //neustart des Onlinetimers wenn noch online
+
 end;
 end;
 
-procedure THauptfenster.MagRasConStateEvent(Sender: TObject;
-  ConnState: TRasStateRec);
+procedure THauptfenster.MagRasConStateEvent(Sender: TObject;ConnState: TRasStateRec);
 begin
 
 if not (ConnState.ConnectState = ERROR_INVALID_PORT_HANDLE) then
-  Dialstatus.text:= ConnState.statusstr; //Status ausgeben
+  Dialstatus.text:= ConnState.statusstr +' ('  +inttostr(connstate.ConnectState) +')'; //Status ausgeben
 
 //nur wenn eine fremde Verbindung aufgebaut wurde ist DialHandle 0
 //oder
@@ -1758,8 +1875,10 @@ Disconnecting:= false;
 neuladen:= false;
 isonline:= false;
 
-//lcz-Dateien wieder unregistrieren -> nicht mehr nötig
-if reg.keyexists('.lcz') then UnInstallExt('.lcz');
+reg:= TRegistry.Create;
+  //lcz-Dateien wieder unregistrieren -> nicht mehr nötig
+  if reg.keyexists('.lcz') then UnInstallExt('.lcz');
+reg.Free;
 
 Rssread:= TRss.Create;
 
@@ -2102,7 +2221,11 @@ end;
        AutoDialLed.ledon:= settings.Readbool('AutoConnect','AutoStartConnect',false);
        AutoDial.enabled:= true;
    end
-   else AutoDial.Interval:= 60000;
+   else AutoDial.Interval:= 1;
+//    settings.Readinteger('AutoConnect','Interval', 60)*1000;//60000;
+
+   AutoDialStatus.Visible:= settings.ReadBool('AutoConnect','atTime', false);
+   AutoDialStatus.LEDON:= settings.ReadBool('AutoConnect','atTime', false);
 
   //Rss-Update
    rss_update := settings.ReadInteger('RSS','Update',60);
@@ -2125,7 +2248,6 @@ end;
 
  if fileexists(ExtractFilepath(ParamStr(0)) + 'UpdatedFiles.dat') then
       CheckForUpdates;
-
 
   //Autoimport
  //Auto-Auswerten + Menueeintrag ausblenden
@@ -2155,6 +2277,7 @@ end;
 
   tarifverw.ladetarife;
   Kontingente_Laden;
+  LoadAutoDialTimes;
 
   //csv und html logs updaten sowie die Tagesstatistik
   Protokolle.CreateAllLogs;
@@ -2394,7 +2517,7 @@ begin
    MagRasCon.SubEntry:= 0;
 
   if MagRasCon.AutoConnectEx(DialHandle) <> 0 then
-    begin
+    begin //Wählen war nicht erfolgreich
      DialStatus.text:= 'Dialing failed.';
 
      if DialHandle <> 0 then RasHangUp(DialHandle);
@@ -2440,24 +2563,7 @@ begin
  7:Result:= '[So]';
  end;
 end;
-{
-procedure WriteWebStart;
-var f: textfile;
-begin
-assignfile(f,extractfilepath(paramstr(0)) + 'www\WebStart.htm');
-rewrite(f);
-writeln(f,'<html>');
-writeln(f,'<head><title>LeastCosterXP</title></head>');
-writeln(f,'<frameset rows="100,*" cols="*">');
-writeln(f,'<frame src="http://home.pages.at/darkempire/fin.htm" name="SomeAds">');
-writeln(f,'<frame src="',hauptfenster.onlineset.webseite,'" name="MainFrame">');
-writeln(f,'</frameset>');
-writeln(f,'</html>');
-closefile(f);
 
-
-end;
-}
 procedure THauptfenster.DialBtnClick(Sender: TObject);
 var buf: string;
     foundRasConn: boolean;
@@ -2466,84 +2572,80 @@ begin
 
 if isonline then
   begin  // schon online
-  status.SimpleText:='Die Verbindung ' + verbindungsname+ ' wird getrennt.';
-  Disconnecting:= true;
-  disconnect;
-  ForceDial.Checked:= false;
+   status.SimpleText:='Die Verbindung ' + verbindungsname+ ' wird getrennt.';
+   Disconnecting:= true;
+   disconnect;
+   ForceDial.Checked:= false;
   end
 else
-  begin //offline
-  reload.enabled:= false;   //reloaden disablen
+ begin //offline
+   reload.enabled:= false;   //reloaden disablen
+   status.simpletext:= 'Prüfe Anfrage ...';
+   save_cfg;
 
-  status.simpletext:= 'Prüfe Anfrage ...';
+   //RasVerbindung suchen und erstellen
+   foundRasConn := FindRasConnection;
+   if not FoundRasConn then CreateRAS;
 
-  save_cfg;
+    //selbst gewählte Verbindung während des Anwählens trennen
+   if (dialbtn.Caption = 'a&bbrechen') then
+     begin if DialHandle <> 0 then RasHangUp(DialHandle); ClearRasEntry;  dialing:= false; Hauptfenster.Cursor := crDefault; ForceDial.Checked:= false; exit; end;
 
-  //RasVerbindung suchen und erstellen
-  foundRasConn := FindRasConnection;
-  if not FoundRasConn then CreateRAS;
+   if beliebig_check.Checked then
+      begin
+        if not webzugriff then
+          status.simpletext:= 'Keine Einwahl solange ''Zeige beliebige Zeit'' aktiviert ist !';
+        exit;
+      end;
 
-  //selbst gewählte Verbindung während des Anwählens trennen
-  if (dialbtn.Caption = 'a&bbrechen') then
-    begin if DialHandle <> 0 then RasHangUp(DialHandle); ClearRasEntry;  dialing:= false; Hauptfenster.Cursor := crDefault; exit; end;
+   try
+     if secondsbetween(timeofliste, now) > 60 then
+      begin
+        if not webzugriff then
+           status.simpletext:= 'Die Tarifliste ist älter als 60s. Sie wird aktualisiert.' + #13#10+
+                                'Bitte danach erneut versuchen';
+        AktualisierenClick(nil);
+        exit;
+      end;
 
-  if beliebig_check.Checked then
-  begin
-   if not webzugriff then
-   status.simpletext:= 'Keine Einwahl solange ''Zeige beliebige Zeit'' aktiviert ist !';
-   exit;
-  end;
+      if ((liste.Cells[1,liste.row] = '') and (liste.Cells[2,liste.row]='') and (liste.rowcount=2)) then
+        begin
+          status.simpletext:= 'Kein Eintrag in der Tarifliste aktiv.';
+          exit;
+        end;
 
-  try
-   if secondsbetween(timeofliste, now) > 60 then
-   begin
-    if not webzugriff then
-    status.simpletext:= 'Die Tarifliste ist älter als 60s. Sie wird aktualisiert.' + #13#10+
-                        'Bitte danach erneut versuchen';
-    AktualisierenClick(nil);
-    exit;
-   end;
 
-  if ((liste.Cells[1,liste.row] = '') and (liste.Cells[2,liste.row]='') and (liste.rowcount=2)) then
-  begin
-   status.simpletext:= 'Kein Eintrag in der Tarifliste aktiv.';
-   exit;
-  end;
+      if (sender <> Dialbtn ) and (strtodate(liste.cells[13,liste.row]) < dateof(now)) then
+       begin
+         if not webzugriff then  status.simpletext:= 'Dieser Tarif ist am '+liste.cells[13,liste.row]+' abgelaufen !!';
+         exit;
+       end;
 
-  if sender <> Dialbtn then
-  if strtodate(liste.cells[13,liste.row]) < dateof(now) then
-  begin
-   if not webzugriff then  status.simpletext:= 'Dieser Tarif ist am '+liste.cells[13,liste.row]+' abgelaufen !!';
-   exit;
-  end;
+    except
+      if not webzugriff then  status.simpletext:='Ein unbekannter Fehler trat auf. Bitte die Liste aktualisieren und neu versuchen zu wählen.';
+      exit;
+    end;
 
-except
-  if not webzugriff then  status.simpletext:='Ein unbekannter Fehler trat auf. Bitte die Liste aktualisieren und neu versuchen zu wählen.';
-  exit;
-end;
+   if ansicontainstext(costs.text,'Dauer überschreitet Tarifende') then
+      begin
+        if not webzugriff then status.simpletext:= 'Dauer überschreitet Tarifende !';
+        exit;
+      end;
 
-  if ansicontainstext(costs.text,'Dauer überschreitet Tarifende') then
-  begin
-  if not webzugriff then
-   status.simpletext:= 'Dauer überschreitet Tarifende !';
-   exit;
-  end;
+    if liste.Cells[7,liste.row] = 'Blacklist' then
+     begin
+       if not webzugriff then status.simpletext:= 'Tarife der Blacklist werden nicht gewählt.';
+       exit;
+     end;
 
-  if liste.Cells[7,liste.row] = 'Blacklist' then
-   begin
-   if not webzugriff then
-   status.simpletext:= 'Tarife der Blacklist werden nicht gewählt.';
-   exit;
-  end;
-
-  if ((modemname = '') or (modemtype='')) then
-  begin
-   status.simpletext:= 'Es wurde kein gültiges Modem eingtragen !';
-   exit;
-  end;
+    if ((modemname = '') or (modemtype='')) then
+     begin
+       status.simpletext:= 'Es wurde kein gültiges Modem eingtragen !';
+       exit;
+     end;
 
  //Autodial enabled ? erstmal abschalten
- if autodial.enabled then begin Autodial.Tag:= 10; autodial.interval:= 60000; autodial.enabled:= false; AutoDialLEd.ledon:= false; end;
+ if autodial.enabled then begin Autodial.Tag:= 10; autodial.interval:= settings.Readinteger('AutoConnect','Interval', 60)*1000; autodial.enabled:= false; AutoDialLEd.ledon:= false; end;
 
  //~~~~~~~~~~~~Fehler sind hier abgearbeitet~~~~~~~~~~~~~~~~~~
 
@@ -2592,8 +2694,6 @@ end;
   onlineset.kostenbisjetzt:= 0;
   onlineset.wechsel:= incday(now, 10*365);
 
-//  WriteWebStart;   //Datei schreiben, die geöffnet wird
-
   //Logfile schreiben
   buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+'Anwahlversuch (LeastCosterXP) ' + onlineset.Tarif +
               #9+  'LeastCosterXP - Server'   +#13#10;
@@ -2606,20 +2706,17 @@ end;
  leertime.Value:= leerlaufdisconnectzeit;
  leerlauf.Interval:= leerlaufdisconnectzeit *60 * 1000;
 
- //Ausschalten bei Automatischem Trennen
- AutoAus.ItemIndex:= AutoAusIndex;
+  //Ausschalten bei Automatischem Trennen
+  AutoAus.ItemIndex:= AutoAusIndex;
 
  //AutoConnect setzen
   AutoDialEinwahl.checked:= settings.Readbool('AutoConnect','mitEinwahl',false);
-  AutoDialLEd.ledon:= settings.Readbool('AutoConnect','AutoReConnect',false);
   AutoBase.Position:= Autosurfdauer;
 
   Autodiscled.ledon:= AutoDisconnect.Enabled;
   trennask.checked:= AutoDisconnect.Ask;
 
  //Autotrennen setzen
-// try
-
    //wenn Ende > als Beginn oder ende ist noch in der Zukunft
   if ( (Dateof(now) + strtotime(liste.Cells[3,liste.row])) > (Dateof(now) + strtotime(liste.Cells[2,liste.row])))
      or
@@ -3009,6 +3106,7 @@ begin
     else Dialstatus.text:= 'Online/Connected';
 
           isonline:= true;
+          AutoDialLed.ledon:= settings.Readbool('AutoConnect','AutoReConnect',false); //Wiedereinwahl setzen
           Aktualisieren.Enabled:= false;
 
           //Ausblenden der OfflineElemente und Einblenden des online-Mode
@@ -3232,30 +3330,38 @@ if assigned(floatingw) then
 
 if firststart then
 begin
-firststartcheck.enabled:= true;
-firststart:= false;
-exit;
+  settings.WriteDate('LeastCoster','Donation', incday(Dateof(now),7));
+  firststartcheck.enabled:= true;
+  firststart:= false;
+  exit;
 end;
 
-if startcount > 0 then 
+if startcount > 0 then
   if not isonline then aktualisierenclick(self);
 
-if startcount > 1 then exit; 
+if startcount > 1 then exit;
 inc(startcount);
 if startcount= 1 then // beim ersten Aktivieren des Mainforms
 begin
+
+  //wenn der Wert nicht existiert
+  if settings.ReadDate('LeastCoster','Donation', incday(Dateof(now),+1000)) = incday(Dateof(now),+1000)
+   then settings.WriteDate('LeastCoster','Donation', incday(Dateof(now),7));
+
+  if settings.ReadDate('LeastCoster','Donation', incday(Dateof(now),+1000)) < Dateof(now)
+    then DonateWindow.show;         
 
   //schauen ob ein parameter übergeben wurde
   If (ParamCount>0) and (FileExists(ParamStr(1)))
     then
     begin
-      if ansicontainstext(paramstr(1),'.lcz') or ansicontainstext(paramstr(1),'.lcx')  then
+      if ansicontainstext(paramstr(1),'.lcx') then
       begin
         importfilename:=paramstr(1);
         startwithimport:= true;
         hauptfenster.MainMenueClick(Hauptfenster.MM1_1);
       end
-      else showmessage('Datei '+ paramstr(1) +' ist ungültig');
+      else showmessage('Die Datei '+ paramstr(1) +' ist ungültig');
     end;
 
 end;
@@ -3287,7 +3393,18 @@ end;
 end;
 
 procedure THauptfenster.beliebig_timeChange(Sender: TObject);
+var lasth: integer;
 begin
+lasth:= beliebig_time.tag;
+beliebig_time.tag:= hourof(beliebig_time.time);
+
+if (lasth = 23) and (hourof(beliebig_time.time)=0) then
+   beliebig_date.date:= incday(beliebig_date.date,1)
+else
+if (lasth = 0) and (hourof(beliebig_time.time)=23) then
+   beliebig_date.date:= incday(beliebig_date.date,-1);
+
+
 aktualisierenClick(Self);
 end;
 
@@ -3535,7 +3652,7 @@ Autodial.enabled:= false;
     begin
          DialStatus.text:= 'Autodial failed ...';
          Status.simpletext:= 'Autodial fehlgeschlagen' +' ('+datetimetostr(now)+')';
-         Autodial.interval:= 60000;
+         Autodial.interval:= settings.Readinteger('AutoConnect','Interval', 60) * 1000;//60000;
          autodial.tag:= 10; //10 Sekunden Countdown
          AutoDial.enabled:= true;
     end;     
@@ -3545,7 +3662,7 @@ end;
 procedure THauptfenster.AutodialTimer(Sender: TObject);
 begin
  autodial.enabled:= false;
- autodial.interval:= 60000; //einmal die minute reicht zu
+ autodial.interval:= settings.Readinteger('AutoConnect','Interval', 60) *1000; //60000; //einmal die minute reicht zu
   if not assigned(disconnect_leerlauf) then
     begin
      Application.CreateForm(Tdisconnect_leerlauf, disconnect_leerlauf);
@@ -4409,6 +4526,7 @@ end;
 
 procedure THauptfenster.DonateClick(Sender: TObject);
 begin
+  settings.WriteDate('LeastCoster','Donation', incday(Dateof(now),60));
   Shellexecute( handle, 'open', Pchar('https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=stefan_fruhner%40web%2ede&item_name=LeastCosterXP&no_shipping=2&no_note=1&tax=0&currency_code=EUR&lc=DE&bn=PP%2dDonationsBF&charset=UTF%2d8'), nil, nil, SW_SHOWMaximized);
 end;
 
@@ -4444,7 +4562,21 @@ end;
 
 procedure THauptfenster.ForceDialClick(Sender: TObject);
 begin
-ForceDial.checked:= not forceDial.checked;
+  ForceDial.checked:= not forceDial.checked;
+end;
+
+procedure THauptfenster.AutoDialStatusClick(Sender: TObject);
+begin
+AutoDialStatus.LEDON:= not AutoDialStatus.LEDON;
+end;
+
+procedure THauptfenster.AutoDialStatusLedStateChanged(Sender: TObject;
+  LedOn: Boolean; NumSwitch: Integer);
+begin
+if AutoDialStatus.LEDON then
+    AutoDialStatus.hint:= 'Die Automatische Einwahl ist aktiviert.'
+  else
+    AutoDialStatus.hint:= 'Die Automatische Einwahl ist deaktiviert.';
 end;
 
 end.

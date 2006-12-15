@@ -13,6 +13,7 @@ object LCXPSettings: TLCXPSettings
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  Menu = MainMenu1
   OldCreateOrder = False
   Position = poDesktopCenter
   Visible = True
@@ -38,7 +39,7 @@ object LCXPSettings: TLCXPSettings
     Top = 0
     Width = 439
     Height = 449
-    ActivePage = TabSheet7
+    ActivePage = TabSheet9
     Align = alTop
     MultiLine = True
     TabOrder = 0
@@ -695,7 +696,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'In welchem Modus soll das Programm ausgef'#252'hrt werden ?'
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           Sorted = True
@@ -1046,7 +1047,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Zeige BackUp-Ordner'
           TabOrder = 2
           WordWrap = True
-          OnClick = Button9Click
+          OnClick = Button10Click
         end
         object keepfiles_one: TCheckBox
           Left = 43
@@ -1613,7 +1614,7 @@ object LCXPSettings: TLCXPSettings
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1630,9 +1631,9 @@ object LCXPSettings: TLCXPSettings
       ImageIndex = 8
       object GroupBox20: TGroupBox
         Left = 0
-        Top = 121
+        Top = 297
         Width = 431
-        Height = 109
+        Height = 104
         Align = alTop
         Caption = 'Auto - Blacklist'
         Font.Charset = DEFAULT_CHARSET
@@ -1714,7 +1715,7 @@ object LCXPSettings: TLCXPSettings
         Left = 0
         Top = 0
         Width = 431
-        Height = 121
+        Height = 297
         Align = alTop
         Caption = 'Auto - Einwahl  |  Wiederverbinden'
         Font.Charset = DEFAULT_CHARSET
@@ -1726,18 +1727,32 @@ object LCXPSettings: TLCXPSettings
         TabOrder = 0
         OnMouseMove = AutoEinwahlMouseMove
         object Label30: TLabel
-          Left = 28
-          Top = 70
+          Left = 52
+          Top = 110
           Width = 125
           Height = 13
           Caption = 'Basiszeit bei Autoeinwahl :'
           OnMouseMove = Label30MouseMove
         end
         object Label33: TLabel
-          Left = 159
-          Top = 70
-          Width = 3
+          Left = 189
+          Top = 110
+          Width = 51
           Height = 13
+        end
+        object Label48: TLabel
+          Left = 88
+          Top = 59
+          Width = 210
+          Height = 13
+          Caption = 'Sekunden zwischen zwei Einwahlversuchen'
+        end
+        object Label51: TLabel
+          Left = 25
+          Top = 231
+          Width = 6
+          Height = 13
+          Caption = '--'
         end
         object AutoConnectOnStart: TCheckBox
           Left = 8
@@ -1759,16 +1774,16 @@ object LCXPSettings: TLCXPSettings
         end
         object AutoConnectEinwahl: TCheckBox
           Left = 8
-          Top = 49
+          Top = 87
           Width = 232
           Height = 17
           Caption = 'Tarife mit Einwahlgeb'#252'hren ber'#252'cksichtigen'
-          TabOrder = 2
+          TabOrder = 3
           OnMouseMove = AutoConnectEinwahlMouseMove
         end
         object AutoSurfdauer: TTrackBar
-          Left = 27
-          Top = 84
+          Left = 51
+          Top = 124
           Width = 342
           Height = 20
           Ctl3D = True
@@ -1777,9 +1792,104 @@ object LCXPSettings: TLCXPSettings
           ParentCtl3D = False
           Frequency = 20
           Position = 15
-          TabOrder = 3
+          TabOrder = 4
           ThumbLength = 10
           OnChange = AutoSurfdauerChange
+        end
+        object AutoConnectInterval: TSpinEdit
+          Left = 8
+          Top = 56
+          Width = 73
+          Height = 22
+          MaxValue = 600
+          MinValue = 1
+          TabOrder = 2
+          Value = 60
+        end
+        object AutoD_start: TDateTimePicker
+          Left = 23
+          Top = 196
+          Width = 100
+          Height = 21
+          Date = 39057.000000000000000000
+          Time = 39057.000000000000000000
+          Kind = dtkTime
+          TabOrder = 7
+        end
+        object AutoD_End: TDateTimePicker
+          Left = 40
+          Top = 228
+          Width = 100
+          Height = 21
+          Date = 39057.000000000000000000
+          Time = 39057.000000000000000000
+          Kind = dtkTime
+          TabOrder = 8
+        end
+        object AutoD: TCheckBox
+          Left = 8
+          Top = 144
+          Width = 153
+          Height = 17
+          Caption = 'zeitgesteuert online : '
+          TabOrder = 5
+          OnClick = AutoDClick
+        end
+        object AutoD_Day: TComboBox
+          Left = 23
+          Top = 163
+          Width = 100
+          Height = 21
+          AutoComplete = False
+          Style = csDropDownList
+          DropDownCount = 13
+          ItemHeight = 13
+          ItemIndex = 7
+          TabOrder = 6
+          Text = 't'#228'glich'
+          Items.Strings = (
+            'montags'
+            'dienstags'
+            'mittwochs'
+            'donnerstags'
+            'freitags'
+            'samstags'
+            'sonntags'
+            't'#228'glich'
+            'wochentags'
+            'Wochenende')
+        end
+        object Button9: TButton
+          Left = 16
+          Top = 256
+          Width = 65
+          Height = 25
+          Caption = 'hinzuf'#252'gen'
+          TabOrder = 9
+          OnClick = Button9Click
+        end
+        object Button11: TButton
+          Left = 88
+          Top = 256
+          Width = 65
+          Height = 25
+          Caption = 'l'#246'schen'
+          TabOrder = 10
+          OnClick = Button11Click
+        end
+        object AutoL: TValueListEditor
+          Left = 176
+          Top = 152
+          Width = 233
+          Height = 129
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goThumbTracking]
+          TabOrder = 11
+          TitleCaptions.Strings = (
+            'Tag'
+            'Zeit')
+          ColWidths = (
+            75
+            152)
         end
       end
     end
@@ -1901,7 +2011,7 @@ object LCXPSettings: TLCXPSettings
           Width = 170
           Height = 21
           Hint = 'W'#228'hlen Sie hier den User aus. '
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           Sorted = True
@@ -2268,5 +2378,9 @@ object LCXPSettings: TLCXPSettings
     Options = [fdForceFontExist]
     Left = 400
     Top = 328
+  end
+  object MainMenu1: TMainMenu
+    Left = 344
+    Top = 64
   end
 end

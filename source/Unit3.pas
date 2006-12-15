@@ -255,10 +255,9 @@ begin
     temp:= line; //nächste Spalte
    end; // ende der for-schleife > weiter zur nächsten zeile
 
-
  //wenn Daten ausserhalb des Bereichs dann wieder löschen
-    if  ( Strtodatetime( grid.cells[1,row]+ ' ' +grid.cells[2,row] ) < datepick1.DateTime )
-       or ( Strtodatetime( grid.cells[1,row]+ ' ' +grid.cells[2,row] ) > datepick2.DateTime)
+    if  ( Dateof(Strtodate(grid.cells[1,row]))+ Timeof(strtotime(grid.cells[2,row])) < datepick1.DateTime )
+       or ( Dateof(Strtodate( grid.cells[1,row]))+ TimeOf(strtotime(grid.cells[2,row])) > datepick2.DateTime)
        then
         begin
           row:= row-1;
@@ -540,14 +539,12 @@ begin
  sortedbyrufnummer:= false;
 
  datepick2.Date:= dateof(now);
- timepick2.Time:= strtotime('23:59:59');
+ timepick2.Time:= EncodeTime(23,59,59,0);//strtotime('23:59:59');
  datepick2.Time:= timepick2.Time;
 
- datepick1.Date:= strtodate('01.'+inttostr(monthof(now))+'.'+inttostr(yearof(now)));
- timepick1.time:= strtotime('00:00:00');
+ datepick1.Date:= encodedate(yearof(now), monthof(now),1);//strtodate('01.'+inttostr(monthof(now))+'.'+inttostr(yearof(now)));
+ timepick1.time:= EncodeTime(0,0,0,0);//strtotime('00:00:00');
  datepick1.Time:= timepick1.Time;
-
-
 
  sortbox.itemindex  :=    settings.ReadInteger('EVN','Sortierung',0);
  Formatbox.itemindex:=    settings.ReadInteger('EVN','Export',0);
@@ -671,6 +668,10 @@ var localrow: integer;
     tmp, inhalti: string;
     getcols: integer;
 begin
+
+if sortbox.ItemIndex = -1 then sortbox.ItemIndex:= 0;
+if formatbox.ItemIndex = -1 then formatbox.ItemIndex:= 0;
+
 SetCursor_Wait;
 errormsg.caption:= 'Lade Datensätze ... ';
 errormsg.Refresh;
@@ -903,8 +904,8 @@ nummer:=0;
 tarif:=0;
 rufnummer:=0;
 gesamtkosten:= 0.0;
-gesamtzeit:= EncodeTime(0,0,0,0);//Strtotime('00:00:00');
-gesamt:= EncodeDateTime(1970,01,01,0,0,0,0);//Strtodatetime('01.01.1970 00:00:00');
+gesamtzeit:= EncodeTime(0,0,0,0);
+gesamt:= EncodeDateTime(1970,01,01,0,0,0,0);
 
 if ((grid.ColCount<6) and (grid.rowcount < 3)) then exit;
 

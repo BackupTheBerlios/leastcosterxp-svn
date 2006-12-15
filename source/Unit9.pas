@@ -31,7 +31,7 @@ var
   Info: TInfo;
 
 implementation
-uses files, StrUtils, ShellAPi, Unit1;
+uses files, StrUtils, ShellAPi, Unit1, DateUtils;
 {$R *.dfm}
 
 procedure TInfo.FormCreate(Sender: TObject);
@@ -83,6 +83,7 @@ end;
 
 procedure TInfo.Image1Click(Sender: TObject);
 begin
+ settings.WriteDate('LeastCoster','Donation', incday(Dateof(now),60));
  Shellexecute( handle, nil, Pchar('https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=stefan_fruhner%40web%2ede&item_name=LeastCosterXP&no_shipping=2&no_note=1&tax=0&currency_code=EUR&lc=DE&bn=PP%2dDonationsBF&charset=UTF%2d8'), nil, nil, SW_SHOWMaximized);
 end;
 

@@ -40,23 +40,12 @@ months : array[1..12] of String[9] = ('Januar','Februar','M„rz','April','Mai','J
 length_months : array[1..12] of shortint = (31,28,31,30,31,30,31,31,30,31,30,31);
 
 procedure getdate(var y,m,d,dow: word);
-var datestring, day, month, year: string;
-code: integer;
 begin
-Datestring := DateToStr(Date);
-day:= datestring;  month:= datestring; year:= datestring;
-Delete(day, 3, 8);
-
-Delete(month, 1, 3);
-Delete(month, 3, 5);
-
-Delete(year, 1,6);
-
-val(day,d,code);
-val(month,m,code);
-val(year,y,code);
-dow:= dayoftheweek(date);
-if dow=7 then dow:=0;
+  y:= yearof(date);
+  m:= monthof(date);
+  d:= dayof(date);
+  dow:= dayoftheweek(date);
+  if dow=7 then dow:=0;
 end;
 
 Function Fnord(Zeichen:string):Real;

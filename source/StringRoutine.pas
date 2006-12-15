@@ -38,34 +38,25 @@ var zeilen: TStringlist;
     timestamp: string;
     DateOfTimeStamp: TDate;
     i: integer;
-    r: TRegExpr;
 begin
  if fileexists(LogFile) then
  begin
-  r:= TregExpr.Create;
   zeilen:= TStringList.create;
   zeilen.LoadFromFile(LogFile);
   for i:= zeilen.Count-1 downto 0 do
   begin
-   r.expression:= '(.* \d\d:\d\d:\d\d)\t.*';
-//   timestamp:= trim(GetWordOfAnsiString(zeilen.Strings[i],1,#9));
-   if r.Exec(zeilen.Strings[i]) then
-   begin
-    timestamp:= trim(r.Replace(zeilen.strings[i],'$1', true));
-    try
-     DateOfTimeStamp:= Dateof(StrtoDateTime(timestamp));
-     if (daysbetween(dateof(now), DateofTimeStamp) > DaysToSave) then
-      zeilen.Delete(i);
-    except
-     continue;
-    end;
+   timestamp:= trim(GetWordOfAnsiString(zeilen.Strings[i],1,#9));
+   try
+    DateOfTimeStamp:= Dateof(StrtoDateTime(timestamp));
+    if (daysbetween(dateof(now), DateofTimeStamp) > DaysToSave) then
+     zeilen.Delete(i);
+   except
+    continue;
    end;
   end;
   zeilen.SaveToFile(LogFile);
   zeilen.free;
-  r.free;
  end;
-
 end;
 
 end.
