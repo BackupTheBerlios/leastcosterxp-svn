@@ -885,6 +885,7 @@ begin
            disconnect_leerlauf.usetimer:= true;
            disconnect_leerlauf.timer1.tag:= delay;
            disconnect_leerlauf.Label1.Caption:= 'Automatisches Trennen';
+           disconnect_leerlauf.grad.endcolor:= $0081E6EB; {gelb}//$009191DB; {rot}//$006FEE7E;{grün}
            disconnect_leerlauf.Show;
       end;
   end;
@@ -905,7 +906,7 @@ ConnCount := MagRasCon.Connections.Count;
 
 //wenn selbst gewählt und Win9x dann schauen ob wirklich connected
 if (ConnHandle=0) and (ConnCount >0) and (MagRasOSVersion = OSW9x) then
-  For index:= ConnCount-1 to 0 do
+  For index:= ConnCount-1 downto 0 do
     begin
       //Status bestimmen
       MagRasCon.GetConnectStatusEx(MagRasCon.Connections.RasConn(index),1);
@@ -920,8 +921,9 @@ if (ConnHandle=0) and (ConnCount >0) and (MagRasOSVersion = OSW9x) then
 If ((ConnHandle=0) and( ConnCount > 0)) then //wenn keine Connection bekannt war
 begin
      OnConnect;
-     if selfdial then ConnHandle:= DialHandle
-     else
+     if selfdial then
+      begin ConnHandle:= DialHandle; DialHandle:= 0; end
+     else //wenn externe Verbindung
      For index:= 0 to ConnCount -1 do
          if ( (lowercase(MagRasCon.Connections.DeviceType(index)) = 'modem')
             or(lowercase(MagRasCon.Connections.DeviceType(index)) = 'isdn')) then
@@ -936,21 +938,20 @@ end;
 MagRasCon.GetSubHandles(ConnHandle,2,SubHandle);
 
 //wenn Connection besteht, dann nachschauen auf welchem Kanal
-if ConnHandle > 0 then
-begin
-  if MagRasOSVersion = OSW9x then
+if (ConnHandle > 0) and (MagRasOSVersion = OSW9x) then
   begin
    MagRasCon.GetConnectStatusEx(ConnHandle,1);
    setLEDs;
   end
-  else
+else
+if (ConnHandle > 0) then
   begin
      MagRasCon.GetConnectStatusEx(Subhandle[1],1);
      setLEDs;
      MagRasCon.GetConnectStatusEx(Subhandle[2],2);
      setLEDs;
   end;
-end;
+
 
 TryAutoConnect;
 
@@ -1011,10 +1012,10 @@ begin//Onlinezeitmessung
 
 if Assigned(floatingW) then
  begin
- floatingW.ozeit.Caption:= ozeit.caption;
- floatingW.ozeit.Refresh;
- floatingW.ocostlabel.caption:= ocostlabel.caption;
- floatingW.ocostlabel.refresh;
+   floatingW.ozeit.Caption:= ozeit.caption;
+   floatingW.ozeit.Refresh;
+   floatingW.ocostlabel.caption:= ocostlabel.caption;
+   floatingW.ocostlabel.refresh;
  end;
 
  //ip ausgeben
@@ -1075,6 +1076,7 @@ if Assigned(floatingW) then
             disconnect_leerlauf.usetimer:= true;
             disconnect_leerlauf.timer1.tag:= 30;
             disconnect_leerlauf.Label1.Caption:= 'Ende des Freikontingents';
+            disconnect_leerlauf.grad.endcolor:= $009191DB; {rot}
             disconnect_leerlauf.Show;
             kontingenteWarned:= true;
        end;
@@ -1100,6 +1102,7 @@ if Assigned(floatingW) then
                         disconnect_leerlauf.timer1.tag:= Autodisconnect.Delay;
                       end;
                       disconnect_leerlauf.Label1.Caption:= 'Automatisches Trennen';
+                      disconnect_leerlauf.grad.endcolor:= $009191DB; {rot}
                       disconnect_leerlauf.Show;
                 end;
           end
@@ -1670,26 +1673,20 @@ procedure THauptfenster.PerformExit;
 var i: integer;
     buf: string;
 begin
- //alle aktiven Benutzer ausloggen
-    UserSettings.erasesection('active');
+    UserSettings.erasesection('active');                                          //alle aktiven Benutzer aus dem WebInterface ausloggen
+    settings.writeinteger('lasttime','base', hauptfenster.surfdauer.position);    //sichern der Einstellungen
 
+    for i:= 1 to liste.colcount-1 do                                              //abspeichern der Tabellenbreiten
+      settings.writeinteger('Tariflist','Col'+inttostr(i),hauptfenster.liste.ColWidths[i]);
 
-    //sichern der Einstellungen
-    settings.writeinteger('lasttime','base', hauptfenster.surfdauer.position);
-
-    for i:= 1 to liste.colcount-1 do     //abspeichern der Tabellenbreiten
-    settings.writeinteger('Tariflist','Col'+inttostr(i),hauptfenster.liste.ColWidths[i]);
     settings.writebool('Tariflist','Colors', usecolors);
     settings.writeBool('LeastCoster','ConnectionCost', ConnectionCostVisible );
     settings.WriteBool('Tariflist','Clock', clock.Visible);
 
-    //wenn gerade gewählt wird
-    with hauptfenster do
-    if (dialbtn.Caption = 'a&bbrechen') then
-    begin if ConnHandle <> 0 then RasHangUp(ConnHandle); end;
+    if DialHandle <> 0 then  //wenn gerade gewählt wird
+      begin RasHangUp(DialHandle); ClearRasEntry;  dialing:= false; Hauptfenster.Cursor := crDefault; ForceDial.Checked:= false; end;
 
-   //wenn noch online
-    if (isonline and selfdial) then
+    if (isonline and selfdial) then //wenn noch online
     begin
      disconnect;
      onlineset.Endzeit:= timeof(now);
@@ -2717,27 +2714,27 @@ else
   trennask.checked:= AutoDisconnect.Ask;
 
  //Autotrennen setzen
-   //wenn Ende > als Beginn oder ende ist noch in der Zukunft
-  if ( (Dateof(now) + strtotime(liste.Cells[3,liste.row])) > (Dateof(now) + strtotime(liste.Cells[2,liste.row])))
+  //wenn Ende > als Beginn oder ende ist noch in der Zukunft
+  if ( (Dateof(now) + Timeof(onlineset.vend)) > (Dateof(now) + timeof(onlineset.vbegin)))
      or
-     ( (Dateof(now) + strtotime(liste.Cells[3,liste.row])) > now )
+     ( (Dateof(now) + timeof(onlineset.vend)) > now )
   then
-    trennticker.DateTime:= Dateof(now) + strtotime(liste.Cells[3,liste.row])
+    trennticker.DateTime:= Dateof(now) + Timeof(onlineset.vend)
   else //wenn ende < beginn
-  if (Dateof(now) + strtotime(liste.Cells[3,liste.row])) < (Dateof(now) + strtotime(liste.Cells[2,liste.row])) then
+  if (Dateof(now) + Timeof(onlineset.vend)) < (Dateof(now) + TimeOf(onlineset.vbegin)) then
   begin //auf morgen setzen
-    trennticker.DateTime:= incday(Dateof(now),1) + strtotime(liste.Cells[3,liste.row]);
+    trennticker.DateTime:= Dateof(incday(now,1)) + Timeof(onlineset.vend);
     // ... und schauen ob morgen noch gültig, wenn nicht, dann 00:00:00 beenden
     if (Ansicontainstext(liste.cells[17,liste.row],StringvonMorgen(now)) = false) then
           //auf nächstes 0h setzen
-          trennticker.DateTime:= incday(dateof(now) + EncodeTime(0,0,0,0),1);
+          trennticker.DateTime:= incday(dateof(now) + timeof(EncodeTime(0,0,0,0)),1);
   end
   else //wenn ende = beginn (ganztags)
-  if (Dateof(now) + strtotime(liste.Cells[3,liste.row])) = (Dateof(now) + strtotime(liste.Cells[2,liste.row])) then
+  if (Dateof(now) + Timeof(onlineset.vend)) = (Dateof(now) + Timeof(onlineset.vbegin)) then
   begin
     //wenn morgen nicht mehr gültig, dann 0h trennen
     if Ansicontainstext(liste.cells[17,liste.row],StringvonMorgen(now)) = false then
-       trennticker.DateTime:= incday(dateof(now) + EncodeTime(0,0,0,0),1)
+       trennticker.DateTime:= incday(dateof(now) + timeof(EncodeTime(0,0,0,0)),1)
     else
     Autodiscled.ledon:= false; //gilt noch morgen
   end;
@@ -2785,6 +2782,7 @@ begin
     disconnect_leerlauf.usetimer:= true;
     disconnect_leerlauf.timer1.tag:= 30;
     disconnect_leerlauf.Label1.Caption:= 'Tarif wurde verändert !';
+    disconnect_leerlauf.grad.endcolor:= $009191DB; {rot}
     disconnect_leerlauf.Show;
  end;
 
@@ -3182,7 +3180,7 @@ begin
          if dialing then begin WaitOnDisconnect.enabled:= true; exit; end;
 
           ConnHandle:= 0;
-          DialHandle:= 0 ;
+          DialHandle:= 0;
           disconnectStopped:= false;
           actofftime:= now;
           onlineset.Endzeit:= timeof(now);
@@ -3578,6 +3576,7 @@ begin
        disconnect_leerlauf.timer1.tag:= leerlaufdisconnect.Delay;
        end;
       disconnect_leerlauf.label1.caption:= 'Ihre Verbindung ist im Leerlauf.';
+      disconnect_leerlauf.grad.endcolor:= $006FEE7E;{grün}
       disconnect_leerlauf.Show;
      end;
    end
@@ -3673,6 +3672,7 @@ begin
      disconnect_leerlauf.Label3.Caption:= 'gewählt.';
      disconnect_leerlauf.Label2.Caption:= inttostr(Autodial.tag) + ' Sekunden';
      disconnect_leerlauf.trennen.visible:= false;
+     disconnect_leerlauf.grad.endcolor:= $0081E6EB; {gelb}//$009191DB; {rot}//$006FEE7E;{grün}
      disconnect_leerlauf.Show;
      end;
 end;

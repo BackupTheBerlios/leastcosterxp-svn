@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, StdCtrls, Buttons, AppEvnts;
+  Dialogs, ExtCtrls, StdCtrls, Buttons, AppEvnts,SRGrad;
 
 type
   Tdisconnect_leerlauf = class(TForm)
@@ -35,6 +35,8 @@ type
    //0: Standardzustand (not selceted) wird beim Starten und Beenden gesetzt
    //1: Autodisconnect
    //2: AutoEinwahl
+
+   grad : TSRGradient;
     { Public declarations }
   end;
 
@@ -49,6 +51,16 @@ uses Unit1;
 
 procedure Tdisconnect_leerlauf.FormCreate(Sender: TObject);
 begin
+
+grad := TSRGradient.Create(self);
+grad.parent:= disconnect_leerlauf;
+grad.Align:= alClient;
+grad.Direction:= gdUpLeft;
+grad.EndColor:= $00DBAF95;
+grad.StartColor:= clBtnFace;
+grad.Style:= gsPyramid;
+grad.SendToBack;//nach hinten schieben
+
 usetimer:= false;
 useConnectTimeOut:= false;
 hauptfenster.Enabled:= false;
@@ -99,6 +111,9 @@ procedure Tdisconnect_leerlauf.FormClose(Sender: TObject; var Action: TCloseActi
 begin
 hauptfenster.Enabled:= true;
 disconnect_leerlauf.tag:= 0;
+
+if assigned(grad) then grad.free;
+
 disconnect_leerlauf.release;
 disconnect_leerlauf:= nil;
 end;
