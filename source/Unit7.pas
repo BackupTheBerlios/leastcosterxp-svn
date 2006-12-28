@@ -8,9 +8,8 @@ uses
 
 type
   TPriceWarning = class(TForm)
-    Label1: TLabel;
-    warn: TLabel;
-    info: TLabel;
+    neu1: TLabel;
+    neu2: TLabel;
     close: TBitBtn;
     info2: TLabel;
     Image1: TImage;
@@ -20,6 +19,12 @@ type
     Panel1: TPanel;
     Timer1: TTimer;
     time: TStaticText;
+    info1: TLabel;
+    info3: TLabel;
+    Panel2: TPanel;
+    Label1: TLabel;
+    neu3: TLabel;
+    info4: TLabel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ApplicationEventsDeactivate(Sender: TObject);
     procedure trennenClick(Sender: TObject);
@@ -74,14 +79,14 @@ hauptfenster.AutoDiscLED.LedOn:= true;
 if hauptfenster.onlineset.vbegin <> hauptfenster.onlineset.vend then
 begin
         //wenn das Ende (zeitlich) noch in der Zukunft liegt, aber heutiges Datum hat
-        if (dateof(now) + hauptfenster.onlineset.vend > now) then
-                hauptfenster.trennticker.datetime:= dateof(now) + hauptfenster.onlineset.vend
+        if (dateof(now) + timeof(hauptfenster.onlineset.vend) > now) then
+                hauptfenster.trennticker.datetime:= dateof(now) + timeof(hauptfenster.onlineset.vend)
         // wen Datumsgrenze überschritten wird
            else
            if ansicontainstext(hauptfenster.onlineset.tag, Hauptfenster.Stringvonmorgen(now)) then
-            hauptfenster.trennticker.datetime:= incday(Dateof(now),1) + hauptfenster.onlineset.vend
+            hauptfenster.trennticker.datetime:= incday(Dateof(now) + timeof(hauptfenster.onlineset.vend),1)
            else
-            hauptfenster.trennticker.datetime:= incday(Dateof(now),1) + EncodeTime(0,0,0,0);
+            hauptfenster.trennticker.datetime:= incday(Dateof(now) + TimeOf(EncodeTime(0,0,0,0)),1);
 
         hauptfenster.Autodiscled.ledon:= true;
 end
@@ -89,7 +94,7 @@ else //wenn ganztags
 begin
  //wenn nicht der String von morgen enthalten ist
  if not ansicontainstext(hauptfenster.onlineset.tag, hauptfenster.Stringvonmorgen(now)) then
- hauptfenster.trennticker.datetime:= dateof(tomorrow) + hauptfenster.onlineset.vend
+   hauptfenster.trennticker.datetime:= dateof(tomorrow) + TimeOf(hauptfenster.onlineset.vend)
  else
  hauptfenster.Autodiscled.ledon:= false;
 end;

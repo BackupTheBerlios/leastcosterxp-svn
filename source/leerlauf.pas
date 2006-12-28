@@ -49,6 +49,13 @@ uses Unit1;
 
 {$R *.dfm}
 
+procedure DisconnectAndClose;
+begin
+ disconnect_leerlauf.timer1.Enabled:= false;
+ hauptfenster.disconnect;
+ disconnect_leerlauf.Close;
+end;
+
 procedure Tdisconnect_leerlauf.FormCreate(Sender: TObject);
 begin
 
@@ -71,17 +78,14 @@ end;
 procedure Tdisconnect_leerlauf.Timer1Timer(Sender: TObject);
 begin
 if not isonline then disconnect_leerlauf.Close;
+
 if usetimer then
 begin
  timer1.tag:= timer1.tag-1;
  label2.Caption := inttostr(timer1.tag) + ' Sekunden';
 end;
- if timer1.tag= 0 then
- begin
-      timer1.Enabled:= false;
-      hauptfenster.disconnect;
-      disconnect_leerlauf.Close;
- end;
+
+if timer1.tag = 0 then DisconnectAndClose;
 end;
 
 procedure Tdisconnect_leerlauf.StopClick(Sender: TObject);
@@ -134,8 +138,7 @@ end;
 
 procedure Tdisconnect_leerlauf.TrennenClick(Sender: TObject);
 begin
-timer1.Tag:= 1;
-timer1timer(self);
+  DisconnectAndClose;
 end;
 
 procedure Tdisconnect_leerlauf.ConnectTimerTimer(Sender: TObject);

@@ -1229,25 +1229,30 @@ end;
           If Assigned(PriceWarning) then Pricewarning.close.click;
 
            Application.CreateForm(TPriceWarning, PriceWarning);
-           PriceWarning.warn.Caption:= 'Große Zeitdifferenz nach Atomzeitupdate : ' +timetostr(now-oldtime);
-//           PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vend +')';
-           PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
+
+           PriceWarning.info2.Caption:= Format('%s für %1.2f ct/min (Einwahl : %f).',[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
+           PriceWarning.info3.Caption:= Format('Dieser gilt von %s Uhr bis %s Uhr).',[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
+           PriceWarning.info4.Caption:= '';
+
+           PriceWarning.neu1.Caption:= 'Große Zeitdifferenz nach Atomzeitupdate : ' +timetostr(now-oldtime);
+
 
            if ((now > beginn) and (now < ende)) then
            begin
-             PriceWarning.info2.Caption:= 'Der gewählte Tarif ist noch gültig. Trennen ist nicht nötig.';
+             PriceWarning.neu2.Caption:= 'Der gewählte Tarif ist noch gültig.';
+             PriceWarning.neu3.Caption:= 'Trennen ist nicht nötig.';
              Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
              Pricewarning.Timer1.enabled:= true;
          end;
          if ((now < beginn) or (now > ende)) then
          begin
-           PriceWarning.info2.Caption:= 'Der gewählte Tarif ist im Moment NICHT gültig. Trennen wird empfohlen.';
+           PriceWarning.neu2.Caption:= 'Der gewählte Tarif ist im Moment NICHT gültig.';
+           PriceWarning.neu3.Caption:= 'Trennen wird empfohlen.';
            Pricewarning.trennen2.visible:= false;
            Pricewarning.Timer1.enabled:= true;
          end;
          Pricewarning.Show;
          pricewarning.BringToFront;
-
     end;
 
 oldtime:= now;
@@ -1605,7 +1610,7 @@ setlength(oprogoff,programs.count);
 if programs.count > 0 then
 for i:= 0 to programs.Count-1 do
 begin
- oprog[i].section := programs.Strings[i];
+ oprogoff[i].section := programs.Strings[i];
  oprogoff[i].path   := SettingsOffline.ReadString(programs.Strings[i],'Pfad','');
  oprogoff[i].param  := SettingsOffline.ReadString(programs.Strings[i],'Param','');
  oprogoff[i].style  := Uppercase(SettingsOffline.ReadString(programs.Strings[i],'Style',''));
@@ -4150,6 +4155,9 @@ begin
        if disableTarife then wait:= true;
 
        hauptfenster.FTerminate := False;
+
+       if loadtarife then WriteTarifeToHD;   //falls das PlugIN die Tarifdatenbank benötigt, zuerst alle Tarife auf die Platte schreiben
+
        hauptfenster.ExecuteFile(ExtractFilePath(ParamStr(0)) + 'PlugIns\' + name+'\'+run, params, '', wait,hidden, nil{DoOnExecuteWait});
 
 //       fertig:

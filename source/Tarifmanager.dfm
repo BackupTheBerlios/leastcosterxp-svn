@@ -39,7 +39,7 @@ object TaVerwaltung: TTaVerwaltung
     object Caption: TLabel
       Left = 6
       Top = 6
-      Width = 136
+      Width = 721
       Height = 24
       Align = alTop
       Alignment = taCenter
@@ -113,7 +113,7 @@ object TaVerwaltung: TTaVerwaltung
       Left = 1
       Top = 1
       Width = 384
-      Height = 13
+      Height = 40
       Align = alClient
       Alignment = taCenter
       Color = clBtnFace
@@ -162,7 +162,7 @@ object TaVerwaltung: TTaVerwaltung
     Top = 39
     Width = 297
     Height = 461
-    ActivePage = TabSheet1
+    ActivePage = TabSheet2
     MultiLine = True
     Style = tsFlatButtons
     TabOrder = 6
@@ -1038,7 +1038,7 @@ object TaVerwaltung: TTaVerwaltung
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ItemHeight = 0
+    ItemHeight = 13
     ParentFont = False
     Sorted = True
     TabOrder = 7
@@ -1055,7 +1055,7 @@ object TaVerwaltung: TTaVerwaltung
     Hint = '[Mehrfachauswahl durch Linksklick halten und Maus ziehen.]'
     TabStop = False
     Color = cl3DLight
-    ColCount = 15
+    ColCount = 16
     DefaultRowHeight = 18
     FixedCols = 0
     RowCount = 2
@@ -1070,6 +1070,7 @@ object TaVerwaltung: TTaVerwaltung
     OnMouseUp = TariflisteMouseUp
     ColWidths = (
       128
+      64
       64
       64
       64

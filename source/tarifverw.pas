@@ -1,7 +1,7 @@
 unit tarifverw;
 
 interface
-uses grids,controls, GridEvents, floating, files;
+uses grids,controls, GridEvents, floating, files, unit1;
 
 procedure watchoutforcheaperprice(checktime: TDateTime);
 function IndexOfScores(tarif: string): integer;
@@ -29,7 +29,7 @@ procedure SaveAutoDialTimes;
 
 implementation
 
-uses unit1, inifiles, classes, sysutils, Strutils,Dateutils, forms, unit7, windows, dialogs;
+uses inifiles, classes, sysutils, Strutils,Dateutils, forms, unit7, windows, dialogs;
 
 procedure watchoutforcheaperprice(checktime: TDateTime);
 var price_now: real;
@@ -41,19 +41,21 @@ begin
 
 with hauptfenster do
   begin
+
   //Fenster freigeben, wenn es schon existiert
   If Assigned(PriceWarning) then begin Pricewarning.close.click; exit; end;
+
+  thisprice_then   := 'unbekannt';
+  thiseinwahl_then := 'unbekannt';
+  thisprice_when:= liste.cells[2,1];
 
   if not (liste.cells[1,1] ='') then
   begin
    if (onlineset.preis <> -1.0) then price_now:= onlineset.Preis
                             else price_now:= -1.0;
-   price_then:= strtofloat(liste.cells[4,1]);
 
-   thisprice_then   := 'unbekannt';
-   thiseinwahl_then := 'unbekannt';
-   thisprice_when:= liste.cells[2,1];
-   
+   price_then:= strtofloat(liste.cells[4,1]);    //der billigste Preis zum Vergleich
+
    for i:= 1 to liste.RowCount-1 do
    begin //neuen preis des Tarifs suchen
     if (liste.cells[1,i] = onlineset.Tarif)
@@ -66,18 +68,29 @@ with hauptfenster do
      end;
    end;
 
-   if (price_then > price_now) then
+   if ( (price_then <> price_now) or (thisprice_then = 'unbekannt')) then
    begin
      Application.CreateForm(TPriceWarning, PriceWarning);
-     PriceWarning.warn.Caption:= 'Jetzt wird''s teurer. Ab ' + liste.cells[2,1]+' ist der billigste Tarif '''+ UpperCase(liste.cells[1,1])+''' . Er kostet '+liste.cells[4,1]+'( +'+liste.cells[5,1]+ ') pro Minute.';
-//     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'(' + onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vend +')';
-     PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
 
-     PriceWarning.info2.Caption:= 'Der Preis ab  ' + thisprice_when + ' ist ' + thisprice_then +'.';
+     PriceWarning.info2.Caption:= Format('%s für %1.2f ct/min (Einwahl : %f ct).',[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
+     PriceWarning.info3.Caption:= Format('Dieser gilt von %s Uhr bis %s Uhr).',[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
+
+     PriceWarning.info4.visible:= (thisprice_when <> timetoStr(onlineset.vbegin)); //ausbelnnden wenn die gleiche zeit wie Anfang
+     PriceWarning.info4.Caption:= 'Der Preis ab  ' + thisprice_when + ' Uhr ist ' + thisprice_then;
+     if thisprice_then <> 'unbekannt' then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' ct/min .';
+
+     PriceWarning.neu1.Caption:= Format('Von %s Uhr - %s Uhr steht Ihnen der Tarif',[liste.cells[2,1] ,liste.cells[3,1]]);
+     PriceWarning.neu2.Caption:= Format('%s für %s ct/min (Einwahl %s ct)',[UpperCase(liste.cells[1,1]),liste.cells[4,1],liste.cells[5,1]]);
+     PriceWarning.neu3.Caption:= 'zur Verfügung !';
      Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
+
      Pricewarning.Timer1.enabled:= true;
      Pricewarning.Show;
      SetWindowPos(pricewarning.handle,hwnd_topmost,pricewarning.left,pricewarning.Top,pricewarning.Width,pricewarning.Height,{swp_noactivate+swp_nomove+}swp_nosize);
+   end;
+
+   if (price_then > price_now) then
+   begin
      onlineset.wechsel:= dateof(checktime) + onlineset.vend;
      if thisprice_then <> 'unbekannt' then
         begin
@@ -92,15 +105,6 @@ with hauptfenster do
    else
    if (price_then < price_now) then
    begin
-     Application.CreateForm(TPriceWarning, PriceWarning);
-     PriceWarning.warn.Caption:= 'Ab ' + liste.cells[2,1]+' steht der Tarif '''+ UpperCase(liste.cells[1,1])+''' zur Verfügung. Er kostet '+liste.cells[4,1]+'( +'+liste.cells[5,1]+ ') pro Minute.';
-//     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
-     PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
-     PriceWarning.info2.Caption:= 'Der Preis ab  ' + thisprice_when  + ' ist ' + thisprice_then +'.';
-     Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
-     Pricewarning.Timer1.enabled:= true;
-     Pricewarning.Show;
-     SetWindowPos(pricewarning.handle,hwnd_topmost,pricewarning.left,pricewarning.Top,pricewarning.Width,pricewarning.Height,{swp_noactivate+swp_nomove+}swp_nosize);
      if onlineset.vend <> onlineset.vbegin then //nur wenn nicht ganztags
      onlineset.wechsel:= dateof(checktime) + onlineset.vend;
      if thisprice_then <> 'unbekannt' then
@@ -116,33 +120,28 @@ with hauptfenster do
    else
    if (thisprice_then = 'unbekannt') then
    begin
-     Application.CreateForm(TPriceWarning, PriceWarning);
-     PriceWarning.warn.Caption:= 'Ab ' + liste.cells[2,1]+' steht der Tarif '''+ UpperCase(liste.cells[1,1])+''' zur Verfügung. Er kostet '+liste.cells[4,1]+'( +'+liste.cells[5,1]+ ') pro Minute.';
-//     PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
-     PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
-     PriceWarning.info2.Caption:= 'Der Preis ab  ' + thisprice_when  + ' ist ' + thisprice_then +'.';
-     Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
-     Pricewarning.Timer1.enabled:= true;
-     Pricewarning.Show;
-     SetWindowPos(pricewarning.handle,hwnd_topmost,pricewarning.left,pricewarning.Top,pricewarning.Width,pricewarning.Height,{swp_noactivate+swp_nomove+}swp_nosize);
-
      onlineset.tag  := liste.cells[17,i];
-
      if onlineset.vend <> onlineset.vbegin then //nur wenn nicht ganztags
-     onlineset.wechsel:= dateof(checktime) + onlineset.vend;
+      onlineset.wechsel:= dateof(checktime) + onlineset.vend;
    end;
  end
   else //erste Zeile ist leer
   begin
-    Application.CreateForm(TPriceWarning, PriceWarning);
-    PriceWarning.warn.Caption:= 'Es ist kein Tarif bekannt, der nach ' + TimeToStr(onlineset.endzeit)+'gilt !';
-//    PriceWarning.info.Caption:= 'Sie sind online mit  ' + onlineset.Tarif +'('+onlineset.Preis +', ' +onlineset.vbegin +'-'+onlineset.vEnd +')';
-    PriceWarning.info.Caption:= Format('Sie sind online mit %s (%f , %s - %s) ',[onlineset.Tarif ,onlineset.Preis ,timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);;
-    PriceWarning.info2.Caption:= '';
-    Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
-    Pricewarning.Timer1.enabled:= true;
-    Pricewarning.Show;
-    Pricewarning.bringtofront;
+     Application.CreateForm(TPriceWarning, PriceWarning);
+
+     PriceWarning.info2.Caption:= Format('%s für %1.2f ct/min (Einwahl : %f ct).',[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
+     PriceWarning.info3.Caption:= Format('Dieser gilt von %s Uhr bis %s Uhr).',[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
+     PriceWarning.info4.Caption:= 'Der Preis ab  ' + timeToStr(onlineset.vend) + 'Uhr ist ' + thisprice_then;
+     if thisprice_then <> 'unbekannt' then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' ct/min .';
+
+     PriceWarning.neu1.Caption:= 'Es ist kein Tarif bekannt, der nach';
+     PriceWarning.neu2.Caption:=  TimeToStr(onlineset.endzeit) + ' Uhr';
+     PriceWarning.neu3.Caption:= 'gilt !';
+
+     Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
+     Pricewarning.Timer1.enabled:= true;
+     Pricewarning.Show;
+     Pricewarning.bringtofront;
    end;
 end;
 end;

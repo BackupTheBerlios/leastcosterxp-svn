@@ -177,7 +177,7 @@ begin
   wndlist.Close;
 end;
 
-function tarifisvalid(Tname, DTag:string;DBeginn,DEnde: TTime; DStart, DExpires:TDate): boolean;
+function tarifisvalid(Data:TTarif): boolean;
 var i: integer;
     ergebnis: boolean;
     mo,di,mi,don,fr,sa,so,feiertag: string;
@@ -186,7 +186,6 @@ var i: integer;
     anfang, ende: TTime;
     expdate, startdate: TDate;
 begin
-
 //negativ initialisieren
 mo:= '[error]';
 di:= '[error]';
@@ -198,35 +197,35 @@ so:= '[error]';
 feiertag:= '[error]';
 
 //wenn der tag enthalten ist, dann setzen
-if ansicontainstext(Dtag,'[Mo]') then mo:= '[Mo]';
-if ansicontainstext(Dtag,'[Di]') then di:= '[Di]';
-if ansicontainstext(Dtag,'[Mi]') then mi:= '[Mi]';
-if ansicontainstext(Dtag,'[Do]') then don:= '[Do]';
-if ansicontainstext(Dtag,'[Fr]') then fr:= '[Fr]';
-if ansicontainstext(Dtag,'[Sa]') then sa:= '[Sa]';
-if ansicontainstext(Dtag,'[So]') then so:= '[So]';
-if ansicontainstext(Dtag,'[feiertags]') then feiertag:= '[feiertags]';
+if ansicontainstext(Data.tag,'[Mo]') then mo:= '[Mo]';
+if ansicontainstext(Data.tag,'[Di]') then di:= '[Di]';
+if ansicontainstext(Data.tag,'[Mi]') then mi:= '[Mi]';
+if ansicontainstext(Data.tag,'[Do]') then don:= '[Do]';
+if ansicontainstext(Data.tag,'[Fr]') then fr:= '[Fr]';
+if ansicontainstext(Data.tag,'[Sa]') then sa:= '[Sa]';
+if ansicontainstext(Data.tag,'[So]') then so:= '[So]';
+if ansicontainstext(Data.tag,'[feiertags]') then feiertag:= '[feiertags]';
 
    ergebnis:= true;
 try
-   Dtemptime   := EncodeDate(1970,01,01) + Dbeginn;
-   Dtemptimeend:= EncodeDate(1970,01,01) + DEnde;
+   Dtemptime   := Dateof(EncodeDate(1970,01,01)) + timeof(Data.beginn);
+   Dtemptimeend:= dateof(EncodeDate(1970,01,01)) + timeof(Data.Ende);
 
    if length(hauptfenster.tarife) > 0 then
    for i:= 0 to length(hauptfenster.tarife)-1 do
    //namen finden
-   if hauptfenster.tarife[i].Tarif = Tname then
+   if hauptfenster.tarife[i].Tarif = Data.Tarif then
    begin
     expdate:=    hauptfenster.tarife[i].expires;
     startdate:=  hauptfenster.tarife[i].validfrom;
     vglstring:=  hauptfenster.tarife[i].tag;
     anfang:=     hauptfenster.tarife[i].Beginn;
     ende:=       hauptfenster.tarife[i].Ende;
-    temptime   := EncodeDate(1970,01,01) + anfang;
-    temptimeend:= EncodeDate(1970,01,01) + ende;
+    temptime   := Dateof(EncodeDate(1970,01,01)) + timeof(anfang);
+    temptimeend:= DateOF(EncodeDate(1970,01,01)) + timeof(ende);
 
     if ( //wenn der Tag enthalten ist
-       ( vglstring = Dtag))
+       ( vglstring = Data.tag))
         or (ansicontainstext(vglstring,mo)) or (ansicontainstext(vglstring,di))
         or (ansicontainstext(vglstring,mi)) or (ansicontainstext(vglstring,don))
         or (ansicontainstext(vglstring,fr)) or (ansicontainstext(vglstring,sa))
@@ -235,32 +234,32 @@ try
     then
      begin
      //tagesüberschneidung abfangen
-      if (temptimeend < temptime) then temptimeend:= EncodeDate(1970,1,2) {strtodate('02.01.1970')} + ende;
+      if (temptimeend < temptime) then temptimeend:= DateOf(EncodeDate(1970,1,2)) + timeof(ende);
 
-     //Dbeginn liegt im Intervall
+     //Data.beginn liegt im Intervall
       if ( ((temptime <= Dtemptime) and (temptimeend > (Dtemptime)) )
-     //DEnde liegt im Intervall
+     //Data.Ende liegt im Intervall
       or   ((temptimeend >= (Dtemptimeend)) and (temptime < (Dtemptimeend)))
      //Intervall liegt zwischen TaStart.time und TaEnd.time
      //oder Intervall ist gleich
       or  ((temptime >= Dtemptime) and (temptimeend <= Dtemptimeend)) )
       then
       begin    // wenn Überschneidung gefunden
-      if ((DStart <= expdate)   //wenn neuer beginn und altes Ende sich überschneiden
-      and (startdate < DStart ))//wenn der neue Tarif später beginnt
+      if ((Data.validfrom <= expdate)   //wenn neuer beginn und altes Ende sich überschneiden
+      and (startdate < Data.validfrom ))//wenn der neue Tarif später beginnt
        then
         begin //neues expireDate
-         hauptfenster.tarife[i].expires:= incDay(DStart,-1);
+         hauptfenster.tarife[i].expires:= incDay(Data.validfrom,-1);
 
          //aufnehmen, wenn nicht schon gemacht
-         if wndlist.NewDate.indexof(tname) = -1 then  wndlist.newdate.append(Tname);
+         if wndlist.NewDate.indexof(Data.Tarif) = -1 then  wndlist.newdate.append(Data.Tarif);
          //löschen, wenn nicht schon gelöscht
-         if wndlist.allnames.IndexOf(tname) > -1 then wndlist.allnames.Delete(wndlist.allnames.IndexOf(tname));
+         if wndlist.allnames.IndexOf(Data.Tarif) > -1 then wndlist.allnames.Delete(wndlist.allnames.IndexOf(Data.Tarif));
 
          ergebnis:= true;
          end
        else
-       if (startdate >= DStart )//wenn der neue Tarif neuer ist
+       if (startdate >= Data.validfrom )//wenn der neue Tarif neuer ist
        then begin ergebnis:= false; break; end;
       end;
      end;
@@ -302,7 +301,7 @@ if listbox.count > 0 then
      inc(count);
      progress.position:= count;
      if (listbox.Items.IndexOf(Datensatz.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Datensatz.tarif)] then
-       if tarifisvalid(Datensatz.tarif, Datensatz.Tag,Datensatz.Beginn,Datensatz.Ende,Datensatz.validfrom,Datensatz.Expires) then
+       if tarifisvalid(Datensatz) then
        begin
          pos:= length(hauptfenster.tarife);
          setlength(hauptfenster.tarife, pos+1);
