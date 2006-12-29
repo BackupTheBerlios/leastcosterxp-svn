@@ -774,35 +774,22 @@ end;
 
 end;
 
+//liefert den Feiertag oder einen leeren String zurück
 function isFeiertag(date: TDate): string;
 var i: integer;
     temp: string;
-    feiertagsliste: TStringlist;
+
 begin
-with hauptfenster do
-begin
-temp:= '';
-feiertagsliste:= TStringlist.Create;
+  temp:= '';
 
-if fileexists(extractfilepath(paramstr(0))+'feiertage.txt') then
-begin
-  try
-    feiertagsliste.LoadFromFile(extractfilepath(paramstr(0))+'feiertage.txt');
-  except
-    feiertagsliste.Append('1. Weichnachtstag|25.12.2006');
-  end;
-end;
+  if feiertagsliste.count >0 then
+    for i:= 0 to feiertagsliste.Count-1 do
+      if Ansicontainstext(feiertagsliste.Strings[i],datetostr(date)) then begin temp:= feiertagsliste.Strings[i]; break; end;
 
-if feiertagsliste.count >0 then
-for i:= 0 to feiertagsliste.Count-1 do
-if Ansicontainstext(feiertagsliste.Strings[i],datetostr(date)) then begin temp:= feiertagsliste.Strings[i]; break; end;
+  if pos('|', temp)>0 then
+    Delete(temp,pos('|', temp), length(temp));
 
-if pos('|', temp)>0 then
-Delete(temp,pos('|', temp), length(temp));
-
-feiertagsliste.free;
-Result:= temp;
-end;
+  Result:= temp;
 end;
 
 procedure LoescheTarif(tarif: string);

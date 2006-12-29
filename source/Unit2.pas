@@ -673,7 +673,7 @@ Var
   End;
 
 procedure TLCXPSettings.beendenClick(Sender: TObject);
-var i,j: integer;
+var i: integer;
 begin
  //Pfad Speichern
  if fileexists(Pfad.text) then
@@ -752,8 +752,8 @@ begin
   hauptfenster.noBalloon:= noBalloon.checked;
 
   hauptfenster.clock.visible:= time.checked;
-  if hauptfenster.clock.visible then hauptfenster.DateLabel.Constraints.MaxWidth:= 402
-                                else hauptfenster.DateLabel.Constraints.MaxWidth:= 222;
+  if not hauptfenster.clock.visible then hauptfenster.DateLabel.Constraints.MaxWidth:= 402
+                                    else hauptfenster.DateLabel.Constraints.MaxWidth:= 222;
 
   //Dialerfunktion
   settings.writeBool('Dialer','SetUpModem', not setupmodems.checked);
@@ -894,7 +894,6 @@ begin
         LEDOn:= false;
         Hint:= 'Noch kein Atomzeit-Update seit dem Start.';
    end;
-
 
   settings.writeinteger('Onlinecheck','Vorschub',forwardtable.Value);
   hauptfenster.lookforward:= forwardtable.Value;
@@ -1796,6 +1795,7 @@ AtomRepeatClick(self);
 
 edit2.text:= settings.Readstring('lokale IP','IP','127.0.0.1;');
 forwardtable.Value:= settings.Readinteger('Onlinecheck','Vorschub',5);
+if forwardtable.Value < 3 then forwardtable.Value:= 3; //mininmalwert setzen, wenn unterschritten 
 
 //IP-Notification
   ipmail_active.checked:= settings.Readbool('lokale IP','IP_Notify',false);

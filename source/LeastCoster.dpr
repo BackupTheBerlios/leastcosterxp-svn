@@ -1,5 +1,4 @@
 program LeastCoster;
-
 uses
   madExcept,
   madLinkDisAsm,
@@ -37,7 +36,8 @@ uses
   menues in 'menues.pas',
   RSSReader in 'RSSReader.pas',
   Protokolle in 'Protokolle.pas',
-  donation in 'donation.pas' {DonateWindow};
+  donation in 'donation.pas' {DonateWindow},
+  messagestrings in 'messagestrings.pas';
 
 {$R *.res}
 

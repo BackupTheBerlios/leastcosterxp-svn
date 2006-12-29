@@ -1,0 +1,22 @@
+Neujahr|01.01.2006
+Karfreitag|14.04.2006
+Ostersonntag|16.04.2006
+Ostermontag|17.04.2006
+Tag der Arbeit|01.05.2006
+Christi Himmelfahrt|25.05.2006
+Pfingstsonntag|04.06.2006
+Pfingstmontag|05.06.2006
+Tag der deutschen Einheit|03.10.2006
+1. Weihnachtstag|25.12.2006
+2. Weihnachtstag|26.12.2006
+Neujahr|01.01.2007
+Karfreitag|06.04.2007
+Ostersonntag|08.04.2007
+Ostermontag|09.04.2007
+Tag der Arbeit |01.05.2007
+Christi Himmelfahrt|17.05.2007
+Pfingstsonntag|27.05.2007
+Pfingstmontag|28.05.2007
+Tag der deutschen Einheit|03.10.2007
+1. Weihnachtstag|25.12.2007
+2. Weihnachtstag|26.12.2007

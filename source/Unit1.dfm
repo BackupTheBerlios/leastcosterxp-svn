@@ -517,7 +517,6 @@ object Hauptfenster: THauptfenster
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     Kind = dtkTime
-    ParseInput = True
     ParentFont = False
     TabOrder = 15
     Visible = False
@@ -737,7 +736,7 @@ object Hauptfenster: THauptfenster
         Width = 177
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         Items.Strings = (
           'Tue nichts'
