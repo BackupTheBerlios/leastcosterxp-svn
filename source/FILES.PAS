@@ -12,8 +12,6 @@ function GetFileVersion(Path: string): string;
 function daten_zaehlen(Filename:string):integer;
 procedure Filecopy(sourcefilename, targetfilename: string);
 function FileExists(FileName: string): Boolean;
-procedure datei_erzeugen(FileName:string);
-procedure ini_anhaengen(zeile: string);
 procedure verzeichnis_erzeugen(FolderName: string);
 function DeleteFileToRecycleBin(const AFile: string): boolean;
 procedure Compress(InputFileName, OutputFileName: string);
@@ -98,8 +96,6 @@ begin
     end;
   end;
 end;
-
-
 
 function GetFileVersion(Path: string): string;
 var
@@ -193,41 +189,12 @@ begin
   FileExists := (IOResult = 0) and (FileName <> '');
 end;  { FileExists }
 
-procedure datei_erzeugen(FileName:string);
-var F: textfile;
-begin
-  assignfile(F, FileName);
-  Rewrite(F);
-  closefile(F);
-end;
-
-procedure ini_anhaengen(zeile: string);
-var hilf: textfile;
-
-begin
-if fileexists('lcr.$$$') then
-begin
-assignfile(hilf,'lcr.$$$');
-append(hilf);
-writeln(hilf,zeile);
-closefile(hilf);
-end else
-begin
-datei_erzeugen('lcr.$$$');
-assignfile(hilf,'lcr.$$$');
-append(hilf);
-writeln(hilf,zeile);
-closefile(hilf);
-end;
-end;
-
 procedure verzeichnis_erzeugen(FolderName: string);
 begin
   {$I-}
   MkDir(FolderName);
   if IOResult <> 0 then begin end {verzeichnis besteht schon}
     else
- 
 end;
 
 function DeleteFileToRecycleBin(const AFile: string): boolean;

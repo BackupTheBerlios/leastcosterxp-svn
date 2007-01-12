@@ -54,7 +54,7 @@ var
   posleft: integer;
 implementation
 
-uses Unit1, WebServ1, Protokolle;
+uses Unit1, WebServ1, Protokolle, inilang, messagestrings;
 
 {$R *.dfm}
 function VerzGroesse(Verzeichnis:string):longint;
@@ -111,17 +111,17 @@ Var Sichte:textfile;
 Begin
 assign(Sichte, ExtractFilePath(paramstr(0))+'htm\Übersicht.htm');
 rewrite(Sichte);
-Write   ( Sichte, '<meta name="author" content="LeastCoster 1.1">');
-Write   ( Sichte, '<meta name="generator" content="LeastCoster 1.1 ">');
+Write   ( Sichte, '<meta name="author" content="LeastCosterXP">');
+Write   ( Sichte, '<meta name="generator" content="LeastCosterXP">');
 write   ( Sichte, '<meta http-equiv="cache-control" content="no-cache"></head>');
 Write   ( Sichte, '<body alink="#0080ff" bgcolor="#ebedfe" link="#0000df" text="#000000" vlink="#3f00ff">');
 Write   ( Sichte, '<p align="center"><img src="head.jpg" alt="" border="0" height="150"> </p>');
-Writeln ( Sichte, '<p align=center><font size=+2>Übersicht der verfügbaren Tabellen</font></p>');
+Writeln ( Sichte, '<p align=center><font size=+2>'+misc(M208,'M208')+'</font></p>');
 Writeln ( Sichte, '<table align="center" height="20" border=0 cellspacing="0" >');
 Writeln ( Sichte, '<tr><td>');
 Writeln ( Sichte, '</td></tr>');
 Writeln ( Sichte, '</table>');
-Write   ( Sichte, '<br><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
+Write   ( Sichte, '<br><p align=center><font size="-1"><b><a href="http://www.leastcosterxp.de ">LeastCosterXP</a> by <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
 Writeln ( Sichte, '</body></html>');
 Closefile(Sichte);
 End;
@@ -150,8 +150,6 @@ for i := 0 to (Auswahlbox.Items.Count - 1) do begin
     if Auswahlbox.Selected[i] then //html-Files auf den neuesten Stand bringen
     begin
        Protokolle.Abholung(ExtractFilePath(paramstr(0))+'log\'+Auswahlbox.Items.Strings[i]);
-    //   Protokolle.monatshtml(ExtractFilePath(paramstr(0))+'log\',Auswahlbox.Items.Strings[i]);
-
        balken.progress:= i+1;
 
        //exportieren
@@ -171,7 +169,7 @@ for i := 0 to (Auswahlbox.Items.Count - 1) do begin
             Filecopy(new,output)
           else
           begin
-            if MessageDlg('Die Datei ' +Auswahlbox.Items.Strings[i] + ' existiert bereits. Überschreiben ?' , mtConfirmation,
+            if MessageDlg(Auswahlbox.Items.Strings[i] + ' '+misc(M209,'M209') , mtConfirmation,
             [mbYes, mbNo], 0) = mrYes then
                       Filecopy(new,output);
             end;
@@ -320,10 +318,10 @@ for i := (Auswahlbox.Items.Count - 1) downto 0 do
      then auswahlbox.items.Delete(i);
 
      if (not DeleteFileToRecycleBin(ExtractFilePath(paramstr(0))+'www\log\' + ChangeFileExt(name,'.htm')))
-       then warning.caption:= 'Konnte '+ ChangeFileExt(name,'.htm')+ ' nicht in den Papierkorb verschieben.';
+       then warning.caption:= ChangeFileExt(name,'.htm')+ ' '+misc(M210,'M210');
      balken.progress:= auswahlbox.Items.count - i;
     end;
-htmlwindow.Cursor:= crdefault;    
+htmlwindow.Cursor:= crdefault;
 end;
 
 procedure Thtmlwindow.BitBtn3Click(Sender: TObject);
@@ -366,7 +364,7 @@ begin
   rewrite(tmp);
   datcount:= 1;
   for k:= 0 to (length(data) -1)do
-  if not ansicontainsstr(data[k],'[OlecoImport]') then begin writeln(tmp,inttostr(datcount) + data[k]); datcount:= datcount+1; end;
+    begin writeln(tmp,inttostr(datcount) + data[k]); datcount:= datcount+1; end;
   closefile(tmp);
   if datcount = 1 then
     begin erase(tmp); auswahlbox.Items.Delete(i); end;

@@ -45,7 +45,7 @@ var
 
 implementation
 
-uses Unit1;
+uses Unit1, inilang, messagestrings;
 
 {$R *.dfm}
 
@@ -82,7 +82,7 @@ if not isonline then disconnect_leerlauf.Close;
 if usetimer then
 begin
  timer1.tag:= timer1.tag-1;
- label2.Caption := inttostr(timer1.tag) + ' Sekunden';
+ label2.Caption := inttostr(timer1.tag) + ' '+misc(M93,'M93');
 end;
 
 if timer1.tag = 0 then DisconnectAndClose;
@@ -98,7 +98,7 @@ case disconnect_leerlauf.tag of
 1: hauptfenster.DisconnectStopped:= true;
 //AuoEinwahl
 2: begin
-    hauptfenster.Status.SimpleText:= 'Auto-Einwahl deaktivert ('+ datetimetostr(now)+')';
+    hauptfenster.Status.SimpleText:= misc(M211,'M211')+' ('+ datetimetostr(now)+')';
     Hauptfenster.AutoDialStatus.LEDOn:= false;
     Hauptfenster.AutoDial.Enabled:= false;
    end;
@@ -146,7 +146,7 @@ begin
 if useConnectTimeOut then
 begin
  ConnectTimer.tag:= ConnectTimer.tag-1;
- label2.Caption := inttostr(ConnectTimer.tag) + ' Sekunden';
+ label2.Caption := inttostr(ConnectTimer.tag) + ' '+misc(M93,'M93');
 end;
 
 if ConnectTimer.tag= 0 then

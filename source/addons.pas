@@ -18,7 +18,7 @@ function GetLocalIPs: string;
 
 function InternetIP(var sHostName, sIPAddr, sWSAError: string): Boolean;
 
-function IsOnline: boolean;
+//function IsOnline: boolean;
 
 Procedure AskedClose(Progname: PAnsiChar);
 {Programmnamen übergeben}
@@ -40,7 +40,7 @@ implementation
 
 function GetWinVersion: string;
 begin
-  result:='Unbekannte Version';
+  result:='unknown';
   case Win32Platform of
     1:// 9x-Reihe
       If Win32MajorVersion=4 Then Begin
@@ -171,13 +171,14 @@ begin
      WSACleanup;
 end;
 
-
+{
 function IsOnline: boolean;
 
 begin
   IsOnline:=InternetGetConnectedState(nil, 0);
 end;
-
+ }
+ 
 Procedure AskedClose(Progname: PAnsichar);
 begin
 SendMessage(FindWindow(nil,Progname),WM_CLOSE,0,0);

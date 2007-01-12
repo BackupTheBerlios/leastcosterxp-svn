@@ -13,7 +13,6 @@ object LCXPSettings: TLCXPSettings
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  Menu = MainMenu1
   OldCreateOrder = False
   Position = poDesktopCenter
   Visible = True
@@ -46,6 +45,7 @@ object LCXPSettings: TLCXPSettings
     OnChange = PageControl1Change
     object TabSheet1: TTabSheet
       Caption = 'Einstellungen'
+      OnMouseMove = gelbMouseMove
       object settingbox: TGroupBox
         Left = 0
         Top = 0
@@ -101,6 +101,7 @@ object LCXPSettings: TLCXPSettings
           Height = 17
           Caption = 'Klick auf [X] minimiert LCXP'
           TabOrder = 4
+          OnMouseMove = minimizeMouseMove
         end
         object time: TCheckBox
           Left = 216
@@ -109,6 +110,7 @@ object LCXPSettings: TLCXPSettings
           Height = 17
           Caption = 'zeige aktuelle Uhrzeit an'
           TabOrder = 1
+          OnMouseMove = timeMouseMove
         end
       end
       object GroupBox17: TGroupBox
@@ -133,7 +135,6 @@ object LCXPSettings: TLCXPSettings
           Width = 162
           Height = 13
           Caption = 'Einf'#228'rbung der Balkendiagramme :'
-          OnMouseMove = Label10MouseMove
         end
         object Label3: TLabel
           Left = 26
@@ -148,7 +149,6 @@ object LCXPSettings: TLCXPSettings
           Width = 18
           Height = 13
           Caption = 'rot :'
-          OnMouseMove = gelbMouseMove
         end
         object gelb: TEdit
           Left = 64
@@ -169,13 +169,14 @@ object LCXPSettings: TLCXPSettings
           OnMouseMove = gelbMouseMove
         end
         object Button6: TButton
-          Left = 248
-          Top = 49
+          Left = 256
+          Top = 51
           Width = 137
           Height = 24
           Caption = 'Standard wiederherstellen'
           TabOrder = 2
           OnClick = Button3Click
+          OnMouseMove = gelbMouseMove
         end
       end
       object GroupBox16: TGroupBox
@@ -227,7 +228,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Atomzeit-Log  &anzeigen'
           TabOrder = 1
           OnClick = showatomlogClick
-          OnMouseMove = showatomlogMouseMove
+          OnMouseMove = Button3MouseMove
         end
         object Button7: TButton
           Left = 248
@@ -237,204 +238,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Einwahl-Log  &anzeigen'
           TabOrder = 2
           OnClick = Button7Click
-          OnMouseMove = showatomlogMouseMove
-        end
-      end
-    end
-    object TabSheet2: TTabSheet
-      Caption = 'Ausweich-LCR'
-      ImageIndex = 1
-      object GroupBox15: TGroupBox
-        Left = 0
-        Top = 168
-        Width = 431
-        Height = 121
-        Align = alTop
-        Caption = 'Oleco/ Discountsurfer - Protokolle'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        object lasttimelabel: TLabel
-          Left = 24
-          Top = 43
-          Width = 119
-          Height = 13
-          Caption = 'Stand des letzten Imports'
-        end
-        object pledelete: TButton
-          Left = 264
-          Top = 83
-          Width = 121
-          Height = 25
-          Caption = 'L'#246'sche Oleco Protokoll'
-          TabOrder = 4
-          OnClick = pledeleteClick
-        end
-        object pleopen: TButton
-          Left = 120
-          Top = 83
-          Width = 137
-          Height = 25
-          Caption = 'Bearbeite Oleco Protokoll'
-          TabOrder = 3
-          OnClick = pleopenClick
-        end
-        object resetdate: TButton
-          Left = 24
-          Top = 83
-          Width = 89
-          Height = 25
-          Caption = 'Reset'
-          TabOrder = 2
-          OnClick = resetdateClick
-          OnMouseMove = resetdateMouseMove
-        end
-        object lasttime: TEdit
-          Left = 24
-          Top = 59
-          Width = 361
-          Height = 21
-          Color = cl3DLight
-          ReadOnly = True
-          TabOrder = 1
-          OnMouseMove = lasttimeMouseMove
-        end
-        object autoread: TCheckBox
-          Left = 24
-          Top = 19
-          Width = 297
-          Height = 17
-          Caption = 'automatisch von Oleco/ Discountsurfer importieren'
-          TabOrder = 0
-          OnMouseMove = autoreadMouseMove
-        end
-      end
-      object GroupBox14: TGroupBox
-        Left = 0
-        Top = 0
-        Width = 431
-        Height = 168
-        Align = alTop
-        Caption = 'Ausweich-LCR'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-        object Suchen: TSpeedButton
-          Left = 369
-          Top = 37
-          Width = 23
-          Height = 22
-          Caption = '...'
-          OnClick = SuchenClick
-          OnMouseMove = PfadMouseMove
-        end
-        object Label1: TLabel
-          Left = 22
-          Top = 115
-          Width = 253
-          Height = 13
-          Caption = 'Tarife mit Einwahlgeb'#252'hr anzeigen f'#252'r Zeiten > ...  min'
-          Enabled = False
-          OnMouseMove = Label1MouseMove
-        end
-        object Pfad: TLabeledEdit
-          Left = 22
-          Top = 37
-          Width = 337
-          Height = 21
-          EditLabel.Width = 218
-          EditLabel.Height = 13
-          EditLabel.Caption = 'Pfad zum Discountsurfer / Oleco/ Smartsurfer '
-          EditLabel.Font.Charset = DEFAULT_CHARSET
-          EditLabel.Font.Color = clWindowText
-          EditLabel.Font.Height = -11
-          EditLabel.Font.Name = 'MS Sans Serif'
-          EditLabel.Font.Style = []
-          EditLabel.ParentFont = False
-          TabOrder = 0
-          OnChange = PfadChange
-          OnMouseMove = PfadMouseMove
-        end
-        object Button2: TButton
-          Left = 296
-          Top = 79
-          Width = 97
-          Height = 25
-          Caption = 'Titel herausfinden'
-          TabOrder = 2
-          OnClick = Button2Click
-          OnMouseMove = Button2MouseMove
-        end
-        object DSurfer: TLabeledEdit
-          Left = 21
-          Top = 83
-          Width = 252
-          Height = 21
-          EditLabel.Width = 233
-          EditLabel.Height = 13
-          EditLabel.Caption = 'Titelleiste von Discountsurfer/ Oleco/ Smartsurfer'
-          EditLabel.Font.Charset = DEFAULT_CHARSET
-          EditLabel.Font.Color = clWindowText
-          EditLabel.Font.Height = -11
-          EditLabel.Font.Name = 'MS Sans Serif'
-          EditLabel.Font.Style = []
-          EditLabel.ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 1
-          OnMouseMove = DSurferMouseMove
-        end
-        object selectshowtime: TSpinEdit
-          Left = 38
-          Top = 130
-          Width = 64
-          Height = 22
-          Enabled = False
-          MaxValue = 180
-          MinValue = 1
-          TabOrder = 4
-          Value = 1
-          OnChange = selectshowtimeChange
-          OnMouseMove = selectshowtimeMouseMove
-        end
-        object RadioButton3: TRadioButton
-          Left = 22
-          Top = 135
-          Width = 17
-          Height = 17
-          Enabled = False
-          TabOrder = 3
-          OnEnter = RadioButton3Enter
-        end
-        object RadioButton2: TRadioButton
-          Left = 126
-          Top = 135
-          Width = 113
-          Height = 17
-          Caption = 'immer an'
-          Enabled = False
-          TabOrder = 5
-          OnEnter = RadioButton2Enter
-          OnMouseMove = RadioButton2MouseMove
-        end
-        object RadioButton1: TRadioButton
-          Left = 230
-          Top = 135
-          Width = 113
-          Height = 17
-          Caption = 'immer aus'
-          Enabled = False
-          TabOrder = 6
-          OnEnter = RadioButton1Enter
-          OnMouseMove = RadioButton1MouseMove
+          OnMouseMove = Button7MouseMove
         end
       end
     end
@@ -482,7 +286,6 @@ object LCXPSettings: TLCXPSettings
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
-          OnDropDown = DeviceDropDown
         end
         object edvorwahl: TEdit
           Left = 25
@@ -525,7 +328,6 @@ object LCXPSettings: TLCXPSettings
           ParentShowHint = False
           ShowHint = True
           TabOrder = 3
-          OnDropDown = DeviceDropDown
         end
         object setupmodems: TCheckBox
           Left = 26
@@ -552,6 +354,7 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 2
+        OnMouseMove = GroupBox11MouseMove
         object Label20: TLabel
           Left = 266
           Top = 88
@@ -582,12 +385,11 @@ object LCXPSettings: TLCXPSettings
         end
         object programs_suchen: TSpeedButton
           Left = 232
-          Top = 65
+          Top = 66
           Width = 19
           Height = 18
           Caption = '...'
           OnClick = programs_suchenClick
-          OnMouseMove = programs_pathMouseMove
         end
         object Label36: TLabel
           Left = 242
@@ -611,7 +413,7 @@ object LCXPSettings: TLCXPSettings
           Caption = '&Felder l'#246'schen'
           TabOrder = 11
           OnClick = BitBtn2Click
-          OnMouseMove = programs_pathMouseMove
+          OnMouseMove = BitBtn2MouseMove
         end
         object programs_add: TBitBtn
           Left = 28
@@ -621,7 +423,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'h&inzuf'#252'gen'
           TabOrder = 10
           OnClick = programs_addClick
-          OnMouseMove = programs_pathMouseMove
+          OnMouseMove = programs_addMouseMove
         end
         object programs_params: TEdit
           Left = 28
@@ -669,7 +471,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'l'#246'&schen'
           TabOrder = 1
           OnClick = BitBtn3Click
-          OnMouseMove = programs_pathMouseMove
+          OnMouseMove = BitBtn3MouseMove
         end
         object programs_online: TRadioButton
           Left = 264
@@ -701,7 +503,6 @@ object LCXPSettings: TLCXPSettings
           ShowHint = True
           Sorted = True
           TabOrder = 6
-          OnDropDown = DeviceDropDown
           Items.Strings = (
             'maximiert'
             'minimiert'
@@ -762,7 +563,7 @@ object LCXPSettings: TLCXPSettings
           Width = 55
           Height = 13
           Caption = 'Tariftabelle '
-          OnMouseMove = forwardtableMouseMove
+          OnMouseMove = Label15MouseMove
         end
         object Label16: TLabel
           Left = 162
@@ -770,7 +571,7 @@ object LCXPSettings: TLCXPSettings
           Width = 208
           Height = 13
           Caption = 'Minuten im Voraus berechnen und anzeigen'
-          OnMouseMove = forwardtableMouseMove
+          OnMouseMove = Label15MouseMove
         end
         object forwardtable: TSpinEdit
           Left = 90
@@ -781,7 +582,7 @@ object LCXPSettings: TLCXPSettings
           MinValue = 3
           TabOrder = 0
           Value = 5
-          OnMouseMove = forwardtableMouseMove
+          OnMouseMove = Label15MouseMove
         end
         object hidetray: TCheckBox
           Left = 26
@@ -799,6 +600,7 @@ object LCXPSettings: TLCXPSettings
           Height = 17
           Caption = #246'ffne Webseite des Anbieters'
           TabOrder = 2
+          OnMouseMove = OpenWebsiteMouseMove
         end
       end
     end
@@ -832,6 +634,7 @@ object LCXPSettings: TLCXPSettings
           Width = 30
           Height = 13
           Caption = 'Online'
+          OnMouseMove = Label23MouseMove
         end
         object Label25: TLabel
           Left = 25
@@ -839,6 +642,7 @@ object LCXPSettings: TLCXPSettings
           Width = 30
           Height = 13
           Caption = 'Offline'
+          OnMouseMove = Label23MouseMove
         end
         object SoundOn: TEdit
           Left = 64
@@ -846,7 +650,7 @@ object LCXPSettings: TLCXPSettings
           Width = 304
           Height = 21
           TabOrder = 0
-          OnMouseMove = SoundOnMouseMove
+          OnMouseMove = Label23MouseMove
         end
         object SoundOff: TEdit
           Left = 64
@@ -854,7 +658,7 @@ object LCXPSettings: TLCXPSettings
           Width = 304
           Height = 21
           TabOrder = 2
-          OnMouseMove = SoundOnMouseMove
+          OnMouseMove = Label23MouseMove
         end
         object SoundOffBut: TButton
           Left = 376
@@ -864,7 +668,7 @@ object LCXPSettings: TLCXPSettings
           Caption = '...'
           TabOrder = 3
           OnClick = SoundOnButClick
-          OnMouseMove = SoundOnMouseMove
+          OnMouseMove = Label23MouseMove
         end
         object SoundOnBut: TButton
           Left = 376
@@ -874,6 +678,7 @@ object LCXPSettings: TLCXPSettings
           Caption = '...'
           TabOrder = 1
           OnClick = SoundOnButClick
+          OnMouseMove = Label23MouseMove
         end
       end
       object GroupBox7: TGroupBox
@@ -930,6 +735,7 @@ object LCXPSettings: TLCXPSettings
           Caption = '...'
           TabOrder = 3
           OnClick = bgbuttonClick
+          OnMouseMove = bgeditMouseMove
         end
         object GroupBox25: TGroupBox
           Left = 16
@@ -944,6 +750,7 @@ object LCXPSettings: TLCXPSettings
             Width = 79
             Height = 13
             Caption = 'Hintergrundfarbe'
+            OnMouseMove = InfoBGMouseMove
           end
           object InfoSpecialText: TLabel
             Left = 5
@@ -951,6 +758,7 @@ object LCXPSettings: TLCXPSettings
             Width = 118
             Height = 13
             Caption = 'Farbe der Kostenanzeige'
+            OnMouseMove = InfoSpecialTextMouseMove
           end
           object InfoText: TLabel
             Left = 5
@@ -958,6 +766,7 @@ object LCXPSettings: TLCXPSettings
             Width = 45
             Height = 13
             Caption = 'Textfarbe'
+            OnMouseMove = InfoTextMouseMove
           end
           object ColorBox1: TColorBox
             Left = 128
@@ -994,6 +803,7 @@ object LCXPSettings: TLCXPSettings
           Height = 17
           Caption = 'Tarifnamen immer vollst'#228'ndig lesbar'
           TabOrder = 1
+          OnMouseMove = SetOnlineInfoWidthMouseMove
         end
         object Fontedit: TEdit
           Left = 88
@@ -1002,6 +812,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           ReadOnly = True
           TabOrder = 4
+          OnMouseMove = FonteditMouseMove
         end
         object FontB: TButton
           Left = 400
@@ -1011,6 +822,7 @@ object LCXPSettings: TLCXPSettings
           Caption = '...'
           TabOrder = 5
           OnClick = FontBClick
+          OnMouseMove = FonteditMouseMove
         end
       end
       object GroupBox22: TGroupBox
@@ -1029,6 +841,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Backups beim Updaten anlegen'
           TabOrder = 1
           OnClick = keepfilesClick
+          OnMouseMove = keepfilesMouseMove
         end
         object updatebox: TCheckBox
           Left = 24
@@ -1048,6 +861,7 @@ object LCXPSettings: TLCXPSettings
           TabOrder = 2
           WordWrap = True
           OnClick = Button10Click
+          OnMouseMove = Button10MouseMove
         end
         object keepfiles_one: TCheckBox
           Left = 43
@@ -1058,6 +872,7 @@ object LCXPSettings: TLCXPSettings
           Checked = True
           State = cbChecked
           TabOrder = 3
+          OnMouseMove = keepfiles_oneMouseMove
         end
       end
     end
@@ -1078,14 +893,13 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 0
-        OnMouseMove = AtomboxMouseMove
+        OnMouseMove = GroupBox10MouseMove
         object Label6: TLabel
           Left = 16
           Top = 57
           Width = 72
           Height = 13
           Caption = 'Atomzeitserver:'
-          OnMouseMove = Label6MouseMove
         end
         object Label37: TLabel
           Left = 146
@@ -1093,7 +907,7 @@ object LCXPSettings: TLCXPSettings
           Width = 76
           Height = 13
           Caption = 'min wiederholen'
-          OnMouseMove = RssUpdateMouseMove
+          OnMouseMove = atomrepeatMouseMove
         end
         object Atombox: TCheckBox
           Left = 16
@@ -1103,7 +917,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Systemzeit mit der Atomzeit abgleichen'
           TabOrder = 0
           OnClick = AtomboxClick
-          OnMouseMove = AtomboxMouseMove
+          OnMouseMove = GroupBox10MouseMove
         end
         object showatomlog: TButton
           Left = 264
@@ -1113,7 +927,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Logfile &anzeigen'
           TabOrder = 1
           OnClick = showatomlogClick
-          OnMouseMove = showatomlogMouseMove
+          OnMouseMove = Button3MouseMove
         end
         object serverdelete: TButton
           Left = 296
@@ -1123,7 +937,7 @@ object LCXPSettings: TLCXPSettings
           Caption = '&l'#246'schen'
           TabOrder = 5
           OnClick = serverdeleteClick
-          OnMouseMove = serverdeleteMouseMove
+          OnMouseMove = BitBtn2MouseMove
         end
         object Serveraddbutton: TButton
           Left = 296
@@ -1133,7 +947,7 @@ object LCXPSettings: TLCXPSettings
           Caption = '&hinzuf'#252'gen'
           TabOrder = 7
           OnClick = ServeraddbuttonClick
-          OnMouseMove = ServeraddbuttonMouseMove
+          OnMouseMove = programs_addMouseMove
         end
         object Serveradd: TEdit
           Left = 120
@@ -1141,14 +955,13 @@ object LCXPSettings: TLCXPSettings
           Width = 145
           Height = 21
           TabOrder = 6
-          OnMouseMove = Label6MouseMove
         end
         object Serverbox: TComboBox
           Left = 120
           Top = 54
           Width = 145
           Height = 21
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 3
           Text = 'Serverliste'
           OnEnter = ServerboxEnter
@@ -1162,6 +975,7 @@ object LCXPSettings: TLCXPSettings
           MinValue = 1
           TabOrder = 9
           Value = 1
+          OnMouseMove = atomrepeatMouseMove
         end
         object atomrepeat: TCheckBox
           Left = 16
@@ -1171,6 +985,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'alle'
           TabOrder = 8
           OnClick = atomrepeatClick
+          OnMouseMove = atomrepeatMouseMove
         end
         object left: TButton
           Left = 97
@@ -1194,7 +1009,7 @@ object LCXPSettings: TLCXPSettings
           ShowHint = False
           TabOrder = 4
           OnClick = rightClick
-          OnMouseMove = leftMouseMove
+          OnMouseMove = rightMouseMove
         end
       end
       object GroupBox18: TGroupBox
@@ -1211,7 +1026,6 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 1
-        OnMouseMove = GroupBox18MouseMove
         object Label34: TLabel
           Left = 129
           Top = 21
@@ -1250,6 +1064,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'aktiv'
           TabOrder = 0
           OnClick = ipmail_activeClick
+          OnMouseMove = ipmail_activeMouseMove
         end
       end
       object GroupBox8: TGroupBox
@@ -1266,6 +1081,7 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 2
+        OnMouseMove = GroupBox8MouseMove
         object Edit2: TEdit
           Left = 24
           Top = 25
@@ -1276,7 +1092,6 @@ object LCXPSettings: TLCXPSettings
           ShowHint = False
           TabOrder = 0
           Text = '-'
-          OnMouseMove = BitBtn1MouseMove
         end
         object BitBtn1: TBitBtn
           Left = 296
@@ -1288,7 +1103,6 @@ object LCXPSettings: TLCXPSettings
           ShowHint = True
           TabOrder = 1
           OnClick = BitBtn1Click
-          OnMouseMove = BitBtn1MouseMove
         end
       end
       object GroupBox23: TGroupBox
@@ -1313,6 +1127,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'DF'#220'-Einwahl > keine Verbindung'
           TabOrder = 0
           OnClick = DFUEClick
+          OnMouseMove = DFUEMouseMove
         end
         object DFUE2: TButton
           Left = 223
@@ -1322,6 +1137,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'DF'#220'-Einwahl > Standardverbindung'
           TabOrder = 1
           OnClick = DFUE2Click
+          OnMouseMove = DFUE2MouseMove
         end
       end
     end
@@ -1367,15 +1183,15 @@ object LCXPSettings: TLCXPSettings
         object Label39: TLabel
           Left = 76
           Top = 81
-          Width = 221
+          Width = 200
           Height = 13
-          Caption = 'Sekunden vor den Ende eines Tarifes trennen.'
-          OnMouseMove = forwardtableMouseMove
+          Caption = 'Sekunden vor Ende eines Tarifes trennen.'
+          OnMouseMove = DisconnectSecondsMouseMove
         end
         object autotrennen: TCheckBox
           Left = 8
           Top = 18
-          Width = 201
+          Width = 185
           Height = 17
           Caption = 'Automatisch bei Tarifende trennen'
           TabOrder = 0
@@ -1385,7 +1201,7 @@ object LCXPSettings: TLCXPSettings
         object autotrennenask: TCheckBox
           Left = 8
           Top = 38
-          Width = 201
+          Width = 185
           Height = 17
           Caption = 'vor dem Trennen nachfragen und '
           TabOrder = 2
@@ -1430,7 +1246,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Trennen am Ende von Zeitkontingenten'
           TabOrder = 1
           OnClick = autotrennenClick
-          OnMouseMove = autotrennenMouseMove
+          OnMouseMove = autotrennen_kontiMouseMove
         end
         object DisconnectSeconds: TSpinEdit
           Left = 6
@@ -1441,7 +1257,7 @@ object LCXPSettings: TLCXPSettings
           MinValue = 1
           TabOrder = 6
           Value = 5
-          OnMouseMove = forwardtableMouseMove
+          OnMouseMove = DisconnectSecondsMouseMove
         end
       end
       object GroupBox3: TGroupBox
@@ -1458,7 +1274,7 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 1
-        OnMouseMove = GroupBox2MouseMove
+        OnMouseMove = GroupBox3MouseMove
         object Label31: TLabel
           Left = 290
           Top = 19
@@ -1479,6 +1295,7 @@ object LCXPSettings: TLCXPSettings
           Width = 79
           Height = 13
           Caption = 'Leerlaufschwelle'
+          OnMouseMove = Label12MouseMove
         end
         object Label28: TLabel
           Left = 187
@@ -1495,7 +1312,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Automatisch trennen bei Leerlauf nach'
           TabOrder = 0
           OnClick = leerlaufClick
-          OnMouseMove = leerlaufminutenMouseMove
+          OnMouseMove = GroupBox3MouseMove
         end
         object leerlaufminuten: TSpinEdit
           Left = 216
@@ -1506,7 +1323,7 @@ object LCXPSettings: TLCXPSettings
           MinValue = 1
           TabOrder = 1
           Value = 1
-          OnMouseMove = leerlaufminutenMouseMove
+          OnMouseMove = GroupBox3MouseMove
         end
         object leerlaufask: TCheckBox
           Left = 8
@@ -1516,7 +1333,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'vor dem Trennen nachfragen und '
           TabOrder = 2
           OnClick = leerlaufaskClick
-          OnMouseMove = autotrennenMouseMove
+          OnMouseMove = autotrennenaskMouseMove
         end
         object leerlaufwait: TRadioButton
           Left = 192
@@ -1560,7 +1377,7 @@ object LCXPSettings: TLCXPSettings
           Width = 304
           Height = 21
           TabOrder = 7
-          OnMouseMove = SoundOnMouseMove
+          OnMouseMove = LeerlaufPlaySoundMouseMove
         end
         object leerlaufsoundbut: TButton
           Left = 375
@@ -1570,6 +1387,7 @@ object LCXPSettings: TLCXPSettings
           Caption = '...'
           TabOrder = 8
           OnClick = SoundOnButClick
+          OnMouseMove = LeerlaufPlaySoundMouseMove
         end
         object LeerlaufPlaySound: TCheckBox
           Left = 8
@@ -1579,6 +1397,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'Spiele Sound ab '
           TabOrder = 6
           OnClick = LeerlaufPlaySoundClick
+          OnMouseMove = LeerlaufPlaySoundMouseMove
         end
         object Leerlaufschwelle: TSpinEdit
           Left = 117
@@ -1590,7 +1409,6 @@ object LCXPSettings: TLCXPSettings
           MinValue = 1
           TabOrder = 9
           Value = 500
-          OnMouseMove = LeerlaufschwelleMouseMove
         end
       end
       object GroupBox1: TGroupBox
@@ -1607,14 +1425,14 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 2
-        OnMouseMove = AutoEinwahlMouseMove
+        OnMouseMove = GroupBox1MouseMove
         object AutoAus: TComboBox
           Left = 128
           Top = 12
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1643,7 +1461,7 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 1
-        OnMouseMove = AutoEinwahlMouseMove
+        OnMouseMove = GroupBox20MouseMove
         object Label41: TLabel
           Left = 159
           Top = 70
@@ -1651,64 +1469,73 @@ object LCXPSettings: TLCXPSettings
           Height = 13
         end
         object Label40: TLabel
-          Left = 61
-          Top = 20
+          Left = 101
+          Top = 15
           Width = 116
           Height = 26
           Caption = 'Automatisch zur Blacklist, wenn mehr als '
           WordWrap = True
         end
         object Label42: TLabel
-          Left = 62
-          Top = 75
+          Left = 102
+          Top = 70
           Width = 81
           Height = 13
           Caption = 'Einwahlversuche'
           WordWrap = True
         end
         object Label43: TLabel
-          Left = 193
-          Top = 56
+          Left = 233
+          Top = 51
           Width = 18
           Height = 13
           Caption = 'und'
           WordWrap = True
         end
         object Label44: TLabel
-          Left = 240
-          Top = 20
+          Left = 280
+          Top = 15
           Width = 53
           Height = 13
           Caption = 'mindestens '
           WordWrap = True
         end
         object Label45: TLabel
-          Left = 238
-          Top = 75
+          Left = 278
+          Top = 70
           Width = 123
           Height = 26
           Caption = 'Prozent fehlgeschlagener Einwahlen.'
           WordWrap = True
         end
         object AutoBlacklist: TSpinEdit
-          Left = 61
-          Top = 50
+          Left = 101
+          Top = 45
           Width = 108
           Height = 22
           MaxValue = 100000
           MinValue = 1
-          TabOrder = 0
+          TabOrder = 1
           Value = 100
         end
         object AutoBlackListScore: TSpinEdit
-          Left = 237
-          Top = 50
+          Left = 277
+          Top = 45
           Width = 108
           Height = 22
           MaxValue = 100
           MinValue = 1
-          TabOrder = 1
+          TabOrder = 2
           Value = 100
+        end
+        object UseAutoBlacklist: TCheckBox
+          Left = 8
+          Top = 24
+          Width = 73
+          Height = 17
+          Caption = 'aktiv'
+          TabOrder = 0
+          OnClick = UseAutoBlacklistClick
         end
       end
       object AutoEinwahl: TGroupBox
@@ -1725,7 +1552,6 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 0
-        OnMouseMove = AutoEinwahlMouseMove
         object Label30: TLabel
           Left = 52
           Top = 110
@@ -1746,6 +1572,7 @@ object LCXPSettings: TLCXPSettings
           Width = 210
           Height = 13
           Caption = 'Sekunden zwischen zwei Einwahlversuchen'
+          OnMouseMove = AutoConnectIntervalMouseMove
         end
         object Label51: TLabel
           Left = 25
@@ -1805,6 +1632,7 @@ object LCXPSettings: TLCXPSettings
           MinValue = 1
           TabOrder = 2
           Value = 60
+          OnMouseMove = AutoConnectIntervalMouseMove
         end
         object AutoD_start: TDateTimePicker
           Left = 23
@@ -1834,6 +1662,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'zeitgesteuert online : '
           TabOrder = 5
           OnClick = AutoDClick
+          OnMouseMove = AutoDMouseMove
         end
         object AutoD_Day: TComboBox
           Left = 23
@@ -1843,7 +1672,7 @@ object LCXPSettings: TLCXPSettings
           AutoComplete = False
           Style = csDropDownList
           DropDownCount = 13
-          ItemHeight = 13
+          ItemHeight = 0
           ItemIndex = 7
           TabOrder = 6
           Text = 't'#228'glich'
@@ -1867,6 +1696,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'hinzuf'#252'gen'
           TabOrder = 9
           OnClick = Button9Click
+          OnMouseMove = programs_addMouseMove
         end
         object Button11: TButton
           Left = 88
@@ -1876,6 +1706,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'l'#246'schen'
           TabOrder = 10
           OnClick = Button11Click
+          OnMouseMove = BitBtn2MouseMove
         end
         object AutoL: TValueListEditor
           Left = 176
@@ -1887,6 +1718,7 @@ object LCXPSettings: TLCXPSettings
           TitleCaptions.Strings = (
             'Tag'
             'Zeit')
+          OnMouseMove = AutoLMouseMove
           ColWidths = (
             75
             152)
@@ -1910,17 +1742,19 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 0
+        OnMouseMove = GroupBox4MouseMove
         object Label5: TLabel
           Left = 24
           Top = 24
           Width = 19
           Height = 13
           Caption = 'Port'
+          OnMouseMove = PoEditMouseMove
         end
         object serverautostart: TCheckBox
           Left = 24
           Top = 60
-          Width = 241
+          Width = 353
           Height = 17
           Caption = 'Server mit LeastCoster XP starten'
           TabOrder = 3
@@ -1933,6 +1767,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           TabOrder = 0
           OnExit = PoEditExit
+          OnKeyPress = PoEditKeyPress
           OnMouseMove = PoEditMouseMove
         end
         object StartButton: TButton
@@ -1971,6 +1806,7 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 1
+        OnMouseMove = GroupBox5MouseMove
         object Label26: TLabel
           Left = 16
           Top = 18
@@ -1990,6 +1826,7 @@ object LCXPSettings: TLCXPSettings
           Width = 75
           Height = 13
           Caption = 'neues Passwort'
+          OnMouseMove = pwMouseMove
         end
         object Label8: TLabel
           Left = 147
@@ -1997,6 +1834,7 @@ object LCXPSettings: TLCXPSettings
           Width = 68
           Height = 13
           Caption = 'altes Passwort'
+          OnMouseMove = oldpwMouseMove
         end
         object Label9: TLabel
           Left = 16
@@ -2004,6 +1842,7 @@ object LCXPSettings: TLCXPSettings
           Width = 48
           Height = 13
           Caption = 'Username'
+          OnMouseMove = usernameMouseMove
         end
         object userbox1: TComboBox
           Left = 16
@@ -2105,6 +1944,7 @@ object LCXPSettings: TLCXPSettings
         Font.Style = []
         ParentFont = False
         TabOrder = 0
+        OnMouseMove = GroupBox12MouseMove
         object label_min: TLabel
           Left = 374
           Top = 292
@@ -2127,7 +1967,6 @@ object LCXPSettings: TLCXPSettings
           Width = 59
           Height = 13
           Caption = 'Adressliste : '
-          OnMouseMove = RssListMouseMove
         end
         object Label49: TLabel
           Left = 22
@@ -2135,6 +1974,7 @@ object LCXPSettings: TLCXPSettings
           Width = 50
           Height = 13
           Caption = 'zeige max.'
+          OnMouseMove = Rss_maxitemsMouseMove
         end
         object Label50: TLabel
           Left = 160
@@ -2142,6 +1982,7 @@ object LCXPSettings: TLCXPSettings
           Width = 27
           Height = 13
           Caption = 'News'
+          OnMouseMove = Rss_maxitemsMouseMove
         end
         object RssUpdate: TSpinEdit
           Left = 296
@@ -2162,6 +2003,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'l'#246'schen'
           TabOrder = 5
           OnClick = Button4Click
+          OnMouseMove = BitBtn2MouseMove
         end
         object Button5: TButton
           Left = 32
@@ -2171,6 +2013,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'hinzuf'#252'gen'
           TabOrder = 4
           OnClick = Button5Click
+          OnMouseMove = programs_addMouseMove
         end
         object RssList: TValueListEditor
           Left = 16
@@ -2190,7 +2033,6 @@ object LCXPSettings: TLCXPSettings
           TitleCaptions.Strings = (
             'Name'
             'Adresse')
-          OnMouseMove = RssListMouseMove
           ColWidths = (
             110
             261)
@@ -2200,7 +2042,7 @@ object LCXPSettings: TLCXPSettings
           Top = 183
           Width = 25
           Height = 37
-          Caption = #244
+          Caption = '-'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -2215,7 +2057,7 @@ object LCXPSettings: TLCXPSettings
           Top = 135
           Width = 25
           Height = 37
-          Caption = #242
+          Caption = '+'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
@@ -2228,11 +2070,12 @@ object LCXPSettings: TLCXPSettings
         object noFeeds: TCheckBox
           Left = 16
           Top = 24
-          Width = 145
+          Width = 361
           Height = 17
           Caption = 'keine RSS-Feeds laden'
           TabOrder = 0
           OnClick = noFeedsClick
+          OnMouseMove = noFeedsMouseMove
         end
         object Rss_oldItems: TCheckBox
           Left = 243
@@ -2243,6 +2086,7 @@ object LCXPSettings: TLCXPSettings
           Checked = True
           State = cbChecked
           TabOrder = 8
+          OnMouseMove = Rss_oldItemsMouseMove
         end
         object Rss_maxitems: TSpinEdit
           Left = 80
@@ -2253,6 +2097,7 @@ object LCXPSettings: TLCXPSettings
           MinValue = 5
           TabOrder = 7
           Value = 40
+          OnMouseMove = Rss_maxitemsMouseMove
         end
       end
     end
@@ -2267,6 +2112,7 @@ object LCXPSettings: TLCXPSettings
         Align = alTop
         Caption = 'PlugIns'
         TabOrder = 0
+        OnMouseMove = GroupBox24MouseMove
         object Label46: TLabel
           Left = 5
           Top = 192
@@ -2289,6 +2135,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'deinstallieren'
           TabOrder = 2
           OnClick = unregisterClick
+          OnMouseMove = unregisterMouseMove
         end
         object register: TButton
           Left = 232
@@ -2298,6 +2145,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'installieren'
           TabOrder = 1
           OnClick = registerClick
+          OnMouseMove = registerMouseMove
         end
         object readme: TMemo
           Left = 2
@@ -2328,6 +2176,7 @@ object LCXPSettings: TLCXPSettings
           Enabled = False
           TabOrder = 3
           OnClick = plugSettingsClick
+          OnMouseMove = plugSettingsMouseMove
         end
         object State: TStaticText
           Left = 48
@@ -2347,6 +2196,7 @@ object LCXPSettings: TLCXPSettings
           Caption = 'aktivieren'
           TabOrder = 6
           OnClick = activateClick
+          OnMouseMove = activateMouseMove
         end
       end
     end
@@ -2376,11 +2226,7 @@ object LCXPSettings: TLCXPSettings
     Font.Name = 'Tahoma'
     Font.Style = []
     Options = [fdForceFontExist]
-    Left = 400
-    Top = 328
-  end
-  object MainMenu1: TMainMenu
-    Left = 344
-    Top = 64
+    Left = 392
+    Top = 320
   end
 end

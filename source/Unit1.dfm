@@ -323,7 +323,7 @@ object Hauptfenster: THauptfenster
     Font.Style = []
     ParentFont = False
     ReadOnly = True
-    TabOrder = 10
+    TabOrder = 8
   end
   object surfdauer: TTrackBar
     Left = 20
@@ -341,37 +341,6 @@ object Hauptfenster: THauptfenster
     TabStop = False
     ThumbLength = 18
     OnChange = surfdauerChange
-  end
-  object Oleco: TBitBtn
-    Left = 291
-    Top = 431
-    Width = 123
-    Height = 25
-    Cancel = True
-    Caption = '&Net::LCR'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = []
-    ModalResult = 2
-    ParentFont = False
-    TabOrder = 9
-    Visible = False
-    OnClick = OlecoClick
-    Glyph.Data = {
-      66010000424D6601000000000000760000002800000014000000140000000100
-      040000000000F000000000000000000000001000000000000000000000000000
-      8000008000000080800080000000800080008080000080808000C0C0C0000000
-      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00FFFFFFFFFFFF
-      FFFFFFFF0000FFFFFFFFFFFFFFFFFFFF0000FFFFF7777777FFFFFFFF0000FFFF
-      7FFFFFFF77FFFFFF0000FF7FFF0000010F7777770000FFF0002626C000111077
-      0000FF0F02C2C2022011107700000FFF0EEEE0220199910700000FFF0EEEEE02
-      01F9910F00000F7F2EE00222249910FF00000F007E60200EE0000F0F0000F044
-      2777A00EE20FFFFF0000044C022AA200E60FFFF7000004CCC22A2A2260FFFF7F
-      000004CC4402222007777F0F0000F044400FFFFFFFFFF0FF0000FF000FF00FFF
-      FFF00FFF0000FFFFFFFFFFFFFFFFFFFF0000FFFFFFFFFFFFFFFFFFFF0000FFFF
-      FFFFFFFFFFFFFFFF0000}
   end
   object edTarif: TEdit
     Left = 27
@@ -422,32 +391,6 @@ object Hauptfenster: THauptfenster
     ReadOnly = True
     TabOrder = 4
   end
-  object smurf: TBitBtn
-    Left = 291
-    Top = 431
-    Width = 123
-    Height = 25
-    Cancel = True
-    Caption = '&SmartSurfer'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 8
-    Visible = False
-    OnClick = OlecoClick
-    Glyph.Data = {
-      F6000000424DF600000000000000760000002800000010000000100000000100
-      0400000000008000000000000000000000001000000010000000000000000000
-      80000080000000808000800000008000800080800000C0C0C000808080000000
-      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00777777777777
-      777777777777777777777777777777777777777777BBBB777777777BBBBBBBBB
-      B77703BBBBBBBBBB3007700001300030BBB7BBB30B0B1BB0BBB7BBBB0B0B0B30
-      BBB7BBBB0B0B0B30BBB7BBB33BBB3B33BBB77BB0333000003BB77BBBBB303333
-      BB7777BBBBB0BBBBB77777777BBBBB7777777777777777777777}
-  end
   object clock: TStaticText
     Left = 240
     Top = 37
@@ -466,7 +409,7 @@ object Hauptfenster: THauptfenster
     Font.Pitch = fpFixed
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 11
+    TabOrder = 9
     Visible = False
   end
   object DateLabel: TStaticText
@@ -485,7 +428,7 @@ object Hauptfenster: THauptfenster
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
     ParentFont = False
-    TabOrder = 12
+    TabOrder = 10
   end
   object beliebig_date: TDateTimePicker
     Left = 13
@@ -500,7 +443,7 @@ object Hauptfenster: THauptfenster
     Font.Name = 'MS Sans Serif'
     Font.Style = []
     ParentFont = False
-    TabOrder = 14
+    TabOrder = 12
     Visible = False
     OnChange = beliebig_timeChange
   end
@@ -518,7 +461,7 @@ object Hauptfenster: THauptfenster
     Font.Style = []
     Kind = dtkTime
     ParentFont = False
-    TabOrder = 15
+    TabOrder = 13
     Visible = False
     OnChange = beliebig_timeChange
   end
@@ -532,7 +475,7 @@ object Hauptfenster: THauptfenster
     Smooth = True
     Step = 1
     ShowHint = True
-    TabOrder = 16
+    TabOrder = 14
     Visible = False
   end
   object Takt1: TProgressBar
@@ -545,7 +488,7 @@ object Hauptfenster: THauptfenster
     Smooth = True
     Step = 1
     ShowHint = True
-    TabOrder = 17
+    TabOrder = 15
     Visible = False
   end
   object beliebig_check: TCheckBox
@@ -555,7 +498,7 @@ object Hauptfenster: THauptfenster
     Height = 17
     Anchors = [akTop, akRight]
     Caption = 'zeige beliebige Zeit'
-    TabOrder = 18
+    TabOrder = 16
     OnClick = beliebig_check1Click
   end
   object AutoTrennen: TPageControl
@@ -566,7 +509,7 @@ object Hauptfenster: THauptfenster
     ActivePage = TabSheet1
     Anchors = [akLeft, akTop, akRight]
     Style = tsFlatButtons
-    TabOrder = 19
+    TabOrder = 17
     object TabSheet1: TTabSheet
       Caption = 'Auto-Trennen'
       object Label1: TLabel
@@ -736,7 +679,7 @@ object Hauptfenster: THauptfenster
         Width = 177
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         Items.Strings = (
           'Tue nichts'
@@ -754,7 +697,7 @@ object Hauptfenster: THauptfenster
     Width = 97
     Height = 18
     Caption = 'Kanalb'#252'ndelung'
-    TabOrder = 20
+    TabOrder = 18
   end
   object TarifProgress: TProgressBar
     Left = 112
@@ -765,8 +708,17 @@ object Hauptfenster: THauptfenster
     ParentShowHint = False
     Smooth = True
     ShowHint = False
-    TabOrder = 21
+    TabOrder = 19
     Visible = False
+  end
+  object Button1: TButton
+    Left = 80
+    Top = 216
+    Width = 75
+    Height = 25
+    Caption = 'SetOnline'
+    TabOrder = 20
+    OnClick = Button1Click
   end
   object Menu: TMainMenu
     Left = 288
@@ -786,15 +738,6 @@ object Hauptfenster: THauptfenster
       end
       object MM1_3: TMenuItem
         Caption = '-'
-      end
-      object MM1_4: TMenuItem
-        Caption = '&Import'
-        object MM1_4_1: TMenuItem
-          Caption = 'Oleco/ Discountsurfer - Protokoll'
-          RadioItem = True
-          ShortCut = 16457
-          OnClick = MainMenueClick
-        end
       end
       object MM1_5: TMenuItem
         Caption = '&Export'
@@ -881,11 +824,6 @@ object Hauptfenster: THauptfenster
           OnClick = MainMenueClick
         end
       end
-      object MM2_6: TMenuItem
-        Caption = '&Fernsteuerung testen'
-        ShortCut = 16454
-        OnClick = MainMenueClick
-      end
       object MM2_7: TMenuItem
         Caption = '&LeastCosterXP-Dateien'
         object MM2_7_1: TMenuItem
@@ -908,6 +846,10 @@ object Hauptfenster: THauptfenster
         Default = True
         ShortCut = 16464
         OnClick = MainMenueClick
+      end
+      object WebServ: TMenuItem
+        Caption = 'WebInterface'
+        OnClick = WebServClick
       end
       object MM3_2: TMenuItem
         Caption = 'Fortgeschrittener Modus'

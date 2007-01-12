@@ -29,7 +29,7 @@ procedure SaveAutoDialTimes;
 
 implementation
 
-uses inifiles, classes, sysutils, Strutils,Dateutils, forms, unit7, windows, dialogs;
+uses inifiles, classes, sysutils, Strutils,Dateutils, forms, unit7, windows, dialogs, inilang, messagestrings;
 
 procedure watchoutforcheaperprice(checktime: TDateTime);
 var price_now: real;
@@ -45,8 +45,8 @@ with hauptfenster do
   //Fenster freigeben, wenn es schon existiert
   If Assigned(PriceWarning) then begin Pricewarning.close.click; exit; end;
 
-  thisprice_then   := 'unbekannt';
-  thiseinwahl_then := 'unbekannt';
+  thisprice_then   := misc(M149,'M149');
+  thiseinwahl_then := misc(M149,'M149');
   thisprice_when:= liste.cells[2,1];
 
   if not (liste.cells[1,1] ='') then
@@ -68,7 +68,7 @@ with hauptfenster do
      end;
    end;
 
-   if ( (price_then <> price_now) or (thisprice_then = 'unbekannt')) then
+   if ( (price_then <> price_now) or (thisprice_then = misc(M149,'M149'))) then
    begin
      Application.CreateForm(TPriceWarning, PriceWarning);
 
@@ -77,7 +77,7 @@ with hauptfenster do
 
      PriceWarning.info4.visible:= (thisprice_when <> timetoStr(onlineset.vbegin)); //ausbelnnden wenn die gleiche zeit wie Anfang
      PriceWarning.info4.Caption:= 'Der Preis ab  ' + thisprice_when + ' Uhr ist ' + thisprice_then;
-     if thisprice_then <> 'unbekannt' then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' ct/min .';
+     if thisprice_then <> misc(M149,'M149') then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' ct/min .';
 
      PriceWarning.neu1.Caption:= Format('Von %s Uhr - %s Uhr steht Ihnen der Tarif',[liste.cells[2,1] ,liste.cells[3,1]]);
      PriceWarning.neu2.Caption:= Format('%s für %s ct/min (Einwahl %s ct)',[UpperCase(liste.cells[1,1]),liste.cells[4,1],liste.cells[5,1]]);
@@ -92,7 +92,7 @@ with hauptfenster do
    if (price_then > price_now) then
    begin
      onlineset.wechsel:= dateof(checktime) + onlineset.vend;
-     if thisprice_then <> 'unbekannt' then
+     if thisprice_then <> misc(M149,'M149') then
         begin
              onlineset.wechselpreis   := strtofloat(thisprice_then);
              onlineset.wechseleinwahl := strtofloat(thiseinwahl_then);
@@ -107,7 +107,7 @@ with hauptfenster do
    begin
      if onlineset.vend <> onlineset.vbegin then //nur wenn nicht ganztags
      onlineset.wechsel:= dateof(checktime) + onlineset.vend;
-     if thisprice_then <> 'unbekannt' then
+     if thisprice_then <> misc(M149,'M149') then
         begin
              onlineset.wechselpreis   := strtofloat(thisprice_then);
              onlineset.wechseleinwahl := strtofloat(thiseinwahl_then);
@@ -118,7 +118,7 @@ with hauptfenster do
        else begin onlineset.wechselpreis := -1.; onlineset.wechseleinwahl:=0; end;
    end
    else
-   if (thisprice_then = 'unbekannt') then
+   if (thisprice_then = misc(M149,'M149')) then
    begin
      onlineset.tag  := liste.cells[17,i];
      if onlineset.vend <> onlineset.vbegin then //nur wenn nicht ganztags
@@ -132,7 +132,7 @@ with hauptfenster do
      PriceWarning.info2.Caption:= Format('%s für %1.2f ct/min (Einwahl : %f ct).',[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
      PriceWarning.info3.Caption:= Format('Dieser gilt von %s Uhr bis %s Uhr).',[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
      PriceWarning.info4.Caption:= 'Der Preis ab  ' + timeToStr(onlineset.vend) + 'Uhr ist ' + thisprice_then;
-     if thisprice_then <> 'unbekannt' then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' ct/min .';
+     if thisprice_then <> misc(M149,'M149') then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' ct/min .';
 
      PriceWarning.neu1.Caption:= 'Es ist kein Tarif bekannt, der nach';
      PriceWarning.neu2.Caption:=  TimeToStr(onlineset.endzeit) + ' Uhr';
@@ -651,7 +651,6 @@ if not hauptfenster.NoChangeWarning.checked then
    if (isonline and (not hauptfenster.warnung_gezeigt)) then
    if hauptfenster.selfdial and not hauptfenster.beliebig_check.checked then
    if (minuteof(now) = (59-lookforward+1)) then watchoutforcheaperprice(tarifzeit);
-
 end;
 
 
@@ -660,7 +659,13 @@ var k, FreiSekunden, index: integer;
     Dials, DialAll, state, ScoreIndex: integer;
     tarif: string;
     score, score2: real;
+    AutoBlacklist, AutoBlacklistScore: integer;
+    UseAutoBlacklist: Boolean;
 begin
+ UseAutoBlacklist   := settings.ReadBool('AutoBlacklist','active',false);
+ AutoBlackList      := settings.Readinteger('AutoBlacklist','Value',10);
+ AutoBlackListScore := settings.Readinteger('AutoBlacklist','Score',50);
+
 with hauptfenster do
 begin
   rows := rows+1;
@@ -692,7 +697,8 @@ begin
   if (Dials > 0) then Score2:= 1./Dials else Score2:= 1.;
 
 //AutoBlackliste
-  if ((DialAll - Dials > AutoBlacklist) and (Score*100 > Hauptfenster.AutoBlacklistScore)) then hauptfenster.Scores[ScoreIndex].state:= 1;
+  if useAutoBlackList then
+    if ((DialAll - Dials > AutoBlacklist) and (Score*100 > AutoBlacklistScore)) then hauptfenster.Scores[ScoreIndex].state:= 1;
 
 //Scores eintragen
   liste.Cells[0, rows] :=  Format('%.4f',[score+ Score2]);
@@ -720,7 +726,7 @@ begin
              if state = 1 then liste.Cells[7,rows]:= 'Blacklist'
              else
              //es gibt nocht FreiKB
-             if ((length(kontingente) > 0) and (index > -1) and (kontingente[index].FreikB > 0)) then liste.cells[7,rows]:= Format('%.4f',[1/100 *(Einwahl + thisdauer*preis)]) //Format('%.4f (%.4f)',[0., score+ Score2])//  '0,0000'
+             if ((length(kontingente) > 0) and (index > -1) and (kontingente[index].FreikB > 0)) then liste.cells[7,rows]:= Format('%.4f',[1/100 *(Einwahl + thisdauer*preis)])
              else
              //normale Kosten berechnen
              if Freisekunden <= 0 then
@@ -740,7 +746,7 @@ begin
              //Blacklist vor Ablauf markieren
              if state = 1 then liste.Cells[7,rows]:= 'Blacklist'
              else //abglaufen
-              liste.Cells[7,rows]:= 'abgelaufen'; {Hauptfenster.Scores[ScoreIndex].state:= 2;}
+              liste.Cells[7,rows]:= misc(M98,'M98'); {Hauptfenster.Scores[ScoreIndex].state:= 2;}
             end;
 
             if rows>1 then liste.RowCount:= liste.rowcount+1;

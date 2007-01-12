@@ -551,7 +551,7 @@ object TaVerwaltung: TTaVerwaltung
         Left = 0
         Top = 18
         Width = 289
-        Height = 226
+        Height = 191
         Align = alTop
         Caption = 'Freikontingente'
         TabOrder = 1
@@ -613,26 +613,6 @@ object TaVerwaltung: TTaVerwaltung
           Width = 43
           Height = 13
           Caption = 'nextreset'
-        end
-        object konti_hinweis: TLabel
-          Left = 2
-          Top = 183
-          Width = 285
-          Height = 41
-          Align = alBottom
-          Alignment = taCenter
-          AutoSize = False
-          Caption = 
-            'Achtung: Kontingentfunktionen sind nicht ausreichend getestet. B' +
-            'itte teilen Sie mir Ihre Erfahrung mit (leastcosterxp-owner@yaho' +
-            'ogroups.de).'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clRed
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          WordWrap = True
         end
         object Label22: TLabel
           Left = 265
@@ -785,7 +765,7 @@ object TaVerwaltung: TTaVerwaltung
       end
       object Verbrauch: TGroupBox
         Left = 0
-        Top = 244
+        Top = 209
         Width = 289
         Height = 179
         Align = alTop

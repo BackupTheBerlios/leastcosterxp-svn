@@ -102,7 +102,6 @@ type
     firststartcheck: TTimer;
     Status: TStatusBar;
     MM2: TMenuItem;
-    MM1_4_1: TMenuItem;
     MM1_5_1: TMenuItem;
     Tray: TCoolTrayIcon;
     PopupMenu1: TPopupMenu;
@@ -147,7 +146,6 @@ type
     costs: TEdit;
     DialStatus: TEdit;
     surfdauer: TTrackBar;
-    Oleco: TBitBtn;
     MM2_4_1: TMenuItem;
     MM2_4_2: TMenuItem;
     IsOntimer: TTimer;
@@ -162,10 +160,7 @@ type
     MM1_1: TMenuItem;
     Aktualisieren_timer: TTimer;
     MM2_5: TMenuItem;
-    smurf: TBitBtn;
-    MM1_4: TMenuItem;
     MM1_8: TMenuItem;
-    MM2_6: TMenuItem;
     MM2_7: TMenuItem;
     MM2_7_1: TMenuItem;
     MM2_7_2: TMenuItem;
@@ -298,6 +293,10 @@ type
     S_17: TMenuItem;
     ForceDial: TMenuItem;
     AutoDialStatus: TAMAdvLed;
+    Button1: TButton;
+    WebServ: TMenuItem;
+    procedure WebServClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
     procedure AutoDialStatusLedStateChanged(Sender: TObject; LedOn: Boolean;
       NumSwitch: Integer);
     procedure AutoDialStatusClick(Sender: TObject);
@@ -351,7 +350,6 @@ type
     procedure DialBtnClick(Sender: TObject);
     procedure surfdauerChange(Sender: TObject);
     procedure AktualisierenClick(Sender: TObject);
-    procedure OlecoClick(Sender: TObject);
     procedure disconnectviatrennticker;
     procedure IsOntimerTimer(Sender: TObject);
     procedure OnConnect;
@@ -502,8 +500,8 @@ type
       UseColors: boolean;
       SetupModems: boolean;
       Scores : array of TScores;
-      AutoBlacklist, AutoBlacklistScore: integer;
-      //LangStrings : array of String;
+//      AutoBlacklist, AutoBlacklistScore: integer;
+
       german: boolean;
       TarifeDisabled,neuladen: boolean;
       pluglist: TStringlist;
@@ -516,7 +514,6 @@ var
   isonline: boolean; //OnlineStatus
   progcount, progcountoff: integer;
   zeit_min, zeit_std : string;
- // showtime: integer;
   maxkostenrot, maxkostengelb: real;
   oprog, oprogoff: programs;
   lastupdate: TDatetime;
@@ -552,7 +549,7 @@ var
   feiertagsliste: TStringlist;
 implementation
 
-uses Unit2, Unit4, WebServ1, screen, shutdown, Unit3, tarifverw,
+uses Unit2, Unit4, WebServ1, shutdown, Unit3, tarifverw,
   Tarifmanager, Strutils,DateUtils, floating, unit8, Unit6, mmsystem,
   leerlauf, StringRoutine, Unit7, Unit9, GridEvents, modes, menues, RSSReader, Protokolle, httpprot,
   donation;
@@ -755,8 +752,6 @@ case MagRasCon.StateSubEntry of
      begin
       StatLED1.LEDon:= true;
       aktualisieren.enabled:= true;
-      oleco.enabled:= true;
-      smurf.enabled:= true;
       surfdauer.enabled:= true;
      end;
    end
@@ -789,7 +784,6 @@ case MagRasCon.StateSubEntry of
             Kanalbuendelung:= false;
             takt2.tag:= 0;
          end;
-
 end;
 end;
 end;
@@ -1274,8 +1268,6 @@ begin
      selfdial:= true;
      surfdauer.enabled:= true;
      aktualisieren.enabled:= true;
-     oleco.enabled:= true;
-     smurf.enabled:= true;
      //verstecken wenn online
      if settings.readbool('Dialer','Tray',false) then MainMenueClick(MM1_9);
      exit;
@@ -1291,8 +1283,6 @@ begin
  Aktualisieren.enabled:= true;
  aktualisieren.click;
  surfdauer.enabled:= true;
- oleco.enabled:= true;
- smurf.enabled:= true;
  reload.enabled:= true;
  ClearRasEntry;
  Hauptfenster.Cursor := crDefault;
@@ -2042,8 +2032,6 @@ Hauptfenster.Caption:= 'LeastCosterXP '+GetFileVersion(application.exename);
 ozeit.caption:= '';
 usecolors:= true;
 TS6_2.checked:= false;
-AutoBlackList      := 10;
-AutoBlackListScore := 50;
 disconnectseconds  := 5;
 minimizeonclose:= true;
 ConnectionCostvisible:= true;
@@ -2146,20 +2134,6 @@ end;
   //wenn datei übergeben wurde mainform anzeigen
   If (ParamCount>0) and (FileExists(ParamStr(1))) then application.showmainform:= true;
 
-  path:=  settings.ReadString('Pfad von Oleco/ Discountsurfer','path','');{Pfad/ progname}
-  prog:=  settings.ReadString('Pfad von Oleco/ Discountsurfer','prog','');
-
-  //Zeit des letzten Oleco-Imports
-  //wenn die ple.cst gelöscht wurde, dann letztes Datum Vergessen
-  if not fileexists(path+'ple.cst') then
-     begin
-      settings.writestring('lastdate','1','');
-      settings.writestring('lastdate','3','');
-     end;
-
-  //Fernsteuerung deaktivieren, wenn kein Programm eingetragen   
-  MM2_6.enabled:= not (path='');
-
   //letzten Basiszeitwert setzen
   surfdauer.Position:= settings.Readinteger('lasttime','base',15);
 
@@ -2202,10 +2176,6 @@ end;
 
    disconnectseconds         := settings.Readinteger('Autotrennen','DisconnectSeconds',5);
    NoChangeWarning.checked   := settings.Readbool('Autotrennen','keineWechselWarnung',false);
-
-   //AuotBlackList
-   AutoBlackList      := settings.Readinteger('AutoBlacklist','Value',10);
-   AutoBlackListScore := settings.Readinteger('AutoBlacklist','Score',50);
 
   //Leerlauf
    LeerlaufDisconnect.Enabled    := settings.readbool('Leerlauf','Enabled',true);
@@ -2258,30 +2228,6 @@ end;
  if fileexists(ExtractFilepath(ParamStr(0)) + 'UpdatedFiles.dat') then
       CheckForUpdates;
 
-  //Autoimport
- //Auto-Auswerten + Menueeintrag ausblenden
-   if (settings.readbool('LeastCoster','autoread',false) and (prog <> '')) then
-   begin
-    MM1_4_1.Enabled:= true;
-    //nur ausführen, wenn Oleco zur Überwachung installiert
-    if ansicontainstext(prog,'oleco.exe') or ansicontainstext(prog,'discountsurfer.exe') then
-       Protokolle.OlecoImport(sender);
-   end;
-
-  datensaetze:= 0;
-  if ansicontainstext(prog,'oleco') or ansicontainstext(prog,'discountsurfer') then
-  begin
-     if fileexists(path+'ple.cst') then
-     begin
-       ple:= Tinifile.Create(path+'ple.cst');
-       datensaetze:= ple.ReadInteger('online','count',0);
-       ple.Free;
-     end;
-  end
-  else MM1_4_1.enabled:= false;
-   
-  if datensaetze = settings.ReadInteger('lastdate','count',0) then writeme:= true;
-
   RSSRead.LoadRSSList;
 
   tarifverw.ladetarife;
@@ -2316,15 +2262,6 @@ closer.Enabled:= false;
 if (not selfdial) then
 begin
  askedclose(PAnsichar(settings.ReadString('Server','Titel','')));
- if settings.readbool('LeastCoster','autoread',false) then //wenn Autoimport
-     begin
-       //nur ausführen, wenn Oleco zur Überwachung installiert
-      if ansicontainstext(prog,'oleco.exe') or ansicontainstext(prog,'discountsurfer.exe') then
-         Protokolle.OlecoImport(sender);
-
-       //Auto-Export
-       Protokolle.CreateAllLogs;
-      end;
 end
 else
 begin
@@ -2549,8 +2486,8 @@ begin
     end;
 
   //wählen war erfolgreich
-   DialBtn.caption:=misc(M53,'M53'); surfdauer.enabled:= false; oleco.enabled:= false; smurf.enabled:= false;
-end;
+   DialBtn.caption:=misc(M53,'M53'); surfdauer.enabled:= false;
+   end;
 end;
 
 function THauptfenster.StringVonMorgen(date: TDate): string;
@@ -2820,100 +2757,6 @@ begin
 end;
 
 liste.Repaint;
-end;
-
-procedure THauptfenster.OlecoClick(Sender: TObject);
-var ini, initmp: textfile;
-    zeile, buf: string;
-    wort: string[9];
-    checkexe: boolean;
-    h:HWnd;
-    showtime: integer;
-begin
-save_cfg;
-checkexe:= false;
-
-showtime := settings.Readinteger('Einwahl anzeigen','grenze',20); {Einwahlgrenze}
-
-if (IsExeRunning('_discountsurfer.exe')    or IsExeRunning('_oleco.exe')
-    or IsExeRunning('discountsurfer.exe')  or IsExeRunning('oleco.exe')
-    or IsExeRunning('smartsurfer.exe'))
-   then checkexe:= true
-else
-begin
-if not webzugriff then
-   begin //Logfile schreiben
-   buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M69,'M69')+' ('+prog+')' +
-              #9+  'LeastCosterXP'   +#13#10;
-   webserv1.status:= buf;
-   webservform.logfile_add(buf);
-   end;
-end;
-
-if ansicontainstext(prog,'oleco.exe') or ansicontainstext(prog,'discountsurfer.exe') then
-begin
-
-  zeit_min:= inttostr(surfdauer.position);
-  checkexe:=false;
-
-  if fileexists(path+'lcr.ini')  then
-  begin
-    assignfile(ini,path+'lcr.ini');
-    reset(ini);
-    assignfile(initmp,path+'lcr.$$$');
-    rewrite(initmp);
-
-    repeat
-          readln(ini,zeile);
-          if ((zeile='PCselection=1') or (zeile='PCselection=2')) then zeile:='PCselection=0';
-          if ((zeile = 'showstartpriceprov=1') and (surfdauer.Position <= showtime )) then zeile := 'showstartpriceprov=0';
-          if ((zeile = 'showstartpriceprov=1') and (surfdauer.Position > showtime )) then zeile := 'showstartpriceprov=1';
-          if ((zeile = 'showstartpriceprov=0') and (surfdauer.Position <= showtime )) then zeile := 'showstartpriceprov=0';
-          if ((zeile = 'showstartpriceprov=0') and (surfdauer.Position > showtime )) then zeile := 'showstartpriceprov=1';
-          if (zeile = 'atomtime=1') then zeile := 'atomtime=0';
-
-          if ((settings.readinteger('Einwahl anzeigen','grenze',0)=-2) and (zeile = 'showstartpriceprov=1')) then zeile := 'showstartpriceprov=0';
-          if ((settings.readinteger('Einwahl anzeigen','grenze',0)=-2) and (zeile = 'showstartpriceprov=0')) then zeile := 'showstartpriceprov=0';
-
-          if ((settings.readinteger('Einwahl anzeigen','grenze',0)=-1) and (zeile = 'showstartpriceprov=1')) then zeile := 'showstartpriceprov=1';
-          if ((settings.readinteger('Einwahl anzeigen','grenze',0)=-1) and (zeile = 'showstartpriceprov=0')) then zeile := 'showstartpriceprov=1';
-          wort:= zeile;
-
-          if wort='basetime=' then zeile:='basetime=' + zeit_min;
-          writeln(initmp,zeile);
-  until eof(ini);
-  closefile(initmp);
-  closefile(ini);
-  assignfile(ini, path+'lcr.ini');
-  erase(ini);
-  assignfile(initmp, path+'lcr.$$$');
-  rename(initmp, path+'lcr.ini');
-  end;
-end
-else
-if ansicontainstext(prog,'smartsurfer.exe') then
-begin {tue was Smartsurferspezifisches }end;
-
-//wenn Programm nicht läuft
-if not checkexe then
-  begin
- if fileexists(path+prog) then
-  begin
-   ShellExecute(handle,'open',Pchar(path+prog),Pchar ('') ,nil,SW_SHOWNORMAL);
-   tray.IconVisible:= true;
-   hauptfenster.Visible:= false;
-   formhidden:= true;
-   if not noballoon then tray.ShowBalloonHint(misc(M01,'M01'),misc(M02,'M02'), bitInfo, 10);
-   end else timer_an.enabled:= true;
-  end
-else //prog läuft
-begin
-try
- h:=FindWindow(nil,PAnsichar(settings.ReadString('Server','Titel','')));
- postmessage(h,WM_SYSCOMMAND,SC_RESTORE,0);
- BringWindowToTop(h);
-except end;
-end;
 end;
 
 Procedure THauptfenster.SendMail(Subject,Mailtext,
@@ -3212,7 +3055,7 @@ begin
           Tray.IconIndex:=0; //setzen des Offline-Tray-Icons
 
           sntptimer.enabled:= false;
-          //Oleco schließen und Autoexport und updaten
+          //Autoexport und updaten
           if selfdial then closer.Interval:= 500
           else closer.Interval:= 10000;
           closer.Enabled:=true;
@@ -3240,7 +3083,6 @@ begin
            DialStatus.Text:= misc(M85,'M85') + ' ('+timetostr(timeof(now))+')';
            reload.enabled:= true;
 
-           if ( assigned(screenshot) and (not screenshot.Visible)) then screenshot.close;
            refreshall;
 
           //Sound
@@ -3801,7 +3643,7 @@ liste.canvas.font.color:= clBlack;
 if arow > 0 then
 begin
   kostenstring:= liste.cells[7,arow];
-  if not ansicontainsstr(kostenstring,'abgelaufen') and not ansicontainsstr(kostenstring, 'Blacklist') then
+  if not ansicontainsstr(kostenstring,misc(M98,'M98')) and not ansicontainsstr(kostenstring, 'Blacklist') then
    if (kostenstring <> '') then
     kosten := strtofloat(kostenstring);
 end;
@@ -3818,7 +3660,7 @@ if selected[arow] and (arow > 0) then
 else
 if (useColors and ( arow >0 )) then
 begin
-  if liste.cells[7,arow] = 'abgelaufen' then
+  if liste.cells[7,arow] = misc(M98,'M98') then
   begin
      Canvas.Brush.Color := StringToColor(settings.ReadString('Basics','Color_A', ColortoString(RGB(255,220,220))));
      Canvas.FillRect(Rect);
@@ -3904,7 +3746,6 @@ with Liste.Canvas do
     Lineto(Rect.right-1, Rect.bottom);
    end;
 
-
 //Dreieck nach unten
 with Liste.Canvas do
  if ((ARow = 0) and (ACol = Liste.tag)) then
@@ -3973,7 +3814,7 @@ begin
     TS5.Visible:= not (liste.cells[1,row] = '');
 
     liste.row:= Row;
-    tarifstatus.items.items[0].enabled:= not (liste.cells[7, liste.row] = 'abgelaufen');
+    tarifstatus.items.items[0].enabled:= not (liste.cells[7, liste.row] = misc(M98,'M98'));
     listeMouseup(Sender, Button, Shift,X, Y);
   end
   else
@@ -4032,10 +3873,10 @@ if isonline then
 with sender as TLabel do
 if ansicontainsstr(caption,'> ')
  then
-  hint:= 'Die Kosten können nicht berechnet werden. Der aktuelle Preis ist unbekannt !'
+  hint:= misc(M99,'M99')
  else
   if ((gesamtdauer/60) >= 1.0) then
-    hint:= Format('Durchschnittliche Kosten/min : %.4f €',[onlineset.kostenbisjetzt/(gesamtdauer/60)]);
+    hint:= Format(misc(M100,'M100')+ ' : %.4m',[onlineset.kostenbisjetzt/(gesamtdauer/60)]);
 end;
 
 procedure THauptfenster.TarifStatusPopup(Sender: TObject);
@@ -4053,8 +3894,8 @@ begin
  if (liste.cells[7, liste.row] <> 'Blacklist') and (liste.cells[7,i] = 'Blacklist') then begin addtoBL:= false; break; end;
 end;
 
-if (liste.cells[7, liste.row] = 'Blacklist') then TS1.caption:= 'aus Blacklist entfernen'
-else TS1.caption:= 'zur Blacklist hinzufügen';
+if (liste.cells[7, liste.row] = 'Blacklist') then TS1.caption:= misc(M101,'M101')
+else TS1.caption:= misc(M102,'M102');
 
 TS1.enabled:= addtoBL;
 end;
@@ -4070,7 +3911,7 @@ begin
 Scoretimer.enabled:= false;
 //ScoreWert erhöhen (erfolgreich gewählt)
   if (selfdial and (IndexOfScores(onlineset.tarif)>-1)) then
-  inc(Scores[IndexOfScores(onlineset.tarif)].erfolgreich);
+    inc(Scores[IndexOfScores(onlineset.tarif)].erfolgreich);
 end;
 
 //Plugins <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -4166,6 +4007,7 @@ if sender=MM3_2 then
 if isonline then modes.setonlinemode else modes.setofflinemode;
 
 aktualisieren.visible := MM3_2.checked;
+WebServ.visible := MM3_2.checked;
 LEDRSS.visible        := MM3_2.checked;
 LEDTime.visible       := MM3_2.checked;
 DialStatus.visible    := MM3_2.checked;
@@ -4173,7 +4015,6 @@ edtime.visible        := MM3_2.checked;
 edtarif.visible       := MM3_2.checked;
 beliebig_check.visible:= MM3_2.checked;
 MM2_4.visible         := MM3_2.checked;
-MM2_6.visible         := MM3_2.checked;
 MM2_7.visible         := MM3_2.checked;
 TS3.visible           := MM3_2.checked;
 
@@ -4214,18 +4055,7 @@ begin
   hauptfenster.height:= 480;
 end;
 
-if ansicontainstext(prog,'smartsurfer') then
-  begin
-   oleco.Visible:= false;
-   smurf.Visible:= MM3_2.Checked;
-  end
-  else
-   if ansicontainstext(prog,'oleco') or ansicontainstext(prog,'discountsurfer') then
-   begin
-     oleco.Visible:= MM3_2.Checked;
-     smurf.Visible:= false;
-   end
- else begin hauptfenster.oleco.Visible:= false; hauptfenster.smurf.Visible:= false; end;
+
 end;
 
 //Atomzeit-Update
@@ -4240,7 +4070,7 @@ begin
 error:= false;
 
 LedTime.ColorOff:= clGray;
-LedTime.Hint:= 'Atomzeit-Update um '+ timetostr(timeof(now)) + ' gestartet';
+LedTime.Hint:= misc(M103,'M103') +' ('+ timetostr(timeof(now)) + ' )';
 
 if not isonline or (atomserver.count = 0) then
 begin //wenn offline tue nix
@@ -4267,13 +4097,14 @@ end;
 //Datei anlegen, wenn sie nicht existiert und öffnen
      assignfile(log,extractfilepath(paramstr(0))+'log\atomzeit.txt');
      if fileexists( extractfilepath(paramstr(0))+'log\atomzeit.txt') then
-     append(log)
-     else begin
+      append(log)
+     else
+     begin
       rewrite(log);
-      writeln(log,'alte Zeit' + chr(9) + 'neue Zeit' + chr(9) + 'Zeitdifferenz in s'+ chr(9) + 'Server');
+      writeln(log,misc(M105,'M105') + #9 + misc(M106,'M106') + #9 + misc(M107,'M107')+ #9 + misc(M108,'M108'));
      end;
  //zeile hinzufügen
-      writeln(log,datetimetostr(now) +chr(9)+'Starte Atomzeit-Update mit ' + atomserver.strings[atomcount]);
+      writeln(log,datetimetostr(now) +#9+misc(M104,'M104')+' ' + atomserver.strings[atomcount]);
 
      time:= TSNTPSend.Create;
    try
@@ -4293,11 +4124,11 @@ end;
 
       LEDTime.ColorOff:= cllime;
       LEDTime.ledon:= false;
-      LedTime.Hint:= 'Erfolgreiches Atomzeit-Update um '+ timetostr(timeof(now));
+      LedTime.Hint:= misc(M109,'M109')+ ' ('+ timetostr(timeof(now)) +')';
    end
    else //wenn nicht erfolgreiches update
    begin
-    writeln(log,datetimetostr(now) + chr(9) + 'Fehler beim Verbinden mit '+time.targethost );
+    writeln(log,datetimetostr(now) + #9 + misc(M110,'M110')+' '+time.targethost );
     sntptimer.interval:= 5000;
     error:= true;
    end;
@@ -4314,7 +4145,6 @@ end;
      timeupdaterunning:= false;
      exit;
  end;
-
 //wenn erfolgreich, dann neues Interval setzen
 sntptimer.interval:= settings.ReadInteger('Onlinecheck','Atominterval', 60)*60000;
 //nur neu starten, wenn wiederholt werden soll
@@ -4344,7 +4174,15 @@ end;
 
 procedure THauptfenster.ListeClick(Sender: TObject);
 var k, index: integer;
+    vcost   : real;  
 begin
+
+try
+ vcost:= strtofloat(liste.cells[7,liste.row]);
+except
+ vcost:= 1.0;
+end;
+
 index:= -1;
 
 if (not isonline) and (not dialing) then
@@ -4353,7 +4191,7 @@ begin
   edtarif.text:= liste.cells[1,liste.row];
  //Zeitraum setzen
   if (liste.cells[2,liste.Row]=liste.cells[3,liste.Row]) then
-     edtime.text:='ganztags'
+     edtime.text:=misc(M111,'M111')
     else edtime.text:= liste.cells[2,liste.row] +'-'+liste.cells[3,liste.row];
  //Rufnummer setzen
   ednumber.text:= liste.cells[8,liste.row];
@@ -4361,27 +4199,26 @@ begin
  //Kosten setzen
   costs.Font.Color:= clWindowtext;
 
-  if ( (liste.cells[7,liste.row]='abgelaufen') or (liste.cells[7,liste.row]='Blacklist')) then
+  if ( (liste.cells[7,liste.row]=misc(M98,'M98')) or (liste.cells[7,liste.row]='Blacklist')) then
   begin
     costs.Font.Color:= clred;
-    if (liste.cells[7,liste.row]='abgelaufen') then costs.Text:= 'ungültig seit ' + liste.cells[13,liste.row]
+    if (liste.cells[7,liste.row]=misc(M98,'M98')) then costs.Text:= misc(M112,'M112')+' ' + liste.cells[13,liste.row]
     else costs.text:= 'Blacklist';
   end
   else
-  if ( (length(kontingente) > 0) and (liste.cells[7,liste.row]='0,0000')) then
+  if ( (length(kontingente) > 0) and (vcost=0.0000)) then
   begin
     for k:=0 to length(kontingente)-1 do if kontingente[k].Tarif = edtarif.text then begin index:= k; break; end;
       if (index > -1) then
        begin
         if kontingente[index].freikB > 0 then
-         costs.text:= Format('noch frei %05f MB',[kontingente[index].freikB/1024])
+         costs.text:= Format(misc(M113,'M113')+' %05f MB',[kontingente[index].freikB/1024])
         else
         if kontingente[index].freisekunden > 0 then
-          costs.text:= Format('noch ca. frei %5.0f min',[kontingente[index].freisekunden/60])
+          costs.text:= Format(misc(M113,'M113')+' %5.0f min',[kontingente[index].freisekunden/60])
        end;
       end
-   else   costs.Text:=liste.cells[7,liste.row] + ' €';
-
+   else costs.Text:= Format('%1.4m',[vcost]);
  end;
  //Webseite setzen und unsichtbar machen, wenn leer
  if assigned(edwebsite) then
@@ -4459,9 +4296,7 @@ if ((button<> mbright)  or ((button=mbright) and not selected[row])) then
 
 liste.repaint;
 end;
-
 end;
-
 
 procedure THauptfenster.ListeSelectCell(Sender: TObject; ACol, ARow: Integer;
   var CanSelect: Boolean);
@@ -4478,7 +4313,6 @@ if not (ssctrl in shift) then
     for i:=0 to length(selected)-1 do selected[i]:= false;
  if liste.row > 0 then selected[liste.row]:= true;
  liste.repaint;
-
 end;
 
 procedure THauptfenster.ListeKeyUp(Sender: TObject; var Key: Word;
@@ -4518,19 +4352,17 @@ LEDTime.left := Hauptfenster.width - 50;
 StatLED2.left := online.left -16;
 StatLED1.left := online.left -26;
 
-if assigned(title2) then title2.left:= round((hauptfenster.clientwidth/2) - (title2.width/2));  
+if assigned(title2) then title2.left:= round((hauptfenster.clientwidth/2) - (title2.width/2));
 end;
 
 procedure THauptfenster.S_1Click(Sender: TObject);
 begin
-
  (sender as TMenuitem).checked:= not (sender as TMenuitem).checked;
- 
+
  if (not (sender as TMenuitem).checked) then
   hauptfenster.Liste.ColWidths[(sender as TMenuitem).tag]:= -1
  else
   hauptfenster.Liste.ColWidths[(sender as TMenuitem).tag]:= 60;
-
 end;
 
 procedure THauptfenster.ForceDialClick(Sender: TObject);
@@ -4547,9 +4379,20 @@ procedure THauptfenster.AutoDialStatusLedStateChanged(Sender: TObject;
   LedOn: Boolean; NumSwitch: Integer);
 begin
 if AutoDialStatus.LEDON then
-    AutoDialStatus.hint:= 'Die Automatische Einwahl ist aktiviert.'
+    AutoDialStatus.hint:= misc(M114,'M114')
   else
-    AutoDialStatus.hint:= 'Die Automatische Einwahl ist deaktiviert.';
+    AutoDialStatus.hint:= misc(M115,'M115');
+end;
+
+procedure THauptfenster.Button1Click(Sender: TObject);
+begin
+isontimer.enabled:= false;
+OnConnect;
+end;
+
+procedure THauptfenster.WebServClick(Sender: TObject);
+begin
+WebServForm.visible:= true;
 end;
 
 end.

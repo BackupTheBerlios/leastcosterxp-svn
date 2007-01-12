@@ -44,7 +44,7 @@ var count:integer;
 
 
 implementation
-uses unit1, httpprot, RegExpr, windows, menus, graphics, DateUtils, shellapi;
+uses unit1, httpprot, RegExpr, windows, menus, graphics, DateUtils, shellapi, inilang, messagestrings;
 
 function Download(Adress, FName: String): boolean;
 var HttpCli: THttpCli;
@@ -211,10 +211,8 @@ begin
         end;
       end;
 
-
     items.Free;
     r.free;
-
 end;
 
 procedure TRSS.RSSNotify(Sender: TObject);
@@ -334,7 +332,7 @@ begin
    Files.LoadFromFile(ExtractFilePath(ParamStr(0))+ 'RSSlist.txt');
   end else exit;
   
- hauptfenster.Status.SimpleText:= ('Starte RSS-Update');
+ hauptfenster.Status.SimpleText:= (misc(M217,'M217'));
 
  if not DirectoryExists(ExtractFilePath(paramstr(0))+'RSS') then MkDir(ExtractFilePath(paramstr(0))+'RSS');
 
@@ -396,7 +394,7 @@ begin
  hauptfenster.ledrss.coloroff:= clOlive;
  hauptfenster.ledrss.coloron:= clYellow;
  hauptfenster.LEDTimer.enabled:= true;
- hauptfenster.LEDRSS.Hint:= 'RSS-Update gestartet : ' + timetostr(timeof(now));
+ hauptfenster.LEDRSS.Hint:= misc(M218,'M218')+' : ' + timetostr(timeof(now));
 
  RSSRead.XML:= TEasyXmlScanner.Create(hauptfenster);
  RssRead.XML.Normalize:= false;
@@ -416,7 +414,6 @@ begin
  RSSRead.XML.Free;
  RssRead.MyThread:= nil;
  RssRead.MyThread.Free;
-// RSSRead.Free;
 
 if (not Hauptfenster.noFeeds) then
    begin
@@ -424,10 +421,10 @@ if (not Hauptfenster.noFeeds) then
     hauptfenster.ledtimer.enabled:= false;
     hauptfenster.ledrss.coloron:= clLime;
     hauptfenster.ledrss.ledon:= true;
-    hauptfenster.ledrss.hint:= 'Letzte Aktualisierung der Rss-Feeds um ' + timetostr(timeof(now));
+    hauptfenster.ledrss.hint:= misc(M220,'M220')+' ' + timetostr(timeof(now));
    end;
 
- hauptfenster.Status.SimpleText:= ('RSS-Update beendet.');
+ hauptfenster.Status.SimpleText:= (misc(M219,'M219'));
 
  if RSSRead.shutdown then
  begin

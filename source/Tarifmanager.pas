@@ -90,7 +90,6 @@ type
     butBatchExport: TBitBtn;
     ButBatchImport: TBitBtn;
     nextreset: TLabel;
-    konti_hinweis: TLabel;
     radio_zeit: TRadioButton;
     Radio_Vol: TRadioButton;
     radio_NO: TRadioButton;
@@ -184,7 +183,7 @@ var
 
 implementation
 
-uses Unit3, Unit1, tarifverw, auswertung, math, GridEvents, addons;
+uses Unit3, Unit1, tarifverw, auswertung, math, GridEvents, addons, inilang, messagestrings;
 
 {$R *.dfm}
 
@@ -329,21 +328,17 @@ end;
 
 if (TaWebsite.text='') then
 begin
-if hauptfenster.german then
-   errormsg.caption:= 'Hinweis: Es wurde keine Webseite angegeben.';
-
-label7.font.color:= clgreen;
+  errormsg.caption:= misc(M157,'M157');
+  label7.font.color:= clgreen;
 end;
 
 if ((TaStart.time= TaEnd.time) and (not ganztags.checked)) then
 begin
-if hauptfenster.german then
-   errormsg.caption:= 'Hinweis: Startzeit gleich Endzeit: ''Ganztags'' wurde aktiviert.';
-
-label3.font.color:= clgreen;
-label4.font.color:= clgreen;
-tastart.time:= Encodetime(0,0,0,0);
-taend.time:= Encodetime(0,0,0,0);
+  errormsg.caption:= misc(M158,'M158');
+  label3.font.color:= clgreen;
+  label4.font.color:= clgreen;
+  tastart.time:= Encodetime(0,0,0,0);
+  taend.time:= Encodetime(0,0,0,0);
 end;
 
 if (TaExpires.date < TAStarts.date) then
@@ -354,8 +349,7 @@ end;
 
 if error then
 begin
-  if hauptfenster.german then
-     errormsg.caption:= 'Eintragen abgebrochen: Bitte rote Markierungen beachten !';
+  errormsg.caption:= misc(M159,'M159');
   exit;
 end;
 
@@ -373,7 +367,7 @@ if checkbox10.checked then temptag:= temptag +'[feiertags]';
 if not isdatavalid(temptag, myident) then
     begin
      if hauptfenster.german then
-      errormsg.Caption:= 'Tarifüberschneidung, bitte Daten korrigieren.';
+      errormsg.Caption:= misc(M160,'M160');
       exit;
     end;
 
@@ -399,9 +393,9 @@ begin
      if (taexpires.Date <> strtodate(tarifliste.cells[11,tarifliste.row]) ) then changedvalues.Append('expires');
      if (temptag        <> tarifliste.cells[0,tarifliste.row] ) then changedvalues.Append('Tag');
 
-     if (TaDelEnd.checked and (tarifliste.cells[14,tarifliste.row] = 'nein')) then changedvalues.Append('DeleteWhenExpires')
+     if (TaDelEnd.checked and (tarifliste.cells[14,tarifliste.row] =  misc(M162,'M162'))) then changedvalues.Append('DeleteWhenExpires')
      else
-     if (not TaDelEnd.checked and (tarifliste.cells[14,tarifliste.row] = 'ja')) then changedvalues.Append('DeleteWhenExpires');
+     if (not TaDelEnd.checked and (tarifliste.cells[14,tarifliste.row] = misc(M161,'M161'))) then changedvalues.Append('DeleteWhenExpires');
 
      //werte ändern
      if ((changedvalues.count > 0)   and (myident <> ''))
@@ -534,7 +528,7 @@ begin
 end;
 
 button2.Click; //Felder löschen
-button1.caption:='&Tarif hinzufügen';
+button1.caption:=misc(M163,'M163');
 tarifboxCloseUp(self);
 changedvalues.Free;
 end;
@@ -552,21 +546,22 @@ myident:='';
 
 PageControl1.ActivePage:= TabSheet2;
 
-tarifliste.cells[0,0]:='Gültigkeit';
-tarifliste.cells[1,0]:='Beginn';
-tarifliste.cells[2,0]:='Ende';
-tarifliste.cells[3,0]:='Preis';
-tarifliste.cells[4,0]:='Einwahl';
-tarifliste.cells[5,0]:='Takt';
-tarifliste.cells[6,0]:='Nummer';
-tarifliste.cells[7,0]:='User';
-tarifliste.cells[8,0]:='Passwort';
-tarifliste.cells[9,0]:='Webseite';
-tarifliste.cells[10,0]:='gültig ab';
-tarifliste.cells[11,0]:='gültig bis';
-tarifliste.cells[12,0]:='eingetragen';
+tarifliste.cells[0,0]:= misc(M164,'M164');
+tarifliste.cells[1,0]:= misc(M165,'M165');
+tarifliste.cells[2,0]:= misc(M166,'M166');
+tarifliste.cells[3,0]:= misc(M167,'M167');
+tarifliste.cells[4,0]:= misc(M168,'M168');
+tarifliste.cells[5,0]:= misc(M169,'M169');
+tarifliste.cells[6,0]:= misc(M170,'M170');
+tarifliste.cells[7,0]:= misc(M171,'M171');
+tarifliste.cells[8,0]:= misc(M172,'M172');
+tarifliste.cells[9,0]:= misc(M173,'M173');
+tarifliste.cells[10,0]:=misc(M174,'M174');
+tarifliste.cells[11,0]:=misc(M175,'M175');
+tarifliste.cells[12,0]:=misc(M176,'M176');
 tarifliste.cells[13,0]:='Ident';
-tarifliste.cells[14,0]:='Löschen bei Ablauf';
+tarifliste.cells[14,0]:=misc(M177,'M177');
+tarifliste.cells[15,0]:=misc(M178,'M178');
 
 for i:= 0 to tarifliste.colcount-1 do
 Tarifliste.ColWidths[i] := settings.readinteger('Tarifmanager','Col'+inttostr(i),64);
@@ -576,8 +571,6 @@ if large then tarifliste_sizeclick(self);
 
 //IdentSpalte 'unsichtbar'
 tarifliste.ColWidths[13]:= -1;
-
-
 
 Taexpires.Date:= incday(dateof(now),7);
 taStarts.date:= dateof(now);
@@ -599,35 +592,17 @@ end;
 
 procedure TTaVerwaltung.CheckBox8Click(Sender: TObject);
 begin
-if checkbox8.Checked then
-begin
-checkbox1.checked:= true;
-checkbox2.checked:= true;
-checkbox3.checked:= true;
-checkbox4.checked:= true;
-checkbox5.checked:= true;
-end
-else
-begin
-checkbox1.checked:= false;
-checkbox2.checked:= false;
-checkbox3.checked:= false;
-checkbox4.checked:= false;
-checkbox5.checked:= false;
-end;
+  checkbox1.checked:= checkbox8.Checked;
+  checkbox2.checked:= checkbox8.Checked;
+  checkbox3.checked:= checkbox8.Checked;
+  checkbox4.checked:= checkbox8.Checked;
+  checkbox5.checked:= checkbox8.Checked;
 end;
 
 procedure TTaVerwaltung.CheckBox9Click(Sender: TObject);
 begin
-if checkbox9.checked then
-begin
-checkbox6.checked:= true;
-checkbox7.checked:= true;
-end else
-begin
-checkbox6.checked:= false;
-checkbox7.checked:= false;
-end;
+  checkbox6.checked:= checkbox9.checked;
+  checkbox7.checked:= checkbox9.checked;
 end;
 
 procedure TTaVerwaltung.TaPriceKeyPress(Sender: TObject; var Key: Char);
@@ -647,30 +622,22 @@ procedure TTaVerwaltung.TaTaktKeyPress(Sender: TObject; var Key: Char);
 begin
 if not (Key in ['0'..'9', '/', Char(VK_BACK)]) then
   Key := #0;
-
 end;
 //index: welcher index soll ausgewählt werden ?
 procedure TTaVerwaltung.AddItemstoTarifbox(index: integer);
 var i: integer;
     temp: string;
 begin
-{for i:= 0 to length(hauptfenster.Scores) -1  do
-begin
-temp:= hauptfenster.Scores[i].Name;
-if (tarifbox.Items.IndexOf(temp)=-1) then Tarifbox.Items.Append(temp);
-end;}
-
 for i:= 0 to length(hauptfenster.Tarife) -1  do
 begin
-temp:= hauptfenster.Tarife[i].tarif;
-if (tarifbox.Items.IndexOf(temp)=-1) then Tarifbox.Items.Append(temp);
+  temp:= hauptfenster.Tarife[i].tarif;
+  if (tarifbox.Items.IndexOf(temp)=-1) then Tarifbox.Items.Append(temp);
 end;
-
 
 tarifbox.ItemIndex:=index;
 
 //-20 Tarifname geändert | -10 wenn neu hinzugefügt
-if (index=-10) then tarifbox.itemindex:= tarifbox.items.indexof(TAName.text)//tarifbox.items.indexof(temp)
+if (index=-10) then tarifbox.itemindex:= tarifbox.items.indexof(TAName.text)
 else
 if (index=-20) then tarifbox.itemindex:= tarifbox.items.indexof(TaName.text);
 end;
@@ -693,32 +660,32 @@ begin
  blacklist.Glyph.TransparentMode:= tmFixed;
  case state of
   0: begin Blacklist.Caption:= 'Whitelist';
-           Blacklist.Hint := 'Dieser Tarif befindet sich auf der Whitelist. Klick zum Umschalten';
+           Blacklist.Hint := misc(M179,'M179');
            if fileexists(ExtractFilepath(paramstr(0)) + 'whitelist.bmp') then Blacklist.glyph.LoadFromFile(ExtractFilepath(paramstr(0)) + 'whitelist.bmp');
      end;
   1: begin Blacklist.Caption:= 'Blacklist';
-           Blacklist.Hint := 'Dieser Tarif befindet sich auf der Blacklist. Klick zum Umschalten';
+           Blacklist.Hint := misc(M180,'M180');
            if fileexists(ExtractFilepath(paramstr(0)) + 'blacklist.bmp') then Blacklist.glyph.LoadFromFile(ExtractFilepath(paramstr(0)) + 'blacklist.bmp');
      end;
   end;
 end;
 
-tarifliste.cells[0,0]:='Gültigkeit';
-tarifliste.cells[1,0]:='Beginn';
-tarifliste.cells[2,0]:='Ende';
-tarifliste.cells[3,0]:='Preis';
-tarifliste.cells[4,0]:='Einwahl';
-tarifliste.cells[5,0]:='Takt';
-tarifliste.cells[6,0]:='Nummer';
-tarifliste.cells[7,0]:='User';
-tarifliste.cells[8,0]:='Passwort';
-tarifliste.cells[9,0]:='Webseite';
-tarifliste.cells[10,0]:='gültig ab';
-tarifliste.cells[11,0]:='gültig bis';
-tarifliste.cells[12,0]:='eingetragen';
+tarifliste.cells[0,0]:= misc(M164,'M164');
+tarifliste.cells[1,0]:= misc(M165,'M165');
+tarifliste.cells[2,0]:= misc(M166,'M166');
+tarifliste.cells[3,0]:= misc(M167,'M167');
+tarifliste.cells[4,0]:= misc(M168,'M168');
+tarifliste.cells[5,0]:= misc(M169,'M169');
+tarifliste.cells[6,0]:= misc(M170,'M170');
+tarifliste.cells[7,0]:= misc(M171,'M171');
+tarifliste.cells[8,0]:= misc(M172,'M172');
+tarifliste.cells[9,0]:= misc(M173,'M173');
+tarifliste.cells[10,0]:=misc(M174,'M174');
+tarifliste.cells[11,0]:=misc(M175,'M175');
+tarifliste.cells[12,0]:=misc(M176,'M176');
 tarifliste.cells[13,0]:='Ident';
-tarifliste.cells[14,0]:='Löschen bei Ablauf';
-tarifliste.cells[15,0]:='Tarif-Editor';
+tarifliste.cells[14,0]:=misc(M177,'M177');
+tarifliste.cells[15,0]:=misc(M178,'M178');
 
 rows:=0;
 pbar.Min:= 0;
@@ -745,7 +712,7 @@ begin
      Tarifliste.Cells[12,rows] := DateToStr(hauptfenster.tarife[i].eingetragen);
      Tarifliste.Cells[13,rows] := inttostr(i);
      if hauptfenster.tarife[i].DeleteWhenExpires then
-       Tarifliste.cells[14,rows] := 'ja' else Tarifliste.cells[14,rows] := 'nein';
+       Tarifliste.cells[14,rows] := misc(M161,'M161') else Tarifliste.cells[14,rows] := misc(M162,'M162');
      Tarifliste.Cells[15,rows] := hauptfenster.tarife[i].Editor;
 
      if rows>1 then Tarifliste.RowCount:= tarifliste.rowcount+1;
@@ -767,7 +734,7 @@ procedure TTaVerwaltung.TarifboxCloseUp(Sender: TObject);
 var changeindex: boolean;
 begin
  changeindex:= false;
- button4.Caption:= 'Eintrag &löschen';
+ button4.Caption:= misc(M181,'M181');
 
  if changeindex then tarifbox.itemindex:= 0;
 
@@ -783,7 +750,7 @@ EnableEdits(true);
 myident:= '';
 changename:= '';
 errormsg.Caption:= '';
-if hauptfenster.german then button1.caption:= '&Tarif hinzufügen';
+if hauptfenster.german then button1.caption:= misc(M163,'M163');
 
 Taname.Text:=  '';
 TaNumber.Text:='';
@@ -873,7 +840,6 @@ if (length(Hauptfenster.Tarife)> 0) then
     if ( (TaName.text = Hauptfenster.Tarife[i].Tarif )
     //und prüfen ob es derselbe Eintrag ist
     and (id <> i)
-//    and (myident <> '') and (strtoint(myident) <> i)
     and (TaStarts.date < expdate)
     )
     then
@@ -936,12 +902,12 @@ var name: string;
     index,i: integer;
     del: array of integer;
 begin
+
 button2.click; //eingabefelder leeren
 
 name:= tarifbox.Items.Strings[tarifbox.itemindex];
 index:= tarifbox.Items.IndexOf(name);
-
-//>>
+if index=-1 then exit;
 
 for i:= tarifliste.Selection.TopLeft.Y to tarifliste.Selection.BottomRight.Y do
 begin
@@ -964,10 +930,8 @@ begin
 end;
 
 tarifliste.Rows[1].Clear;
-{if tarifbox.Items.count = 0 then exit;}
 tarifbox.itemindex:= index;
 TarifboxCloseUp(sender);
-
 end;
 
 procedure TTaVerwaltung.changeData;
@@ -976,7 +940,7 @@ begin
 button2.Click;
 
 if tarifliste.Row < 1 then exit;
-if hauptfenster.german then button1.Caption:= '&speichern';
+if hauptfenster.german then button1.Caption:= misc(M128,'M128');
 
 Taname.text:= tarifbox.Items.Strings[tarifbox.itemindex];
 myident:= tarifliste.Cells[13, tarifliste.row];  //ident-nr. merken
@@ -1020,10 +984,10 @@ if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[Sa]') then checkbox6.che
 if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[So]') then checkbox7.checked:= true;
 if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[feiertags]') then checkbox10.checked:= true;
 
-if tarifliste.cells[14,tarifliste.row] = 'ja' then TaDelEnd.checked:= true else TadelEnd.Checked:= false;
+if tarifliste.cells[14,tarifliste.row] = misc(M161,'M161') then TaDelEnd.checked:= true else TadelEnd.Checked:= false;
 
 edit:= (tarifliste.cells[15,tarifliste.row] = '');
-if not edit then errormsg.caption:= 'Der Tarif wird von '+ tarifliste.cells[15,tarifliste.row] + ' verwaltet !';
+if not edit then errormsg.caption:= misc(M182,'M182')+': '+ tarifliste.cells[15,tarifliste.row];
 
 EnableEdits(edit);
 
@@ -1091,14 +1055,11 @@ liste_clicked:= false;
 //tarifliste.repaint;
 if tarifliste.Selection.Bottom - tarifliste.Selection.Top > 0 then
 begin
-  if hauptfenster.german then
-   errormsg.caption:= 'Achtung : Mehrfachauswahl.' + #13#10 +
-                      'Beim Ändern werden die Daten für alle markierten Datensätze übernommen. Ausnahme sind die Felder "Beginn" und "Ende".';
-
-  if hauptfenster.german then button4.Caption:= 'Einträge &löschen';
+   errormsg.caption:= misc(M183,'M183');
+   button4.Caption := misc(M184,'M184');
 end
 else //wenn nur ein Eintrag selektiert
-   if hauptfenster.german then button4.Caption:= 'Eintrag &löschen';
+   button4.Caption := misc(M185,'M185');
 
 //wenn über den rand gezogen wird wieder verkleinern
 for i:=0 to tarifliste.ColCount -1 do
@@ -1123,16 +1084,14 @@ end;
 
 procedure TTaVerwaltung.butBatchExportClick(Sender: TObject);
 begin
-TaVerwaltung.enabled:= false;
-hauptfenster.MainMenueClick(Hauptfenster.MM1_2);
-//hauptfenster.MM1_2click(self);
+  TaVerwaltung.enabled:= false;
+  hauptfenster.MainMenueClick(Hauptfenster.MM1_2);
 end;
 
 procedure TTaVerwaltung.ButBatchImportClick(Sender: TObject);
 begin
-TaVerwaltung.enabled:= false;
-hauptfenster.MainMenueClick(Hauptfenster.MM1_1);
-//hauptfenster.MM1_1click(Hauptfenster.MM1_1);
+  TaVerwaltung.enabled:= false;
+  hauptfenster.MainMenueClick(Hauptfenster.MM1_1);
 end;
 
 procedure TTaVerwaltung.ButDelExpClick(Sender: TObject);
@@ -1225,21 +1184,22 @@ end;
 
 procedure TTaVerwaltung.newexpireDropDown(Sender: TObject);
 begin
-nomove:= true;
+  nomove:= true;
 end;
 
 procedure TTaVerwaltung.TariflisteClick(Sender: TObject);
 begin
-if tarifbox.items.count > 0 then
-ChangeData;
-tarifliste.repaint;
+  if tarifbox.items.count > 0 then
+    ChangeData;
+  tarifliste.repaint;
 end;
 
 procedure TTaVerwaltung.ButkopierenClick(Sender: TObject);
 begin
+if (tarifliste.Row < 1) or (tarifliste.cells[0,tarifliste.row]='') then exit;
 
-if tarifliste.Row < 1 then exit;
-button1.Caption:= '&Tarif hinzufügen';
+
+button1.Caption:= misc(M163,'M163');
 
 myident:= '';  //keine ident merken
 enableedits(true);
@@ -1255,16 +1215,16 @@ procedure TTaVerwaltung.konti_changeClick(Sender: TObject);
 var date: Tdate;
     tag: word;
 begin
-if konti_change.Caption ='speichern' then
-begin
-     if tarifbox.items.count > 0 then
+if tarifbox.items.count > 0 then
      begin
 
-      if (konti_zeit.value = 0) then SettingsKontingente.DeleteKey(konti_tarif.caption, 'Freistunden')
+      if (konti_zeit.value = 0) then
+       SettingsKontingente.DeleteKey(konti_tarif.caption, 'Freistunden')
       else
        SettingsKontingente.WriteInteger(konti_tarif.caption,'Freistunden',konti_zeit.Value);
 
-      if (konti_min.value = 0) then SettingsKontingente.DeleteKey(konti_tarif.caption, 'Freiminuten')
+      if (konti_min.value = 0) then
+        SettingsKontingente.DeleteKey(konti_tarif.caption, 'Freiminuten')
       else
        SettingsKontingente.WriteInteger(konti_tarif.caption,'Freiminuten',konti_min.Value);
 
@@ -1282,6 +1242,7 @@ begin
       SettingsKontingente.WriteInteger(konti_tarif.caption,'Tag',konti_tag.Value);
       tag:= konti_tag.Value;
       date:= incmonth(dateof(now),1);
+
       Repeat
       if IsValidDate(yearof(date),monthof(date),tag)
        then date:= encodeDate(yearof(date),monthof(date),tag)
@@ -1292,17 +1253,15 @@ begin
         then date:= encodeDate(yearof(date),monthof(date),tag)
        end;
       until IsValidDate(yearof(date),monthof(date),tag);
-      nextreset.caption:= 'Nächster Reset : ' + datetostr(date);
+      nextreset.caption:= misc(M186,'M186')+' : ' + datetostr(date);
       SettingsKontingente.WriteDate(konti_tarif.caption,'NextReset',date);
 
-      if (
-            ((konti_upvol.value = 0) and (konti_zeit.value = 0) and (konti_min.Value=0))
+      if ( ((konti_upvol.value = 0) and (konti_zeit.value = 0) and (konti_min.Value=0))
             or
             radio_NO.checked
           )
       then SettingsKontingente.EraseSection(konti_tarif.caption);
-    end;
-end;
+ end;
 end;
 
 procedure TTaVerwaltung.PageControl1Change(Sender: TObject);
@@ -1315,8 +1274,8 @@ begin
 if ((PageControl1.ActivePage = TabSheet1) and (tarifbox.items.count > 0)) then
 begin
 
-  Freikontingente.visible:= not isonline;
-  Freikontis_Online.visible:= isonline;
+   Freikontingente.visible   := not isonline;
+   Freikontis_Online.visible := isonline;
 
    //Kontingente
    konti_tarif.caption:= tarifbox.Items.Strings[tarifbox.itemindex];
@@ -1334,7 +1293,7 @@ begin
    else
    if (konti_upvol.Value > 0) then radio_Vol.checked:= true;
 
-   nextreset.caption:= 'Nächster Reset: ' +SettingsKontingente.ReadString(konti_tarif.caption,'NextReset','kein');
+   nextreset.caption:= misc(M186,'M186')+' : ' +SettingsKontingente.ReadString(konti_tarif.caption,'NextReset','kein');
 
    bisher_gesurft:= SettingsTraffic.ReadInteger(konti_tarif.caption,'Surfdauer',0);
    bisher_up     := SettingsTraffic.ReadFloat(konti_tarif.caption,'Upload',0.0);
@@ -1382,8 +1341,8 @@ begin
         begin index:= i; TarifName:=kontingente[i].tarif; break; end;
 //fragen ob wirklich zurückzusetzen
 if index > -1 then
-  if (MessageBox(0, 'Mit dem Zurücksetzen der Zähler werden bestehende Kontingente wieder aktiviert. '+#13+#10+'Wirklich zurücksetzen ?', 'Achtung: Zähler-Reset !', MB_ICONWARNING or MB_YESNO or MB_SETFOREGROUND or MB_DEFBUTTON1) in [idNo]) then
-  exit; //wenn nein -> raus hier !
+  if (MessageBox(0, PChar(misc(M187,'M187')),PChar( misc(M188,'M188')), MB_ICONWARNING or MB_YESNO or MB_SETFOREGROUND or MB_DEFBUTTON1) in [idNo])
+  then exit; //wenn nein -> raus hier !
 
 if tarifbox.items.count > 0 then
  begin
@@ -1407,7 +1366,6 @@ end;
 
 procedure TTaVerwaltung.radio_zeitClick(Sender: TObject);
 begin
-if konti_change.caption = 'speichern' then
 if radio_NO.checked then
 begin
      konti_zeit.Enabled:= false;
@@ -1437,18 +1395,16 @@ end;
 
 procedure TTaVerwaltung.TaNameChange(Sender: TObject);
 begin
-if myident <> '' then errormsg.caption:= 'Achtung: Beim Umbenennen werden Kontingente und Zähler nicht übernommen.';
+if myident <> '' then errormsg.caption:= misc(M189,'M189');
 end;
 
 procedure TTaVerwaltung.DelAllClick(Sender: TObject);
 var FileName: String;
-
 begin
-
-if isonline then errormsg.caption:= '''Alles löschen'' nicht möglich im Online-Modus.';
+if isonline then errormsg.caption:= misc(M190,'M190');
 
 if not isonline then
-  if MessageDlg('Wollen Sie die Tarifdatenbank, Kontingente und Zähler wirklich löschen ?', mtConfirmation, [mbYes, mbNo], 0) = IDYes then
+  if MessageDlg(misc(M191,'M191'), mtConfirmation, [mbYes, mbNo], 0) = IDYes then
   begin
 
     //Tarife.lcx löschen
@@ -1499,8 +1455,6 @@ last_x:= x;
 liste_clicked := true;
 Tarifliste.MouseToCell(X,Y,Column,Row);
 
-//if row > 0 then tarifliste.Repaint;
-
 widthl:=0;
 widthr:=0;
 with Tarifliste do
@@ -1542,13 +1496,13 @@ if cells[11,arow] <> '' then
 end
 else //wenn selektiert
   begin
-     Canvas.Brush.Color := clHighlight;//clHotlight;//RGB(255,220,220);
+     Canvas.Brush.Color := clHighlight;
      Canvas.FillRect(Rect);
      canvas.Font.Color:= clHighlightText;
      Canvas.TextOut(Rect.Left+2, Rect.Top+2, Cells[Acol, Arow]);
    end;
 
-if (ARow = 0) then // and not (gdFixed in State) then
+if (ARow = 0) then
 begin
   with TarifListe.Canvas do
   begin
@@ -1601,9 +1555,9 @@ var i: integer;
 begin
 if tarifliste.rowcount > 1 then
 for i:= 1 to tarifliste.rowcount -1 do
-begin
-  if strtodate(tarifliste.cells[11,i]) < dateof(now) then ColorizeRow(tarifliste,i,255,220,220);
-end;
+  if strtodate(tarifliste.cells[11,i]) < dateof(now)
+    then ColorizeRow(tarifliste,i,255,220,220);
+
 end;
 
 procedure TTaVerwaltung.BlacklistClick(Sender: TObject);
@@ -1616,11 +1570,11 @@ begin
  blacklist.Glyph.TransparentMode:= tmFixed;
  case state of
   0: begin Blacklist.Caption:= 'Whitelist';
-           Blacklist.Hint := 'Dieser Tarif befindet sich auf der Whitelist. Klick zum Umschalten';
+           Blacklist.Hint := misc(M179,'M179');
            if fileexists(ExtractFilepath(paramstr(0)) + 'whitelist.bmp') then Blacklist.glyph.LoadFromFile(ExtractFilepath(paramstr(0)) + 'whitelist.bmp');
      end;
   1: begin Blacklist.Caption:= 'Blacklist';
-           Blacklist.Hint := 'Dieser Tarif befindet sich auf der Blacklist. Klick zum Umschalten';
+           Blacklist.Hint := misc(M180,'M180');
            if fileexists(ExtractFilepath(paramstr(0)) + 'blacklist.bmp') then Blacklist.glyph.LoadFromFile(ExtractFilepath(paramstr(0)) + 'blacklist.bmp');
      end;
  end;
@@ -1695,7 +1649,6 @@ Tarifliste_size.Visible:= true;
 hauptfenster.visible:= true;
 TaVerwaltung.Refresh;
 TaVerwaltung.BringToFront;
-
 end;
 end;
 

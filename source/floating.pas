@@ -82,20 +82,22 @@ end;
 
 Procedure TFloatingW.Setwidth;
 var width: integer;
+    w: integer;
 begin
-
+w:= floatingw.width;
 width:= floatingw.Canvas.TextWidth(tarif.Caption);
 
 if ((width > 145) and (width < screen.width)) then //dann verbreitern ... ansonsten nix tun
 begin
-  floatingw.width:= floatingw.width + (width - 145);
-  LabelSpeedXmit.left:= LabelSpeedXmit.left+floatingw.width-200;
-  LEDXmit.left:= LEDXmit.left+floatingw.width-200;
-  preis.Left:= preis.left+floatingw.width-200;
-  ocostlabel.left:= ocostlabel.left+floatingw.width-200;
-  visbar.width:= visbar.width+floatingw.width-200;
-  floatingw.mini.left:= floatingw.mini.left+floatingw.width-200;
-  beenden.left:= beenden.left+floatingw.width-200;
+  floatingw.width     := w + (width - 145);
+  floatingw.left      := floatingw.left -(floatingw.width-w);
+  LabelSpeedXmit.left := LabelSpeedXmit.left+floatingw.width-200;
+  LEDXmit.left        := LEDXmit.left+floatingw.width-200;
+  preis.Left          := preis.left+floatingw.width-200;
+  ocostlabel.left     := ocostlabel.left+floatingw.width-200;
+  visbar.width        := visbar.width+floatingw.width-200;
+  floatingw.mini.left := floatingw.mini.left+floatingw.width-200;
+  beenden.left        := beenden.left+floatingw.width-200;
 end;
 end;
 
@@ -144,8 +146,8 @@ textcolor:= stringtocolor(settings.Readstring('Onlineinfo','TextColor','clWindow
 sptextcolor:= stringtocolor(settings.Readstring('Onlineinfo','SpecialTextColor',   'clGreen'));
 
 font.Size:= settings.Readinteger('Onlineinfo','FontSize',8);
-oZeit.Font.Size := font.size + 6;//settings.Readinteger('Onlineinfo','Fonts_big',16);
-oCostLabel.Font.Size := font.size+ 6;//settings.Readinteger('Onlineinfo','Fonts_big',16);
+oZeit.Font.Size := font.size + 6;
+oCostLabel.Font.Size := font.size+ 6;
 
 if (bgfile <> '') and fileexists(bgfile) then
 begin
@@ -232,25 +234,21 @@ end;
 
 procedure TfloatingW.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-
-
-settings.WriteInteger('Onlineinfo','WindowTop', floatingW.top);
-settings.WriteInteger('Onlineinfo','WindowLeft', floatingW.left);
-settings.WriteInteger('Onlineinfo','WindowWidth', floatingW.Clientwidth);
-settings.WriteInteger('Onlineinfo','WindowHeight', floatingW.Clientheight);
-settings.WriteInteger('Onlineinfo','FontSize', floatingW.font.size);
-settings.WriteInteger('Onlineinfo','yScaling', scaling);
-settings.writeinteger('Onlineinfo','Alpha',floatingW.AlphaBlendValue);
-settings.writebool('Onlineinfo','OnTop',topbox.checked);
-
-
-floatingW.Release;
-floatingW:= nil;
+  settings.WriteInteger('Onlineinfo','WindowTop', floatingW.top);
+  settings.WriteInteger('Onlineinfo','WindowLeft', floatingW.left);
+  settings.WriteInteger('Onlineinfo','WindowWidth', floatingW.Clientwidth);
+  settings.WriteInteger('Onlineinfo','WindowHeight', floatingW.Clientheight);
+  settings.WriteInteger('Onlineinfo','FontSize', floatingW.font.size);
+  settings.WriteInteger('Onlineinfo','yScaling', scaling);
+  settings.writeinteger('Onlineinfo','Alpha',floatingW.AlphaBlendValue);
+  settings.writebool('Onlineinfo','OnTop',topbox.checked);
+  floatingW.Release;
+  floatingW:= nil;
 end;
 
 procedure TfloatingW.beendenClick(Sender: TObject);
 begin
-floatingW.Close;
+  floatingW.Close;
 end;
 
 procedure TfloatingW.miniClick(Sender: TObject);
@@ -387,7 +385,6 @@ scaleup.top       := fontdown.top;
 
 visbar.top        := topbox.top + topbox.height;
 end;
-
 
 //maximale breite von Tarif festelegen
 tarif.constraints.MaxWidth:= (mini.Left - tarif.left - 5);

@@ -35,7 +35,6 @@ object shutter: Tshutter
     Font.Height = -15
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ParentBackground = True
     ParentFont = False
     TabOrder = 0
     object Label3: TLabel

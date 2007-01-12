@@ -13,11 +13,11 @@ function sonntage(monat, jahr: integer): integer;
 procedure Connections(filename, newfilename: string);
 procedure html_export(filename:string);
 
-procedure input_date(y,m,d,dow: word);
-procedure input_file(filename: string);
+//procedure input_date(y,m,d,dow: word);
+//procedure input_file(filename: string);
 
 implementation
-uses files, unit1, SysUtils, DateUtils, {unit3,} forms;
+uses files, unit1, SysUtils, DateUtils, forms, inilang, messagestrings;
 
 type auswert = record
       day: shortint;
@@ -34,7 +34,7 @@ var  geld: gesamt_auswertung;
      zaehl: integer;
 
 const
-months : array[1..12] of String[9] = ('Januar','Februar','M„rz','April','Mai','Juni',
+months : array[1..12] of String[9] = ('Januar','Februar','März','April','Mai','Juni',
          'Juli','August','September','Oktober','November','Dezember');
 
 length_months : array[1..12] of shortint = (31,28,31,30,31,30,31,31,30,31,30,31);
@@ -218,18 +218,15 @@ var  ye,mo,da,dow1: word;
 begin
 y:=0;
 getdate(ye,mo,da,dow1);
-//days:= 365;
 dayofyear:=0;
-//diffdays:=0;
 startday:=1;
-//if (ye mod 4 = 0) then begin days:=days+1; end;
+
 For i:=1 to mo-1 do
 begin
      dayofyear:= dayofyear+length_months[i];
      if (i = 2) and (ye mod 4 = 0) then dayofyear:= dayofyear+1;
 end;
 dayofyear:= dayofyear+da;
-//sonntag:= da-dow1;
 
 For i:=1 to monat-1 do
 begin
@@ -254,15 +251,12 @@ diffdays:= diffdays-dow1;
 
 while diffdays>7 do diffdays:=diffdays-7;
 
-
-
 getdate(ye,mo,da,dow1);
 if ((ye=jahr) and (mo=monat)) then
 begin
 
 if ((da-dow1)>31) then da:=da+7;
 Repeat if ((da-dow1)>7) then da:=da-7; until ((da-dow1)<=7);
-{writeln(da-dow1,' ',dow1,' ',da); }
 sonntage:=da-dow1;
 
 end else
@@ -281,12 +275,12 @@ var f,htm: text;
 begin
 
 gesamtkosten:=0;
-{writeln(newfilename);readln;}
+
 assignfile(htm,newfilename);
 append(htm);
-writeln(htm,'<p align=center><font size=+2>Einzelverbindungen ',filename,'</font></p>');
+writeln(htm,'<p align=center><font size=+2>'+misc(M28,'M28')+' ',filename,'</font></p>');
 writeln(htm,'<table align=center border=0 width=550>');
-writeln(htm,'<tr><td>Datum</td><td>Tarif</td><td>Uhrzeit</td><td>Surfzeit</td><td>Kosten [Euro] </td></tr>');
+writeln(htm,'<tr><td>Datum</td><td>'+misc(M140,'M140')+'</td><td>'+misc(M137,'M137')+'</td><td>'+misc(M138,'M138')+'</td><td>'+misc(M139,'M139')+'</td></tr>');
 
 
 assignfile(f, FileName);
@@ -372,10 +366,8 @@ begin
 maximum:= getmax(false,true,false,false); {Kosten}
 daycount:=0;
 m:= 0;
-{verzeichnis_erzeugen('htm');}
-//i:=0;
+
 oldfilename:= filename;
-{monatsl„nge bestimmen}
 
 tempo:= oldfilename;
 
@@ -394,11 +386,11 @@ else monatslaenge:= length_months[monat];
 Assignfile(f,filename);
 Append(f);
 
-write(f,'<p align="center"><b>Legende</b> <img src="red.gif" width="20" height="10">: mind. ',
-maxkostenrot/monatslaenge:2:2,' EUR/Tag ');
-write(f,'<img src="yellow.gif" width="20" height="10">: mind. ',maxkostengelb/monatslaenge:2:2,' EUR/Tag ');
-write(f,'<img src="blue.gif" width="20" height="10">: weniger als ',maxkostengelb/monatslaenge:2:2,' EUR/Tag ');
-writeln(f,'<p align=center><font size=+2>Kosten ',oldfilename,'</font></p>');
+write(f,'<p align="center"><b>'+misc(M203,'M203')+'</b> <img src="red.gif" width="20" height="10">: '+misc(M204,'M204')+' ',
+maxkostenrot/monatslaenge:2:2,' '+misc(M205,'M205'));
+write(f,'<img src="yellow.gif" width="20" height="10">: '+misc(M204,'M204')+' ',maxkostengelb/monatslaenge:2:2,' '+misc(M205,'M205'));
+write(f,'<img src="blue.gif" width="20" height="10">: '+misc(M206,'M206')+' ',maxkostengelb/monatslaenge:2:2,' '+misc(M205,'M205'));
+writeln(f,'<p align=center><font size=+2>'+misc(M50,'M50')+' ',oldfilename,'</font></p>');
 writeln(f,'<Table align="center" height="400" border=0 cellspacing="0" ><tr>');
 
 d:= sonntage(monat,jahr);
@@ -409,25 +401,25 @@ if i=d then begin writeln(f,'<td valign="bottom"  background="bgred.jpg">'); d:=
 writeln(f,'<td valign="bottom"  background="bg.jpg">');
 
 For temp:=monatslaenge downto 1 do
-begin
-if geld[temp].day=i then begin daycount:=temp; break end;
-end;
+  if geld[temp].day=i then
+    begin daycount:=temp; break end;
 
-if geld[daycount].day = i then begin
 
+if geld[daycount].day = i then
+                          begin
                             factor:= geld[daycount].cost/maximum * 400;
                             if geld[daycount].cost > (maxkostenrot/monatslaenge) then
                             writeln(f,'<img src="red.gif" width=20 height="',round(factor),
-                            '" border=0 title="',geld[daycount].cost:3:2,' Euro">');
+                            '" border=0 title="',geld[daycount].cost:3:2,' '+misc(M13,'M13')+'">');
 
                             if ((geld[daycount].cost > (maxkostengelb/monatslaenge))
                             and (geld[daycount].cost <= (maxkostenrot/monatslaenge))) then
                             writeln(f,'<img src="yellow.gif" width=20 height="',round(factor),
-                            '" border=0 title="',geld[daycount].cost:3:2,' Euro">');
+                            '" border=0 title="',geld[daycount].cost:3:2,' '+misc(M13,'M13')+'">');
 
                             if ((geld[daycount].cost <= (maxkostengelb/monatslaenge))) then
                             writeln(f,'<img src="blue.gif" width=20 height="',round(factor),
-                            '" border=0 title="',geld[daycount].cost:3:2,' Euro">');
+                            '" border=0 title="',geld[daycount].cost:3:2,' '+misc(M13,'M13')+'">');
 
                             daycount:= daycount+1;
                           end
@@ -450,7 +442,7 @@ maximum:= getmax(false,false,true,false); {Time}
 daycount:=0;
 h:= 0; min:=0; s:=0;
 
-writeln(f,'<p align=center><font size=+2>Verbindungsdauer ',oldfilename,'</font></p>');
+writeln(f,'<p align=center><font size=+2>'+misc(M49,'M49')+' ',oldfilename,'</font></p>');
 writeln(f,'<Table align="center" height="400" border=0 cellspacing="0" ><tr>');
 
 d:= sonntage(monat,jahr);
@@ -461,9 +453,8 @@ writeln(f,'<td valign="bottom"  background="bg.jpg">');
 
 
 For temp:=monatslaenge downto 1 do
-begin
-if geld[temp].day=i then begin daycount:=temp; break end;
-end;
+  if geld[temp].day=i then begin daycount:=temp; break end;
+
 
 zeitumrechnen(geld[daycount].time,h,min,s);
 
@@ -502,7 +493,7 @@ writeln(f,'<br><br>');
 maximum:= getmax(true,false,false,false); {Connect}
 daycount:=0;
 
-writeln(f,'<p align=center><font size=+2>Verbindungen ',oldfilename,'</font></p>');
+writeln(f,'<p align=center><font size=+2>'+ misc(M28,'M28'),oldfilename,'</font></p>');
 writeln(f,'<Table align="center" height="400" border=0 cellspacing="0" ><tr>');
 
 d:= sonntage(monat,jahr);
@@ -510,7 +501,6 @@ for i:= 1 to monatslaenge do
 begin
 if i=d then begin writeln(f,'<td valign="bottom"  background="bgred.jpg">'); d:= d+7; end else
 writeln(f,'<td valign="bottom"  background="bg.jpg">');
-
 
 For temp:=monatslaenge downto 1 do
 begin
@@ -522,16 +512,16 @@ if geld[daycount].day = i then begin
                             factor:= geld[daycount].connect/maximum * 400;
                             if geld[daycount].cost > (maxkostenrot/monatslaenge) then
                             writeln(f,'<img src="red.gif" width=20 height="',round(factor),
-                            '" border=0 title="',geld[daycount].connect,' Verbindungen">');
+                            '" border=0 title="',geld[daycount].connect,' '+misc(M28,'M28')+'">');
 
                             if ((geld[daycount].cost > (maxkostengelb/monatslaenge))
                             and (geld[daycount].cost <= (maxkostenrot/monatslaenge))) then
                             writeln(f,'<img src="yellow.gif" width=20 height="',round(factor),
-                            '" border=0 title="',geld[daycount].connect,' Verbindungen">');
+                            '" border=0 title="',geld[daycount].connect,' '+misc(M28,'M28')+'">');
 
                             if ((geld[daycount].cost <= (maxkostengelb/monatslaenge))) then
                             writeln(f,'<img src="blue.gif" width=20 height="',round(factor),
-                            '" border=0 title="',geld[daycount].connect,' Verbindungen">');
+                            '" border=0 title="',geld[daycount].connect,' '+misc(M28,'M28')+'">');
 
                             daycount:= daycount+1;
                           end
@@ -553,7 +543,7 @@ writeln(f,'<br><br>');
 maximum:= getmax(false,false,false,true); {Kosten/Time}
 daycount:=0;
 
-writeln(f,'<p align=center><font size=+2>durchschnittl. Kosten pro Minute ',oldfilename,'</font></p>');
+writeln(f,'<p align=center><font size=+2> '+misc(M207,'M207'),oldfilename,'</font></p>');
 writeln(f,'<Table align="center" height="400" border=0 cellspacing="0" ><tr>');
 d:= sonntage(monat,jahr);
 for i:= 1 to monatslaenge do
@@ -562,9 +552,9 @@ if i=d then begin writeln(f,'<td valign="bottom"  background="bgred.jpg">'); d:=
 writeln(f,'<td valign="bottom"  background="bg.jpg">');
 
 For temp:=monatslaenge downto 1 do
-begin
-if geld[temp].day=i then begin daycount:=temp; break end;
-end;
+  if geld[temp].day=i then
+    begin daycount:=temp; break end;
+
 
 if geld[daycount].day = i then begin
 
@@ -573,16 +563,16 @@ if geld[daycount].day = i then begin
 
                             if geld[daycount].cost > (maxkostenrot/monatslaenge) then
                             writeln(f,'<img src="red.gif" width=20 height="',round(factor),
-                            '" border=0 title="',factor*maximum/400:0:3,' EUR/min">');
+                            '" border=0 title="',factor*maximum/400:0:3,' '+misc(M13,'M13')+'/min">');
 
                             if ((geld[daycount].cost > (maxkostengelb/monatslaenge))
                             and (geld[daycount].cost <= (maxkostenrot/monatslaenge))) then
                             writeln(f,'<img src="yellow.gif" width=20 height="',round(factor),
-                            '" border=0 title="',factor*maximum/400:0:3,' EUR/min">');
+                            '" border=0 title="',factor*maximum/400:0:3,' '+misc(M13,'M13')+'/min">');
 
                             if ((geld[daycount].cost <= (maxkostengelb/monatslaenge))) then
                             writeln(f,'<img src="blue.gif" width=20 height="',round(factor),
-                            '" border=0 title="',factor*maximum/400:0:3,' EUR/min">');
+                            '" border=0 title="',factor*maximum/400:0:3,' '+misc(M13,'M13')+'/min">');
 
                             daycount:= daycount+1;
                           end
@@ -598,54 +588,49 @@ writeln(f,'</tr>');
 writeln(f,'</table>');
 writeln(f,'<br>');
 
-writeln(f,'<p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
+writeln(f,'<p align=center><font size="-1"><b><a href="http://www.leastcosterxp.de">LeastCosterXP</a> by <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
 writeln(f,'</body></html>');
 
 closefile(f);
 end;
 
-
-
-
-procedure input_date(y,m,d,dow: word);
-var a, zeile: string;
-    i: integer;
- begin
-                 init_array;
-                 str(y,a);
-                 zeile:=a;
-                 insert('\',zeile, length(zeile)+1);
-                 insert(a,zeile, length(zeile)+1);
-                 insert('_',zeile, length(zeile)+1);
-                 str(m,a);
-                 if m<10 then insert('0',a, length(a));
-                 insert(a,zeile, length(zeile)+1);
-                 insert('.txt',zeile, length(zeile)+1);
-
-                 if fileexists(zeile) then  
-                 begin
-                 for i:=1 to 31 do begin gesamtkosten_pro_monat(zeile,i); end;
-                 html_export(zeile);
-                 delete(zeile,length(zeile)-3,4);
-                 insert('.htm',zeile, length(zeile)+1);
-
-
- end;
-end;
-
-procedure input_file(filename: string);
-var zeile: string;
-    i: integer;
- begin           zeile:= filename;
-                 init_array;
-                 if fileexists(ExtractFilePath(Application.ExeName)+zeile) then
-                 begin
-                 for i:=1 to 31 do begin gesamtkosten_pro_monat(ExtractFilePath(Application.ExeName)+zeile,i); end;
-                 html_export(zeile);
-                 delete(zeile,length(zeile)-3,4);
-                 insert('.htm',zeile, length(zeile)+1);
-
- end;
-end;
+//procedure input_date(y,m,d,dow: word);
+//var a, zeile: string;
+//    i: integer;
+//begin
+//   init_array;
+//   str(y,a);
+//   zeile:=a;
+//   insert('\',zeile, length(zeile)+1);
+//   insert(a,zeile, length(zeile)+1);
+//   insert('_',zeile, length(zeile)+1);
+//   str(m,a);
+//   if m<10 then insert('0',a, length(a));
+//   insert(a,zeile, length(zeile)+1);
+//   insert('.txt',zeile, length(zeile)+1);
+//
+//   if fileexists(zeile) then
+//      begin
+//         for i:=1 to 31 do begin gesamtkosten_pro_monat(zeile,i); end;
+//         html_export(zeile);
+//         delete(zeile,length(zeile)-3,4);
+//         insert('.htm',zeile, length(zeile)+1);
+//      end;
+//end;
+//
+//procedure input_file(filename: string);
+//var zeile: string;
+//    i: integer;
+//begin
+//    zeile:= filename;
+//    init_array;
+//    if fileexists(ExtractFilePath(Application.ExeName)+zeile) then
+//      begin
+//        for i:=1 to 31 do begin gesamtkosten_pro_monat(ExtractFilePath(Application.ExeName)+zeile,i); end;
+//        html_export(zeile);
+//        delete(zeile,length(zeile)-3,4);
+//        insert('.htm',zeile, length(zeile)+1);
+//      end;
+//end;
 
 end.

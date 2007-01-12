@@ -104,7 +104,7 @@ var
 
 implementation
 
-uses Unit1, gridEvents;
+uses Unit1, gridEvents, inilang, messagestrings;
 
 {$R *.dfm}
 
@@ -178,13 +178,10 @@ begin
    end;
  settings.Writeinteger('EVN','Sortierung',sortbox.ItemIndex);
  settings.writeinteger('EVN','Export',Formatbox.ItemIndex);
-
-
  hauptfenster.enabled:= true;
  auswert.Release;
  auswert:= nil;
 end;
-
 
 procedure Tauswert.readin;
 var line, temp: string;
@@ -202,8 +199,7 @@ lastsorted:= -1;
 grid.RowCount:=2;
 grid.Rows[1].Clear;
 
-//Anfangsdatum setzen
-checkdate:= datepick1.DateTime;
+checkdate:= datepick1.DateTime; //Anfangsdatum setzen
 repeat
 //Dateinamen identifizieren
 if monthof(checkdate) > 9 then checkmonth:= inttostr(monthof(checkdate))
@@ -233,9 +229,6 @@ begin
     if zeichen = chr(9) then
     begin
       tab:= tab+1;
-  {      //wenn mehr Spalten da sind als in der Tabelle, dann Tabelle erweitern
-      if tab+1 > grid.ColCount then grid.ColCount:= grid.colcount+1;
-     }
       delete(temp,i-pretabcount,length(temp)-(i-pretabcount)+1); //hinten abschneiden
       //erste Spalte numerieren
       if tab = 1 then grid.Cells[tab-1,row]:= inttostr(row)
@@ -275,15 +268,15 @@ until (checkdate > incmonth(datepick2.DateTime,1));
 
 
 //Überschriften setzen
-grid.cells[0,0]:= 'Nr.';
-grid.cells[1,0]:= 'Datum';
-grid.cells[2,0]:= 'Uhrzeit';
-grid.cells[3,0]:= 'Dauer';
-grid.cells[4,0]:= 'Kosten';
-grid.cells[5,0]:= 'Tarif';
-grid.cells[6,0]:= 'getrennt um ..';
-grid.cells[7,0]:= 'Rufnr.';
-grid.cells[8,0]:= 'Anmerkungen';
+grid.cells[0,0]:= misc(M135,'M135');
+grid.cells[1,0]:= misc(M136,'M136');
+grid.cells[2,0]:= misc(M137,'M137');
+grid.cells[3,0]:= misc(M138,'M138');
+grid.cells[4,0]:= misc(M139,'M139');
+grid.cells[5,0]:= misc(M140,'M140');
+grid.cells[6,0]:= misc(M141,'M141');
+grid.cells[7,0]:= misc(M142,'M142');
+grid.cells[8,0]:= misc(M143,'M143');
 
 //Spalten
 GridColumnMoved(self, 0,1);
@@ -297,11 +290,8 @@ var
     code1, code2: integer; 
 begin
  if (sortcol > -1) //wenn Maus ausserhalb der Zelle war
- //and not (grid.cells[sortcol,0] =  'Datum')
- //and not (grid.cells[sortcol,0] =  'getrennt um ..')
  then
  begin
-
   //GaugePanel.Visible:= true;
   progress1.min:= start;
   progress1.max:= ende;
@@ -312,7 +302,7 @@ begin
   for i := start{-1 } to ende - 2 do  {because last row has no next row}
   for j:= i+1 to ende-1 do
   begin
-   if (cells[sortcol,0] =  'Nr.') or (cells[sortcol,0] =  'Rufnr.') or (cells[sortcol,0] =  'Kosten') then //numerisch sortieren
+   if (cells[sortcol,0] =  misc(M135,'M135')) or (cells[sortcol,0] =  misc(M142,'M142')) or (cells[sortcol,0] =  misc(M139,'M139')) then //numerisch sortieren
    begin
       if grid.Cells[Sortcol,j]='' then grid.Cells[Sortcol,j]:='-10';
       if grid.Cells[Sortcol,i]='' then grid.Cells[Sortcol,i]:='-10';
@@ -362,8 +352,8 @@ var
    start, ende: integer;
    dat, vgldat: TDate;
 begin
- if grid.cells[sortcol,0]='Tarif' then sortedbytarif:= true else sortedbytarif:= false;
- if grid.cells[sortcol,0]='Rufnr.' then sortedbyrufnummer:= true else sortedbyrufnummer:= false;
+ if grid.cells[sortcol,0]= misc(M140,'M140') then sortedbytarif:= true else sortedbytarif:= false;
+ if grid.cells[sortcol,0]= misc(M142,'M142') then sortedbyrufnummer:= true else sortedbyrufnummer:= false;
 
  if sortcol > -1 then //wenn Maus ausserhalb der Zelle war
  begin
@@ -376,11 +366,11 @@ begin
   for i := FixedRows{-1 } to RowCount - 2 do  {because last row has no next row}
   for j:= i+1 to rowcount-1 do
   begin
-   if cells[sortcol,0] =  'Nr.' then //numerisch sortieren
+   if cells[sortcol,0] =  misc(M135,'M135') then //numerisch sortieren
    begin
    end else
    //ascending
-   if not (grid.cells[sortcol,0]='Datum') then
+   if not (grid.cells[sortcol,0]= misc(M136,'M136')) then
    begin
     if not sort_descending then
     begin
@@ -457,9 +447,9 @@ if (grid.ColWidths[i] > grid.width) then grid.ColWidths[i]:= grid.Width-30;
 
 for i:=0  to grid.ColCount -1 do
  begin
-  if ansicontainstext(grid.Cells[i,0],'Uhrzeit') then timecol:=i;
-  if (grid.Cells[i,0]='Nr.') then nrcol:=i;
-  if (grid.Cells[i,0]='Tarif') then tarifcol:=i;
+  if ansicontainstext(grid.Cells[i,0],misc(M137,'M137')) then timecol:=i;
+  if (grid.Cells[i,0]= misc(M135,'M135')) then nrcol:=i;
+  if (grid.Cells[i,0]= misc(M140,'M140')) then tarifcol:=i;
  end;
 
 if column = -1 then exit;
@@ -472,7 +462,7 @@ with grid do
   begin
 
   SetCursor_Wait;
-  errormsg.caption:= 'Sortiere Datensätze ... ';
+  errormsg.caption:= misc(M144,'M144');
   errormsg.Refresh;
   grid.Enabled:= false;
   grid.Font.Color:= clSilver;
@@ -481,29 +471,29 @@ with grid do
   grid.refresh;
   progresspanel.refresh;
 
-  if grid.Cells[column,0]='Datum' then  sortbox.itemindex:= 0
+  if grid.Cells[column,0]= misc(M136,'M136') then  sortbox.itemindex:= 0
   else
-  if grid.Cells[column,0]='Uhrzeit' then  sortbox.itemindex:= 1
+  if grid.Cells[column,0]= misc(M137,'M137') then  sortbox.itemindex:= 1
   else
-  if grid.Cells[column,0]='Dauer' then  sortbox.itemindex:= 2
+  if grid.Cells[column,0]= misc(M138,'M138') then  sortbox.itemindex:= 2
   else
-  if grid.Cells[column,0]='Kosten' then  sortbox.itemindex:= 3
+  if grid.Cells[column,0]= misc(M139,'M139') then  sortbox.itemindex:= 3
   else
-  if grid.Cells[column,0]='Tarif' then  sortbox.itemindex:= 4
+  if grid.Cells[column,0]= misc(M140,'M140') then  sortbox.itemindex:= 4
   else
-  if grid.Cells[column,0]='Rufnr.' then  sortbox.itemindex:= 5
+  if grid.Cells[column,0]= misc(M142,'M142') then  sortbox.itemindex:= 5
   else
-  if grid.Cells[column,0]='Nr.' then  sortbox.itemindex:= 6;
+  if grid.Cells[column,0]= misc(M135,'M135') then  sortbox.itemindex:= 6;
 
   if grid.Tag = column then sort_descending:= not sort_descending else sort_descending:= false;
   grid.Tag:= column;
   grid.Repaint;
 
   if column <> -1 then
-   if ((grid.Cells[column,0]='Rufnr.') or (grid.Cells[column,0]='Tarif'))
+   if ((grid.Cells[column,0]= misc(M142,'M142')) or (grid.Cells[column,0]=misc(M140,'M140')))
     then sortby2Col(grid,column,nrcol)
    else
-   if ansicontainstext(grid.Cells[column,0],'Datum')
+   if ansicontainstext(grid.Cells[column,0],misc(M136,'M136'))
     then Sortby2Col(Grid,column,timecol)
    else
    begin
@@ -511,9 +501,7 @@ with grid do
     progress1.top:= 16;
     sortgrid(grid,column, 1,grid.rowcount);
    end;
-
    filterclick(self);
-
    end;
 
 if not filter.checked then filtername.Text:= grid.cells[tarifcol,row];
@@ -572,7 +560,7 @@ begin
 if ((auswert.Height < 200) or (grid.RowCount < 3)) then exit;
 
 SetCursor_Wait;
-errormsg.caption:= 'Sortiere Datensätze ... ';
+errormsg.caption:= misc(M144,'M144');
 errormsg.Refresh;
 grid.Enabled:= false;
 grid.Font.Color:= clSilver;
@@ -584,21 +572,21 @@ progresspanel.refresh;
 
 for i:=0  to grid.ColCount -1 do
 begin
-if ansicontainstext(grid.Cells[i,0],'Uhrzeit') then timecol:=i;
-if (grid.Cells[i,0]='Nr.') then nrcol:=i;
+if ansicontainstext(grid.Cells[i,0],misc(M137,'M137')) then timecol:=i;
+if (grid.Cells[i,0]= misc(M135,'M135')) then nrcol:=i;
 end;
 
 case(sortbox.ItemIndex) of
-0: begin vgl:= 'Datum'; end;
-1: begin vgl:= 'Uhrzeit'; progress2.Visible:= false; progress1.Top:= 16; end;
-2: begin vgl:= 'Dauer'; progress2.Visible:= false; progress1.Top:= 16; end;
-3: begin vgl:= 'Kosten'; progress2.Visible:= false; progress1.Top:= 16; end;
-4: vgl:= 'Tarif';
-5: vgl:= 'Rufnr.';
-6: begin vgl:= 'Nr.'; progress2.Visible:= false; progress1.Top:= 16; end;
+0: begin vgl:= misc(M136,'M136'); end;
+1: begin vgl:= misc(M137,'M137'); progress2.Visible:= false; progress1.Top:= 16; end;
+2: begin vgl:= misc(M138,'M138'); progress2.Visible:= false; progress1.Top:= 16; end;
+3: begin vgl:= misc(M139,'M139'); progress2.Visible:= false; progress1.Top:= 16; end;
+4: vgl:= misc(M140,'M140');
+5: vgl:= misc(M142,'M142');
+6: begin vgl:= misc(M135,'M135'); progress2.Visible:= false; progress1.Top:= 16; end;
 end;
 
-   if ((vgl='Rufnr.') or (vgl='Tarif')) then
+   if ((vgl=misc(M142,'M142')) or (vgl=misc(M140,'M140'))) then
    begin
      for i:= 0 to grid.ColCount-1 do
        begin
@@ -607,7 +595,7 @@ end;
                grid.Tag:= i;
                sort_descending:= false;
                sortby2Col(grid,i,nrcol);
-               if vgl='Tarif' then sortedbytarif:= true;
+               if vgl=misc(M140,'M140') then sortedbytarif:= true;
                 SetCursor_Default;
                 filterclick(self);
                 errormsg.caption:= '';
@@ -620,7 +608,7 @@ end;
        end;
    end
    else
-   if (vgl='Datum') then
+   if (vgl=misc(M136,'M136')) then
    begin
      for i:= 0 to grid.ColCount-1 do
        begin
@@ -659,7 +647,6 @@ end;
     exit;
    end;
    end;
-
 end;
 
 procedure Tauswert.okClick(Sender: TObject);
@@ -673,20 +660,20 @@ if sortbox.ItemIndex = -1 then sortbox.ItemIndex:= 0;
 if formatbox.ItemIndex = -1 then formatbox.ItemIndex:= 0;
 
 SetCursor_Wait;
-errormsg.caption:= 'Lade Datensätze ... ';
+errormsg.caption:= misc(M145,'M145');
 errormsg.Refresh;
 
 ok.Enabled:= false;
 
 if datepick2.DateTime < datepick1.DateTime then
   begin
-    errormsg.caption:='Fehler: Endzeit liegt vor der Startzeit.';
+    errormsg.caption:=misc(M146,'M146');
     SetCursor_Default;
     exit;
   end
 else if datepick1.DateTime > now then
   begin
-    errormsg.caption:= 'Fehler: Startzeitpunkt liegt in der Zukunft.';
+    errormsg.caption:= misc(M147,'M147');
     SetCursor_Default;
     exit;
   end;
@@ -705,7 +692,7 @@ readin;
 if (( grid.cells[0,1] = '' ) and ( grid.cells[1,1] = '' ) and ( grid.cells[2,1] = '' ) and ( grid.cells[3,1] = '' ))
 then
 begin
- errormsg.caption:= 'Keine Datensätze gefunden ... ';
+ errormsg.caption:= misc(M148,'M148');
  ok.enabled:= true;
   SetCursor_Default;
  exit;
@@ -730,7 +717,6 @@ begin
           grid.cells[k,j]:= inhalti;
           inhalti:= '';
          end;
-
   end;
   //Spaltengröße
   for i:= 0 to grid.ColCount-1 do
@@ -745,8 +731,8 @@ GridColumnMoved(self, 0,1);
 
 for localrow:= 1 to grid.rowcount-1 do
 begin
- if ( grid.cells[col_rufnr,localrow]='' ) then grid.cells[col_rufnr,localrow]:='unbekannt';
- if ( grid.cells[col_getrennt,localrow] ='' ) then grid.cells[col_getrennt,localrow]:='unbekannt';
+ if ( grid.cells[col_rufnr,localrow]='' ) then grid.cells[col_rufnr,localrow]:=misc(M149,'M149');
+ if ( grid.cells[col_getrennt,localrow] ='' ) then grid.cells[col_getrennt,localrow]:=misc(M149,'M149');
 end;
 
 
@@ -787,9 +773,8 @@ var checkdate   : TDateTime;
     test, tmp   : string;
 begin
 SetCursor_Wait;
-errormsg.caption:= 'Speichere Kommentare ... ';
+errormsg.caption:= misc(M150,'M150');
 errormsg.Refresh;
-
 
 //Anfangsdatum setzen
 checkdate:= start_date;
@@ -833,9 +818,7 @@ repeat
             end;
         end; //case
       end;
-
      end;
-
     end; // ende der for-schleife > weiter zur nächsten zeile
 
     Data.SaveToFile(extractfilepath(paramstr(0))+'log\'+inttostr(yearof(checkdate))+'_'+checkmonth+'.csv');
@@ -848,14 +831,13 @@ until (checkdate > incmonth(end_date,1));
 errormsg.caption:= '';
 //Cursor setzen
 SetCursor_Default;
-
 end;
 
 procedure Tauswert.exportcsv;
 var zeilen: TStringlist;
     i: integer;
 begin
-savedialog1.Title:= 'Export des Einzelverbindungsnachweises';
+savedialog1.Title:= misc(M151,'M151');
 savedialog1.filter:= 'Comma Seperated Value (CSV)|*.csv;*.CSV';
 savedialog1.Options:= [ofHideReadOnly,ofCreatePrompt,ofEnableSizing, ofOverwritePrompt];
 if savedialog1.execute then
@@ -868,7 +850,7 @@ for i:= 0 to grid.rowcount-1 do
   zeilen.append(grid.Rows[i].DelimitedText);
   end;
 
-  //Endung setzen wenn nciht vorhanden oder falsch
+  //Endung setzen wenn nicht vorhanden oder falsch
 if lowercase(ExtractFileExt(SaveDialog1.FileName)) <> '.csv' then
    savedialog1.filename:= Changefileext(SaveDialog1.FileName, '.csv');
    
@@ -917,11 +899,11 @@ end;
 
 for col:=0 to grid.ColCount-1 do
 begin
-if grid.cells[col,0] = 'Tarif' then tarif:= col
-else if grid.cells[col,0] = 'Kosten' then kosten:= col
-else if grid.cells[col,0] = 'Dauer' then zeit:= col
-else if grid.cells[col,0] = 'Nr.' then nummer:= col
-else if grid.cells[col,0] = 'Rufnr.' then rufnummer:= col;
+if grid.cells[col,0] = misc(M140,'M140') then tarif:= col
+else if grid.cells[col,0] = misc(M139,'M139') then kosten:= col
+else if grid.cells[col,0] = misc(M138,'M138') then zeit:= col
+else if grid.cells[col,0] = misc(M135,'M135') then nummer:= col
+else if grid.cells[col,0] = misc(M142,'M142') then rufnummer:= col;
 end;
 
 if not sortedbytarif and not sortedbyrufnummer then
@@ -929,7 +911,7 @@ begin
   assignfile(f, extractfilepath(paramstr(0)) + 'EVN.htm');
   rewrite(f);
   writeln(f, '<html><head></head><body alink="#0080ff" bgcolor="#ebedfe" link="#0000df" text="#000000" vlink="#3f00ff">');
-  writeln(f, '<center><h1>Einzelverbindungesübersicht</h1> '+chr(9) +'<h2>'+ datetimetostr(datepick1.DateTime) + ' - '+datetimetostr(datepick2.DateTime) +'</h2></center>');
+  writeln(f, '<center><h1>'+misc(M152,'M152')+'</h1> '+chr(9) +'<h2>'+ datetimetostr(datepick1.DateTime) + ' - '+datetimetostr(datepick2.DateTime) +'</h2></center>');
   writeln(f,chr(13)+'<table border="0" width="80%" align="center" cellspacing="2">');
 
   for row:=0 to grid.rowcount-1 do
@@ -960,7 +942,6 @@ begin
     geszeitstring:= '0'+ format('%d',[daysbetween(EncodeDateTime(1970,01,01,0,0,0,0), gesamt)*24 + hourof(gesamt)])+FormatDateTime(':nn:ss', gesamt)
    else  geszeitstring:= format('%d',[daysbetween(EncodeDateTime(1970,01,01,0,0,0,0), gesamt)*24 + hourof(gesamt)])+FormatDateTime(':nn:ss', gesamt);
 
-
   for col:=0 to grid.colcount-1 do
   begin
 
@@ -969,7 +950,7 @@ begin
                                         else  write(f,'<td></td>');
   end;
   write(f,'</tr>');
-  writeln(f, '</table><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p></body></html>');
+  writeln(f, '</table><p align=center><font size="-1"><b><a href="http://www.leastcosterxp.de ">LeastCosterXP</a> by <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p></body></html>');
   closefile(f);
 end; // Nach Tarif sortiert
 if sortedbytarif or sortedbyrufnummer then
@@ -996,7 +977,7 @@ begin
   writeln(f,'a:focus {  color:#0080ff; text-decoration:underline;}');
   writeln(f,'</style>');
   writeln(f,'<head></head><body alink="#0080ff" bgcolor="#ebedfe" link="#0000df" text="#000000" vlink="#0000df"><form name="formular">');
-  writeln(f, '<center><h1>Einzelverbindungesübersicht</h1> '+chr(9) +'<h2>'+ datetimetostr(datepick1.DateTime) + ' - '+datetimetostr(datepick2.DateTime) +'</h2></center>');
+  writeln(f, '<center><h1>'+misc(M152,'M152')+'</h1> '+chr(9) +'<h2>'+ datetimetostr(datepick1.DateTime) + ' - '+datetimetostr(datepick2.DateTime) +'</h2></center>');
 
   for row:=1 to grid.rowcount-1 do
     begin
@@ -1029,14 +1010,14 @@ else if sortedbyrufnummer then test := AnsiCompareText(vgl,grid.cells[rufnummer,
             end;
             write(f,'</tr>');
             writeln(f,'</table><hr width="90%"></div>');
-            writeln(f,'<div id="kosten'+idalt+'">&nbsp;&nbsp;&nbsp;&nbsp;<b>Kosten '+format('%2.4m',[gesamtkosten])+' | Gesamtdauer: '+geszeitstring+'</b></div>');
+            writeln(f,'<div id="kosten'+idalt+'">&nbsp;&nbsp;&nbsp;&nbsp;<b>'+misc(M139,'M139')+' '+format('%2.4m',[gesamtkosten])+' | '+misc(M153,'M153')+': '+geszeitstring+'</b></div>');
         end;
         //Kosten und Zeit rücksetzen
-        gesamtzeit  := strtotime('00:00:00');
+        gesamtzeit  := EncodeTime(0,0,0,0);
         gesamt:= EncodeDateTime(1970,01,01,0,0,0,0);
         gesamtkosten:= 0.0;
 
-     if sortedbytarif then writeln(f,'<h3><input type="checkbox" onclick="summe();" name="check'+idtext+'"> <a href="javascript:show('''+idtext+''',''kosten'+idtext+''');"><b>Tarif: '+grid.cells[tarif,row]+'</b></a></h3>')
+     if sortedbytarif then writeln(f,'<h3><input type="checkbox" onclick="summe();" name="check'+idtext+'"> <a href="javascript:show('''+idtext+''',''kosten'+idtext+''');"><b>'+misc(M140,'M140')+': '+grid.cells[tarif,row]+'</b></a></h3>')
      else if sortedbyrufnummer then writeln(f,'<h3><a href="javascript:show('''+idtext+''',''kosten'+idtext+''');"><b>Rufnr.: '+grid.cells[rufnummer,row]+'</b></a></h3>');
         writeln(f,chr(13)+'<div id="'+idtext+'" style="display:none"><table border="0" width="80%" align="center" cellspacing="2">');
         writeln(f,'<tr>');
@@ -1060,17 +1041,17 @@ else if sortedbyrufnummer then test := AnsiCompareText(vgl,grid.cells[rufnummer,
         if col=zeit then //die Zeitspalte aufsummieren
              if row>0 then begin gesamtzeit:= gesamtzeit + strtotime(grid.cells[col, row]); gesamt:= gesamt + strtotime(grid.cells[col, row]); end;
 
-
         // Die Spalte Tarif muss in dieser Sortierung nicht ausgegeben werden !
         if sortedbytarif then
           Begin if ((col <> tarif) and (col<>nummer)) then writeln(f,'   <td>'+grid.cells[col, row]+'</td>'); end
-   else begin if sortedbyrufnummer then  begin if ((col <> rufnummer) and (col<>nummer)) then writeln(f,'   <td>'+grid.cells[col, row]+'</td>') end; end;
+       else
+          begin if sortedbyrufnummer then  begin if ((col <> rufnummer) and (col<>nummer)) then writeln(f,'   <td>'+grid.cells[col, row]+'</td>') end; end;
       end;
       writeln(f,'</tr>');
       if sortedbytarif then vgl:= grid.cells[tarif,row]
- else if sortedbyrufnummer then vgl:= grid.cells[rufnummer,row];
+      else
+      if sortedbyrufnummer then vgl:= grid.cells[rufnummer,row];
     end;
-
 
     //letzte Zeile der allerletzten tabelle schreiben
     write(f,'<tr>');
@@ -1092,7 +1073,7 @@ else if sortedbyrufnummer then test := AnsiCompareText(vgl,grid.cells[rufnummer,
     end;
     write(f,'</tr>');
     write(f, '</table></div>');
-    writeln(f,'<div id="kosten'+idtext+'">&nbsp;&nbsp;&nbsp;&nbsp;<b>Kosten '+format('%2.4m',[gesamtkosten])+' | Gesamtdauer: '+geszeitstring+'</b></div>');
+    writeln(f,'<div id="kosten'+idtext+'">&nbsp;&nbsp;&nbsp;&nbsp;<b>'+misc(M139,'M139')+' '+format('%2.4m',[gesamtkosten])+' | Gesamtdauer: '+geszeitstring+'</b></div>');
     writeln(f,'<input type="hidden"  value="'+inttostr(count)+'" name="Eingabe">');
     writeln(f,'</form>');
 
@@ -1118,11 +1099,11 @@ else if sortedbyrufnummer then test := AnsiCompareText(vgl,grid.cells[rufnummer,
     writeln(f,'   }');
     writeln(f,'  partsum = Math.round(partsum * 10000) / 10000;');
     writeln(f,'  sum = Math.round(sum * 10000) / 10000;');
-    writeln(f,'  document.getElementsByName(''Zusammenfassung'')[0].innerHTML = "<table border=\"0\"><tr><td><b>Teilsumme:</b></td><td><b>" + partsum +" €</b></td></tr><tr><td><b>Gesamtsumme:</b></td><td><b>" + sum + " €<\/b></td></tr></table>";');
+    writeln(f,'  document.getElementsByName(''Zusammenfassung'')[0].innerHTML = "<table border=\"0\"><tr><td><b>'+misc(M154,'M154')+':</b></td><td><b>" + partsum +" '+misc(M13,'M13')+'</b></td></tr><tr><td><b>'+misc(M155,'M155')+':</b></td><td><b>" + sum + " '+misc(M13,'M13')+'<\/b></td></tr></table>";');
     writeln(f, ' }');
     writeln(f,'</script>');
     writeln(f,'   <p name="Zusammenfassung"></p>');
-    writeln(f,'<p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de ">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p></body></html>');
+    writeln(f,'<p align=center><font size="-1"><b><a href="http://www.leastcosterxp.de ">LeastCosterXP</a> by <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p></body></html>');
 
   closefile(f);
 end;
@@ -1252,7 +1233,7 @@ begin
  filtername.ReadOnly:= true;
  filtername.Color:= clgraytext;
  for col:=0 to grid.ColCount-1 do
-  if grid.cells[col,0] = 'Tarif' then break;
+  if grid.cells[col,0] = misc(M140,'M140') then break;
 
  for i:= 1 to grid.RowCount-1 do
   begin
@@ -1260,7 +1241,6 @@ begin
       grid.RowHeights[i]:= -1
     else
       grid.RowHeights[i]:= 18;
-
   end;
 end
 else //wenn Haken entfernt wurde
@@ -1334,9 +1314,7 @@ begin
  sizer.BevelOuter:= bvRaised;
  sizer.color:= clbtnface;
 end;
-
 setgridsize;
-
 end;
 
 procedure Tauswert.GridSelectCell(Sender: TObject; ACol, ARow: Integer;
@@ -1344,7 +1322,7 @@ procedure Tauswert.GridSelectCell(Sender: TObject; ACol, ARow: Integer;
 var i,notecol: integer;
 begin
 for i:= 0 to grid.colcount-1 do
-  if grid.cells[i,0]='Anmerkungen' then notecol:= i;
+  if grid.cells[i,0]=misc(M143,'M143') then notecol:= i;
 
 if ((arow > 0) and (acol <> notecol)) then
   grid.options:= [goFixedVertLine,goFixedHorzLine,goVertLine,goHorzLine,goDrawFocusSelected,goRowSizing,goColSizing,goColMoving,goTabs,goThumbTracking]
@@ -1362,23 +1340,23 @@ var i: integer;
 begin
 for i:= 0 to grid.colcount-1 do
   begin
-   if grid.Cells[i,0] = 'Nr.' then col_Nr:= i
+   if grid.Cells[i,0] = misc(M135,'M135') then col_Nr:= i
    else
-   if grid.Cells[i,0] = 'Datum' then col_Datum:= i
+   if grid.Cells[i,0] = misc(M136,'M136') then col_Datum:= i
    else
-   if grid.Cells[i,0] = 'Uhrzeit' then col_Uhrzeit:= i
+   if grid.Cells[i,0] = misc(M137,'M137') then col_Uhrzeit:= i
    else
-   if grid.Cells[i,0] = 'Dauer' then col_Dauer:= i
+   if grid.Cells[i,0] = misc(M138,'M138') then col_Dauer:= i
    else
-   if grid.Cells[i,0] = 'Kosten' then col_Kosten:= i
+   if grid.Cells[i,0] = misc(M139,'M139') then col_Kosten:= i
    else
-   if grid.Cells[i,0] = 'Tarif' then col_Tarif:= i
+   if grid.Cells[i,0] = misc(M140,'M140') then col_Tarif:= i
    else
-   if grid.Cells[i,0] = 'getrennt um ..' then col_getrennt:= i
+   if grid.Cells[i,0] = misc(M141,'M141') then col_getrennt:= i
    else
-   if grid.Cells[i,0] = 'Rufnr.' then col_Rufnr:= i
+   if grid.Cells[i,0] = misc(M142,'M142') then col_Rufnr:= i
    else
-   if grid.Cells[i,0] = 'Anmerkungen' then col_notiz:= i;
+   if grid.Cells[i,0] = misc(M143,'M143') then col_notiz:= i;
   end;
 end;
 

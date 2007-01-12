@@ -36,24 +36,22 @@ var
 
 implementation
 
-uses WebServ1;
+uses WebServ1, inilang, messagestrings;
 
 {$R *.dfm}
 
 procedure Tshutter.StopClick(Sender: TObject);
 var buf: string;
 begin
-timer2.Enabled:= false;
-art:='';
-//shutter.Visible:= false;
+    timer2.Enabled:= false;
+    art:='';
 
-
-    Buf     := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ 'Windows beenden geblockt !' +
-                #9+ User + '@ LeastCoster XP'  +#13#10;
+    Buf     := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ misc(M156,'M156') +
+                #9+ User + '@LeastCosterXP'  +#13#10;
     webservform.logfile_add(buf);
     webserv1.status:= buf;
 
-shutter.close;    
+    shutter.close;
 end;
 
 procedure Tshutter.Timer2Timer(Sender: TObject);

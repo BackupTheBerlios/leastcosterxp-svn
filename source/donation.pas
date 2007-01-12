@@ -51,8 +51,6 @@ end
 else
 if timer1.tag = -60 then
   DonateWindow.Close;
-
-
 end;
 
 procedure TDonateWindow.quitClick(Sender: TObject);

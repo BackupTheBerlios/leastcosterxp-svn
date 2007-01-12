@@ -53,7 +53,7 @@ var
 
 implementation
 
-uses Unit1, tarifverw, StringRoutine, Strutils, DateUtils, Tarifmanager;
+uses Unit1, tarifverw, StringRoutine, Strutils, DateUtils, Tarifmanager, inilang, messagestrings;
 
 {$R *.dfm}
 
@@ -93,18 +93,15 @@ listbox.Items.clear;
 SetCursor_wait;
 hauptfenster.enabled:= true;
 
-//if ok.Caption = '&Import' then
-if caption.caption='Import' then
-begin
-//tarifverw.LadeTarife;
-hauptfenster.AktualisierenClick(self);
-end;
+if caption.caption=misc(M192,'M192') then
+  hauptfenster.AktualisierenClick(self);
+
 
 if assigned(TaVerwaltung) and TaVerwaltung.visible then
 begin
-TaVerwaltung.FormCreate(self);
-TaVerwaltung.enabled:= true;
-hauptfenster.enabled:= not TaVerwaltung.visible;
+  TaVerwaltung.FormCreate(self);
+  TaVerwaltung.enabled:= true;
+  hauptfenster.enabled:= not TaVerwaltung.visible;
 end;
 
 SetCursor_Default;
@@ -123,8 +120,8 @@ var zeilen: TStringlist;
     FName, CName: String;
 begin
 
-savedialog.Title:= 'Tarif - Export';
-savedialog.filter:= 'LeastCosterXP Tarifpaket (*.lcx)|*.lcx;*.LCX';
+savedialog.Title:= misc(M193,'M193');
+savedialog.filter:= misc(M194,'M194') + ' (*.lcx)|*.lcx;*.LCX';
 savedialog.Options:= [ofHideReadOnly,ofCreatePrompt,ofEnableSizing, ofOverwritePrompt];
 
 if savedialog.execute then
@@ -159,15 +156,16 @@ begin
   if email.checked then  //eMail schreiben
   begin
   mailtext:= #13#10+ '~~~~~~~~~~~~~~~~~~~~~~~'+#13#10 + datetimetostr(now) +#13#10;
-  if hauptfenster.german then mailtext:= mailtext +'Enthaltene Tarife :'+#13#10;
+  if hauptfenster.german then mailtext:= mailtext + misc(M195,'M195') + ' :'+#13#10;
 
 
   for i:= 0 to listbox.Count-1 do
   if listbox.Selected[i] then
-  mailtext:= mailtext + listbox.Items.Strings[i] +#13#10;
+    mailtext:= mailtext + listbox.Items.Strings[i] +#13#10;
+    
   wndlist.Visible:= false;
 
-  neu:= 'neue Tarife ';
+  neu:= misc(M196,'M196') + ' ';
 
   hauptfenster.sendmail(neu + datetimetostr(now),mailtext,'','','','',savedialog.FileName,extractfilename(savedialog.filename),true);
   end;
@@ -266,9 +264,9 @@ try
    end;
 
    tarifisvalid:= ergebnis;
-except
-   ergebnis:= false;
-   tarifisvalid:= ergebnis;
+   except
+    ergebnis:= false;
+    tarifisvalid:= ergebnis;
    end;
 end;
 
@@ -318,10 +316,8 @@ if listbox.count > 0 then
             end;
        end;
     end;
-
    Closefile(Datei);
  end;
-
 end;
 
 procedure Twndlist.okClick(Sender: TObject);
@@ -337,13 +333,13 @@ begin
   progress.visible:= true;
   progress.refresh;
 
-  if Caption.Caption='Export' then batchexport
+  if Caption.Caption=misc(M193,'M193') then batchexport
   else
-  if (Caption.Caption='Import') then batchimport;
+  if (Caption.Caption=misc(M192,'M192')) then batchimport;
 
 
 //Zusammenfassung anzeigen  oder Liste der nicht importierten Tarife
-if (Caption.Caption='Import') then
+if (Caption.Caption=misc(M192,'M192')) then
 begin
  progress.visible:= false;
 
@@ -357,8 +353,7 @@ begin
       panel2.height:= 36;
       wndlist.height:= wndlist.height + memo1.height;
 
-      memo1.Text:= 'Die angezeigten Tarife wurden nur teilweise oder gar nicht importiert, da es Überschneidungen zu bestehenden Tarifen gibt.'
-                   +'Sie können jetzt die alten Tarife löschen und die neuen importieren, indem sie oben die betreffenden Tarife markieren und auf den Button "Weiter" klicken.';
+      memo1.Text:= misc(M197,'M197');
       Memo1.Visible:= true;
       ok.Visible:= false;
       NotImported_label.Visible:= true;
@@ -375,14 +370,14 @@ begin
  //fertig >>> alles auf die Platte schreiben
  WriteDataToHD;
 
- NotImported_Label.caption:= 'Zusammenfassung';
+ NotImported_Label.caption:= misc(M198,'M198');
  listbox.items.Clear;
  listbox.Sorted:= false;
 
  if AllNames.Count > 0 then
  begin
   listbox.Items.Append('|¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|');
-  listbox.Items.Append('|  neu aufgenommene Tarife  |');
+  listbox.Items.Append('|  '+misc(M199,'M199')+'  |');
   listbox.Items.Append('|___________________________|');
   listbox.Items.Append('');
   AllNames.Sorted:= true;
@@ -395,7 +390,7 @@ begin
  if NewDate.Count > 0 then
     begin
      listbox.Items.Append('|¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|');
-     listbox.Items.Append('     neu datierte Tarife     ');
+     listbox.Items.Append('     '+misc(M200,'M200')+'     ');
      listbox.Items.Append('|___________________________|');
      listbox.Items.Append('');
      NewDate.Sorted:= true;
@@ -420,9 +415,8 @@ listbox.enabled:= true;
 end;
 
 //Nur beim Export gleich schließen
-if caption.caption = 'Export' then
-ok.enabled:= true;
-
+if caption.caption = misc(M193,'M193') then
+  ok.enabled:= true;
 end;
 
 procedure FillListBox;
@@ -449,7 +443,7 @@ begin
 hauptfenster.enabled:= false;
 listbox.Sorted:= true;
 
-if caption.caption='Export' then
+if caption.caption=misc(M193,'M193') then
 begin
      listbox.Sorted:= true; //beim Exportieren sortieren
      FillListBox;
@@ -469,7 +463,7 @@ begin
      email.Visible:= false;
      email.Checked:= false;
 
-     opendialog.filter:= 'LeastCosterXP Tarifdatei (*.lcx)|*.lcx;*.LCX|';
+     opendialog.filter:= misc(M194,'M194') + ' (*.lcx)|*.lcx;*.LCX|';
 
      if not hauptfenster.startwithimport then
      begin
@@ -532,15 +526,11 @@ begin
             keine.Visible:= true;
 
         end;
-
-
-
 end;
 //alle selektieren
 alle.Checked:= true;
 alleclick(self);
 keine.checked:= false;
-
 end;
 
 procedure TWndlist.WriteDataToHD;
@@ -580,7 +570,6 @@ Compress(fName, cName);
 DeleteFile(PChar(fName));
 progress.visible:= false;
 end;
-
 
 procedure Twndlist.NotImported_OverWriteClick(Sender: TObject);
 var i,j, count: integer;
@@ -657,17 +646,17 @@ listbox.refresh;
 //fertig >>> alles auf die Platte schreiben
 WriteDataToHD;
 
-NotImported_Label.caption:= 'Zusammenfassung';
+NotImported_Label.caption:= misc(M198,'M198');
 listbox.items.Clear;
 listbox.Sorted:= false;
 
 if ((AllNames.Count = 0) and (notimported.count = 0) and (newdate.Count =0)) then
- listbox.items.Append('Keine Änderungen.');
+ listbox.items.Append(misc(M201,'M201'));
 
 if AllNames.Count > 0 then
 begin
  listbox.Items.Append('|¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|');
- listbox.Items.Append('      neu aufgenommene Tarife   ');
+ listbox.Items.Append('      '+misc(M199,'M199')+'   ');
  listbox.Items.Append('|___________________________|');
  listbox.Items.Append('');
  AllNames.Sorted:= true;
@@ -680,7 +669,7 @@ end;
 if NewDate.Count > 0 then
    begin
     listbox.Items.Append('|¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|');
-    listbox.Items.Append('        neu datierte Tarife     ');
+    listbox.Items.Append('        '+misc(M200,'M200')+'     ');
     listbox.Items.Append('|___________________________|');
     listbox.Items.Append('');
     Newdate.sorted:= true;
@@ -694,7 +683,7 @@ if NewDate.Count > 0 then
 if NotImported.Count > 0 then
    begin
     listbox.Items.Append('|¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|');
-    listbox.Items.Append('       überschriebene Tarife    ');
+    listbox.Items.Append('       '+misc(M202,'M202')+'    ');
     listbox.Items.Append('|___________________________|');
     listbox.Items.Append('');
     NotImported.Sorted:= true;
@@ -711,9 +700,7 @@ keine.Visible:= false;
 wndlist.height:= Caption.height + listbox.Height + panel3.Height + panel2.Height +40 ;
 
 SetCursor_Default;
-
 ClearImport;
-
 end;
 
 procedure TwndList.SetCursor_Wait;
@@ -734,11 +721,9 @@ Screen.Cursor:= crDefault;
 wndlist.enabled:= true;
 end;
 
-
 procedure Twndlist.NewimportClick(Sender: TObject);
 begin
 formshow(self);
 newimport.visible:= false;
 end;
-
 end.

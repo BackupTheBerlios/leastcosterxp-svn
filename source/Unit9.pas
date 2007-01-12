@@ -31,19 +31,19 @@ var
   Info: TInfo;
 
 implementation
-uses files, StrUtils, ShellAPi, Unit1, DateUtils;
+uses files, StrUtils, ShellAPi, Unit1, DateUtils, inilang, messagestrings;
 {$R *.dfm}
 
 procedure TInfo.FormCreate(Sender: TObject);
 begin
 Hauptfenster.enabled:= false;
-label1.caption:= 'LeastCosterXP Version : '+GetFileVersion(Application.exename);
+label1.caption:= 'LeastCosterXP version : '+GetFileVersion(Application.exename);
 copyright.caption:= '©2006 ' + chr(83)+ chr(116)+ chr(101)+ chr(102)+ chr(97)+ chr(110)+ chr(32)+ chr(70)+ chr(114)+ chr(117)+ chr(104)+ chr(110)+ chr(101)+ chr(114) +'   ';
 
 
 if fileexists(ExtractFilepath(paramstr(0))+ 'about.txt' ) then
  edit.Lines.LoadFromFile(ExtractFilepath(paramstr(0))+ 'about.txt')
-else Edit.Lines.Append('about.txt nicht gefunden !');
+else Edit.Lines.Append('about.txt '+misc(M43,'M43'));
 end;
 
 procedure TInfo.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -77,7 +77,6 @@ delete(temp, 1, i);
 delete(temp, posex(' ', temp,0), length(temp) - posex(' ', temp,0) +1);
 link:= 'mailto:'+temp;
 ShellExecute(Application.Handle, 'open', PChar(link), nil, nil, sw_ShowNormal);
-//showmessage(temp);
 end;
 end;
 

@@ -97,22 +97,6 @@ type
    private
 
     FCountRequests : Integer;
-
-    procedure CreateVirtualDocument_index(Sender    : TObject;
-                                         ClientCnx : TMyHttpConnection;
-                                         var Flags : THttpGetFlag);
-    procedure CreateVirtualDocument_links(Sender    : TObject;
-                                         ClientCnx : TMyHttpConnection;
-                                         var Flags : THttpGetFlag);
-    procedure CreateVirtualDocument_aktiv(Sender    : TObject;
-                                         ClientCnx : TMyHttpConnection;
-                                         var Flags : THttpGetFlag);
-    procedure CreateVirtualDocument_unten(Sender    : TObject;
-                                         ClientCnx : TMyHttpConnection;
-                                         var Flags : THttpGetFlag);
-    procedure CreateVirtualDocument_shutdown(Sender    : TObject;
-                                         ClientCnx : TMyHttpConnection;
-                                         var Flags : THttpGetFlag);
     procedure CreateVirtualDocument_shutdown1(Sender    : TObject;
                                          ClientCnx : TMyHttpConnection;
                                          var Flags : THttpGetFlag);
@@ -137,18 +121,6 @@ type
                                          Sender    : TObject;
                                          ClientCnx : TMyHttpConnection;
                                          var Flags : THttpGetFlag);
-    procedure CreateVirtualDocument_down(
-                                         Sender    : TObject;
-                                         ClientCnx : TMyHttpConnection;
-                                         var Flags : THttpGetFlag);
-    procedure CreateVirtualDocument_up(
-                                         Sender    : TObject;
-                                         ClientCnx : TMyHttpConnection;
-                                         var Flags : THttpGetFlag);
-    procedure CreateVirtualDocument_dial(
-                                         Sender    : TObject;
-                                         ClientCnx : TMyHttpConnection;
-                                         var Flags : THttpGetFlag);
     procedure CreateVirtualDocument_ViewFormData(Sender    : TObject;
                                                  ClientCnx : TMyHttpConnection;
                                                  var Flags : THttpGetFlag);
@@ -160,12 +132,9 @@ type
                              UserData        : TObject);
 
     procedure ProcessPostedData_FormHandler(ClientCnx : TMyHttpConnection);
-    procedure ProcessPostedData_goonline(ClientCnx : TMyHttpConnection);
-    procedure ProcessPostedData_goonline2(ClientCnx : TMyHttpConnection);
     procedure ProcessPostedData_LeastCosterDial(ClientCnx : TMyHttpConnection);
     procedure ProcessPostedData_sendmessage(ClientCnx : TMyHttpConnection);
     procedure ProcessPostedData_deletemessage(ClientCnx : TMyHttpConnection);
-    procedure delete(Verzeichnis: string);
     procedure filluserbox;
 
 
@@ -177,10 +146,11 @@ var
   WebServForm: TWebServForm;
   status:string;
   servertime: string;
+  Surftime: integer;
 
 implementation
 
-uses screen, Unit1,CoolTrayIcon,  Unit4;
+uses Unit1, CoolTrayIcon,  Unit4;
 
 {$R *.DFM}
 
@@ -203,6 +173,223 @@ const
     KeyRedirUrl        = 'RedirURL';
 
 var allowedip: string;
+
+
+function Tarifliste(user: string) : string;
+var tabelle: string;
+    i      : integer;
+begin
+ Result   := '';
+ tabelle  := '';
+
+  if (Hauptfenster.Liste.cells[1,1] <> '') then
+   begin
+    tabelle:= '<table border=1 width=100%>'+#13#10;
+      for i:=0 to Hauptfenster.Liste.rowCount-1 do
+         begin
+
+          if (i>0) then
+          begin
+           if (i=1) then
+                tabelle:= tabelle + '<tr><td><input type="radio" name="Tarif" value="'+inttostr(i)+'" checked><font size=-1>'
+           else
+                tabelle:= tabelle + '<tr><td><input type="radio" name="Tarif" value="'+inttostr(i)+'"><font size=-1>';
+          end
+          else  tabelle:= tabelle + '<tr><td><font size=-1>';
+
+          if (not(hauptfenster.Liste.Cells[11,i] = 'Webseite') and not(  hauptfenster.Liste.Cells[11,i]=''))
+          then tabelle:= tabelle + '<a href="'+hauptfenster.Liste.Cells[11,i]+'">'+hauptfenster.Liste.Cells[1,i] + '</a></font></td>'
+          else tabelle:= tabelle + hauptfenster.Liste.Cells[0,i] + '</font></td>'+#13#10;
+
+          tabelle:= tabelle
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[2,i] + '</font></td>'+#13#10
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[3,i] + '</font></td>'+#13#10
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[4,i] + '</font></td>'+#13#10
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[5,i] + '</font></td>'+#13#10
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[6,i] + '</font></td>'+#13#10
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[7,i] + '</font></td>'+#13#10
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[8,i] + '</font></td>'+#13#10
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[12,i] + '</font></td>'+#13#10
+                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[13,i] + '</font></td>'+#13#10
+                    + '</tr>' + #13#10;
+          end;
+          tabelle:= tabelle + '</table>'+#13#10;
+  end else tabelle:= '<font size+1><b>Keine Tarife verfügbar (Surfzeit verkleinern ?)</b></font>+#13#10';
+
+ Result:= '<FORM METHOD="POST" name="Dialform" ACTION="/cgi-bin/LeastCosterDial?='+user+'">' +#13#10
+		     +'<p align=left><input type="submit" name="action" value="Verbindung wählen"><input type="submit" name="action" value="Aktualisieren"><INPUT TYPE="edit" NAME="basetime" value="'+inttostr(surftime)+'" MAXLENGTH="5"></p>' +#13#10
+			   +'<p align=center valign=middle>'+#13#10
+         + tabelle + #13#10
+         +'</p>' +#13#10
+         +'</FORM>';
+end;
+
+function NachrichtenListe(user: string): string;
+var sections: Tstringlist;
+    options, nachrichten, anhang: string;
+    i, count : integer;
+    selector: boolean;
+begin
+with WebServForm do
+begin
+   options:=''; anhang:=''; selector:= false;
+
+   sections := TStringList.Create;
+
+   UserSettings.ReadSections(sections);
+
+   for i:=0 to sections.Count-1 do
+   if (sections.Strings[i] <>'active') and (sections.Strings[i] <> crypter.Doencrypt(user)) then
+   if not selector then
+   begin
+        options:=options+'<option selected>'+crypter.DoDecrypt(sections.Strings[i])+'</option>';
+        selector:= true;
+   end
+   else options:=options+'<option>'+crypter.DoDecrypt(sections.Strings[i])+'</option>';
+
+   count:=UserSettings.ReadInteger(crypter.DoEncrypt(user),'count',0);
+   nachrichten:= '<tr><td><b><a name="lesen">Nachrichten lesen</a></b><hr></td></tr>';
+
+   if count >0 then
+   for i:= count downto 1 do
+   begin
+
+   if (crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),'')) <> '') then
+        anhang:= '<b>Anhang: <a href="files\'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'">'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'</a></b> &nbsp;</b>'
+   else anhang:= '';
+
+   if (UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('gelesen'+inttostr(i)),'1')) = '0'
+   then
+    begin
+    nachrichten:= nachrichten +'<tr><td><b>'+
+        '<input type="checkbox" name="delete'+inttostr(i)+'" value="'+inttostr(i)+'">'+
+        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('zeitpunkt'+inttostr(i)),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0)))) + '&nbsp; von : '+
+        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('sender'+inttostr(i)),''))+'</b> &nbsp;'+
+        anhang+
+        '</td></tr><tr><td><b>'+
+        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('nachricht'+inttostr(i)),'no message')) +
+        '</b><hr><br></td></tr>';
+        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.DoEncrypt('gelesen'+inttostr(i)) )
+    end
+    else
+    nachrichten:= nachrichten + '<tr><td>'+
+        '<input type="checkbox" name="delete'+inttostr(i)+'" value="'+inttostr(i)+'">'+
+        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('zeitpunkt'+inttostr(i)),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0)))) + '&nbsp; von : '+
+        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('sender'+inttostr(i)),''))+ '</b> &nbsp;'+
+        anhang+
+        '</td></tr>'+ '<tr><td>'+
+        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('nachricht'+inttostr(i)),'no message')) +
+        '<br><hr></td></tr>';
+   end;
+  sections.Free;
+
+  Result:=  '<p>' +#13#10+
+						'	 <b><a href="#posten">Nachrichten schreiben</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#lesen">Nachrichten lesen</a></b>' +#13#10+
+					  '</p>' +#13#10+
+            '<FORM METHOD="POST" ACTION="/cgi-bin/deletemessage.html?='+user+'">' +#13#10+
+						'			<P>' +#13#10+
+            '			<TABLE BORDER="0" width="100%" ALIGN="DEFAULT">' +#13#10
+           +nachrichten+
+					  '      <tr><td><input type="submit" name="delete" value="markierte Nachrichten löschen" ></td></tr>' +#13#10+
+					  '			</TABLE>' +#13#10+
+					  '			<hr><br>' +#13#10+
+            '			<b><a name="posten">Nachrichten schreiben</a></b>' +#13#10+
+					  '			<br>' +#13#10+
+					  '			</table>' +#13#10+
+					  '</FORM>' +#13#10+
+            '<FORM METHOD="POST" enctype="multipart/form-data" ACTION="/cgi-bin/sendmessage.html?='+user+'">'+#13#10+
+            '			<TABLE BORDER="0" width="100%" ALIGN="DEFAULT">'+#13#10+
+            '						 <tr>'+#13#10+
+            '						 		 <td>Empfänger:<br> <select size="3" name="to">'+options+'</select></td>'+#13#10+
+            '						 </tr>'+#13#10+
+            '						 <tr>'+#13#10+
+            '						 		 <td><textarea cols="60" rows="10" name="text" wrap="soft"></textarea></td>'+#13#10+
+            '						 </tr>'+#13#10+
+            '						 <tr>'+#13#10+
+            '						 		 <td><input type="file" name="datei" size="60"></input></td>'+#13#10+
+            '						 </tr>'+#13#10+
+            '						 <TR>'+#13#10+
+            '						 		 <TD><INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Send"></TD>'+#13#10+
+            '							</TR>'+#13#10+
+            '			</TABLE>'+#13#10+
+            '</FORM>';
+end;
+end;
+
+
+function LoadPage(f, user: string; ClientCnx : TMyHttpConnection): string;
+var List: TStringlist;
+    n: string;
+    i,count: integer;
+begin
+n:= extractFilePath(Paramstr(0)) + 'www\templates\'+f;
+Result:= '';
+if fileexists(n) then
+begin
+
+  List:=TStringlist.Create;
+  List.LoadFromFile(n);
+
+  for i:= 0 to list.Count-1 do
+    Result:= Result + List.Strings[i] + #13#10;
+
+  list.Free;
+
+  Result:= AnsireplaceStr(Result,'%%DISCONNECT%%','disconnect.html?='+user+'?=disconnect');
+  Result:= AnsireplaceStr(Result,'%%STATUS%%',Hauptfenster.online.Caption);
+  Result:= AnsireplaceStr(Result,'%%LAST_STATUS%%', status);
+  Result:= AnsireplaceStr(Result,'%%LOGIN%%', '/cgi-bin/LCRXP');
+  Result:= AnsireplaceStr(Result,'%%NOW%%', DateTimeToStr(now));
+
+  Result:= AnsireplaceStr(Result,'%%LINK_CONNECT%%',     'basetime.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_DISCONNECT%%',  'disconnect.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_PROTOCOLS%%',   'log/index.htm?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_MESSAGES%%',    'message.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_LOGS%%',        'log/log.txt?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_SHUTDOWN%%',    'shutdown.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_DO_SHUTDOWN%%', 'shutdown1.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_LOGOUT%%',      'logout.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_USERINFO%%',    'aktiv.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_MENU%%',        'links.htm?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_STATUS%%',      'myip.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%LINK_WELCOME%%',     'unten.html?='+user);
+  Result:= AnsireplaceStr(Result,'%%DISABLE_AUTODIAL%%',     'DisableAutoDial.html?=off');
+
+  Result:= AnsireplaceStr(Result,'%%USERNAME%%',          user);
+  Result:= AnsireplaceStr(Result,'%%USER_IP%%',           ClientCnx.PeerAddr);
+
+  Result:= AnsireplaceStr(Result,'%%USERS_LOGGEDIN%%',    inttostr(UserSettings.ReadInteger('active','count',0)));
+  Result:= AnsireplaceStr(Result,'%%SERVER_RUNNING_SINCE%%',   servertime);
+
+  if ansicontainsstr(Result,'%%DIALFORM%%') then
+    Result:= AnsireplaceStr(Result,'%%DIALFORM%%',   Tarifliste(user));
+
+  if ansicontainsstr(Result, '%%MESSAGELIST%%') then
+    Result:= AnsireplaceStr(Result,'%%MESSAGELIST%%',   Nachrichtenliste(user));
+
+  Result:= AnsireplaceStr(Result,'%%USER_DIALING%%',   settings.ReadString('server','dialtimeuser','!_niemand_!'));
+  Result:= AnsireplaceStr(Result,'%%USER_ALLOW_CONNECT_IN%%',   inttostr(300 - secondsbetween(settings.ReadDateTime('server','dialtime', EncodeDatetime(3000,1,1,0,0,0,0)),now)));
+
+  count:= UserSettings.ReadInteger(Webservform.crypter.DoEncrypt(user),'count',0);
+
+  if AnsiContainsSTR(Result,'%%IF_NEW_MESSAGE_BEGIN%%') then
+  begin
+    if (UserSettings.ReadString(Webservform.crypter.DoEncrypt(user),Webservform.crypter.DoEncrypt('gelesen'+inttostr(count)),'1') = '0') then
+      begin //Neue Nachrichten
+        Result:= AnsiReplaceStr(Result,'%%IF_NEW_MESSAGE_BEGIN%%','');
+        Result:= AnsiReplaceStr(Result,'%%IF_NEW_MESSAGE_END%%'  ,'');
+      end
+      else //keine neuen Nachrichten
+        Delete(Result, Pos('%%IF_NEW_MESSAGE_BEGIN%%',Result),Pos('%%IF_NEW_MESSAGE_END%%',Result)+22 - Pos('%%IF_NEW_MESSAGE_BEGIN%%',Result) );
+  end;
+
+  if isonline then
+    Result:= AnsireplaceStr(Result,'%%ONLINETIME%%', hauptfenster.ozeit.caption)
+  else
+    Result:= AnsireplaceStr(Result,'%%ONLINETIME%%','');
+end
+else Result:= 'Template ' + f+ ' missing !';
+end;
 
 {* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
 {$IFDEF VER80}
@@ -265,7 +452,7 @@ end;
 {* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
 procedure TWebServForm.FormCreate(Sender: TObject);
 begin
-httpserver1.tag:= 0;
+  httpserver1.tag:= 0;
 
   crypter := TCHCrypt.Create(Self);
   with crypter do
@@ -280,47 +467,34 @@ httpserver1.tag:= 0;
     Key4 := 40;
   end;
 
-
    //Webinterface automatisch starten
-  if settings.ReadBool('Server','Autostart', false) = true then
+  if settings.ReadBool('Server','Autostart', false) then
     begin
       webservform.PortEdit.text:= settings.ReadString('Server','Port','85');
       webservform.StartButton.Click;
      end;
 end;
 
-
-
 {* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
 procedure TWebServForm.FormDestroy(Sender: TObject);
 begin
-httpserver1.Stop;
-if assigned(crypter) then crypter.free;
+  httpserver1.Stop;
+  if assigned(crypter) then crypter.free;
 end;
 
 
 {* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
 procedure TWebServForm.FormShow(Sender: TObject);
-var
-
-    wsi     : TWSADATA;
+var    wsi     : TWSADATA;
 begin
-
        PortEdit.Text        := '85';
-
-        { Initialize client count caption }
-        ClientCountLabel.Caption := '0';
-        { Display version info for program and used components }
-        wsi := WinsockInfo;
+       ClientCountLabel.Caption := '0';     { Initialize client count caption }
+       wsi := WinsockInfo;                  { Display version info for program and used components }
 
 {$IFNDEF DELPHI3}
-        { A bug in Delphi 3 makes lpVendorInfo invalid }
-        if wsi.lpVendorInfo <> nil then
-
+        if wsi.lpVendorInfo <> nil then     { A bug in Delphi 3 makes lpVendorInfo invalid }
 {$ENDIF}
-        { Automatically start server }
-        StartButtonClick(Self);
-
+        StartButtonClick(Self);             { Automatically start server }
 end;
 
 
@@ -336,7 +510,6 @@ begin
     Stream.Seek(0, soFromEnd);
     Stream.Write(Buf[1], Length(Buf));
     Stream.Destroy;
-
 end;
 
 
@@ -361,11 +534,8 @@ begin
         HttpServer1.Start;
     except
         on E:Exception do begin
-
             if HttpServer1.WSocketServer.LastError = WSAEADDRINUSE then
-
             else
-
         end;
     end;
 end;
@@ -406,7 +576,6 @@ begin
     logfile_add(buf);
 end;
 
-
 {* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
 { This event handler is triggered when server has been stopped, that is     }
 { when server socket stop listening.                                        }
@@ -425,16 +594,14 @@ begin
     StopButton.Enabled          := FALSE;
 
     if assigned(Hauptfenster.WebintLabel) then hauptfenster.WebIntLabel.Visible:=false;
-    
-    allowedip:= '';
 
+    allowedip:= '';
 
     Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Server gestoppt' +#13#10;
     status:= buf;
 
     { Save data to a text file }
     logfile_add(buf);
-
 end;
 
 
@@ -515,33 +682,50 @@ begin
     Inc(FCountRequests);
     ip:='';   user:= '';
 
+    user:= ansireplacestr(clientcnx.FParams,'=','');
+
     counter:= UserSettings.ReadInteger('active','count',0);
     For i:= 1 to counter do
-    begin
-    ip:= ip + UserSettings.ReadString('active','ip_'+inttostr(i),'');
-    end;
+      ip:= ip + UserSettings.ReadString('active','ip_'+inttostr(i),'');
 
-    if CompareText(ClientCnx.Path, '/login.htm') = 0 then
-        CreateVirtualDocument_index(Sender, ClientCnx, Flags)
+    if ((CompareText(ClientCnx.Path, '/login.htm') = 0) or (CompareText(ClientCnx.Path, '/') = 0)) then
+                ClientCnx.AnswerString(Flags,
+                    '',           { Default Status '200 OK'         }
+                    '',           { Default Content-Type: text/html }
+                    '',           { Default header                  }
+                LoadPage('login.tpl',user,ClientCNX))
     { Trap '/surfen.html' path to dynamically generate a dynamic answer. }
     else
-
     if CompareText(ClientCnx.Path, '/logout.html') = 0 then
         CreateVirtualDocument_logout(Sender, ClientCnx, Flags)
     else
-
     {nur authentifizierte User dürfen die folgenden Seiten abrufen}
     //wenn die Ip zur userip passt
     if ansicontainstext(ip,clientcnx.PeerAddr) then
-
     if CompareText(ClientCnx.Path, '/unten.html') = 0 then
-        CreateVirtualDocument_unten(Sender, ClientCnx, Flags)
+         ClientCnx.AnswerString(Flags,
+        '',           { Default Status '200 OK'         }
+        '',           { Default Content-Type: text/html }
+        '',           { Default header                  }
+        LoadPage('welcome.tpl',user,ClientCNX))
     else if CompareText(ClientCnx.Path, '/links.htm') = 0 then
-        CreateVirtualDocument_links(Sender, ClientCnx, Flags)
+         ClientCnx.AnswerString(Flags,
+        '',           { Default Status '200 OK'         }
+        '',           { Default Content-Type: text/html }
+        '',           { Default header                  }
+        LoadPage('menu.tpl',user,ClientCNX))
     else if CompareText(ClientCnx.Path, '/aktiv.html') = 0 then
-        CreateVirtualDocument_aktiv(Sender, ClientCnx, Flags)
+         ClientCnx.AnswerString(Flags,
+        '',           { Default Status '200 OK'         }
+        '',           { Default Content-Type: text/html }
+        '',           { Default header                  }
+        LoadPage('userinfo.tpl',user,ClientCNX))
     else if CompareText(ClientCnx.Path, '/shutdown.html') = 0 then
-        CreateVirtualDocument_shutdown(Sender, ClientCnx, Flags)
+        ClientCnx.AnswerString(Flags,
+        '',           { Default Status '200 OK'         }
+        '',           { Default Content-Type: text/html }
+        '',           { Default header                  }
+        LoadPage('shutdown_select.tpl',user,ClientCNX))
     else if CompareText(ClientCnx.Path, '/shutdown1.html') = 0 then
         CreateVirtualDocument_shutdown1(Sender, ClientCnx, Flags)
     else if CompareText(ClientCnx.Path, '/DisableAutoDial.html') = 0 then
@@ -552,183 +736,10 @@ begin
         CreateVirtualDocument_postmessage(Sender, ClientCnx, Flags)
     else if CompareText(ClientCnx.Path, '/disconnect.html') = 0 then
         CreateVirtualDocument_disconnect(Sender, ClientCnx, Flags)
-    else if CompareText(ClientCnx.Path, '/down.html') = 0 then
-        CreateVirtualDocument_down(Sender, ClientCnx, Flags)
-    else if CompareText(ClientCnx.Path, '/up.html') = 0 then
-        CreateVirtualDocument_up(Sender, ClientCnx, Flags)
-    else if CompareText(ClientCnx.Path, '/dial.html') = 0 then
-        CreateVirtualDocument_dial(Sender, ClientCnx, Flags)
     else if CompareText(ClientCnx.Path, '/view.html') = 0 then
         CreateVirtualDocument_ViewFormData(Sender, ClientCnx, Flags)
     else if CompareText(ClientCnx.Path, '/myip.html') = 0 then
         CreateVirtualDocument_MyIP(Sender, ClientCnx, Flags)
-end;
-
-procedure TWebServForm.CreateVirtualDocument_index(
-    Sender    : TObject;
-    ClientCnx : TMyHttpConnection;
-    var Flags : THttpGetFlag);
-begin
-    ClientCnx.AnswerString(Flags,
-        '',           { Default Status '200 OK'         }
-        '',           { Default Content-Type: text/html }
-        '',           { Default header                  }
-        '<HTML>'+
-        '<HEAD>' +
-        '<TITLE>LeastCoster XP Webserver</TITLE>'+
-        '  </HEAD>'+
-        '  <BODY>'+
-        '   <H2>Bitte geben Sie Usernamen und Passwort ein:</H2>             '+
-        '  <FORM METHOD="POST" ACTION="/cgi-bin/LCRXP">'+
-        '   <P>'+
-        ' <TABLE BORDER="0" ALIGN="DEFAULT">'+
-        '  <TR>'+
-        '   <TD>User: </TD><TD><INPUT TYPE="TEXT" NAME="User" MAXLENGTH="25"></TD>'+
-        ' </TR> '+
-        ' <TR>'+
-        '   <TD>Passwort: </TD><TD><INPUT TYPE="password" NAME="Passwort" MAXLENGTH="25"></TD>'+
-        '</TR> '+
-        '<TR>'+
-        ' <TD>&nbsp;</TD><TD><INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Send"></TD>'+
-        '</TR>'+
-        '</TABLE>'+
-        ' </FORM>'+
- ' </BODY>'+
-'</HTML>');
-
-end;
-
-//Menüleiste
-procedure TWebServForm.CreateVirtualDocument_links(
-    Sender    : TObject;
-    ClientCnx : TMyHttpConnection;
-    var Flags : THttpGetFlag);
-var user: string;
-begin
-    user:= ansireplacestr(clientcnx.FParams,'=','');
-
-    ClientCnx.AnswerString(Flags,
-        '',           { Default Status '200 OK'         }
-        '',           { Default Content-Type: text/html }
-        '',           { Default header                  }
-        '<HTML>'+
-        '<HEAD>'+
-        '<TITLE>Linkliste</TITLE>'+
-        '<meta http-equiv="cache-control" content="no-cache">'+
-        '</HEAD>'+
-        '<BODY bgcolor=white background="img/links.jpg?='+user+'" link=blue alink=blue vlink=blue onLoad="parent.unten.linksloaded=0;">'+
-        '<a href="basetime.html?='+user+'" target="unten" onMouseOver="image.src=''img/prs1.jpg'';" onMouseOut="image.src=''img/but1.jpg'';" >' +
-        '<img name="image" src="img/but1.jpg" border="0" ></a><br>'+
-                '<a href="disconnect.html?='+user+'" target="unten" onMouseOver="image2.src=''img/prs2.jpg'';" onMouseOut="image2.src=''img/but2.jpg'';" >' +
-        '<img name="image2" src="img/but2.jpg" border="0" ></a><br>'+
-                '<a href="log/index.htm?='+user+'" target="unten" onMouseOver="image3.src=''img/prs3.jpg'';" onMouseOut="image3.src=''img/but3.jpg'';" >' +
-        '<img name="image3" src="img/but3.jpg" border="0" ></a><br>'+
-                '<a href="message.html?='+user+'" target="unten" onMouseOver="image4.src=''img/prs4.jpg'';" onMouseOut="image4.src=''img/but4.jpg'';" >' +
-        '<img name="image4" src="img/but4.jpg" border="0" ></a><br>'+
-                '<a href="log\log.txt?='+user+'" target="unten" onMouseOver="image5.src=''img/prs5.jpg'';" onMouseOut="image5.src=''img/but5.jpg'';" >' +
-        '<img name="image5" src="img/but5.jpg" border="0" ></a><br>'+
-                '<a href="shutdown.html?='+user+'" target="unten" onMouseOver="image6.src=''img/prs6.jpg'';" onMouseOut="image6.src=''img/but6.jpg'';" >' +
-        '<img name="image6" src="img/but6.jpg" border="0" ></a><br>'+
-                '<a href="logout.html?='+user+'" target="_parent" onMouseOver="image7.src=''img/prs7.jpg'';" onMouseOut="image7.src=''img/but7.jpg'';" >' +
-        '<img name="image7" src="img/but7.jpg" border="0" ></a>'+
-
-        '</BODY>'+
-        '</HTML>');
-end;
-
-procedure TWebServForm.CreateVirtualDocument_aktiv(
-    Sender    : TObject;
-    ClientCnx : TMyHttpConnection;
-    var Flags : THttpGetFlag);
-var user: string;
-    counter: integer;
-begin
-    user:= ansireplacestr(clientcnx.FParams,'=','');
-
-   counter:= UserSettings.readinteger('active','count',0);
-
-    ClientCnx.AnswerString(Flags,
-        '',           { Default Status '200 OK'         }
-        '',           { Default Content-Type: text/html }
-        '',           { Default header                  }
-        '<HTML>'+
-        '<HEAD>'+
-        '<META HTTP-EQUIV="Refresh" CONTENT="30; URL=aktiv.html?='+user+'">'+
-        '<TITLE>aktive User</TITLE>'+
-        '<meta http-equiv="cache-control" content="no-cache">'+
-        '</HEAD>'+
-        '<BODY bgcolor=blue background="img/links.jpg" link=blue alink=blue vlink=blue onLoad="parent.unten.linksobenloaded=0;">'+
-        '<b><p align="center"><font size="-1">aktive User : '+inttostr(counter)+
-        '<br>Server läuft seit '+servertime+'</p></font></b></BODY>'+
-        '</HTML>');
-end;
-
-
-procedure TWebServForm.CreateVirtualDocument_unten(
-    Sender    : TObject;
-    ClientCnx : TMyHttpConnection;
-    var Flags : THttpGetFlag);
-var user: string;
-begin
-    user:= ansireplacestr(clientcnx.FParams,'=','');
-
-
-    ClientCnx.AnswerString(Flags,
-        '',           { Default Status '200 OK'         }
-        '',           { Default Content-Type: text/html }
-        '',           { Default header                  }
-        '<HTML>'+
-        '<HEAD>'+
-        '<TITLE>Main</TITLE>'+
-        '<meta http-equiv="cache-control" content="no-cache">'+
-
-         '<script type="text/javascript">'+
-         ' var linksobenloaded = 1;'+
-         ' var linksloaded = 1;'+
-         ' var obenloaded = 1;'+
-         'function Load () {'+
-         'if (navigator.appName!="Microsoft Internet Explorer") {stop();}'+
-         'if (linksobenloaded != 0) {parent.linksunten.location.href=''../aktiv.html?='+user+'''; }'+
-         'if (linksloaded != 0){ window.setTimeout("parent.links.location.href=''../links.htm?='+user+''';", 1000); }'+
-         'if (obenloaded != 0) { window.setTimeout("parent.oben.location.href=''../myip.html?='+user+''';", 1000); }'+
-          '}'+
-        'window.setTimeout("Load()", 1000);'+
-        '</script>'+
-
-
-        '</HEAD>'+
-        '<BODY bgcolor="#ebedfe">'+
-        '<p align=center><font size=+2>Willkommen '+user+' :) </font><br><br>'+
-        '<img src="img/head.jpg"></p>'+
-        '</BODY>'+
-        '</HTML>');
-end;
-
-procedure TWebServForm.CreateVirtualDocument_shutdown(
-    Sender    : TObject;
-    ClientCnx : TMyHttpConnection;
-    var Flags : THttpGetFlag);
-var user: string;
-begin
-    user:= ansireplacestr(clientcnx.FParams,'=','');
-    ClientCnx.AnswerString(Flags,
-        '',           { Default Status '200 OK'         }
-        '',           { Default Content-Type: text/html }
-        '',           { Default header                  }
-        '<HTML>'+
-        '<HEAD>'+
-        '<TITLE>shutdown</TITLE>'+
-        '</HEAD>'+
-        '<BODY bgcolor="#ebedfe" link= blue alink=blue vlink=blue>'+
-        '<p align=center><font size=+2>'+
-        '<a href="shutdown1.html?='+user+'?=standby">StandBy</a><br>'+
-        '<a href="shutdown1.html?='+user+'?=ruhezustand">Ruhezustand</a><br>'+
-        '<a href="shutdown1.html?='+user+'?=poweroff">Windows beenden</a><br>'+
-        '<a href="shutdown1.html?='+user+'?=restart">Windows neu starten</a><br>'+
-        '<a href="shutdown1.html?='+user+'?=logoff">User abmelden</a><br></font><br><br>'+
-        '</p>'+
-        '</BODY>'+
-        '</HTML>');
 end;
 
 procedure TWebServForm.CreateVirtualDocument_shutdown1(
@@ -804,9 +815,9 @@ begin
     shutter.Label3.Caption:= 'von '+user;
     end
     else
-    if ansicontainsstr(user,'ruhezustand') then
+    if ansicontainsstr(user,'hibernate') then
     begin
-    user:= ansireplacestr(user,'ruhezustand','');
+    user:= ansireplacestr(user,'hibernate','');
     Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+'Windows ausschalten > Ruhezustand' +#9+
                 #9+ User + '@' + HostName  +#13#10;
     logfile_add(buf);
@@ -822,16 +833,7 @@ begin
         '',           { Default Status '200 OK'         }
         '',           { Default Content-Type: text/html }
         '',           { Default header                  }
-        '<HTML>'+
-        '<HEAD>'+
-        '<TITLE>shutdown</TITLE>'+
-        '</HEAD>'+
-        '<BODY bgcolor="#ebedfe">'+
-        '<p align=center><font size=+1>'+
-        'Funktion wird in 30s ausgeführt, sofern am Server nicht widersprochen wird.</font><br><br>'+
-        '</p>'+
-        '</BODY>'+
-        '</HTML>');
+     LoadPage('shutdown_message.tpl',user,ClientCNX));
 end;
 
 procedure TWebServForm.CreateVirtualDocument_DisableAutoDial(
@@ -850,16 +852,7 @@ begin
         '',           { Default Status '200 OK'         }
         '',           { Default Content-Type: text/html }
         '',           { Default header                  }
-        '<HTML>'+
-        '<HEAD>'+
-        '<TITLE>DisableAutoDial</TITLE>'+
-        '</HEAD>'+
-        '<BODY bgcolor="#ebedfe">'+
-        '<p align=center><font size=+1>'+
-        'Auto-Einwahl deaktiviert !</font><br><br>'+
-        '</p>'+
-        '</BODY>'+
-        '</HTML>');
+        LoadPage('AutoDial_Disabled.tpl',user, ClientCNX));
 end;
 
 
@@ -874,8 +867,6 @@ var
     val1, val2, val3: string;
     buf, hostname: string;
 begin
-
-
     counter:= UserSettings.readinteger('active','count',0);
     stelle:= 0;
     if counter >1 then
@@ -911,39 +902,15 @@ begin
         '',           { Default Status '200 OK'         }
         '',           { Default Content-Type: text/html }
         '',           { Default header                  }
-        '<HTML>'+
-        '<HEAD>' +
-        '<TITLE>LeastCoster XP Webserver</TITLE>'+
-        '  </HEAD>'+
-        '  <BODY>'+
-        '   <H2>Bitte geben Sie Usernamen und Passwort ein:</H2>             '+
-        '  <FORM METHOD="POST" ACTION="/cgi-bin/LCRXP">'+
-        '   <P>'+
-        ' <TABLE BORDER="0" ALIGN="DEFAULT">'+
-        '  <TR>'+
-        '   <TD>User: </TD><TD><INPUT TYPE="TEXT" NAME="User" MAXLENGTH="25"></TD>'+
-        ' </TR> '+
-        ' <TR>'+
-        '   <TD>Passwort: </TD><TD><INPUT TYPE="password" NAME="Passwort" MAXLENGTH="25"></TD>'+
-        '</TR> '+
-        '<TR>'+
-        ' <TD>&nbsp;</TD><TD><INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Send"></TD>'+
-        '</TR>'+
-        '</TABLE>'+
-        ' </FORM>'+
- ' </BODY>'+
-'</HTML>');
+        LoadPage('login.tpl',user,ClientCNX));
 
 { Build the record to write to data file }
     HostName := ClientCnx.PeerAddr;
     Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Ausgeloggt ' +
                 #9+ User + '@' + HostName  +#13#10;
+    logfile_add(buf);
     status:= buf;
     allowedip:= ansireplacestr(allowedip,clientcnx.PeerAddr,'');
-
-    { Save data to a text file }
-    logfile_add(buf);
-
 end;
 
 procedure logout(user: string);
@@ -983,8 +950,8 @@ begin
      end
      else if counter=1 then
      begin
-     UserSettings.erasesection('active');
-     ip:= UserSettings.readstring('active','ip_1','nichts eingetragen !!!');
+       UserSettings.erasesection('active');
+       ip:= UserSettings.readstring('active','ip_1','nichts eingetragen !!!');
      end;
 
       //nachricht schreiben
@@ -1004,7 +971,6 @@ begin
     allowedip:= ansireplacestr(allowedip,ip,'');
     { Save data to a text file }
     webservform.logfile_add(buf);
-
 end;
 
 
@@ -1013,31 +979,23 @@ procedure TWebServForm.CreateVirtualDocument_MyIP(
     Sender    : TObject;
     ClientCnx : TMyHttpConnection;
     var Flags : THttpGetFlag);
-var nachrichten, user, trenner, onzeit: string;
-    count, usercount, i: integer;
+var user: string;
+    usercount, i: integer;
 begin
     user:= ansireplacestr(clientcnx.FParams,'=','');
 
     UserSettings.WriteString(crypter.DoEncrypt(user),crypter.DoEncrypt('lasttimeon'), crypter.DoEncrypt(datetimetostr(now)));
-    count:= UserSettings.ReadInteger(crypter.DoEncrypt(user),'count',0);
-
-    if (UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('gelesen'+inttostr(count)),'1') = '0') then
-    nachrichten:='<b><a href="message.html?='+user+'" target="unten">Sie haben ungelesene Nachrichten</a></b>';
 
     usercount:= UserSettings.Readinteger('active','count',0);
     if usercount>0 then
-
     for i:=1 to usercount do
-    begin
+    begin //User ist noch aktiv
     if (UserSettings.readstring('active','user_'+inttostr(i),'nichts eingetragen  !!!') = user) then
     begin
-    UserSettings.writeString('active','login_'+inttostr(i),datetimetostr(now));
-    break;
+      UserSettings.writeString('active','login_'+inttostr(i),datetimetostr(now));
+      break;
     end;
     end;
-
-  if isonline then
-    onzeit:= hauptfenster.ozeit.caption else onzeit:='';
 
     if status[1] <>' ' then status:= ' ' + status;
 
@@ -1046,36 +1004,18 @@ begin
         '',                            { Default Content-Type: text/html    }
         'Pragma: no-cache' + #13#10 +  { No client caching please           }
         'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+
-          '<META HTTP-EQUIV="Refresh" CONTENT="30; URL=myip.html?='+user+'">'+
-          '<TITLE>Status</TITLE>' +
-          '</HEAD>' + #13#10 +
-          '<BODY bgcolor="#030C5A" text=E0E0E0 link="blue" vlink="blue" alink="blue" topmargin="0" leftmargin="2" onLoad="parent.unten.obenloaded=0;">' +
-          '&nbsp;letzter Status:'+  status +'&nbsp'+
-          '<table width=100% border="0" >'+
-          '<tr>'+
-          '<td>Ihre IP-Adresse:'+  ClientCnx.PeerAddr +'<br>'+
-          'Datum/Uhrzeit:'+  datetimetostr(NOW) +'</td>'+
-          '<td align="center"><font size=+2 color=green>'+hauptfenster.online.caption+ '&nbsp;'+onzeit+'</font><br>'+trenner+'</td>'+
-          '</tr>'+
-          '</table>'+
-           nachrichten+
-           '</BODY>' +
-        '</HTML>');
+        LoadPage('status.tpl', user,ClientCNX));
 end;
-//basetime.html
 
+//basetime.html
 procedure TWebServForm.CreateVirtualDocument_basetime(
     Sender    : TObject;
     ClientCnx : TMyHttpConnection;
     var Flags : THttpGetFlag);
-var user: string;
-    hinweis, surfer, button: string;
+var user, buf,hostname: string;
 begin
-
     user:= ansireplacestr(clientcnx.FParams,'=','');
+    HostName := ClientCnx.PeerAddr;
 
     if (secondsbetween(settings.ReadDateTime('server','dialtime', EncodeDatetime(3000,1,1,0,0,0,0)),now) < 300)
     and not ansicontainstext(user,settings.ReadString('server','dialtimeuser','!_niemand_!')) then
@@ -1085,89 +1025,65 @@ begin
         '',                            { Default Content-Type: text/html    }
         'Pragma: no-cache' + #13#10 +  { No client caching please           }
         'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-            '<meta http-equiv="cache-control" content="no-cache">'+
-          '</HEAD>' + #13#10 +
-          '<BODY bgcolor="#ebedfe"> '+
-           '<p align=center valign=middle>Zugriff gesperrt, da bereits '+settings.ReadString('server','dialtimeuser','!_niemand_!')+
-           ' diese Funktion nutzt.<br>Freigabe in : '+
-          inttostr(300 - secondsbetween(settings.ReadDateTime('server','dialtime', EncodeDatetime(3000,1,1,0,0,0,0)),now)) + ' s</p></BODY>' +
-        '</HTML>');
+        LoadPage('Connect_forbidden.tpl',user, ClientCNX));
         exit;
     end;
-
-    surfer:= hauptfenster.prog;
-    if not (surfer='') then button:= '<INPUT TYPE="SUBMIT" NAME="Dialer" VALUE="' +surfer+ '">' else button:='';
 
     if not isonline then
     begin
     user:= ansireplacestr(clientcnx.Fparams,'=','');
     user:= ansireplacestr(user,'?','');
 
-    if not hauptfenster.AutoDialLED.LedOn then
-    begin
+     if not hauptfenster.AutoDialLED.LedOn then
+     begin
 
-    if not hauptfenster.noballoon then
-    hauptfenster.tray.ShowBalloonHint('WebServer: Hinweis',user +' versucht Einwahl. ',bitinfo, 10);
-    settings.Writedatetime('Server','dialtime',now);
-    settings.Writestring('Server','dialtimeuser',user);
-    ClientCnx.AnswerString(Flags,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+
-          '</HEAD>' + #13#10 +
-          '<BODY bgcolor="#ebedfe"> '+
-           '<p align=center valign=middle>'+hinweis
-          +'<FORM METHOD="POST" ACTION="/cgi-bin/goonline?='+user+'"><P><TABLE BORDER="0" ALIGN="DEFAULT"><TR><TD></TD><TD>Wie lange wollen Sie surfen ?</TD>'+
-           '</TR><TR><TD>Basiszeit: </TD><TD><INPUT TYPE="edit" NAME="basetime" MAXLENGTH="5"></TD></TR> <TR> <TD>&nbsp;</TD><TD>'
+       if not hauptfenster.noballoon then
+           hauptfenster.tray.ShowBalloonHint('WebServer: Hinweis',user +' versucht Einwahl. ',bitinfo, 10);
 
-          +'<INPUT TYPE="SUBMIT" NAME="Dialer" VALUE="LeastCoster">'+button+'</TD></TR></TABLE> </FORM> '+
-           '</p></BODY>' +
-        '</HTML>');
-        end
-        else //AuotDial ist aktiv
-        begin
+       settings.Writedatetime('Server','dialtime',now);
+       settings.Writestring('Server','dialtimeuser',user);
+
+        Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Onlinesession vorbereitet ('+ inttostr(hauptfenster.Surfdauer.Position)+' mins) ' +
+                  #9+ User + '@' + HostName  +#13#10;
+         status:= buf;
+
+        { Save data to a text file }
+         logfile_add(buf);
+        hauptfenster.webzugriff:=true;
+        unit1.zeit_min:= inttostr(hauptfenster.Surfdauer.Position);
+
+        //aktuelle zeit setzen
+        hauptfenster.beliebig_check.Checked:= false;
+        hauptfenster.Repaint;
+
+        Surftime:= hauptfenster.Surfdauer.Position;
         ClientCnx.AnswerString(Flags,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+
-          '</HEAD>' + #13#10 +
-          '<BODY bgcolor="#ebedfe"> '+
-           '<p align=center valign=middle>Die automatische Einwahl ist aktiv. Sobald ein passender Tarif zur Verfügung, steht verbindet der LeastCosterXP automatisch.'+
-           '<br><a href="DisableAutoDial.html?=off">Auto-Einwahl abschalten</a><br>' +
-           '</p></BODY>' +
-        '</HTML>');
-        end;
-        end
-        else
-    ClientCnx.AnswerString(Flags,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+
-          '</HEAD>' + #13#10 +
-          '<BODY bgcolor="#ebedfe"> '+
-           '<p align=center valign=middle>Sie sind bereits online !'+
-           '</p></BODY>' +
-        '</HTML>')
-end;
+             '',                            { Default Status '200 OK'            }
+             '',                            { Default Content-Type: text/html    }
+             'Pragma: no-cache' + #13#10 +  { No client caching please           }
+             'Expires: -1'      + #13#10,   { I said: no caching !               }
+             LoadPage('connect_list.tpl',user, ClientCNX));
+             sleep(1000);
 
+      end
+      else //AuotDial ist aktiv
+      begin
+       ClientCnx.AnswerString(Flags,
+           '',                            { Default Status '200 OK'            }
+           '',                            { Default Content-Type: text/html    }
+           'Pragma: no-cache' + #13#10 +  { No client caching please           }
+           'Expires: -1'      + #13#10,   { I said: no caching !               }
+          LoadPage('Connect_AutoDial_Active.tpl',user,ClientCNX));
+      end;
+    end
+    else
+      ClientCnx.AnswerString(Flags,
+          '',                            { Default Status '200 OK'            }
+          '',                            { Default Content-Type: text/html    }
+          'Pragma: no-cache' + #13#10 +  { No client caching please           }
+          'Expires: -1'      + #13#10,   { I said: no caching !               }
+          LoadPage('connect_already_on.tpl',user,ClientCNX));
+end;
 
 //message.html
 procedure TWebServForm.CreateVirtualDocument_postmessage(
@@ -1175,89 +1091,15 @@ procedure TWebServForm.CreateVirtualDocument_postmessage(
     ClientCnx : TMyHttpConnection;
     var Flags : THttpGetFlag);
 var user: string;
-    sections: Tstringlist;
-    options, nachrichten, anhang: string;
-    i, count : integer;
-    selector: boolean;
 begin
-   options:=''; anhang:=''; selector:= false;
-
    user:= ansireplacestr(clientcnx.FParams,'=','');
-
-   sections := TStringList.Create;
-
-
-   UserSettings.ReadSections(sections);
-
-   for i:=0 to sections.Count-1 do
-   if (sections.Strings[i] <>'active') and (sections.Strings[i] <> crypter.Doencrypt(user)) then
-
-   if not selector then
-   begin
-   options:=options+'<option selected>'+crypter.DoDecrypt(sections.Strings[i])+'</option>';
-   selector:= true;
-   end else
-   options:=options+'<option>'+crypter.DoDecrypt(sections.Strings[i])+'</option>';
-
-   count:=UserSettings.ReadInteger(crypter.DoEncrypt(user),'count',0);
-   nachrichten:= '<tr><td><b><a name="lesen">Nachrichten lesen</a></b><hr></td></tr>';
-
-   if count >0 then
-   for i:= count downto 1 do
-   begin
-   if (crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),'')) <> '') then
-   anhang:= '<b>Anhang: <a href="files\'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'">'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'</a></b> &nbsp;</b>'
-   else anhang:= '';
-
-   if (UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('gelesen'+inttostr(i)),'1')) = '0'
-   then
-    begin
-    nachrichten:= nachrichten +'<tr><td><b>'+
-        '<input type="checkbox" name="delete'+inttostr(i)+'" value="'+inttostr(i)+'">'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('zeitpunkt'+inttostr(i)),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0)))) + '&nbsp; von : '+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('sender'+inttostr(i)),''))+'</b> &nbsp;'+
-        anhang+
-        '</td></tr><tr><td><b>'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('nachricht'+inttostr(i)),'no message')) +
-        '</b><hr><br></td></tr>';
-    UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.DoEncrypt('gelesen'+inttostr(i)) )
-
-
-    end
-    else
-  nachrichten:= nachrichten + '<tr><td>'+
-        '<input type="checkbox" name="delete'+inttostr(i)+'" value="'+inttostr(i)+'">'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('zeitpunkt'+inttostr(i)),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0)))) + '&nbsp; von : '+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('sender'+inttostr(i)),''))+ '</b> &nbsp;'+
-        anhang+
-        '</td></tr>'+ '<tr><td>'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('nachricht'+inttostr(i)),'no message')) +
-        '<br><hr></td></tr>';
-   end;
 
    ClientCnx.AnswerString(Flags,
         '',                            { Default Status '200 OK'            }
         '',                            { Default Content-Type: text/html    }
         'Pragma: no-cache' + #13#10 +  { No client caching please           }
         'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+            
-          '</HEAD>' + #13#10 +
-          '<BODY bgcolor="#ebedfe" link=blue alink=blue vlink=blue> '+
-          '<a name=top></a><p><b><a href="#posten">Nachrichten schreiben</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#lesen">Nachrichten lesen</a></b></p>'+
-           '<p align=center valign=middle> <FORM METHOD="POST" ACTION="/cgi-bin/deletemessage.html?='+user+'"><P><TABLE BORDER="0" width="100%" ALIGN="DEFAULT">'+
-           nachrichten+
-           '<tr><td><input type="submit" name="delete" value="markierte Nachrichten löschen" ></td></tr></table><hr><br>' +
-           '<b><a name="posten">Nachrichten schreiben</a></b><br></table></form><FORM METHOD="POST" enctype="multipart/form-data" ACTION="/cgi-bin/sendmessage.html?='+user+'"><P><TABLE BORDER="0" width="100%" ALIGN="DEFAULT"><tr><td>Empfänger:<br> <select size="3" name="to">'+options+
-           '</select></td></tr><tr><td><textarea cols="60" rows="10" name="text" wrap="soft"></textarea></td></tr>'+
-           '<tr><td><input type="file" name="datei" size="60"></input></td></tr>'+
-           '<TR> <TD><INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Send"></TD></TR></TABLE> </FORM>'+
-           '<a href="#top">nach oben</a> '+
-           '</p></BODY>' +
-        '</HTML>');
-     sections.Free;
+        LoadPage('message_form.tpl', user, ClientCNX));
 end;
 
 //disconnect.html
@@ -1271,38 +1113,25 @@ begin
     user:= ansireplacestr(clientcnx.Fparams,'=','');
     if ansicontainsstr(user,'disconnect') then
     begin
-    user:= ansireplacetext(user,'?','');
-    user:= ansireplacetext(user,'disconnect','');
-
-    { Build the record to write to data file }
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now)+#9+ 'Verbindung getrennt ' +
-                #9+ User + '@' + HostName  +#13#10;
-    status:= buf;
-
-    { Save data to a text file }
-    logfile_add(buf);
-
-
-      user:= ansireplacetext(user,'disconnect','');
       user:= ansireplacetext(user,'?','');
-     if rascheck then hauptfenster.disconnect else hauptfenster.disconnect;
-      if not hauptfenster.noballoon then
-      hauptfenster.tray.ShowBalloonHint('WebServer: Hinweis',user +' hat die Verbindung getrennt.',bitinfo, 10);
+      user:= ansireplacetext(user,'disconnect','');
+
+      Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now)+#9+ 'Verbindung getrennt ' +
+                #9+ User + '@' + HostName  +#13#10;
+      status:= buf;
+      logfile_add(buf);
+
+      if rascheck then hauptfenster.disconnect else hauptfenster.disconnect;
+      if not hauptfenster.noballoon then hauptfenster.tray.ShowBalloonHint('WebServer: Hinweis',user +' hat die Verbindung getrennt.',bitinfo, 10);
+
       hauptfenster.hinttimer.Enabled:= true;
+
       ClientCnx.AnswerString(Flags,
          '',                            { Default Status '200 OK'            }
          '',                            { Default Content-Type: text/html    }
          'Pragma: no-cache' + #13#10 +  { No client caching please           }
          'Expires: -1'      + #13#10,   { I said: no caching !               }
-         '<HTML>' +
-           '<HEAD>' +
-             '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+             
-           '</HEAD>' + #13#10 +
-           '<BODY bgcolor="#ebedfe"> '+
-             '<p align=center valign=middle>Der Server ist jetzt '+Hauptfenster.online.Caption+'.</p></BODY>' +
-         '</HTML>')
-
+          LoadPage('disconnect_stat.tpl',user,ClientCNX))
     end
     else
     begin
@@ -1310,139 +1139,20 @@ begin
     user:= ansireplacetext(user,'?','');
 
     if isonline then
-    ClientCnx.AnswerString(Flags,
+         ClientCnx.AnswerString(Flags,
         '',                            { Default Status '200 OK'            }
         '',                            { Default Content-Type: text/html    }
         'Pragma: no-cache' + #13#10 +  { No client caching please           }
         'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+            
-          '</HEAD>' + #13#10 +
-          '<BODY bgcolor="#ebedfe"> '+
-            '<p align=center valign=middle> <a href=disconnect.html?='+user+'?=disconnect>Verbindung jetzt trennen.</a></p></BODY>' +
-        '</HTML>')
-        else
+         LoadPage('disconnect_com.tpl',user,ClientCNX))
+    else //wenn offline
          ClientCnx.AnswerString(Flags,
          '',                            { Default Status '200 OK'            }
          '',                            { Default Content-Type: text/html    }
          'Pragma: no-cache' + #13#10 +  { No client caching please           }
          'Expires: -1'      + #13#10,   { I said: no caching !               }
-         '<HTML>' +
-           '<HEAD>' +
-             '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+             
-           '</HEAD>' + #13#10 +
-           '<BODY bgcolor="#ebedfe"> '+
-             '<p align=center valign=middle>Es besteht keine Verbindung.</p></BODY>' +
-         '</HTML>')
+         LoadPage('disconnect_err.tpl',user,ClientCNX));
         end;
-end;
-
-//down.html
-procedure TWebServForm.CreateVirtualDocument_down(
-    Sender    : TObject;
-    ClientCnx : TMyHttpConnection;
-    var Flags : THttpGetFlag);
-var time: tdatetime;
-    newname: string;
-    user: string;
-begin
-
-    user:= ansireplacestr(clientcnx.Fparams,'=','');
-
-    if not assigned(screenshot) then Application.CreateForm(Tscreenshot, screenshot);
-
-    webservform.delete(extractfilepath(paramstr(0))+'\www\');
-    time:= now;
-    screenshot.BitBtn2.click;
-    newname:= 'www\lcr'+timetostr(time)+'.jpg';
-    newname:=extractfilepath(paramstr(0))+ ansireplacestr(newname,':','');
-    renamefile(extractfilepath(paramstr(0))+'www\lcr.jpg',newname);
-     ClientCnx.AnswerString(Flags,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML><HEAD><TITLE>Surfen</TITLE>'+
-        '<meta http-equiv="cache-control" content="no-cache">'+
-        '</HEAD><BODY bgcolor="#ebedfe">'+
-        '<FORM METHOD="POST" ACTION="/cgi-bin/goonline2?='+user+'">'+
-        '<p align=center>'+        
-        '<input type="hidden" name="bild" value="'+extractfilename(newname)+'">'+
-        '<input type="submit" value="Verbindung wählen">'+
-        '<input type="button" name="up" value="vorheriger Tarif" onClick="self.location.href=''../up.html''">'+
-        '<input type="button" name="down" value="nächster Tarif" onClick="self.location.href=''../down.html''">'+
-        '</p>'+
-        '<p align=center valign=middle><img src="../'+extractfilename(newname)+'" border=0>'+
-        '</form></BODY></HTML>');
-end;
-
-//up.html
-procedure TWebServForm.CreateVirtualDocument_up(
-    Sender    : TObject;
-    ClientCnx : TMyHttpConnection;
-    var Flags : THttpGetFlag);
-var time: tdatetime;
-    newname: string;
-    user: string;
-begin
-    user:= ansireplacestr(clientcnx.Fparams,'=','');
-    delete(extractfilepath(paramstr(0))+'\www\');
-    time:= now;
-    if not assigned(screenshot) then Application.CreateForm(Tscreenshot, screenshot);
-    screenshot.BitBtn3.click;
-    newname:= 'www\lcr'+timetostr(time)+'.jpg';
-    newname:=extractfilepath(paramstr(0))+ ansireplacestr(newname,':','');
-    renamefile(extractfilepath(paramstr(0))+'www\lcr.jpg',newname);
-      ClientCnx.AnswerString(Flags,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML><HEAD><TITLE>Surfen</TITLE>'+
-          '<meta http-equiv="cache-control" content="no-cache">'+
-        '</HEAD><BODY bgcolor="#ebedfe">'+
-        '<FORM METHOD="POST" ACTION="/cgi-bin/goonline2?='+user+'">'+
-        '<p align=center>'+
-        '<input type="hidden" name="bild" value="'+extractfilename(newname)+'">'+
-        '<input type="submit" value="Verbindung wählen">'+
-        '<input type="button" name="up" value="vorheriger Tarif" onClick="self.location.href=''../up.html''">'+
-        '<input type="button" name="down" value="nächster Tarif" onClick="self.location.href=''../down.html''">'+
-        '</p>'+
-        '<p align=center valign=middle><img src="../'+extractfilename(newname)+'" border=0>'+
-        '</form></BODY></HTML>');
-end;
-
-//dial.html
-procedure TWebServForm.CreateVirtualDocument_dial(
-    Sender    : TObject;
-    ClientCnx : TMyHttpConnection;
-    var Flags : THttpGetFlag);
-var time: tdatetime;
-    newname: string;
-begin
-    delete(extractfilepath(paramstr(0))+'\www\');
-    time:= now;
-    if not assigned(screenshot) then Application.CreateForm(Tscreenshot, screenshot);
-    screenshot.BitBtn1.click;
-    newname:= 'www\lcr'+timetostr(time)+'.jpg';
-    newname:=extractfilepath(paramstr(0))+ ansireplacestr(newname,':','');
-    renamefile(extractfilepath(paramstr(0))+'www\lcr.jpg',newname);
-    ClientCnx.AnswerString(Flags,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+            
-          '</HEAD>' + #13#10 +
-          '<BODY  bgcolor="#ebedfe"> '+
-            '<p align=center valign=middle><font size=+2>Verbindung wird hergestellt.</font></p></BODY>' +
-        '</HTML>');
 end;
 
 {* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
@@ -1590,13 +1300,9 @@ begin
     end else
 //check ob die ipadresse zugriffsrechte hat
     if not ansicontainstext(allowedip,clientcnx.PeerAddr) then
-    begin
-    clientcnx.Answer404;
-    end
+      begin  {clientcnx.Answer404} end
     else
-    if (CompareText(ClientCnx.Path, '/cgi-bin/goonline') = 0)  or
-    (CompareText(ClientCnx.Path, '/cgi-bin/goonline2') = 0)    or
-    (CompareText(ClientCnx.Path, '/cgi-bin/LeastCosterDial') = 0)    or
+    if (CompareText(ClientCnx.Path, '/cgi-bin/LeastCosterDial') = 0)    or
     (CompareText(ClientCnx.Path, '/cgi-bin/sendmessage.html') = 0)    or
     (CompareText(ClientCnx.Path, '/cgi-bin/deletemessage.html') = 0) then begin
 
@@ -1683,12 +1389,6 @@ begin
             { We are happy to handle this one }
             ProcessPostedData_FormHandler(ClientCnx)
         else
-        if CompareText(ClientCnx.Path, '/cgi-bin/goonline') = 0 then
-            ProcessPostedData_goonline(ClientCnx)
-        else
-        if CompareText(ClientCnx.Path, '/cgi-bin/goonline2') = 0 then
-            ProcessPostedData_goonline2(ClientCnx)
-        else
         if CompareText(ClientCnx.Path, '/cgi-bin/LeastCosterDial') = 0 then
             ProcessPostedData_LeastCosterDial(ClientCnx)
         else
@@ -1697,9 +1397,7 @@ begin
         else
         if CompareText(ClientCnx.Path, '/cgi-bin/deletemessage.html')=0 then
             ProcessPostedData_deletemessage(ClientCnx)
-        else
-            { We don't accept any other request }
-            ClientCnx.Answer404;
+        else ClientCnx.Answer404; { We don't accept any other request }
     end;
 end;
 
@@ -1732,328 +1430,57 @@ begin
     Buffer := 'Sorry no password to read:'+pass + #0;
 
   if ((user<>'') and (pass<>'')
-  and(GetMD5(@Buffer[1], Length(Buffer) - 1) = UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('pass'),'nicht gefunden !!!!'))) then
+    and(GetMD5(@Buffer[1], Length(Buffer) - 1) = UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('pass'),'nicht gefunden !!!!')))
+  then
     begin
 
-    { Session speichern }
-     for i:=1 to counter do
-     begin
-     if user = UserSettings.ReadString('active','user_'+inttostr(i),'nichts eingetragen !!!')
-     then begin alreadyin:= true; break; end;
-
-     end;
+     for i:=1 to counter do  { Session speichern }
+      if (user = UserSettings.ReadString('active','user_'+inttostr(i),'nichts eingetragen !!!')) then
+       begin alreadyin:= true; break; end;
 
      if not alreadyin then
      begin
-     UserSettings.writeinteger('active','count',counter+1);
-     counter:= counter+1;
-     UserSettings.writeString('active','user_'+inttostr(counter),user);
-     UserSettings.writeString('active','ip_'+inttostr(counter),ClientCnx.PeerAddr);
-     UserSettings.writeString('active','login_'+inttostr(counter),datetimetostr(now));
+       UserSettings.writeinteger('active','count',counter+1);
+       counter:= counter+1;
+       UserSettings.writeString('active','user_'+inttostr(counter),user);
+       UserSettings.writeString('active','ip_'+inttostr(counter),ClientCnx.PeerAddr);
+       UserSettings.writeString('active','login_'+inttostr(counter),datetimetostr(now));
 
-
-     Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ 'erfolgreicher Login ' +#9+ User + '@' + HostName  +#13#10;
-     allowedip:= clientcnx.PeerAddr + ';';
-     status:= buf;
+       Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ 'erfolgreicher Login ' +#9+ User + '@' + HostName  +#13#10;
+       allowedip:= clientcnx.PeerAddr + ';';
+       status:= buf;
      end;
 
       { HTML answer.}
-    ClientCnx.AnswerString(Dummy,
+     ClientCnx.AnswerString(Dummy,
         '',           { Default Status '200 OK'         }
         '',           { Default Content-Type: text/html }
-        '',           { Default header                  }
-        '<html><head><title>LeastCoaster XP Webserver</title>'+
-        '<frameset frameborder=0 border=0 cols="200,*">'+
-
-          '<frameset border=1 rows="100,*">'+
-            '<frame name="linksunten" src="../aktiv.html?='+user+'" scrolling=no>'+
-            '<frame name="links" src="../links.htm?='+user+'" scrolling=no>'+
-          '</frameset>'+
-
-          '<frameset border=1 rows="100,*">'+
-          '<frame src="../myip.html?='+user+'" name="oben" scrolling=no>'+
-         '<frame src="../unten.html?='+user+'" name="unten">'+
-          '</frameset>'+
-
-         '</frameset>'+
-        '</head><body></body></html>');
-
-       end
-       else
-        begin
-
+        '',           { Default header }
+        LoadPage('loggedin.tpl',user,ClientCNX));
+    end
+    else //falsches Passwort oder Username
+    begin
         Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+'fehlgeschlagener Login '+
                 #9+ User + '@' + HostName  +#13#10;
-    status:= buf;
+        status:= buf;
         ClientCnx.AnswerString(Dummy,
         '',           { Default Status '200 OK'         }
         '',           { Default Content-Type: text/html }
         '',           { Default header                  }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>falsche Userdaten</TITLE>' +
-          '</HEAD>' + #13#10 +
-          '<BODY>' +
-            '<H2>Falsche Userdaten:</H2>' + #13#10 +
-            '<P>' + TextToHtmlText(User) + '.' + '@' +
-                    TextToHtmlText(HostName)  +'</P>' +
-          '</BODY>' +
-        '</HTML>');
-         end;
+        LoadPage('login_error.tpl', user, ClientCNX));
+    end;
        { Save data to a text file }
     if not alreadyin then logfile_add(buf);
-end;
-
-procedure TWebServForm.ProcessPostedData_goonline(
-    ClientCnx : TMyHttpConnection);
-var
-    basetime, surfprog  : String;
-    base, code,i: integer;
-    user, newname: string;
-    HostName  : String;
-    Buf       : String;
-    Dummy     : THttpGetFlag;
-    tabelle, button, surfer: string;
-begin
-    user:= ansireplacestr(clientcnx.Fparams,'=','');
-    user:= ansireplacestr(user,'?','');
-
-    { Extract fields from posted data. }
-    ExtractURLEncodedValue(ClientCnx.FPostedDataBuffer, 'basetime', basetime);
-    ExtractURLEncodedValue(ClientCnx.FPostedDataBuffer, 'Dialer', surfprog);
-
-    surfer:= hauptfenster.prog;
-    if not (surfer='') then
-    begin button:= '<INPUT TYPE="SUBMIT" NAME="Dialer" VALUE="' +surfer+ '">';
-    end
-    else button:='';
-
-    { Get client IP address. We could do ReverseDnsLookup to get hostname }
-    HostName := ClientCnx.PeerAddr;
-    { Build the record to write to data file }
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Onlinesession vorbereitet ('+basetime+' mins) ' +
-                #9+ User + '@' + HostName  +#13#10;
-    status:= buf;
-
-    { Here is the place to check for valid input data and produce a HTML }
-
-    { HTML answer.}
-
-    val(basetime, base,code);
-    if (code =0) and (base < 721) then
-    begin
-
-            { Save data to a text file }
-   logfile_add(buf);
-   hauptfenster.webzugriff:=true;
-   unit1.zeit_min:= basetime;
-
-   //Basiszeit ins Hauptfenster übertragen
-   hauptfenster.Surfdauer.Position:= base;
-
-   //aktuelle zeit setzen
-   hauptfenster.beliebig_check.Checked:= false;
-   hauptfenster.Repaint;
-
-
-
-   if not (surfprog='LeastCoster')
-   then
-   begin
-   if not assigned(screenshot) then Application.CreateForm(Tscreenshot, screenshot);
-    screenshot.shot.click;
-    sleep(1000);
-
-   newname:= 'www\lcr'+timetostr(time)+'.jpg';
-   newname:=extractfilepath(paramstr(0))+ ansireplacestr(newname,':','');
-   renamefile(extractfilepath(paramstr(0))+'www\lcr.jpg',newname);
-
-   ClientCnx.AnswerString({Flags}Dummy,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML><HEAD><TITLE>Surfen</TITLE>'+
-          '<meta http-equiv="cache-control" content="no-cache">'+
-        '</HEAD><BODY bgcolor="#ebedfe">'+
-        '<FORM METHOD="POST" ACTION="/cgi-bin/goonline2?='+user+'">'+
-        '<p align=center>'+
-        '<input type="hidden" name="bild" value="'+extractfilename(newname)+'">'+
-        '<input type="submit" value="Verbindung wählen">'+
-        '<input type="button" name="up" value="vorheriger Tarif" onClick="self.location.href=''../up.html''">'+
-        '<input type="button" name="down" value="nächster Tarif" onClick="self.location.href=''../down.html''">'+
-        '</p>'+
-        '<p align=center valign=middle><img src="../'+extractfilename(newname)+'" border=0>'+
-        '</p>'+
-        '</form></BODY></HTML>');
-        end
-        else //das Surfprogramm soll der leastCoster sein
-        begin
-          Hauptfenster.AktualisierenClick(nil);
-          if Hauptfenster.Liste.cells[1,1] <> '' then
-          begin
-          tabelle:= '<table border=1 width=100%>'+#13#10;
-          for i:=0 to Hauptfenster.Liste.rowCount-1 do
-          begin
-          if i>0 then
-          begin
-           if i=1 then tabelle:= tabelle + '<tr><td><input type="radio" name="Tarif" value="'+inttostr(i)+'" checked><font size=-1>'
-           else tabelle:= tabelle + '<tr><td><input type="radio" name="Tarif" value="'+inttostr(i)+'"><font size=-1>';
-          end
-          else  tabelle:= tabelle + '<tr><td><font size=-1>';
-
-          if (not(hauptfenster.Liste.Cells[11,i] = 'Webseite') and not(  hauptfenster.Liste.Cells[11,i]=''))
-          then tabelle:= tabelle + '<a href="'+hauptfenster.Liste.Cells[11,i]+'">'+hauptfenster.Liste.Cells[1,i] + '</a></font></td>'
-          else tabelle:= tabelle + hauptfenster.Liste.Cells[1,i] + '</font></td>';
-          tabelle:= tabelle
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[2,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[3,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[3,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[4,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[5,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[6,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[7,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[12,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[13,i] + '</font></td>'
-                    + '</tr>' + #13#10;
-          end;
-          tabelle:= tabelle + '</table>';
-          end else tabelle:= '<font size+1><b>Keine Tarife verfügbar (Surfzeit verkleinern ?)</b></font>';
-          ClientCnx.AnswerString({Flags}Dummy,
-            '',                            { Default Status '200 OK'            }
-            '',                            { Default Content-Type: text/html    }
-            'Pragma: no-cache' + #13#10 +  { No client caching please           }
-            'Expires: -1'      + #13#10,   { I said: no caching !               }
-            '<HTML><HEAD><TITLE>Surfen</TITLE>'+
-            '<meta http-equiv="cache-control" content="no-cache">'+
-            '<script type="text/javascript">'+
-            'function keepalive() {'+
-              'document.Dialform.elements[1].click();'+
-            '}'+
-            'window.setTimeout("keepalive()", 30000);'+
-            '</script>'+
-            '</HEAD>'+
-            '<BODY bgcolor="#ebedfe">'+
-            '<FORM METHOD="POST" name="Dialform" ACTION="/cgi-bin/LeastCosterDial?='+user+'">'+
-            '<p align=left><input type="submit" name="action" value="Verbindung wählen"><input type="submit" name="action" value="Aktualisieren"><INPUT TYPE="edit" NAME="basetime" value="'+inttostr(base)+'" MAXLENGTH="5"></p>'+
-            '<p align=center valign=middle>'+
-             tabelle +
-            '</p>'+
-            '</form>'+
-
-            '</BODY></HTML>');
-            sleep(1000);
-        end;
-    end else
-    ClientCnx.AnswerString(Dummy,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+
-          '</HEAD>' + #13#10
-          +'<BODY bgcolor="#ebedfe"> '
-          +'<p align=center valign=middle><font color=red> Die Eingabe der Basiszeit war fehlerhaft, bitte wiederholen !</font>'
-          +'<FORM METHOD="POST" ACTION="/cgi-bin/goonline?='+user+'"><P><TABLE BORDER="0" ALIGN="DEFAULT"><TR><TD></TD><TD>Wie lange wollen Sie surfen ?</TD>'
-          +'</TR><TR><TD>Basiszeit: </TD><TD><INPUT TYPE="edit" NAME="basetime" MAXLENGTH="5"></TD></TR> <TR> <TD>&nbsp;</TD><TD>'
-          +'<INPUT TYPE="SUBMIT" NAME="Dialer" VALUE="LeastCoster">'
-          + button
-          +'</TD></TR></TABLE></FORM> '
-          +'</p></BODY>'
-          +'</HTML>')
-
-end;
-
-procedure TWebServForm.ProcessPostedData_goonline2(
-    ClientCnx : TMyHttpConnection);
-var
-    fehlergefunden: boolean;
-    user, fehlerstring, bildname: string;
-    HostName  : String;
-    Buf       : String;
-    Dummy     : THttpGetFlag;
-begin
-    fehlergefunden:= false;
-    user:= ansireplacestr(clientcnx.Fparams,'=','');
-
-    { Extract fields from posted data. }
-    ExtractURLEncodedValue(ClientCnx.FPostedDataBuffer, 'bild',bildname);
-
-    { Get client IP address. We could to ReverseDnsLookup to get hostname }
-    HostName := ClientCnx.PeerAddr;
-    { Build the record to write to data file }
-
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Wählen mit ' + hauptfenster.prog+
-                #9+ User + '@' + HostName  +#13#10;
-    status:= buf;
-
-    { Save data to a text file }
-    logfile_add(buf);
-
-    { Here is the place to check for valid input data and produce a HTML }
-
-    { HTML answer.}
-    if not fehlergefunden then
-    begin
-    if not assigned(screenshot) then Application.CreateForm(Tscreenshot, screenshot);
-    screenshot.BitBtn1.Click;
-    ClientCnx.AnswerString(Dummy,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML>' +
-          '<HEAD>' +
-            '<TITLE>Surfen</TITLE>' +
-          '<meta http-equiv="cache-control" content="no-cache">'+            
-          '</HEAD>' + #13#10 +
-          '<BODY bgcolor="#ebedfe"> '+
-           '<P>Die Verbindung wird hergestellt.</p></BODY>' +
-        '</HTML>');
-    end
-    else
-         ClientCnx.AnswerString(Dummy,
-        '',                            { Default Status '200 OK'            }
-        '',                            { Default Content-Type: text/html    }
-        'Pragma: no-cache' + #13#10 +  { No client caching please           }
-        'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML><HEAD><TITLE>Surfen</TITLE>'+
-          '<meta http-equiv="cache-control" content="no-cache">'+        
-        '</HEAD><BODY bgcolor="#ebedfe">'+
-        '<P><font color=red>'+fehlerstring+'</font></p>'+
-        '<FORM METHOD="POST" ACTION="/cgi-bin/goonline2?='+user+'">'+
-        '<p align=center>'+
-        '<input type="hidden" name="bild" value="'+bildname+'">'+
-        '<input type="submit" value="Verbindung wählen">'+
-        '<input type="button" name="up" value="vorheriger Tarif" onClick="self.location.href=''../up.html''">'+
-        '<input type="button" name="down" value="nächster Tarif" onClick="self.location.href=''../down.html''">'+
-        '</p>'+
-        '<p align=center valign=middle><img src="../'+bildname+'" border=0>'+
-        '</form></BODY></HTML>');
-
-       //Ausführung des Befehls
-
-       if not fehlergefunden then
-       begin
-       hauptfenster.webzugriff:=true;
-       if not assigned(screenshot) then Application.CreateForm(Tscreenshot, screenshot);
-       screenshot.BitBtn1.click;
-       if not hauptfenster.noballoon then
-       hauptfenster.tray.ShowBalloonHint('WebServer: Hinweis',user +' startet Interneteinwahl.',bitinfo, 10);
-       end;
 end;
 
 procedure TWebServForm.ProcessPostedData_LeastCosterDial(
     ClientCnx : TMyHttpConnection);
 var
-    user, command, Tarif, basetime, tabelle : string;
+    user, command, Tarif, basetime : string;
     HostName  : String;
     Buf       : String;
     Dummy     : THttpGetFlag;
-    tarifnr, base, i   : integer;
+    tarifnr, base : integer;
 begin
     user:= ansireplacestr(clientcnx.Fparams,'=','');
     HostName := ClientCnx.PeerAddr;
@@ -2075,21 +1502,19 @@ begin
    end;
 
     hauptfenster.Liste.Row:= tarifnr;
-    
+
     if command = 'Verbindung wählen' then
     begin
-    if ( (dateof(now) <= strtodate(hauptfenster.liste.cells[12,tarifnr])) and (secondsbetween(hauptfenster.timeofliste, now) < 60) ) then
-    begin
-     hauptfenster.webzugriff:=true;
-     hauptfenster.DialBtnClick(nil);
+     if ( (dateof(now) <= strtodate(hauptfenster.liste.cells[13,tarifnr])) and (secondsbetween(hauptfenster.timeofliste, now) < 60) ) then
+     begin
+      hauptfenster.webzugriff:=true;
+       hauptfenster.DialBtnClick(nil);
        { Build the record to write to data file }
-      Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Wählen mit LeastCoster ' +
+        Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Wählen mit LeastCosterXP ' +
                   #9+ User + '@' + HostName  +#13#10;
-      status:= buf;
+        status:= buf;
       { Save data to a text file }
-      logfile_add(buf);
-
-      { Here is the place to check for valid input data and produce a HTML }
+       logfile_add(buf);
 
       { HTML answer.}
       hauptfenster.webzugriff:=true;
@@ -2101,15 +1526,7 @@ begin
           '',                            { Default Content-Type: text/html    }
           'Pragma: no-cache' + #13#10 +  { No client caching please           }
           'Expires: -1'      + #13#10,   { I said: no caching !               }
-          '<HTML>' +
-            '<HEAD>' +
-              '<TITLE>Surfen</TITLE>' +
-            '<meta http-equiv="cache-control" content="no-cache">'+
-            '<META http-equiv="refresh" content="60;URL=../WebStart.htm">'+
-            '</HEAD>' + #13#10 +
-            '<BODY bgcolor="#ebedfe"> '+
-             '<P>Die Verbindung wird hergestellt. (Laden der Providerseite in 60s)</p></BODY>' +
-          '</HTML>');
+          LoadPage('connect_dial.tpl', user, ClientCNX));
       end
       else
         ClientCnx.AnswerString(Dummy,
@@ -2117,74 +1534,23 @@ begin
           '',                            { Default Content-Type: text/html    }
           'Pragma: no-cache' + #13#10 +  { No client caching please           }
           'Expires: -1'      + #13#10,   { I said: no caching !               }
-          '<HTML>' +
-            '<HEAD>' +
-              '<TITLE>Surfen</TITLE>' +
-            '<meta http-equiv="cache-control" content="no-cache">'+
-            '</HEAD>' + #13#10 +
-              '<BODY bgcolor="#ebedfe"> '+
-             '<P>Fehler: Entweder gilt der Tarif nicht mehr oder die Zeit zum Wählen ist abgelaufen (60s).</p><p align="center"><a href="javascript: history.back();">zurück</a></p></BODY>' +
-          '</HTML>');
+          LoadPage('connect_error.tpl', user,ClientCNX));
     end
    // wenn nicht action=Verbindung wählen
     else
     if command = 'Aktualisieren' then
     begin
-    hauptfenster.surfdauer.position:= base;
-    hauptfenster.AktualisierenClick(nil);
-    hauptfenster.refresh;
-     if Hauptfenster.Liste.cells[0,1] <> '' then
-          begin
-          tabelle:= '<table border=1 width=100%>'+#13#10;
-          for i:=0 to Hauptfenster.Liste.rowCount-1 do
-          begin
-          if i>0 then
-          begin
-           if i=1 then tabelle:= tabelle + '<tr><td><input type="radio" name="Tarif" value="'+inttostr(i)+'" checked><font size=-1>'
-           else tabelle:= tabelle + '<tr><td><input type="radio" name="Tarif" value="'+inttostr(i)+'"><font size=-1>';
-          end
-          else  tabelle:= tabelle + '<tr><td><font size=-1>';
-
-          if (not(hauptfenster.Liste.Cells[10,i] = 'Webseite') and not(  hauptfenster.Liste.Cells[10,i]=''))
-          then tabelle:= tabelle + '<a href="'+hauptfenster.Liste.Cells[10,i]+'">'+hauptfenster.Liste.Cells[0,i] + '</a></font></td>'
-          else tabelle:= tabelle + hauptfenster.Liste.Cells[0,i] + '</font></td>';
-          tabelle:= tabelle
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[1,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[2,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[2,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[3,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[4,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[5,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[6,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[11,i] + '</font></td>'
-                    + '<td><font size=-1>'+ hauptfenster.Liste.Cells[12,i] + '</font></td>'
-                    + '</tr>' + #13#10;
-          end;
-          tabelle:= tabelle + '</table>';
-          end else tabelle:= '<font size+1><b>Keine Tarife verfügbar (Surfzeit verkleinern ?)</b></font>';
+          hauptfenster.surfdauer.position:= base;
+          SurfTime:= base;
           ClientCnx.AnswerString({Flags}Dummy,
             '',                            { Default Status '200 OK'            }
             '',                            { Default Content-Type: text/html    }
             'Pragma: no-cache' + #13#10 +  { No client caching please           }
             'Expires: -1'      + #13#10,   { I said: no caching !               }
-            '<HTML><HEAD><TITLE>Surfen</TITLE>'+
-            '<meta http-equiv="cache-control" content="no-cache">'+
-            '<script type="text/javascript">'+
-            'function keepalive() {'+
-              'document.Dialform.elements[1].click();'+
-            '}'+
-            'window.setTimeout("keepalive()", 30000);'+
-            '</script>'+
-            '</HEAD><BODY bgcolor="#ebedfe">'+
-            '<FORM METHOD="POST" name="Dialform" ACTION="/cgi-bin/LeastCosterDial?='+user+'">'+
-            '<p align=left><input type="submit" name="action" value="Verbindung wählen"><input type="submit" name="action" value="Aktualisieren"><INPUT TYPE="edit" NAME="basetime" value="'+inttostr(base)+'" MAXLENGTH="5"></p>'+
-            '<p align=center valign=middle>'+
-             tabelle +
-            '</p>'+
-            '</form></BODY></HTML>');
+            LoadPage('connect_list.tpl', user, ClientCNX));
             sleep(1000);
     end;
-end;    
+end;
 
 Procedure extractfile(ClientCnx : TMyHttpConnection; var filename: string);
 var len,Blen: integer;
@@ -2324,12 +1690,8 @@ begin
         '',                            { Default Content-Type: text/html    }
         'Pragma: no-cache' + #13#10 +  { No client caching please           }
         'Expires: -1'      + #13#10,   { I said: no caching !               }
-        '<HTML><HEAD><TITLE>... gesendet</TITLE>'+
-          '<meta http-equiv="cache-control" content="no-cache">'+
-        '</HEAD><BODY bgcolor="#ebedfe">'+
-        'Nachricht gesendet ... </BODY></HTML>');
+        LoadPage('message_sent.tpl',user,ClientCNX));
 end;
-
 
 //deletemessage.html
 procedure TWebServForm.ProcessPostedData_deletemessage(
@@ -2348,36 +1710,34 @@ begin
     user:= ansireplacestr(user,'?','');
 
     //nachrichtenanzahl auslesen
-
     count:= UserSettings.ReadInteger(crypter.DoEncrypt(user),'count',0);
 
     { Extract fields from posted data. }
     for i:= 1 to count do
     begin
-    ExtractURLEncodedValue(ClientCnx.FPostedDataBuffer, 'delete'+inttostr(i), value);
-    if value='' then value:='-10';
+      ExtractURLEncodedValue(ClientCnx.FPostedDataBuffer, 'delete'+inttostr(i), value);
+      if value='' then value:='-10';
 
-    if strtoint(value) > 0 then
-    begin
-    filename:= crypter.DoDecrypt(UserSettings.Readstring(crypter.DoEncrypt(user),crypter.doencrypt('file'+value),'nichts eingetragen !!!'));
-    if fileexists(Extractfilepath(paramstr(0)) + 'www\files\'+filename) then
-    Deletefile(Extractfilepath(paramstr(0)) + 'www\files\'+filename);
-    UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('file'+value));
-    UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+value));
-    UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('sender'+value));
-    UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('zeitpunkt'+value));
-    UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('gelesen'+value));
-    end;
+      if strtoint(value) > 0 then
+      begin
+        filename:= crypter.DoDecrypt(UserSettings.Readstring(crypter.DoEncrypt(user),crypter.doencrypt('file'+value),'nichts eingetragen !!!'));
+        if fileexists(Extractfilepath(paramstr(0)) + 'www\files\'+filename) then
+            Deletefile(Extractfilepath(paramstr(0)) + 'www\files\'+filename);
+        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('file'+value));
+        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+value));
+        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('sender'+value));
+        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('zeitpunkt'+value));
+        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('gelesen'+value));
+      end;
     end;
     position:=1;
     //lücken füllen
     For i:=1 to count do
     begin
 
-    if (UserSettings.ValueExists(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+inttostr(i))))
-    then
-     begin
-      if i > position then
+      if (UserSettings.ValueExists(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+inttostr(i)))) then
+      begin
+       if i > position then
         begin
            UserSettings.WriteString(crypter.DoEncrypt(user),crypter.doencrypt('file'+inttostr(position)),  UserSettings.ReadString( crypter.DoEncrypt(user), crypter.doencrypt('file'+inttostr(i)),'') );
            UserSettings.WriteString(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+inttostr(position)),  UserSettings.ReadString( crypter.DoEncrypt(user), crypter.doencrypt('nachricht'+inttostr(i)),'') );
@@ -2392,15 +1752,15 @@ begin
            UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('gelesen'+inttostr(i)));
            position:= position +1;
         end else position:= position+1;
-     end;
+      end;
 
     end;
     UserSettings.WriteInteger(crypter.DoEncrypt(user),'count',position-1);
-    { Get client IP address. We could do ReverseDnsLookup to get hostname }
-    HostName := ClientCnx.PeerAddr;
 
-    { HTML answer.}
-     CreateVirtualDocument_postmessage(Sender, ClientCnx, dummy)
+    HostName := ClientCnx.PeerAddr; { client's IP address}
+
+   { HTML answer.}
+   CreateVirtualDocument_postmessage(Sender, ClientCnx, dummy)
 end;
 
 {* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
@@ -2415,22 +1775,6 @@ begin
     end;
     inherited Destroy;
 end;
-
-//+++++++++++++++++++++++++++++++++FileHandler++++++++++++++++++
-
-procedure TWebServForm.delete(Verzeichnis:string);
-var SR      : TSearchRec;
-begin
-  if Verzeichnis[length(Verzeichnis)]<>'\' then
-    Verzeichnis:=Verzeichnis+'\';
-  if FindFirst(Verzeichnis+'*.jpg',$3F,SR)=0 then begin
-    repeat
-       deletefile(verzeichnis+sr.name);
-    until FindNext(SR)<>0;
-    FindClose(SR);
-  end;
-end;
-
 
 procedure TWebServForm.userboxChange(Sender: TObject);
 var i: integer;
@@ -2474,8 +1818,6 @@ var
 begin
 
   UserSettings.ReadSections(userbox.Items);
-
-
   userbox.ItemIndex := userbox.items.IndexOf('active');
   userbox.items.Delete(userbox.itemindex);
 

@@ -12,7 +12,6 @@ type Lieferant = record
       Lieferung = array[1..31] of Lieferant;
 
 procedure append_own_data;
-procedure OlecoImport(sender: TObject);
 Procedure Abholung(Lageradresse:string);
 procedure monatshtml(path, filename: string);
 procedure CreateAllLogs;
@@ -21,7 +20,7 @@ procedure WebAuswertungErstellen;
 
 
 implementation
-uses unit1, files, DateUtils, SysUtils, StrUtils, Dialogs, RegExpr, Classes, IniFiles;
+uses unit1, files, DateUtils, SysUtils, StrUtils, Dialogs, RegExpr, Classes, IniFiles, inilang, messagestrings;
 
 var Lieferliste:Lieferung;
 
@@ -105,199 +104,6 @@ end;
 
 end;
 
-procedure OlecoImport(sender: TObject);
-var f: textfile;
-    zeile, tarif, counter, savedata, filename, monat, ausgabepfad, temp1, temp2: string;
-    temp: string[2];
-    count, ccount, nof: integer;
-    check1, check2: boolean;
-    sec: longint;
-    i: integer;
-    h, m, s: word;
-    hour, mins, secs: string;
-    act_file: string;
-    zeichen: char;
-    zeilennr: string;
-    dates_1, dates_2: string;
-begin
-
-dates_1:= settings.ReadString('lastdate','1','');{Datum/ Zeit}
-dates_2:= settings.ReadString('lastdate','3','');
-
-count:=0; ccount:=0; nof:= 0;
-temp1:='';temp2:='';
-check1:= false; check2:= false;
-
-//zeilencounter des eigenen Logfiles auslesen
-act_file:=''; zeilennr:= '';
-
-if monthof(date) < 10 then act_file:= inttostr(yearof(date))+'_0'+inttostr(monthof(date))+'.csv'
-else act_file:= inttostr(yearof(date))+'_'+inttostr(monthof(date))+'.csv';
-
-if (fileexists(extractfilepath(paramstr(0)) + '\log\'+act_file)) then
-begin
-  Assignfile(f,extractfilepath(paramstr(0)) + '\log\'+act_file);
-  reset(f);
-    repeat
-      readln(f,zeile);
-    until eof(f);
-
-  closefile(f);
-  i:=1;
-    repeat
-      zeichen:= zeile[i];
-      i:=i+1;
-      zeilennr:= zeilennr + zeichen;
-    until ord(zeichen)=9;
-  Delete(zeilennr,length(zeilennr),1);
-
-count:= strtoint(zeilennr);
-end;
-
-zeile:='';// i:=0;
-verzeichnis_erzeugen(ExtractFilePath(ParamStr(0))+'log');
-ausgabepfad:= ExtractFilePath(ParamStr(0))+'log\';
-
-if fileexists(hauptfenster.path+'ple.cst') then
-begin
-
-  assignfile(f, hauptfenster.path+'ple.cst');
-  reset(f);
-
-  repeat
-    readln(f,zeile);
-  until eof(f) or AnsiContainsStr(zeile, '[1]');
-
-  if ((length(dates_1) > 4) and (length(dates_2) > 4)) then
-  begin
-    repeat
-      readln(f,zeile);
-      temp1:= zeile;
-      if (AnsiContainsStr(temp1, dates_1)) then begin
-      check1:= true;
-      break; end;
-    until ((temp1= dates_1) or eof(f));
-
-    repeat
-      readln(f,zeile);
-      temp2:= zeile;
-      if (AnsiContainsStr(temp2, dates_2)) then
-        begin
-          check2:= true;
-          break;
-        end;
-
-    until ((temp2= dates_2) or eof(f));
-    if ((check1=false) or (check2=false)) then
-    begin
-     closefile(f);
-     assignfile(f, hauptfenster.path+'ple.cst');
-     reset(f);
-      repeat  // ersten Datensatz finden
-      readln(f,zeile);
-      until eof(f) or AnsiContainsStr(zeile, '[1]');
-    end;
-    if ((check1) and (check2)) then
-    begin
-      repeat
-       if not eof(f) then readln(f,zeile);
-      until ( (AnsiContainsStr(zeile, '[')) or (eof(f)=true))
-    end;
-  end;
-if not eof(f) then
-begin
-
-  savedata:='';
-  repeat
-    readln(f, zeile);
-    temp:= zeile;
-    if not (zeile ='') then begin
-    case temp[1] of
-      '1': begin
-             count:= count + 1;
-              str(count, counter);
-              savedata:= savedata+ counter+chr(9);
-              Delete(zeile,1,2);
-              settings.writestring('lastdate','1',zeile);
-              dates_1:= zeile;
-              filename:= zeile; monat:=zeile;
-              delete(monat,1,3); delete(monat,3,5);
-              delete(filename,1,6); {erste 8 zeichen löschen}
-              insert('_'+monat,filename, 5);
-              savedata:= savedata+zeile + chr(9);
-              tarif:='';
-             end;
-
-   '2': begin Delete(zeile,1,2); { Tarif } tarif:=zeile + ' [OlecoImport]'; end;
-   '3': begin Delete(zeile,1,2); { Surfzeit Anfang } settings.writestring('lastdate','3',zeile); dates_2:= zeile; savedata:= savedata+zeile + chr(9); end;
-   '4': begin {Zeit in s}
-          Delete(zeile,1,2);
-          sec:= strtoint(zeile);
-          hauptfenster.zeitumrechnen(sec, h, m, s);
-
-          if h< 10 then hour:= '0'+inttostr(h) else hour:= inttostr(h);
-          if m< 10 then mins:= '0'+inttostr(m) else mins:= inttostr(m);
-          if s< 10 then secs:= '0'+inttostr(s) else secs:= inttostr(s);
-
-          zeile:= hour + ':'+mins+':'+secs;
-          savedata:= savedata+zeile + chr(9);
-        end;
-   '5': begin {Kosten in Cent}
-          Delete(zeile,1,2);
-          For i:=1 to length(zeile) do
-          begin
-          if zeile[i]=',' then
-            begin
-              insert('000',zeile,1);
-              Delete(zeile,i+3,1);
-              insert(',',zeile,i+3-2);
-              Delete(zeile,1,i-1);
-               break;
-            end;
-          end;
-
-          savedata:= savedata+zeile + chr(9);
-        end;
-   '6': Delete(zeile,1,2);
-   '7': Delete(zeile,1,2);
-   '8': begin
-         Delete(zeile,1,2);
-         savedata:= savedata{+zeile + chr(9)}+tarif;
-         //findme
-         if writeme then
-          begin
-            savedata:= savedata + chr(9) + timetostr(actofftime) + chr(9) + actnumber;
-            actnumber:='';
-            actofftime:= strtotime('00:00:00');
-            //um eins erhöhen
-            settings.WriteInteger('lastdate','count',settings.ReadInteger('lastdate','count',0)+1);
-          end;
-         append_data(ausgabepfad,filename, savedata, count);//, nof);
-         ccount:=ccount+1;
-         savedata:='';
-         end;
-  end;
- end;
-until eof(f);
-end;
-closefile(f);
-
- if (sender=hauptfenster.MM1_4_1) then
-       showmessage(inttostr(ccount) + ' Verbindung(en) exportiert nach '+ausgabepfad + '.'+ #13#10 +'Es wurden '+inttostr(nof) + ' Dateien neu angelegt.');
-
-   end
-else
-  begin
-      settings.writestring('lastdate','1','');
-      settings.writestring('lastdate','3','');
-      dates_1:= '';
-      dates_2:= '';
-  end;
-
-//der aktuelle Stand ist erreicht ... immer mitschreiben
-writeme:= true;
-end;
-
 Function sekunden(Zeit:tdatetime): longint;
 var h,m,s, msec: word;
 begin
@@ -329,11 +135,12 @@ delete(fname,3,4);
 monat:= strtoint(fname);
 
 
-maxcost:=0;
+maxcost:=0.;
 Maxtime:=0;
-maxtimecost:=0;
+maxtimecost:=0.;
 maxconect:=0;
 monatstage:=Daysinamonth(yearof(lieferliste[1].tag),monthof(lieferliste[1].tag) );
+
 For zahler:=1 to monatstage do
  Begin
  IF maxcost  <lieferliste[zahler].Kosten       Then maxcost  :=lieferliste[zahler].Kosten      ;
@@ -341,20 +148,21 @@ For zahler:=1 to monatstage do
  IF maxconect<lieferliste[zahler].Verbindungen Then maxconect:=lieferliste[zahler].VErbindungen;
  IF (maxtimecost<(lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60))) Then maxtimecost:=((lieferliste[zahler].Kosten)/(sekunden(lieferliste[zahler].Zeit)/60));
  End;
+
 Verzeichnis_erzeugen(ExtractFilePath(paramstr(0))+'www\log');
 htmfilename:=ChangeFileExt(filename,'.htm');
 Assignfile(Importeur ,ExtractFilePath(paramstr(0))+'www\log\'+htmfilename);
 rewrite(Importeur);
-Write(Importeur,'<meta name="author" content="LeastCoster XP">');
-Write(Importeur, '<meta name="generator" content="LeastCoster XP">');
+Write(Importeur,'<meta name="author" content="LeastCosterXP">');
+Write(Importeur, '<meta name="generator" content="LeastCosterXP">');
 write(Importeur,'<meta http-equiv="cache-control" content="no-cache"></head>');
 Write(Importeur,'<body alink="#0080ff" bgcolor="#ebedfe" link="#0000df" text="#000000" vlink="#3f00ff">');
 Write(Importeur,'<p align="center"><img src="head.jpg" alt="" border="0" height="150"> </p>');
 Begin
  Assignfile(Exporteur,path+filename); Reset(Exporteur);
- Writeln(Importeur,'<p align=center><font size=+2>Einzelverbindungen '+ filename+'</font></p>');
+ Writeln(Importeur,'<p align=center><font size=+2>'+misc(M28,'M28')+' '+ filename+'</font></p>');
  Writeln(Importeur,'<table align=center border=0 cellspacing=3>');
- Writeln(Importeur,'<tr><td>Nr.</td><td>Datum</td><td>Uhrzeit</td><td>Dauer</td><td>Kosten [Euro]</td><td>Tarif</td><td>getrennt um ..</td><td>Rufnummer</td></tr>');
+ Writeln(Importeur,'<tr><td>'+misc(M135,'M135')+'</td><td>'+misc(M136,'M136')+'</td><td>'+misc(M137,'M137')+'</td><td>'+misc(M138,'M138')+'</td><td>'+misc(M139,'M139')+'</td><td>'+misc(M140,'M140')+'</td><td>'+misc(M141,'M141')+'</td><td>'+misc(M142,'M142')+'</td></tr>');
  Repeat
   Write(importeur, '<tr><td>');
   Readln(exporteur, Zwischenhandler);
@@ -374,8 +182,8 @@ adtime:= 0;
 Adcost:=0;
 For zahler:=1 to 31 do
  Begin
- adtime:=adtime+lieferliste[zahler].Zeit;
- adcost:=adcost+lieferliste[zahler].Kosten;
+   adtime:=adtime+lieferliste[zahler].Zeit;
+   adcost:=adcost+lieferliste[zahler].Kosten;
  End;
 
 Writeln(Importeur, inttostr(daysbetween(0, adtime))+'d ' + FormatDateTime('h"h" m"m" s"s"' ,adtime));
@@ -386,23 +194,23 @@ Write(Importeur,'<td></td></tr>');
  Writeln(importeur, '</table>');
  Closefile(Exporteur);
 End;
-Writeln(Importeur,'<p align="center"><b>Legende</b><img src="red.gif" width="20" height="10">: mind.');
+Writeln(Importeur,'<p align="center"><b>'+misc(M203,'M203')+'</b><img src="red.gif" width="20" height="10">: '+misc(M204,'M204') +' ');
 Write(Importeur, ((settings.ReadFloat('Kostengrenzen','rot',15.0)/monatstage)):3:2);
-Writeln(Importeur, ' EUR/Tag <img src="yellow.gif" width="20" height="10">: mind. ');
+Writeln(Importeur, ' '+misc(M205,'M205')+' <img src="yellow.gif" width="20" height="10">:'+misc(M204,'M204') +' ');
 Write(Importeur, (settings.ReadFloat('Kostengrenzen','gelb',10.0)/monatstage):3:2);
-Writeln(Importeur, ' EUR/Tag <img src="blue.gif" width="20" height="10">: weniger als');
+Writeln(Importeur, ' '+misc(M205,'M205')+' <img src="blue.gif" width="20" height="10">: '+misc(M206,'M206') +' ');
 Write(Importeur, (settings.ReadFloat('Kostengrenzen','gelb',10.0)/monatstage):3:2);
-Writeln(Importeur, ' EUR/Tag ');
+Writeln(Importeur, ' '+misc(M205,'M205')+' ');
 
        For cost:=true downto false do
          Begin
          For time:=false to true do{vertauscht}
 
           Begin
-          IF not(cost Or      Time)Then Writeln(Importeur,'<p align=center><font size=+2>Verbindungen '+filename+'</font></p>');
-          If     cost and not time then Writeln(Importeur,'<p align=center><font size=+2>Kosten '+filename+'</font></p>');
-          If     cost and     time then Writeln(Importeur,'<p align=center><font size=+2>Verbindungsdauer '+filename+'</font></p>');
-          If(not cost)and     time then Writeln(Importeur,'<p align=center><font size=+2>durchschnittliche Kosten pro Minute '+filename+'</font></p>');
+          IF not(cost Or      Time)Then Writeln(Importeur,'<p align=center><font size=+2>'+misc(M28,'M28')+' '+filename+'</font></p>');
+          If     cost and not time then Writeln(Importeur,'<p align=center><font size=+2>'+misc(M139,'M139')+' '+filename+'</font></p>');
+          If     cost and     time then Writeln(Importeur,'<p align=center><font size=+2>'+misc(M48,'M48')+ ' ' +filename+'</font></p>');
+          If(not cost)and     time then Writeln(Importeur,'<p align=center><font size=+2>'+misc(M207,'M207')+ ' '+filename+'</font></p>');
           Writeln(Importeur, '<Table align="center" height="400" border=0 cellspacing="0" ><tr>');
           For zahler:=1 to monatstage do
           Begin
@@ -414,10 +222,11 @@ Writeln(Importeur, ' EUR/Tag ');
           Write(Importeur, '"><img src="trans.gif" width=20 height="');
 
           IF not(cost Or      Time)Then Begin
-                                              Write(Importeur, (400 - 400*lieferliste[zahler].Verbindungen/maxconect):3:0);
+                                              if maxconect > 0 then Write(Importeur, (400 - 400*lieferliste[zahler].Verbindungen/maxconect):3:0)
+                                                                else Write(Importeur, '400');
                                               Write(Importeur, '" border=0 title="');
                                               Write(Importeur, lieferliste[zahler].Verbindungen);
-                                              Write(Importeur, ' Verbindung(en)');
+                                              Write(Importeur, ' '+misc(M28,'M28'));
 
                                               if encodedate(jahr,monat,zahler) = dateof(now) then
                                               begin
@@ -426,17 +235,18 @@ Writeln(Importeur, ' EUR/Tag ');
                                               end;
 
                                         End;
-          If  cost and not time then Begin Write(Importeur, (400-400*lieferliste[zahler].Kosten/maxcost):3:0);
+          If  cost and not time then Begin if maxcost > 0. then Write(Importeur, (400-400*lieferliste[zahler].Kosten/maxcost):3:0)
+                                                           else Write(Importeur, '400');
                                               Write(Importeur, '" border=0 title="');
-                                              Write(Importeur, lieferliste[zahler].kosten:3:2);
-                                              Write(Importeur, ' €');
+                                              Write(Importeur, Format('%3.2m',[lieferliste[zahler].kosten]));
 
                                              if encodedate(jahr,monat,zahler) = dateof(now) then
                                               begin
                                               settings.WriteFloat('Tageskosten','Kosten',lieferliste[zahler].Kosten);
                                               end;
                                         End;
-          If  cost and     time then Begin Write(Importeur,  (400-400*lieferliste[zahler].Zeit/maxtime):3:0);
+          If  cost and     time then Begin if maxtime > 0 then Write(Importeur,  (400-400*lieferliste[zahler].Zeit/maxtime):3:0)
+                                                           else Write(Importeur, '400');
                                               Write(Importeur, '" border=0 title="');
                                               Write(Importeur, timetostr(lieferliste[zahler].zeit));
 
@@ -447,23 +257,24 @@ Writeln(Importeur, ' EUR/Tag ');
 
                                         End;
 
-
-
           If  (not cost)and     time  then Begin
-                                             Write(Importeur,  (400-400*(lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60))/maxtimecost):3:0);
+                                             if maxtimecost > 0. then Write(Importeur,  (400-400*(lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60))/maxtimecost):3:0)
+                                                                 else Write(Importeur, '400');
                                              Write(Importeur, '" border=0 title="');
-                                             Write(Importeur, (lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60)):3:4);
-                                             Write(Importeur, ' €/min');
+                                             Write(Importeur, Format('%3.4m /min',[lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60)]));
 
                                              if encodedate(jahr,monat,zahler) = dateof(now) then
                                               begin
-                                              settings.WriteFloat('Tageskosten','Mittelwert',(lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60)));
+                                                try
+                                                 settings.WriteFloat('Tageskosten','Mittelwert',(lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60)));
+                                                except
+                                                 settings.WriteFloat('Tageskosten','Mittelwert',0.0);
+                                                end;
                                               end;
-
                                             End;
 
 
-          // Balken zeichner
+          // Balken zeichnen
           Write(Importeur, '"><br><img src="');
           If (((settings.ReadFloat('Kostengrenzen','gelb',10.0))/monatstage)<lieferliste[zahler].kosten) Then
            If (((settings.ReadFloat('Kostengrenzen','rot',15.0))/monatstage)<lieferliste[zahler].kosten) Then
@@ -473,30 +284,33 @@ Writeln(Importeur, ' EUR/Tag ');
           Write(Importeur, '" width=20 height="');
 
            IF not(cost Or Time)Then Begin
-            Write(Importeur, (400*lieferliste[zahler].Verbindungen/maxconect):3:0);
+           if maxconect > 0 then Write(Importeur, (400*lieferliste[zahler].Verbindungen/maxconect):3:0)
+                            else Write(Importeur, '0');
             Write(Importeur, '" border=0 title="');
             Write(Importeur, lieferliste[zahler].Verbindungen);
-            Write(Importeur, ' Verbindung(en)');
+            Write(Importeur, ' '+misc(M28,'M28'));
            End;
 
            If cost and not time then Begin
-            Write(Importeur, (400*lieferliste[zahler].Kosten/maxcost):3:0);
+           if maxcost > 0. then Write(Importeur, (400*lieferliste[zahler].Kosten/maxcost):3:0)
+                            else Write(Importeur, '0');
             Write(Importeur, '" border=0 title="');
-            Write(Importeur, lieferliste[zahler].kosten:3:2);
-            Write(Importeur, ' €');
+            Write(Importeur, Format('%3.2m',[lieferliste[zahler].kosten]));
            End;
 
            If cost and time then Begin
-            Write(Importeur,  (400*lieferliste[zahler].Zeit/maxtime):3:0);
+           if maxtime > 0 then Write(Importeur,  (400*lieferliste[zahler].Zeit/maxtime):3:0)
+                          else Write (Importeur, '0');
             Write(Importeur, '" border=0 title="');
             Write(Importeur, timetostr(lieferliste[zahler].zeit));
            End;
 
            If (not cost)and time then Begin
-            Write(Importeur,  (400*(lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60))/maxtimecost):3:0);
+            if maxtimecost > 0. then Write(Importeur,  (400*(lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60))/maxtimecost):3:0)
+                                 else Write (Importeur, '0');
             Write(Importeur, '" border=0 title="');
             Write(Importeur, (lieferliste[zahler].Kosten/(sekunden(lieferliste[zahler].Zeit)/60)):3:4);
-            Write(Importeur, ' €/min');
+            Write(Importeur, ' '+misc(M13,'M13')+'/min');
            End;
            Writeln(Importeur, '"></td>');
           End;
@@ -508,7 +322,7 @@ Writeln(Importeur, ' EUR/Tag ');
           Writeln(Importeur,'</tr></table>');
         End;
        End;
-       Write(Importeur, '<br><p align=center><font size="-1"><b>Statistik erstellt mit <a href="http://www.leastcosterxp.de">LeastCosterXP</a> von <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
+       Write(Importeur, '<br><p align=center><font size="-1"><b><a href="http://www.leastcosterxp.de">LeastCosterXP</a> by <a href="mailto:owner@leastcosterxp.de"> Stefan Fruhner </a></b></font></p>');
        Writeln(Importeur,'</body></html>');
        Closefile(Importeur);
   end;
@@ -520,8 +334,6 @@ Var Zwischenhandler:string;
     Tabs      :shortint;
     Lager     :Textfile;
     Punkt,haekchen:integer;
-//    monat:string[2];
-//    Jahr:string[4];
     monat, jahr: integer;
     i: integer;
 Begin
@@ -561,8 +373,8 @@ end;
   Lieferliste[Punkt].Verbindungen:=Lieferliste[Punkt].Verbindungen+1;
  Until Eof(Lager);
  For haekchen:=1 to daysinamonth(jahr, monat) do
-   Lieferliste[haekchen].Tag:= Dateof(encodeDate(Jahr,monat, haekchen)); // strtodate((inttostr(haekchen))+'.'+Monat+'.'+Jahr);
- 
+   Lieferliste[haekchen].Tag:= Dateof(encodeDate(Jahr,monat, haekchen));
+
  Closefile(Lager);
 
  //jetzt den Html-Export
@@ -611,8 +423,8 @@ begin
   assignfile(uebersicht, verzeichnis+'index.htm');
   rewrite(uebersicht);
 
-  writeln(uebersicht,' <HTML><HEAD><TITLE>Kostenprotokolle</TITLE>');
-  writeln(uebersicht,'<meta name="author" content="LeastCoster XP"><meta name="generator" content="LeastCoster XP 1.2 "><meta http-equiv="cache-control" content="no-cache">');
+  writeln(uebersicht,' <HTML><HEAD><TITLE>'+misc(M216,'M216')+'</TITLE>');
+  writeln(uebersicht,'<meta name="author" content="LeastCosterXP"><meta name="generator" content="LeastCosterXP"><meta http-equiv="cache-control" content="no-cache">');
   writeln(uebersicht,'</HEAD><BODY alink="#0080ff" bgcolor="#ebedfe" link="#0000df" text="#000000" vlink="#3f00ff">');
 
   if FindFirst(Verzeichnis+'*.htm',$3F,SR)=0 then begin

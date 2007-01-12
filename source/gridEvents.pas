@@ -11,7 +11,7 @@ procedure ColorizeRow(grid: TStringgrid; CRow: integer; R,G,B: word);
 
 implementation
 
-uses unit1;
+uses unit1, inilang, messagestrings;
 
 procedure OnMouseDown(Sender: TObject; X,column, ClickedRow, widthl, widthr: Integer);
 var rect: Trect;
@@ -101,23 +101,23 @@ begin
 
       if grid.cells[sortcol, 0] = 'Kosten' then
       begin
-        if ((str1 <> 'Blacklist') and (str1 <> 'abgelaufen')) then
+        if ((str1 <> 'Blacklist') and (str1 <> misc(M98,'M98'))) then
           val(str1, cost1,code1)
         else
-        if str1 = 'abgelaufen' then cost1:= 10000.0
+        if str1 = misc(M98,'M98') then cost1:= 10000.0
         else
         if str1 = 'Blacklist' then cost1:= 20000.0;
 
-        if ((str2 <> 'Blacklist') and (str2 <> 'abgelaufen')) then
+        if ((str2 <> 'Blacklist') and (str2 <> misc(M98,'M98'))) then
          val(str2, cost2,code2)
         else
-        if str2 = 'abgelaufen' then cost2:= 10000.0
+        if str2 = misc(M98,'M98') then cost2:= 10000.0
         else
         if str2 = 'Blacklist' then cost2:= 20000.0;
 
         if (cost1 = cost2) then //nach Score beurteilen
         begin
-          if (str1 = 'abgelaufen') then
+          if (str1 = misc(M98,'M98')) then
           begin
            if (lowercase(grid.cells[1,j]) > lowercase(grid.cells[1,i])) then cost1:= 15000.0 else cost2:= 15000.0;
           end
@@ -189,10 +189,6 @@ begin
  Progress.Visible:= false;
  grid.Cursor:= crDefault;
 end;
-
-
-
-
 
 procedure ColorizeRow(grid: TStringgrid; CRow: integer; R,G,B: word);
 var rect: Trect;

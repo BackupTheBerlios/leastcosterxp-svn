@@ -8,8 +8,8 @@ interface
 implementation
 uses unit1, tarifverw,Graphics, DateUtils, SysUtils, unit6,
      forms, CoolTrayIcon, Tarifmanager, shellapi,
-     Windows, unit3, floating, addons, screen, dialogs, files,
-     unit2, unit9, strUtils, shutdown, Protokolle, html;
+     Windows, unit3, floating, addons, dialogs, files,
+     unit2, unit9, strUtils, shutdown, Protokolle, html, inilang, messagestrings;
 
 procedure TarifStatusClick(sender: TObject; row: integer);
 var datum: TDateTime;
@@ -85,7 +85,7 @@ with hauptfenster do
     begin
      ColorDialog.Color:= StringToColor(settings.ReadString('Basics','Color_E', ColortoString(RGB(250,250,200))));
      if ColorDialog.execute then
-       settings.WriteString('Basics','Color_E', ColortoString(ColorDialog.Color));
+       settings.WriteString('Basics','Color_E', ColorToString(ColorDialog.Color));
      liste.repaint;
     end
     else
@@ -165,8 +165,8 @@ with hauptfenster do
     if ( ( not assigned(wndlist)) and (not TarifeDisabled)) then
        begin
          Application.CreateForm(Twndlist, wndlist);
-         wndlist.ok.Caption:= '&Import';
-         wndlist.Caption.Caption:= 'Import';
+         wndlist.ok.Caption:= misc(M192,'M192');
+         wndlist.Caption.Caption:= misc(M192,'M192');
          wndlist.show;
        end;
   end
@@ -176,17 +176,10 @@ with hauptfenster do
     if not assigned(wndlist) then
      begin
       Application.CreateForm(Twndlist, wndlist);
-      wndlist.ok.Caption:= '&Export';
-      wndlist.Caption.Caption:= 'Export';
+      wndlist.ok.Caption:= misc(M193,'M193');
+      wndlist.Caption.Caption:= misc(M193,'M193');
       wndlist.show;
    end;
-  end
-  else
-  if sender = MM1_4_1 then
-  begin
-    Protokolle.OlecoImport(sender);
-    Protokolle.CreateAllLogs;
-    Protokolle.WebAuswertungErstellen;
   end
   else
   if sender = MM1_5_1 then
@@ -208,8 +201,7 @@ with hauptfenster do
   if sender = MM1_9 then
   begin
    tray.hidemainform;
-   if not noballoon then tray.ShowBalloonHint('Hinweis', 'Der LeastCoster ist nun im Tray minimiert.' + #13 +
-                                                          'Doppelklick zum maximieren.', bitInfo, 10);  end
+   if not noballoon then tray.ShowBalloonHint(misc(M01,'M01'), misc(M02,'M02'), bitInfo, 10);  end
   else
   if sender = MM1_10 then
   begin
@@ -249,10 +241,10 @@ with hauptfenster do
     if selfdial and (not Assigned(floatingW)) then
     begin
      Application.CreateForm(TfloatingW, floatingW);
-     floatingW.tarif.caption:= onlineset.Tarif;//edtarif.text;
+     floatingW.tarif.caption:= onlineset.Tarif;
      if settings.ReadBool('OnlineInfo', 'AutoWidth', true) then floatingW.setwidth;
      floatingW.valid.caption:= TimeToStr(onlineset.vbegin) + '-'+ TimeToStr(onlineset.vend);
-     floatingW.preis.caption:= Format('%.2f c/min',[onlineset.preis ]);
+     floatingW.preis.caption:= Format('%.2f c/min',[onlineset.preis]);
      floatingW.Show;
     end;
   end
@@ -295,25 +287,16 @@ with hauptfenster do
     PChar('https://lists.berlios.de/mailman/listinfo/leastcosterxp-news'), nil, nil, sw_ShowNormal);
   end
   else
-  if sender = MM2_6 then   //Fernsteuerung testen
-  begin
-    if not assigned(screenshot) then
-    begin
-    Application.CreateForm(Tscreenshot, screenshot);
-    screenshot.show;
-    end;
-  end
-  else
   if sender = MM2_7_1 then
   begin
 
    lcx:= false;
    try //Dateiendung lcz und lcx installieren
-    if InstallExt('.lcx', 'LeastCosterXP Xport', 'LeastCosterXP Tarifdatei', ParamStr(0), '%1',0)
+    if InstallExt('.lcx', 'LeastCosterXP Xport', misc(M194,'M194'), ParamStr(0), '%1',0)
      then lcx:= true;
 
     if lcx then
-    Showmessage('Dateiendung .lcx konnten erfolgreich registriert werden.');
+    Showmessage('*.lcx '+misc(M212,'M212'));
 
    except end;
   end
@@ -324,7 +307,7 @@ with hauptfenster do
     if UnInstallExt('.lcx') then lcx:= true;
 
     if lcx then
-    Showmessage('Dateiendung .lcx konnten erfolgreich gelöscht werden.');
+    Showmessage('*.lcx '+misc(M213,'M213'));
 
   end
    else

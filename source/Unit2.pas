@@ -17,7 +17,6 @@ type
     Memo1: TMemo;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
-    TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
     TabSheet5: TTabSheet;
@@ -100,23 +99,6 @@ type
     minimiert: TCheckBox;
     noBalloon: TCheckBox;
     autostart: TCheckBox;
-    GroupBox14: TGroupBox;
-    Suchen: TSpeedButton;
-    Pfad: TLabeledEdit;
-    Button2: TButton;
-    DSurfer: TLabeledEdit;
-    selectshowtime: TSpinEdit;
-    RadioButton3: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton1: TRadioButton;
-    Label1: TLabel;
-    GroupBox15: TGroupBox;
-    pledelete: TButton;
-    pleopen: TButton;
-    resetdate: TButton;
-    lasttime: TEdit;
-    lasttimelabel: TLabel;
-    autoread: TCheckBox;
     GroupBox16: TGroupBox;
     Leerlaufsound: TEdit;
     leerlaufsoundbut: TButton;
@@ -250,19 +232,187 @@ type
     AutoD_Day: TComboBox;
     Button9: TButton;
     Button11: TButton;
-    MainMenu1: TMainMenu;
     AutoL: TValueListEditor;
+    UseAutoBlacklist: TCheckBox;
+    procedure PoEditKeyPress(Sender: TObject; var Key: Char);
+    procedure plugSettingsMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure unregisterMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure registerMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure activateMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox24MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Rss_oldItemsMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Rss_maxitemsMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure RssUpdateMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure noFeedsMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox12MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure pw2MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure pwMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure oldpwMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure usernameMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox5MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure serverautostartMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure StopButtonMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure StartButtonMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure PoEditMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox4MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure UseAutoBlacklistClick(Sender: TObject);
+    procedure GroupBox20MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure AutoLMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure AutoDMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Label30MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure AutoConnectEinwahlMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: Integer);
+    procedure AutoConnectIntervalMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: Integer);
+    procedure AutoReConnectMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure AutoConnectOnStartMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: Integer);
+    procedure GroupBox1MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Label12MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure LeerlaufPlaySoundMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox3MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure DisconnectSecondsMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure autotrennenconfirmMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: Integer);
+    procedure autotrennenwaitMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure autotrennenaskMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure autotrennen_kontiMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure autotrennenMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox2MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox8MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure DFUE2MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure DFUEMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure ipmail_adressMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure ipmail_nameMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure ipmail_activeMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure atomrepeatMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure ServerboxEnter(Sender: TObject);
+    procedure rightMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure leftMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure GroupBox10MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure InfoSpecialTextMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure InfoBGMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure InfoTextMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure FonteditMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure bgeditMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure SetOnlineInfoWidthMouseMove(Sender: TObject; Shift: TShiftState;
+      X, Y: Integer);
+    procedure OnlineInfoMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Button10MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure keepfiles_oneMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure keepfilesMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure updateboxMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Label23MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure BitBtn2MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure programs_addMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure opendaysMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure programs_mintimeMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure programs_timeoutMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure programs_paramsMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure programs_pathMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure programs_killMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure BitBtn3MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox11MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure OpenWebsiteMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure hidetrayMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Label15MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Button8MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure vorwahllabelMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure MultilinkMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure modemlabelMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure setupmodemsMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure gelbMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure Button7MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure Button3MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure DaystoSaveLogsMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure noBalloonMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure timeMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure minimizeMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure minimiertMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure autostartMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
     procedure AutoDClick(Sender: TObject);
     procedure Button11Click(Sender: TObject);
     procedure Button9Click(Sender: TObject);
     procedure FontBClick(Sender: TObject);
 
     procedure beendenClick(Sender: TObject);
-    procedure SuchenClick(Sender: TObject);
-    procedure selectshowtimeChange(Sender: TObject);
-    procedure RadioButton3Enter(Sender: TObject);
-    procedure RadioButton2Enter(Sender: TObject);
-    procedure RadioButton1Enter(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
     procedure PoEditExit(Sender: TObject);
     procedure StartButtonClick(Sender: TObject);
@@ -272,84 +422,16 @@ type
     procedure loeschenClick(Sender: TObject);
     procedure filluserbox;
     procedure autostartClick(Sender: TObject);
-    procedure AtomboxMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure autostartMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure minimiertMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure PfadMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure Label1MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure selectshowtimeMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure RadioButton2MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure RadioButton1MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure Label2MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure AusgabeMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure autoreadMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure DSurferMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure CheckBox1MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure RASMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure PoEditMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure StartButtonMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure StopButtonMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure serverautostartMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure Button2Click(Sender: TObject);
-    procedure Button2MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure serverdeleteClick(Sender: TObject);
     procedure ServeraddbuttonClick(Sender: TObject);
-    procedure IPMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure Label6MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure serverdeleteMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure ServeraddbuttonMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure ServerboxEnter(Sender: TObject);
     procedure showatomlogClick(Sender: TObject);
-    procedure showatomlogMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure updateboxMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure Label10MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure gelbMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure gelbChange(Sender: TObject);
     procedure rotChange(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure edvorwahlKeyPress(Sender: TObject; var Key: Char);
-    procedure modemlabelMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure vorwahllabelMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure DeviceDropDown(Sender: TObject);
-    procedure BitBtn1MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure PfadChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button5Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
-    procedure RssListMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure RssUpdateMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure rssupClick(Sender: TObject);
     procedure rssdownClick(Sender: TObject);
     procedure ColorBox1Change(Sender: TObject);
@@ -359,23 +441,6 @@ type
     procedure OnlineInfoClick(Sender: TObject);
     procedure loadprogramstrings(activate: string);
     procedure FormCreate(Sender: TObject);
-    procedure OnlineInfoMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure bgeditMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure scaleMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure resetdateClick(Sender: TObject);
-    procedure lasttimeMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure resetdateMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure forwardtableMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure hidetrayMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure pleopenClick(Sender: TObject);
-    procedure pledeleteClick(Sender: TObject);
     procedure programs_suchenClick(Sender: TObject);
     procedure programs_addClick(Sender: TObject);
     procedure ProgramsCloseUp(Sender: TObject);
@@ -383,43 +448,9 @@ type
     procedure programs_onlineClick(Sender: TObject);
     procedure BitBtn3Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
-    procedure programs_pathMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure programs_timeoutMouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
-    procedure programs_mintimeMouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
-    procedure programs_paramsMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure programs_killMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
     procedure SoundOnButClick(Sender: TObject);
-    procedure SoundOnMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure noFeedsClick(Sender: TObject);
-    procedure usernameMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure oldpwMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure pw2MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure pwMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure PageControl1Change(Sender: TObject);
-    procedure GroupBox2MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure autotrennenMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure autotrennenaskMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure autotrennenwaitMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure autotrennenconfirmMouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
-    procedure AutoEinwahlMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure leerlaufminutenMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
     procedure autotrennenaskClick(Sender: TObject);
     procedure autotrennenwaitClick(Sender: TObject);
     procedure autotrennenClick(Sender: TObject);
@@ -428,45 +459,15 @@ type
     procedure leerlaufwaitClick(Sender: TObject);
     procedure LeerlaufPlaySoundClick(Sender: TObject);
     procedure Button7Click(Sender: TObject);
-    procedure LeerlaufschwelleMouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
-    procedure DaystoSaveLogsMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
     procedure Button8Click(Sender: TObject);
-    procedure Button8MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure AutoSurfdauerChange(Sender: TObject);
-    procedure AutoConnectOnStartMouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
-    procedure AutoReConnectMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
-    procedure AutoConnectEinwahlMouseMove(Sender: TObject;
-      Shift: TShiftState; X, Y: Integer);
-    procedure Label30MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure GroupBox18MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure ipmail_nameMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure ipmail_adressMouseMove(Sender: TObject; Shift: TShiftState;
-      X, Y: Integer);
     procedure atomrepeatClick(Sender: TObject);
     procedure AtomboxClick(Sender: TObject);
     procedure ipmail_activeClick(Sender: TObject);
     procedure rightClick(Sender: TObject);
-    procedure leftMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure Button10Click(Sender: TObject);
-    procedure noBalloonMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure MultilinkClick(Sender: TObject);
     procedure setupmodemsClick(Sender: TObject);
-    procedure setupmodemsMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure MultilinkMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure opendaysMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure DFUEClick(Sender: TObject);
     procedure DFUE2Click(Sender: TObject);
     procedure keepfilesClick(Sender: TObject);
@@ -495,7 +496,7 @@ var
 
 implementation
 
-uses Unit1, addons, registry, floating, DateUtils, ZLIBArchive, RegExpr, tarifverw;
+uses Unit1, addons, registry, floating, DateUtils, ZLIBArchive, RegExpr, tarifverw, inilang, messagestrings;
 
 {$R *.dfm}
 
@@ -543,64 +544,6 @@ begin
  end;
 end;
 
-
-
-procedure TLCXPSettings.SuchenClick(Sender: TObject);
-begin
- open.Filter:= 'exe|*.exe';
- open.execute;
- Pfad.text := lowercase(open.filename);
- if((AnsiContainstext(pfad.text,'discountsurfer.exe')= false)
-      and (AnsiContainstext(pfad.text,'oleco.exe')=false)
-      and (AnsiContainstext(pfad.text,'smartsurfer.exe')=false)
-      )  then
- begin Pfad.text := 'Fehler !!! '+extractfilename(Pfad.Text)+' ist ein ungültiger Eintrag!'; hauptfenster.oleco.Visible:= true; hauptfenster.oleco.Enabled:= false; hauptfenster.smurf.Visible:= false; end
- else
- begin
- hauptfenster.prog:= Extractfilename(Pfad.text);
- hauptfenster.path:= Extractfilepath(Pfad.text);
- Dsurfer.EditLabel.Caption:= 'Titelleiste von ' +  hauptfenster.prog;
-
- //welcher button im Hauptfenster?
-  if ansicontainstext(hauptfenster.prog,'smartsurfer') then
-  begin
-  hauptfenster.oleco.Visible:= false;
-  hauptfenster.smurf.Visible:= true;
-  end
-  else
-  if ansicontainstext(hauptfenster.prog,'oleco') or ansicontainstext(hauptfenster.prog,'discountsurfer') then
-  begin
-  hauptfenster.oleco.Visible:= true;
-  hauptfenster.smurf.Visible:= false;
-  end
-  else
-  begin
-  hauptfenster.oleco.Visible:= false;
-  hauptfenster.smurf.Visible:= false;
-  end
-
- end;
-
- if ansicontainstext(pfad.Text,'oleco.exe') or ansicontainstext(pfad.Text,'discountsurfer.exe')
- then
- begin
- radiobutton1.Enabled:= true;
- radiobutton2.Enabled:= true;
- radiobutton3.Enabled:= true;
- selectshowtime.Enabled:= true;
- label1.Enabled:= true;
- end
- else
- begin
- radiobutton1.Enabled:= false;
- radiobutton2.Enabled:= false;
- radiobutton3.Enabled:= false;
- selectshowtime.Enabled:= false;
- label1.Enabled:= false;
- end;
-
-end;
-
 procedure TLCXPSettings.filluserbox;
 var
   counter: integer;
@@ -615,43 +558,15 @@ begin
   begin
     userbox1.items[counter]:=Webservform.crypter.DoDecrypt(userbox1.items[counter])
   end;
-  userbox1.items.Append('<neuer User>');
+  userbox1.items.Append(misc(M118,'M118'));
   userbox1.ItemIndex := 0;
 
 end;
 
-procedure TLCXPSettings.selectshowtimeChange(Sender: TObject);
-begin
-try
-    settings.writeinteger('Einwahl anzeigen','grenze',selectshowtime.value); {Einwahlgrenze}
-except
-    settings.writeinteger('Einwahl anzeigen','grenze',0); {Einwahlgrenze} 
-end;
-    radiobutton1.checked:= false;
-    radiobutton2.checked:= false;
-end;
-
-
-procedure TLCXPSettings.RadioButton3Enter(Sender: TObject);
-begin
-selectshowtime.enabled:= true;
-end;
-
-procedure TLCXPSettings.RadioButton2Enter(Sender: TObject);
-begin
-selectshowtime.enabled:= false;
-end;
-
-procedure TLCXPSettings.RadioButton1Enter(Sender: TObject);
-begin
-selectshowtime.enabled:= false;
-end;
-
 procedure TLCXPSettings.BitBtn1Click(Sender: TObject);
 begin
-bitBtn1.caption:= 'OK';
-edit2.Text:= getlocalips;
-//ShowMessage('Wenn Sie bereits online sind, dann ist eine der ausgegebenen IP-Adressen nicht lokal. Diese bitte löschen !!');
+  bitBtn1.caption:= misc(M119,'M119');
+  edit2.Text:= getlocalips;
 end;
 
 procedure copy(sourcefilename, targetfilename: string);
@@ -675,56 +590,6 @@ Var
 procedure TLCXPSettings.beendenClick(Sender: TObject);
 var i: integer;
 begin
- //Pfad Speichern
- if fileexists(Pfad.text) then
- begin
-  settings.writestring('Pfad von Oleco/ Discountsurfer','path',Extractfilepath(pfad.text));
-  settings.writestring('Pfad von Oleco/ Discountsurfer','prog',Extractfilename(pfad.text));
-  hauptfenster.path:=Extractfilepath(pfad.text);
-  hauptfenster.prog:=Extractfilename(pfad.text);
-  if ansicontainstext(hauptfenster.prog,'oleco') or ansicontainstext(hauptfenster.prog,'discountsurfer')
-  then
-  begin
-   hauptfenster.Oleco.visible:= true;
-   hauptfenster.oleco.enabled:= true;
-   hauptfenster.smurf.visible:= false;
-  end
-  else
-  if ansicontainstext(hauptfenster.prog,'smartsurfer') then
-  begin
-   hauptfenster.smurf.visible:= true;
-   hauptfenster.smurf.enabled:= true;
-   hauptfenster.Oleco.visible:= false;
-  end;
-
-  if Dsurfer.Text= '' then
-  begin
-  showmessage('Die Titelzeile von '+Extractfilename(Pfad.text)+' ist nicht eingetragen. Bitte korrigieren !!');
-  exit;
-  end
-  else hauptfenster.MM2_6.enabled:= true;
- end
- else //wenn datei nicht existtiert
- begin
- if ((not (pfad.text='')) and (not ansicontainstext(pfad.text,'fehler !!!')) and (not ansicontainstext(pfad.text,'nicht angegeben')))
- then showmessage(Extractfilename(Pfad.text) +' konnte nicht gefunden werden !')
- else
-   begin
-     settings.writestring('Pfad von Oleco/ Discountsurfer','path','');
-     settings.writestring('Pfad von Oleco/ Discountsurfer','prog','');
-     hauptfenster.path:='';
-     hauptfenster.prog:='';
-     hauptfenster.smurf.visible:= false;
-     hauptfenster.Oleco.visible:= false;
-     hauptfenster.oleco.enabled:= false;
-     Hauptfenster.MM2_6.enabled:= false; //Fernsteurung im menu
-   end
-
- end;
-
- //Einwahl anzeigen ? - > Value
- if Radiobutton1.Checked then settings.writeinteger('Einwahl anzeigen','grenze',-2)
- else if Radiobutton2.Checked then settings.writeinteger('Einwahl anzeigen','grenze',-1);
 
   //IP speichern
   settings.writestring('lokale IP','IP',Edit2.text);
@@ -736,11 +601,10 @@ begin
  //Server Autostart
   settings.writebool('Server','Autostart',serverautostart.Checked);
   settings.writestring('Server','Port',Poedit.text);
-  settings.writestring('Server','Titel',DSurfer.Text);
 
   settings.writeBool('LeastCoster','autostart',autostart.Checked);
   settings.writeBool('LeastCoster','minimiert',minimiert.checked);
-  settings.writebool('LeastCoster','autoread', autoread.checked);
+
   settings.writebool('LeastCoster','MinimizeOnClose', minimize.checked);
   settings.writeinteger('LeastCoster','DaysToSaveLogs', DaysToSaveLogs.Value);
   Hauptfenster.DaysToSaveLogs:= DaysToSaveLogs.Value;
@@ -819,8 +683,7 @@ begin
 
   settings.writebool('Autotrennen','Kontingente',autotrennen_konti.checked);
 
-  Hauptfenster.AutoBlackList := AutoBlacklist.value;
-  Hauptfenster.AutoBlackListScore := AutoBlacklistScore.value;
+  settings.WriteBool('AutoBlacklist','active',UseAutoBlacklist.checked);
   settings.Writeinteger('AutoBlacklist','Value',AutoBlacklist.Value);
   settings.Writeinteger('AutoBlacklist','Score',AutoBlacklistScore.Value);
 
@@ -886,13 +749,13 @@ begin
    begin
         Coloroff:= clgray;
         LEDOn:= false;
-        Hint:= 'Das automatische Atomzeit-Update ist deaktiviert';
+        Hint:= misc(M45,'M45');
    end
    else
    begin
         Coloroff:= clMaroon;
         LEDOn:= false;
-        Hint:= 'Noch kein Atomzeit-Update seit dem Start.';
+        Hint:= misc(M122,'M122');
    end;
 
   settings.writeinteger('Onlinecheck','Vorschub',forwardtable.Value);
@@ -911,11 +774,11 @@ begin
    if (noFeeds.checked <> hauptfenster.nofeeds) then
     if nofeeds.checked then
      begin
-          hauptfenster.ledRss.ColorOff:= clGray; hauptfenster.ledrss.Hint:= 'RSSFeeds sind deaktiviert.';
+          hauptfenster.ledRss.ColorOff:= clGray; hauptfenster.ledrss.Hint:= misc(M46,'M46');
      end
      else
      begin
-          hauptfenster.ledRss.ColorOff:= clMaroon; hauptfenster.ledrss.Hint:= 'Noch kein Rss-Feed Update seit dem Start.';
+          hauptfenster.ledRss.ColorOff:= clMaroon; hauptfenster.ledrss.Hint:= misc(M123,'M123');
      end;
 
    hauptfenster.nofeeds:= nofeeds.checked;
@@ -941,13 +804,6 @@ begin
  atomserver.clear;
  atomserver.Assign(serverbox.items);
 
-//AutoCheck
- if not autoread.Checked then
- begin
-  if ansicontainstext(hauptfenster.prog,'oleco') or ansicontainstext(hauptfenster.prog,'discountsurfer')
-    then hauptfenster.MM1_4_1.enabled:= true else hauptfenster.MM1_4_1.enabled:= false;
- end;
- 
  //Leere Zeilen in der Rsslist löschen
  if rsslist.RowCount > 3 then
  for i:= rsslist.RowCount-2 downto 1 do
@@ -979,42 +835,31 @@ end;
 procedure TLCXPSettings.StartButtonClick(Sender: TObject);
 var i, Code: integer;
 begin
-Val(PoEdit.Text, I, Code);
-  { Error during conversion to integer? }
-  if Code <> 0 then
-  begin
-    MessageDlg('Fehler bei der Eingabe des Ports', mtWarning, [mbOk], 0);
-    Poedit.Text:= '85';
-    exit;
-  end;
-webservform.startbutton.click;
-stopbutton.Enabled:= true;
-startbutton.Enabled:=false;
+  Val(PoEdit.Text, I, Code);
+  if Code <> 0 then exit;   { Error during conversion to integer? }
+
+  webservform.startbutton.click;
+  stopbutton.Enabled:= true;
+  startbutton.Enabled:=false;
 end;
 
 procedure TLCXPSettings.StopButtonClick(Sender: TObject);
 begin
-Webservform.Stopbutton.click;
-stopbutton.Enabled:= false;
-startbutton.Enabled:=true;
-
+  Webservform.Stopbutton.click;
+  stopbutton.Enabled:= false;
+  startbutton.Enabled:=true;
 end;
 
 procedure TLCXPSettings.userbox1Change(Sender: TObject);
 var i: integer;
 begin
-
  i:= userbox1.ItemIndex;
- if not (userbox1.items[i]= '<neuer User>') then username.Text:= userbox1.items[i]
+ if not (userbox1.items[i]= misc(M118,'M118')) then username.Text:= userbox1.items[i]
   else username.Text:='';
  pw.Text:= '';
  pw2.Text:= '';
  oldpw.Text:= '';
- 
 end;
-
-
-
 
 procedure TLCXPSettings.Button1Click(Sender: TObject);
 var oldpw_buf, pw_buf: string;
@@ -1029,18 +874,18 @@ if UserSettings.sectionexists(webservform.crypter.doencrypt(username.text)) then
 begin
 if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1) = UserSettings.readstring(webservform.crypter.doencrypt(username.text),webservform.crypter.doencrypt('pass'),'no password!!')) then
   if (pw.text=pw2.text) then UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1))
-    else showmessage('Die beiden Passwortfelder stimmen nicht überein !')
-  else showmessage('Falsches Passwort !!')
+    else showmessage(misc(M124,'M124'))
+  else showmessage(misc(M125,'M125')) //falsches PW
 end
 else if (pw.text=pw2.text) then
 begin
-UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1));
-username.Text:='';
-oldpw.Text:='';
-pw.Text:= '';
-pw2.Text:= '';
+  UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1));
+  username.Text:='';
+  oldpw.Text:='';
+  pw.Text:= '';
+  pw2.Text:= '';
 end
-else showmessage('Die beiden Passwortfelder stimmen nicht überein !');
+else showmessage(misc(M124,'M124'));
 
 end;
 filluserbox;
@@ -1058,9 +903,8 @@ if UserSettings.sectionexists(webservform.crypter.doencrypt(username.text)) then
   oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
   if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1)) = UserSettings.readstring(webservform.crypter.doencrypt(username.text),webservform.crypter.doencrypt('pass'),'no password!!') then
     UserSettings.erasesection(webservform.crypter.DoEncrypt(username.text))
-      else showmessage('Falsches Passwort !!')
+      else showmessage(misc(M125,'M125'))
   end;
-
 end;
 filluserbox;
 username.Text:='';
@@ -1070,161 +914,13 @@ pw2.Text:= '';
 
 end;
 
-
 procedure TLCXPSettings.autostartClick(Sender: TObject);
-
 begin
 // letzter Parameter: true, wenn key zu löschen/ false wenn nicht
 if autostart.checked = true then
 CreateAutorunEntry(Application.Title,'"'+ParamStr(0)+'"', akRun,false)
 else
 CreateAutorunEntry(Application.Title,'"'+ParamStr(0)+'"', akRun,true);
-end;
-
-procedure TLCXPSettings.AtomboxMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Atomzeit:' +chr(13)+chr(10)+
-'Damit es nicht zu unnötigen Tarifüberschreitungen kommt, muss die Uhrzeit des Computers immer genau sein. Mit dem Atomzeit-Update wird die Uhrzeit bei Online-Verbindung mit einem Time-Server abgeglichen.'+
- #13#10+
-'Achtung: andere Atomzeit-Update Programme und die Windows-Funktion müssen deaktiviert sein.';
-end;
-
-procedure TLCXPSettings.autostartMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Autostart:' +chr(13)+chr(10)
-              + 'LeastCoster XP startet mit Windows. Wenn der Webserver nach dem Einschalten der Rechners zur Verfügung stehen soll, dann unbedingt aktivieren !'
-end;
-
-procedure TLCXPSettings.minimiertMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'minimiert:' +chr(13)+chr(10)
-              + 'Der LeastCoster startet nur in der Tray-Leiste (kleines graues Symbol, das bei Onlineverbindung gelb wird). Ein Klick darauf maximiert den LeastCoster.'
-end;
-
-procedure TLCXPSettings.PfadMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-memo1.Text:= 'Pfad:' +chr(13)+chr(10)
-              + 'Welches Programm soll als Ausweichprogramm benutzt werden, sollten keine Tarife vorliegen ? '+
-              'Wird Oleco oder Discountsurfer gewählt, so kann das Kostenprotokoll, in das LeastCoster-eigene Protokoll importiert werden. (> Protokolle > Automatisch importieren)';
-end;
-
-procedure TLCXPSettings.Label1MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Tarife mit Einwahlgebühr:' +chr(13)+chr(10)
-              + '(a) werden ausgeblendet wenn die gewünschte Surfdauer kleiner ist als eingestellt' + chr(13)+chr(10)+
-                '(b) werden immer bzw. (c) nie angezeigt' + chr(13)+chr(10) +
-                'empfohlene:Einstellung: 15 min';
-end;
-
-procedure TLCXPSettings.selectshowtimeMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Tarife mit Einwahlgebühr:' +chr(13)+chr(10)
-              + '(a) werden ausgeblendet wenn die gewünschte Surfdauer kleiner ist als eingestellt' + chr(13)+chr(10)+
-                '(b) werden immer bzw. (c) nie angezeigt' + chr(13)+chr(10) +
-                'empfohlene:Einstellung: 15 min';
-end;
-
-procedure TLCXPSettings.RadioButton2MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Tarife mit Einwahlgebühr:' +chr(13)+chr(10)
-              + '(a) werden ausgeblendet wenn die gewünschte Surfdauer kleiner ist als eingestellt' + chr(13)+chr(10)+
-                '(b) werden immer bzw. (c) nie angezeigt' + chr(13)+chr(10) +
-                'empfohlene:Einstellung: 15 min';
-end;
-
-procedure TLCXPSettings.RadioButton1MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Tarife mit Einwahlgebühr:' +chr(13)+chr(10)
-              + '(a) werden ausgeblendet wenn die gewünschte Surfdauer kleiner ist als eingestellt' + chr(13)+chr(10)+
-                '(b) werden immer bzw. (c) nie angezeigt' + chr(13)+chr(10) +
-                'empfohlene:Einstellung: 15 min';
-end;
-
-procedure TLCXPSettings.Label2MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Protokolldateien:' +chr(13)+chr(10)
-       +' ... werden im eingestellten Ordner abgelegt.'+chr(13)+chr(10)
-       +'Achtung: Sie werden bei jeder Aktualisierung überschrieben, um eine bestimmte Datei zu behalten, muss sie umbenannt oder kopiert werden.';
-end;
-
-procedure TLCXPSettings.AusgabeMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Protokolldateien:' +chr(13)+chr(10)
-       +' ... werden im eingestellten Ordner abgelegt.'+chr(13)+chr(10)
-       +'Achtung: Sie werden bei jeder Aktualisierung überschrieben, um eine bestimmte Datei zu behalten, muss sie umbenannt oder kopiert werden.';
-end;
-
-procedure TLCXPSettings.autoreadMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Automatischer Kostenprotokoll-Import:' +chr(13)+chr(10)
-              +'Nach jeder Verbindung werden die Daten von Oleco::NetLCR bzw. Discountsurfer autmatisch importiert. So ist eine chronologische Auflistung im Kostenprotokoll gewährleistet.';
-
-end;
-
-procedure TLCXPSettings.DSurferMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Titelleiste:' +chr(13)+chr(10)
-              +'Welchen Namen hat das Oleco/ Discountsurfer-Fenster ?'+chr(13)+chr(10)
-              +'Vor allem wichtig zur Fernsteuerung über das WebInterface.' +chr(13)+chr(10)
-              +'Achtung: Groß- und Kleinschreibung beachten !';
-end;
-
-procedure TLCXPSettings.CheckBox1MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'keinen Onlinecheck' +chr(13)+chr(10)+
-              ' ... die WebInterface-Funktionen "verbinden" und "trennen" sind dann nicht möglich !! '+chr(13)+chr(10)+
-              ' ... kein Atomzeitabgleich, kein Update, keine Onlineanzeige möglich ';;
-end;
-
-procedure TLCXPSettings.RASMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-memo1.text:= 'Onlinecheck' +chr(13)+chr(10)+
-              '(a) RAS: empfohlen - Überprüfung der DFÜ-Verbindungen (auch für Win9x)' +chr(13)+chr(10)+
-              '(b) IP: Überprüfung der IP-Adressen des Rechners. Es müssen die Adressen eingetragen werden, die der Rechner hat, wenn er offline ist. Der Button hilft beim herausfinden.';
-end;
-
-procedure TLCXPSettings.PoEditMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Port' +chr(13)+chr(10)+
-              'Auf welchem Port soll das WebInterface bereitgestellt werden ?' +chr(13)+chr(10)+
-              'Empfohlene Einstellung: 85'+chr(13)+chr(10)+
-              'Die Adresse des Interfaces ist dann http://{servername}:{port}, z.B. http://192.168.0.1:85 .';
-end;
-
-procedure TLCXPSettings.StartButtonMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Start' +chr(13)+chr(10)+
-             '... startet das WebInterface';
-end;
-
-procedure TLCXPSettings.StopButtonMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Stop' +chr(13)+chr(10)+
-             '... beendet das WebInterface';
-end;
-
-procedure TLCXPSettings.serverautostartMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Automatischer Start' +chr(13)+chr(10)+
-             '... startet das WebInterface bei Programmstart.';
 end;
 
 function ActiveCaption(): string;
@@ -1240,133 +936,26 @@ begin
     Len := GetWindowTextLength(Handle) + 1;
     SetLength(Title, Len);
     GetWindowText(Handle, PChar(Title), Len);
-//    showmessage(TrimRight(Title));
     ActiveCaption := TrimRight(Title);
   end;
 end;
 
-procedure TLCXPSettings.Button2Click(Sender: TObject);
-var titel: string;
-begin
-titel:= 'test';
-if fileexists(Pfad.text)=false then showmessage('Die Datei '+Pfad.text +' gibt es nicht.'+ chr(13) + 'Bitte die Einstellungen überprüfen')
-else
-  begin
-   //starten
-   ShellExecute(0,'open',Pchar(Pfad.text),Pchar ('') ,nil,SW_hide);
-
-   sleep(6000);
-
-   //Titel bestimmen
-   titel := activecaption();
-   if not ansicontainstext(titel,'LeastCosterXP') then askedclose(PAnsichar(titel))
-   else showmessage('Titel nicht gefunden. Bitte Versuch wiederholen.');
-   DSurfer.Text:= titel;
-
-
-   end;
-
-
-
-end;
-
-procedure TLCXPSettings.Button2MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
- memo1.text:= 'Titel herausfinden' +chr(13)+chr(10)+
-              'Oleco/Discountsurfer wird geöffnet, die Titelleiste wird ausgelesen, anschließend wird Oleco wieder geschlossen. Der Vorgang dauert ca. 3s .';
-end;
-
 procedure TLCXPSettings.serverdeleteClick(Sender: TObject);
 begin
-serverbox.Items.Delete(serverbox.ItemIndex);
-serverbox.ItemIndex:=0;
+  serverbox.Items.Delete(serverbox.ItemIndex);
+  serverbox.ItemIndex:=0;
 end;
 
 procedure TLCXPSettings.ServeraddbuttonClick(Sender: TObject);
 begin
-if serveradd.text <> '' then serverbox.Items.append(serveradd.Text);
-serveradd.text:='';
-end;
-
-procedure TLCXPSettings.IPMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-memo1.text:= 'Onlinecheck' +chr(13)+chr(10)+
-              '(a) RAS: empfohlen - Überprüfung der DFÜ-Verbindungen (auch für Win9x)' +chr(13)+chr(10)+
-              '(b) IP: Überprüfung der IP-Adressen des Rechners. Es müssen die Adressen eingetragen werden, die der Rechner hat, wenn er offline ist. Der Button hilft beim herausfinden.';
-end;
-
-procedure TLCXPSettings.Label6MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Atomzeit-Server' +chr(13)+chr(10)+
-              'Server, die das SNTP-Protokoll unterstützen, können hier eingetragen werden.'
-            + 'Der LeastCoster XP versucht die Liste in angegebener Reihenfolge abzuarbeiten, wenn ein Server nicht antwortet.';
-end;
-
-procedure TLCXPSettings.serverdeleteMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Atomzeit-Server löschen' +chr(13)+chr(10)+
-              '... löscht den markierten Server.';
-end;
-
-procedure TLCXPSettings.ServeraddbuttonMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Atomzeit-Server hinzufügen' +chr(13)+chr(10)+
-              '... fügt den in der Textbox eingetragenen Server der Liste hinzu.' +chr(13)+chr(10)
-              +'ACHTUNG: Es findet keine Überprüfung statt !';
-end;
-
-procedure TLCXPSettings.ServerboxEnter(Sender: TObject);
-begin
-memo1.text:= 'Atomzeit-Server' +chr(13)+chr(10)+
-              'Server, die das SNTP-Protokoll unterstützen, können hier eingetragen werden.'
-            + 'Der LeastCoster XP versucht die Liste in angegebener Reihenfolge abzuarbeiten, wenn ein Server nicht antwortet.';
-
+  if serveradd.text <> '' then serverbox.Items.append(serveradd.Text);
+  serveradd.text:='';
 end;
 
 procedure TLCXPSettings.showatomlogClick(Sender: TObject);
 begin
-if fileexists(extractfilepath(paramstr(0))+'log\atomzeit.txt') then
-ShellExecute(0,'open',Pchar(extractfilepath(paramstr(0))+'log\atomzeit.txt'),'' ,nil,SW_SHOWNORMAL)
-//ShellExecute(0,'open',Pchar('notepad.exe'),Pchar(extractfilepath(paramstr(0))+'log\atomzeit.txt') ,nil,SW_SHOWNORMAL)
-end;
-
-procedure TLCXPSettings.showatomlogMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Logfile anzeigen' +chr(13)+chr(10)+
-              'Die Änderungen der Uhrzeit werden in der Datei "Atomzeit.txt" protokolliert.'
-              + #13#10
-              +'Ein Klick auf diesen Button öffnet das Logfile';
-end;
-
-procedure TLCXPSettings.updateboxMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Programmupdates' +chr(13)+chr(10)+
-              '... Überprüfung auf Updates (empfohlen)';
-end;
-
-procedure TLCXPSettings.Label10MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Einfärbung der Balkendiagramme' +chr(13)+chr(10)+
-              'Die Balkendiagramme werden blau, gelb und rot eingefärbt. Hier einzutragen sind die vorrausichtlichen Monatskosten.' +chr(13)+chr(10)+
-              'Dier Wert wird intern durch die Anzahl der Tage geteilt. Eine Einfärbung findet dann statt wenn der jeweilige Anteil an einem Tag überschritten wurde.' +chr(13)+chr(10)+
-              'Standardwerte: gelb: 10 | rot 15';
-end;
-
-procedure TLCXPSettings.gelbMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-memo1.text:= 'Einfärbung der Balkendiagramme' +chr(13)+chr(10)+
-              'Die Balkendiagramme werden blau, gelb und rot eingefärbt. Hier einzutragen sind die vorrausichtlichen Monatskosten.' +chr(13)+chr(10)+
-              'Dier Wert wird intern durch die Anzahl der Tage geteilt. Eine Einfärbung findet dann statt wenn der jeweilige Anteil an einem Tag überschritten wurde.' +chr(13)+chr(10)+
-              'Standardwerte: gelb: 10 | rot 15';
+  if fileexists(extractfilepath(paramstr(0))+'log\atomzeit.txt') then
+    ShellExecute(0,'open',Pchar(extractfilepath(paramstr(0))+'log\atomzeit.txt'),'' ,nil,SW_SHOWNORMAL)
 end;
 
 procedure TLCXPSettings.gelbChange(Sender: TObject);
@@ -1392,49 +981,14 @@ end;
 
 procedure TLCXPSettings.Button3Click(Sender: TObject);
 begin
-gelb.text := '10';
-rot.Text  := '15';
+ gelb.text := '10';
+ rot.Text  := '15';
 end;
 
 procedure TLCXPSettings.edvorwahlKeyPress(Sender: TObject; var Key: Char);
 begin
 if not (Key in ['0'..'9',',','#','*','+','-', Char(VK_BACK)]) then
   Key := #0;
-end;
-
-procedure TLCXPSettings.modemlabelMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
- memo1.text:= 'Modem' +chr(13)+chr(10)+
-              'Welches Modem wird verwendet um ins Internet zu gehen ?';
-end;
-
-procedure TLCXPSettings.vorwahllabelMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
- memo1.text:= 'Modem-Vorwahlstring' +chr(13)+chr(10)+
-              'Manchmal ist es notwendig eine Nummer vorzuwählen um z.B. eine Telefonanlage zu passieren.' + #13#10
-             +'z.B.: "0,"';
-end;
-
-procedure TLCXPSettings.DeviceDropDown(Sender: TObject);
-begin
- memo1.text:= 'Modem' +chr(13)+chr(10)+
-              'Welches Modem wird verwendet um ins Internet zu gehen ?';
-end;
-
-procedure TLCXPSettings.BitBtn1MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
- memo1.text:= 'IP-Adresse' +chr(13)+chr(10)+
-              'Listet alle dem Computer zugewiesenen IP-Adressen auf.'+
-              'Sofern der Rechner Offline ist und er KEINE Netzwerkverbindungen besitzt muss hier  der Wert 127.0.0.1 erscheinen ...'+
-              'Einstellung hat keine Relevanz - nur zur Info ... ';
-end;
-
-procedure TLCXPSettings.PfadChange(Sender: TObject);
-begin
-DSurfer.Text:= '';
 end;
 
 procedure TLCXPSettings.FormClose(Sender: TObject;
@@ -1447,8 +1001,6 @@ hauptfenster.enabled:= true;
 if not hauptfenster.Visible then hauptfenster.Visible:= true;
 LCXPSettings.Release;
 LCXPSettings:= nil;
-
-
 end;
 
 procedure TLCXPSettings.Button5Click(Sender: TObject);
@@ -1470,20 +1022,6 @@ if fileexists(filename) then
     erase(f);
   end;
 end;
-end;
-
-procedure TLCXPSettings.RssListMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Adressen:' +chr(13)+chr(10)
-              +'Tragen Sie hier den Namen und die Adresse Ihrer zu beobachtenden RSS-Feeds ein. Die Reihenfolge wird wie sie hier ist übernommen und im Menü angezeigt.';
-end;
-
-procedure TLCXPSettings.RssUpdateMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Update' +chr(13)+chr(10)
-              +'Die eingestellten RSS-Feeds werden bei Online-Verbindungen aktualisiert und dann alle xx Minuten neu heruntergeladen.';
 end;
 
 procedure TLCXPSettings.rssupClick(Sender: TObject);
@@ -1664,9 +1202,8 @@ multilink.visible:= false;
 end;
 PageControl1.ActivePageIndex:= 0;
 
-groupbox14.Visible:=  hauptfenster.MM3_2.checked;
 groupbox11.Visible:=  hauptfenster.MM3_2.checked;
-tabsheet2.tabVisible :=  hauptfenster.MM3_2.checked;
+
 tabsheet4.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet5.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet6.tabVisible :=  hauptfenster.MM3_2.checked;
@@ -1678,51 +1215,13 @@ tabsheet9.tabVisible :=  hauptfenster.MM3_2.checked;
 for i:= 0 to hauptfenster.pluglist.count-1 do
     Plugbox.Items.Append(hauptfenster.pluglist.strings[i]);
 
-memo1.Text:= 'Hinweise:' +chr(13)+chr(10)+
-              ' werden beim Zeigen auf ein Objekt angezeigt.';
+memo1.Text:= Misc(Help00,'Help00');
 filluserbox;
 
   username.text:= '';
   pw.text:= '';
   pw2.Text:='';
 
-
-pfad.text:= settings.Readstring('Pfad von Oleco/ Discountsurfer','path','')+settings.Readstring('Pfad von Oleco/ Discountsurfer','prog','');
-DSurfer.Text:= settings.ReadString('Server','Titel','');
-open.initialDir:= settings.Readstring('Pfad von Oleco/ Discountsurfer','path','C:\Programme\');
-
-if ansicontainstext(pfad.Text,'oleco.exe') or ansicontainstext(pfad.Text,'discountsurfer.exe')
- then
- begin
- radiobutton1.Enabled:= true;
- radiobutton2.Enabled:= true;
- radiobutton3.Enabled:= true;
- selectshowtime.Enabled:= true;
- label1.Enabled:= true;
- end
- else
- begin
- radiobutton1.Enabled:= false;
- radiobutton2.Enabled:= false;
- radiobutton3.Enabled:= false;
- selectshowtime.Enabled:= false;
- label1.Enabled:= false;
- end;
-
- showtime := settings.Readinteger('Einwahl anzeigen','grenze',20); {Einwahlgrenze}
-
-//Oleco/DSurfer
-if settings.Readstring('Einwahl anzeigen','grenze','') <> '' then
-begin
-val(settings.Readstring('Einwahl anzeigen','grenze',''),showtime,code);
-if code = 0 then
-if showtime > 0 then begin selectshowtime.value:= showtime; radiobutton3.Checked:= true; selectshowtime.enabled:= true; end;
-if ((showtime = -1)or (settings.Readstring('Einwahl anzeigen','grenze','') = '') ) then begin radiobutton2.checked:= true; selectshowtime.value:= 0; selectshowtime.enabled:= false; end;    {an}
-if ( (settings.Readstring('Einwahl anzeigen','grenze','') ='-2') or (showtime=0) ) then begin radiobutton1.checked:= true; selectshowtime.value:= 0; selectshowtime.enabled:= false; end;{aus}
-end;
-
-lasttime.text:= settings.ReadString('lastdate','1','') + ' ' + settings.ReadString('lastdate','3','');
-autoread.checked:= settings.readbool('LeastCoster','autoread',false);
 noballoon.Checked:= hauptfenster.noBalloon;
 
 time.checked:= Hauptfenster.clock.Visible;
@@ -1818,12 +1317,13 @@ Setonlineinfowidth.checked:= settings.ReadBool('OnlineInfo', 'AutoWidth', true);
   autotrennenwait.Checked   := settings.Readbool('Autotrennen','UseDelay',false);
   autotrennenwaitval.value  := settings.Readinteger('Autotrennen','Delay',30);
   autotrennenconfirm.checked:= settings.Readbool('Autotrennen','WaitForUser',true);
-  DisconnectSeconds.Value:= Hauptfenster.DisconnectSeconds; 
-  autotrennen_konti.checked:= settings.Readbool('Autotrennen','Kontingente',true);
+  DisconnectSeconds.Value   := Hauptfenster.DisconnectSeconds;
+  autotrennen_konti.checked := settings.Readbool('Autotrennen','Kontingente',true);
   autotrennenclick(self);
 
-  AutoBlacklist.value:= hauptfenster.AutoBlacklist;
-  AutoBlacklistScore.value:= hauptfenster.AutoBlacklistScore;
+  UseAutoBlacklist.checked  := settings.ReadBool('AutoBlacklist','active',false);
+  AutoBlacklist.value       := settings.Readinteger('AutoBlacklist','Value',10);
+  AutoBlacklistScore.value  := settings.Readinteger('AutoBlacklist','Score',50);
 
   //Leerlauf
   leerlauf.Checked       := settings.readbool('Leerlauf','Enabled',true);
@@ -1842,7 +1342,6 @@ Setonlineinfowidth.checked:= settings.ReadBool('OnlineInfo', 'AutoWidth', true);
   //Ausschalten nach Auto-Trennen
   AutoAus.ItemIndex:= settings.Readinteger('Ausschalten','Value',0);
 
-  
   //AutoVerbinden
   AutoConnectOnStart.Checked := settings.Readbool('AutoConnect','AutoStartConnect',false);
   AutoReConnect.Checked      := settings.Readbool('AutoConnect','AutoReConnect',false);
@@ -1885,95 +1384,15 @@ offlineprogs:= TStringlist.create;
 SettingsOnline.ReadSections(onlineprogs);
 SettingsOffline.ReadSections(offlineprogs);
 
-
 loadprogramstrings('');
 programs_style.ItemIndex:= 2;
 programs_online.checked:= true;
 
 if hauptfenster.pluglist.Count > 0 then
 begin
-plugbox.Selected[0]:= true;
-PlugOnMouseUp;
+  plugbox.Selected[0]:= true;
+  PlugOnMouseUp;
 end;
-
-end;
-
-procedure TLCXPSettings.OnlineInfoMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'OnlineInfo' +chr(13)+chr(10)
-              +'Das Infofenster wird angezeigt, sobald sie eine Verbindung mit LeastCosterXP herstellen.';
-end;
-
-procedure TLCXPSettings.bgeditMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'OnlineInfo' +chr(13)+chr(10)
-              +'Geben Sie hier das gewünschte Hintergrundbild an.'
-              + #13#10+'Maße: 180x200 pixel (groß) | 65x200 pixel (klein) ';
-end;
-
-procedure TLCXPSettings.scaleMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Umskalieren' +chr(13)+chr(10)
-              +'Das Hintergrundbild wird auf die Fenstergröße skaliert. Auch beim minimieren. Wenn nicht angehakt, wird das Bild auf die Größe der Gesamtansicht skaliert.';
-end;
-
-procedure TLCXPSettings.resetdateClick(Sender: TObject);
-begin
- resetlastdate:= true;
- lasttime.text:= '';
-end;
-
-procedure TLCXPSettings.lasttimeMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Datum des letzten Imports' +chr(13)+chr(10)
-              +'Damit nicht jedes mal das komplette Kostenprotokoll von Oleco::NetLCR oder Discountsurfer importiert wird, merkt sich LeastCosterXP, welche Datensätze bereits importiert wurden.';
-end;
-
-procedure TLCXPSettings.resetdateMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Reset - Datum des letzten Imports' +chr(13)+chr(10)
-              +'Es kann in seltenen Fällen vorkommen, dass Daten doppelt importiert wurden. Aus diesem Grunde kann man unter Export, alle Daten von Oleco::NetLCR o. Discountsurfer wieder löschen.'
-              +' Damit aber ältere Datensätze wieder importiert werden, muss das Datum zurückgesetzt werden.'
-              +chr(13)+chr(10)
-              +'Achtung: Werden die Daten nicht vor dem nächsten Import gelöscht, kommt es zu Dopplungen im Kostenprotokoll.';
-end;
-
-procedure TLCXPSettings.forwardtableMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Anzeige im Voraus' +chr(13)+chr(10)
-              +'Im Online-Modus wird die Tariftabelle für die kommenden Minuten angezeigt. Hier wird angezeigt, wie lange im Voraus die Tabelle berechnet wird.'
-              +chr(13)+chr(10)
-              +'Achtung: Auch die Warnung, wenn ein Tarif teurer wird, endet oder ein billigerer Tarif zur Verfügung steht, richtet sich anch dieser Zeit.';
-end;
-
-procedure TLCXPSettings.hidetrayMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Verstecken nach dem Online- Wechsel' +chr(13)+chr(10)
-              +'Das Hauptfenster wird nach dem Onlinewechsel minimiert und im Tray versteckt.';
-
-end;
-
-procedure TLCXPSettings.pleopenClick(Sender: TObject);
-var name: string;
-begin
-name := Extractfilepath(pfad.text) + 'ple.cst';
-if fileexists(name) then
-  ShellExecute(0,'open',Pchar(name),Pchar ('') ,nil,SW_NORMAL);
-end;
-
-procedure TLCXPSettings.pledeleteClick(Sender: TObject);
-var name: string;
-begin
-name:= Extractfilepath(pfad.text) + 'ple.cst';
-if not deletefiletorecyclebin(name)
-then showmessage('Fehler beim Löschen von '+name+'.');
 end;
 
 procedure TLCXPSettings.programs_suchenClick(Sender: TObject);
@@ -1991,14 +1410,14 @@ begin
 
 if not fileexists(programs_path.text) then
 begin
-     showmessage('Fehler: Die Datei '+extractfilename(programs_path.text)+'existiert nicht !');
+     showmessage(extractfilename(programs_path.text)+' ' + misc(M43,'M43'));
      exit;
 end;
 
 if programs_path.text <> '' then
 begin
       //namen
-     if programs_add.Caption = '&speichern' then
+     if programs_add.Caption = misc(M128,'M128') then
      begin
           section:= programs.Items.Strings[programs.itemindex];
           if mode_change then
@@ -2023,10 +1442,10 @@ begin
 
      //speichern
      if programs_online.Checked then
-        ini:= SettingsOnline//TmemInifile.Create(Extractfilepath(paramstr(0)) + 'online.ini')
+        ini:= SettingsOnline
      else
      if programs_offline.Checked then
-        ini:= SettingsOffline;//TmemInifile.Create(Extractfilepath(paramstr(0)) + 'offline.ini');
+        ini:= SettingsOffline;
 
      if programs_online.Checked or programs_offline.Checked then
      begin
@@ -2037,7 +1456,7 @@ begin
           ini.WriteInteger(section,'Days',opendays.Value);
           if not ini.ValueExists(section,'DaytoRun')
            then ini.WriteDate(section,'DaytoRun',Dateof(now));
-           
+
           if programs_online.checked then
              ini.WriteBool(section,'kill',programs_kill.checked);
 
@@ -2048,11 +1467,11 @@ begin
            3: ini.WriteString(section,'Style','HIDE');
           end;
 
-     end; 
+     end;
 
 loadprogramstrings(section);
 
-programs_add.Caption:= '&hinzufügen';
+programs_add.Caption:= misc(M129,'M129');
 bitbtn2.click;
 end;
 end;
@@ -2070,11 +1489,11 @@ if ( (programs.ItemIndex <> 0) and
    begin
     if(programs.ItemIndex > onlineprogs.Count+2) then
           begin
-            ini:= SettingsOffline;//TmemInifile.Create(Extractfilepath(paramstr(0)) + 'offline.ini');
+            ini:= SettingsOffline;
             mode_online:= false;
           end
     else  begin
-            ini:= SettingsOnline;//TmemInifile.Create(Extractfilepath(paramstr(0)) + 'online.ini');
+            ini:= SettingsOnline;
             mode_online:= true;
           end;
      section:= programs.items.strings[programs.itemindex];
@@ -2084,7 +1503,7 @@ if ( (programs.ItemIndex <> 0) and
      programs_timeout.Value:= ini.ReadInteger(section,'timeout',0);
      style                 := ini.ReadString(section,'style','SHOWNORMAL');
      opendays.Value        := ini.ReadInteger(section,'Days',1);
-     
+
      if style = 'MAXIMIZE' then programs_style.itemindex:= 0
      else
      if style = 'MINIMIZE' then programs_style.itemindex:= 1
@@ -2106,7 +1525,7 @@ if ( (programs.ItemIndex <> 0) and
           programs_kill.enabled:= false;
      end;
 
-    programs_add.Caption:= '&speichern';
+    programs_add.Caption:= misc(M128,'M128');
    end
    else bitbtn2.click;
 
@@ -2114,16 +1533,16 @@ end;
 
 procedure TLCXPSettings.programs_offlineClick(Sender: TObject);
 begin
-programs_kill.Enabled:= false;
-if (( programs_add.caption = '&speichern') and mode_online)  then mode_change:= true
-else mode_change:= false;
+  programs_kill.Enabled:= false;
+  if (( programs_add.caption = misc(M128,'M128')) and mode_online)  then mode_change:= true
+  else mode_change:= false;
 end;
 
 procedure TLCXPSettings.programs_onlineClick(Sender: TObject);
 begin
-programs_kill.Enabled:= true;
-if ((programs_add.caption = '&speichern') and not mode_online) then mode_change:= true
-else mode_change:= false;
+  programs_kill.Enabled:= true;
+  if ((programs_add.caption = misc(M128,'M128')) and not mode_online) then mode_change:= true
+  else mode_change:= false;
 end;
 
 procedure TLCXPSettings.BitBtn3Click(Sender: TObject);
@@ -2137,9 +1556,9 @@ if ( (programs.ItemIndex <> 0) and
    then
    begin
     if(programs.ItemIndex > onlineprogs.Count+2) then
-            ini:= SettingsOffline //TmemInifile.Create(Extractfilepath(paramstr(0)) + 'offline.ini')
+            ini:= SettingsOffline
     else
-            ini:= SettingsOnline; //TmemInifile.Create(Extractfilepath(paramstr(0)) + 'online.ini');
+            ini:= SettingsOnline; 
     ini.EraseSection(programs.Items.Strings[programs.itemindex]);
 
     if(programs.ItemIndex > onlineprogs.Count+2) then
@@ -2156,55 +1575,18 @@ end;
 
 procedure TLCXPSettings.BitBtn2Click(Sender: TObject);
 begin
-programs.ItemIndex:= 0;
-programs_online.checked:= true;
-programs_offline.checked:= false;
-programs_path.text:='';
-programs_params.text:= '';
-programs_mintime.value:= 1;
-programs_timeout.Value:= 0;
-programs_kill.Checked:= false;
-programs_style.itemindex:= 2;
-programs_kill.Enabled:= true;
-programs_add.Caption:= '&hinzufügen';
-opendays.Value:= 0;
-end;
-
-procedure TLCXPSettings.programs_pathMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Programmstart' +chr(13)+chr(10)+
-              ' ... wechselt der Rechner in den OFFLINE- oder ONLINE-Zustand können Programme gestartet werden';
-end;
-
-procedure TLCXPSettings.programs_timeoutMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Timeout' +chr(13)+chr(10)+
-              ' ... gibt die Zeit in Millisekunden an, die vor dem Start des Programms gewartet werden soll.';
-end;
-
-procedure TLCXPSettings.programs_mintimeMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'mindeste Basiszeit' +chr(13)+chr(10)+
-              ' ... nur wenn die eingestellte Surfdauer den Mindestwert in Minuten überschreitet, dann wird das Programm gestartet. ';
-end;
-
-procedure TLCXPSettings.programs_paramsMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Parameter' +chr(13)+chr(10)+
-              ' Manche Programme können Kommandozeilenparameter verarbeiten, um spezielle Funktionen auszuführen. Diese Parameter sind der Hilfe des jeweiligen Programms zu entnehmen.';
-end;
-
-procedure TLCXPSettings.programs_killMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'Programm wieder beenden' +chr(13)+chr(10)+
-              ' Ein Programm, das bei ONLINE-Verbindungen gestartet wird, kann beendet werden.'
-              +#13#10 +
-              'Achtung: Das Programm wird dann einfach "abgeschossen". Es kann zu Datenverlust kommen.';
+  programs.ItemIndex:= 0;
+  programs_online.checked:= true;
+  programs_offline.checked:= false;
+  programs_path.text:='';
+  programs_params.text:= '';
+  programs_mintime.value:= 1;
+  programs_timeout.Value:= 0;
+  programs_kill.Checked:= false;
+  programs_style.itemindex:= 2;
+  programs_kill.Enabled:= true;
+  programs_add.Caption:= misc(M129,'M129');
+  opendays.Value:= 0;
 end;
 
 procedure TLCXPSettings.SoundOnButClick(Sender: TObject);
@@ -2219,73 +1601,20 @@ begin
  end;
 end;
 
-procedure TLCXPSettings.SoundOnMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Sound' +chr(13)+chr(10)
-              +'Beim Verbinden und Trennen kann je ein Sound abgespielt werden. Dieser muss im Wave- Format vorliegen';
-end;
-
 procedure TLCXPSettings.noFeedsClick(Sender: TObject);
 begin
-if noFeeds.checked then
-   begin
-        Rsslist.Enabled:= false;
-        rssup.Enabled:= false;
-        rssdown.Enabled:= false;
-        button4.Enabled:= false;
-        button5.enabled:= false;
-        rssupdate.Enabled:= false;
-        label13.Enabled:= false;
-        label_min.Enabled:= false;
-        label49.Enabled:= false;
-        label50.Enabled:= false;
-        Rss_maxitems.Enabled:= false;
-        Rss_oldItems.enabled:= false;
-   end
-   else
-   begin
-        Rsslist.Enabled:= true;
-        rssup.Enabled:= true;
-        rssdown.Enabled:= true;
-        button4.Enabled:= true;
-        button5.enabled:= true;
-        rssupdate.Enabled:= true;
-        label13.Enabled:= true;
-        label_min.Enabled:= true;
-        label49.Enabled:= true;
-        label50.Enabled:= true;
-        Rss_maxitems.Enabled:= true;
-        Rss_oldItems.enabled:= true;
-   end;
-end;
-
-procedure TLCXPSettings.usernameMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
- memo1.Text:= 'User' +chr(13)+chr(10)
-              +'Geben Sie hier dem Namen an, mit dem sich ein User beim WebInterface einloggen soll.';
-end;
-
-procedure TLCXPSettings.oldpwMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
- memo1.Text:= 'altes Passwort' +chr(13)+chr(10)
-              +'Wenn Sie einen neuen Benutzer hinzufügen, dann können sie dieses Feld leer lassen. Zum Ändern und Löschen, aber muss Ihnen das Benutzerpasswort bekannt sein.';
-end;
-
-procedure TLCXPSettings.pw2MouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
- memo1.Text:= 'Passwortbestätigung' +chr(13)+chr(10)
-              +'Bitte geben Sie hier ihr Passwort ein zweites Mal ein. Dies ist eine Sicherheitsabfrage, um zu vermeiden, dass Sie sich beim ersten mal vertippt haben';
-end;
-
-procedure TLCXPSettings.pwMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
-begin
- memo1.Text:= 'neues Passwort' +chr(13)+chr(10)
-              +'Tragen Sie hier das Passwort ein. Möchten Sie ihr Passwort ändern, dann muss zusätzlich das zuvor gültige Passwrot angegeben werden (siehe ''altes Passwort'').';
+   Rsslist.Enabled:= not noFeeds.checked;
+   rssup.Enabled:= not noFeeds.checked;
+   rssdown.Enabled:= not noFeeds.checked;
+   button4.Enabled:= not noFeeds.checked;
+   button5.enabled:= not noFeeds.checked;
+   rssupdate.Enabled:= not noFeeds.checked;
+   label13.Enabled:= not noFeeds.checked;
+   label_min.Enabled:= not noFeeds.checked;
+   label49.Enabled:= not noFeeds.checked;
+   label50.Enabled:= not noFeeds.checked;
+   Rss_maxitems.Enabled:= not noFeeds.checked;
+   Rss_oldItems.enabled:= not noFeeds.checked;
 end;
 
 procedure TLCXPSettings.PageControl1Change(Sender: TObject);
@@ -2298,60 +1627,6 @@ case pagecontrol1.ActivePageIndex of
     end;
 else if (assigned(floatingW) and not isonline) then floatingW.close;
 end;
-end;
-
-procedure TLCXPSettings.GroupBox2MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Automatisches Trennen' +chr(13)+chr(10)
-              +'Diese Einstellungen werden bei Online-Wechsel automatisch gesetzt und können dann aber individuell für die Verbindung angepasst werden.';
-end;
-
-procedure TLCXPSettings.autotrennenMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-if sender = autotrennen_konti then
-memo1.Text:= 'Trennen zum Ende von Kontingenten' +chr(13)+chr(10)
-              +'60s bevor ein Kontingent aufgebraucht ist, wird ein Hinweis angezeigt und die Verbindung nach 30s getrennt. Bei Volumenkontingenten wird getrennt sobald weniger als 512kB übrig sind.'
-else
-memo1.Text:= 'Trennen zum Ende des Tarifes' +chr(13)+chr(10)
-              +'Das automatisches Trennen wird zur Uhrzeit des Tarifendes programmiert.';
-end;
-
-procedure TLCXPSettings.autotrennenaskMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= '... mit Nachfrage' +chr(13)+chr(10)
-              +'Wenn gewünscht erscheint ein Hinweisfenster vor dem Trennen der Verbindung.';
-end;
-
-procedure TLCXPSettings.autotrennenwaitMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Warten bis zum Trennen' +chr(13)+chr(10)
-              +'... das Hinweisfenster wartet xx Sekunden und trennt nach Ablauf dieser Zeit, wenn nicht zuvor auf ''Stop'' gedrückt wurde.';
-end;
-
-procedure TLCXPSettings.autotrennenconfirmMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Nur nach Bestätigung' +chr(13)+chr(10)
-              +'Das Hinweisfenster erscheint, aber es wird nur getrennt, wenn ''Jetzt trennen'' gedrückt wird.';
-end;
-
-procedure TLCXPSettings.AutoEinwahlMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Ausschalten' +chr(13)+chr(10)
-              +'Nach dem automatischen Trennen kann der Computer im jeweiligen Modus ausgeschaltet werden.' +#13#10 +
-              'Auch dies ist die Standardeinstellung, die bei jedem Online-Wechsel aktiviert wird.';
-end;
-
-procedure TLCXPSettings.leerlaufminutenMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
- memo1.Text:= 'Trennen bei Leerlauf und Leerlaufzeit' +chr(13)+chr(10)
-              + 'Werden keine Daten über die aktuelle Verbindung empfangen oder gesendet, so ist die Verbindung im Leerlauf und verursacht unnötig Kosten. Nach einer zulässigen Leerlaufzeit von xx Minuten können solche Verbindungen getrennt werden.';
 end;
 
 procedure TLCXPSettings.autotrennenaskClick(Sender: TObject);
@@ -2378,7 +1653,6 @@ begin
  label29.Enabled:= false;
  autotrennenwait.Enabled:= false;
  autotrennenconfirm.Enabled:= false;
-// autotrennenwaitclick(sender);
 end
 else
 begin
@@ -2433,33 +1707,9 @@ if fileexists(extractfilepath(paramstr(0))+'www\log\log.txt') then
 ShellExecute(0,'open',Pchar('notepad.exe'),Pchar(extractfilepath(paramstr(0))+'www\log\log.txt') ,nil,SW_SHOWNORMAL)
 end;
 
-procedure TLCXPSettings.LeerlaufschwelleMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  memo1.Text:= 'Leerlaufschwelle' +chr(13)+chr(10)
-              + 'Die Verbindung wird als im Leerlauf betrachtet, wenn die Summe aus gesendeten und empfangenen Bytes kleiner als diese Leerlaufschwelle ist.'
-              +  ' Je kleiner dieser Wert ist, desto empfindlicher ist die Leerlauferkennung auf Datenbewegungen. Ist dieser Wert zu groß gewählt, so wird nahezu jede Verbindung gemeldet.' +#13#10
-              + 'Empfehlung: 500 bytes/Sekunde';
-end;
-
-procedure TLCXPSettings.DaystoSaveLogsMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  memo1.Text:= 'Log-Dateien' +chr(13)+chr(10)
-              + 'Datensätze die älter als xx Tage sind werden automatisch aus den Log-Dateien entfernt.'
-              +  'So wird vermieden, dass die Log-Dateien immer länger werden.'
-end;
-
 procedure TLCXPSettings.Button8Click(Sender: TObject);
 begin
 ShellExecute(GetActiveWindow,'open','rundll32.exe','shell32.dll,Control_RunDLL ncpa.cpl,,4',NIL,SW_NORMAL);
-end;
-
-procedure TLCXPSettings.Button8MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Netzwerk- und DFÜ-Verbindungen' +chr(13)+chr(10)
-              + '... öffnet das Fenster Netzwerk- und DFÜ-Verbindungen.';
 end;
 
 procedure TLCXPSettings.AutoSurfdauerChange(Sender: TObject);
@@ -2469,60 +1719,6 @@ str(Autosurfdauer.Position mod 60, zeit_min);
 str(Autosurfdauer.Position div 60, zeit_std);
 
 label33.Caption:= zeit_std + ' h ' + zeit_min + ' min';
-end;
-
-procedure TLCXPSettings.AutoConnectOnStartMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Auto-Verbinden bei Programmstart' +chr(13)+chr(10)
-              +'Beim Programmstart wird sofort begonnen zu wählen. Schlägt die Verbindung fehl, wird nach Ablauf des Einwahl-Intervals ein neuer Einwahlversuch gestartet.';
-end;
-
-procedure TLCXPSettings.AutoReConnectMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Wiedereinwahl' +chr(13)+chr(10)
-              +'Wird die Verbindung getrennt, so kann eine automatische Wiedereinwahl mit dem billigsten Tarif veranlasst werden. Dies wird versucht, bis der Rechner online ist oder durch drücken der ''stop''-Taste abgebrochen.';
-end;
-
-procedure TLCXPSettings.AutoConnectEinwahlMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= '... Einwahlgebühr berücksichtigen' +chr(13)+chr(10)
-              + 'Nur wenn dieser Haken gesetzt ist, dann wird auch ein Tarif mit Einwahlgebühr gewählt, ansonsten wir gesucht bis ein Tarif ohne EWG gefunden ist.';
-end;
-
-procedure TLCXPSettings.Label30MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Basiszeit bei Auto-Einwahl' +chr(13)+chr(10)
-              + 'Da der Computer automatisch entscheiden muss, welches der für ihn billgste Tarif ist, muss er die gewünschte Basiszeit selbst setzen. Dieser Wert wird hier angegeben.';
-end;
-
-procedure TLCXPSettings.GroupBox18MouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'eMail-Benachrichtigung' +chr(13)+chr(10)
-              + 'Sie können sich per email benachrichtigen lassen, wenn der Computer eine Verbindung herstellt. So haben Sie immer Zugriff auf Dienste des Computers wenn Sie unterwegs sind.'
-              + ' Voraussetzung ist ein eingerichtetes eMail-Programm (welches unter Umständen eine Warnmeldung beim Versenden gibt > bitte deaktivieren).';
-end;
-
-procedure TLCXPSettings.ipmail_nameMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'eMail-Benachrichtigung : Name' +chr(13)+chr(10)
-              +'Bitte tragen Sie Ihren Namen ein, wie er in der eMail erscheinen soll.'
-              +#13#10
-              +'Ist das Feld leer findet KEIN Versand statt.'
-end;
-
-procedure TLCXPSettings.ipmail_adressMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'eMail-Benachrichtigung : Adresse' +chr(13)+chr(10)
-              +'Bitte tragen Sie Ihre eMail-Adresse hier ein.'
-              +#13#10
-              +'Eine Überprüfung der Adresse findet nicht statt. Für Spamming übernimmt der Autor keine Haftung.'
 end;
 
 procedure TLCXPSettings.atomrepeatClick(Sender: TObject);
@@ -2550,14 +1746,14 @@ begin
 newplace:= 0;
  if sender = right then
  begin
- if serverbox.itemindex = serverbox.Items.count -1 then exit//newplace:= 0
+ if serverbox.itemindex = serverbox.Items.count -1 then exit
  else
  if serverbox.itemindex < serverbox.Items.count -1 then newplace:= serverbox.itemindex + 1;
  end
  else
 if sender = left then
  begin
- if serverbox.itemindex = 0 then exit//newplace:= serverbox.Items.count -1
+ if serverbox.itemindex = 0 then exit
  else
  if serverbox.itemindex > 0 then newplace:= serverbox.itemindex - 1;
  end;
@@ -2568,31 +1764,10 @@ if sender = left then
 
 end;
 
-procedure TLCXPSettings.leftMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-if sender = left then
-   memo1.Text:= 'Atomzeit-Server: Sortierung' +chr(13)+chr(10)
-              +'... verschiebt den ausgewählten Server nach oben in der Prioritätenliste.'
-else
-if sender = right then
-   memo1.Text:= 'Atomzeit-Server: Sortierung' +chr(13)+chr(10)
-              +'... verschiebt den ausgewählten Server nach unten in der Prioritätenliste.';
-
-
-end;
-
 procedure TLCXPSettings.Button10Click(Sender: TObject);
 begin
 if directoryexists(ExtractFilePath(ParamStr(0)) + 'BackUp') then
   Shellexecute( 0, nil, Pchar(ExtractFilePath(ParamStr(0)) + 'BackUp'), nil, nil, SW_SHOW)
-end;
-
-procedure TLCXPSettings.noBalloonMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  memo1.Text:= 'keine BalloonTips' +chr(13)+chr(10)
-              +'BalloonTips sind diese kleinen gelben Fensterchen, die hin und wieder neben der Windows-Uhr erscheinen. Möchten Sie, dass der LeastCosterXP nicht auf diesem Wege mit Ihnen kommuniziert, so können Sie diese Hinweise hier ausschalten.'
 end;
 
 procedure TLCXPSettings.MultilinkClick(Sender: TObject);
@@ -2606,29 +1781,6 @@ begin
  Device.Enabled:= not setupmodems.Checked;
  Device2.Enabled:= not setupmodems.Checked;
  multilink.enabled:= not setupmodems.Checked;
-end;
-
-procedure TLCXPSettings.setupmodemsMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  memo1.Text:= 'benutze Einstellungen der DFÜ-Verbindung' +chr(13)+chr(10)
-              +'Die Modem-Einstellungen der DFÜ-Verbindung blieben unangetastet. Nur in Ausnahmefällen nötig, wenn Kanalbündelung erwünscht ist und das zeite Modem einen identischen Namen hat. Die DFÜ-Verbindung LeastCosterXP MUSS dann korrekt eingerichtet sein.'
-              + #13#10 + 'Empfehlung: daektiviert lassen, solange es keine Probleme gibt';
-end;
-
-procedure TLCXPSettings.MultilinkMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.Text:= 'Multilink' +chr(13)+chr(10)
-              +'... auch Kanalbündelung genannt. Es kann ein zweites Modem angegeben werden um dieses zu realisieren. Nicht unter Windows 9x. Ist dieser Haken gesetzt, so wird die Verbindung beim nächsten Mal mit beidem Modems aufgebaut.'+#13#10
-              +'Ist diese Option gesetzt ist das Zuschalten des 2. Kanales möglich.';
-end;
-
-procedure TLCXPSettings.opendaysMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-memo1.text:= 'alle xx Tage' +chr(13)+chr(10)+
-              ' ... das Programm wird nur jeden x-ten Tag nach dem letzten Aufruf ausgeführt';
 end;
 
 procedure TLCXPSettings.DFUEClick(Sender: TObject);
@@ -2701,18 +1853,12 @@ begin
      arch.CloseArchive;
      arch.free;
    end;
-
-
    hauptfenster.pluglist.Append(folder);
    Plugbox.Items.Append(folder);
-
    plugbox.selected[plugbox.Items.IndexOf(folder)]:= true;
    PlugOnMouseUp;
-
   end;
-
-  end;
-
+ end;
 end;
 
 Procedure TLCXPSettings.PlugOnMouseUp;
@@ -2738,23 +1884,20 @@ for i:= 0 to Plugbox.Count-1 do
 
               if ini.ReadBool('General', 'enabled', true) then
               begin
-                   state.caption:= 'aktiviert';
-                   activate.caption:= 'deaktivieren';
+                   state.caption:= misc(M130,'M130');
+                   activate.caption:= misc(M133,'M133');
                    state.font.color:= clgreen;
                    activate.Tag:= 1;
               end
               else
               begin
-                   state.caption:= 'deaktiviert';
-                   activate.caption:= 'aktivieren';
+                   state.caption:= misc(M132,'M132');
+                   activate.caption:= misc(M131,'M131');
                    state.font.color:= clred;
                    activate.Tag:= 0;
               end;
-
-
               ini.Free;
               end;
-
   end;
 end;
 end;
@@ -2762,7 +1905,7 @@ end;
 procedure TLCXPSettings.PlugBoxMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-plugOnMouseUp;
+  plugOnMouseUp;
 end;
 
 procedure TLCXPSettings.unregisterClick(Sender: TObject);
@@ -2772,18 +1915,13 @@ for i:= 0 to PlugBox.Count-1 do
     if plugbox.Selected[i] then
     begin
      if not DelDir(extractfilepath(paramStr(0)) + 'PlugIns\'+plugbox.items.Strings[i])
-     then showmessage('Sie müssen nun das Verzeichnis PlugIns\'+ plugbox.items.strings[i] + ' löschen !');
+      then showmessage(misc(M134,'M134')+' PlugIns\'+ plugbox.items.strings[i]);
      hauptfenster.pluglist.Delete(hauptfenster.pluglist.IndexOf(plugbox.items.Strings[i]));
-
      plugbox.DeleteSelected;
-
      if plugbox.count > 0 then plugbox.selected[0]:= true;
-
      PlugOnMouseUp;
-
      break;
     end;
-
 end;
 
 procedure TLCXPSettings.plugSettingsClick(Sender: TObject);
@@ -2803,10 +1941,9 @@ for i:=0 to plugbox.Count-1 do
 
   if ini.SectionExists('Settings') then
   begin
-   run:= run + ini.ReadString('Settings','run','');
-   param:= ini.ReadString('Settings','param','');
-
-  ShellExecute(0,'open',Pchar(run),Pchar(param) ,nil,SW_SHOWNORMAL);
+     run:= run + ini.ReadString('Settings','run','');
+     param:= ini.ReadString('Settings','param','');
+     ShellExecute(0,'open',Pchar(run),Pchar(param) ,nil,SW_SHOWNORMAL);
   end;
    ini.Free;
   end;
@@ -2829,11 +1966,8 @@ for i:= 0 to PlugBox.Count-1 do
        else
            ini.WriteBool('General', 'enabled', false);
      ini.free;
-
      plugOnmouseup;
-
     end;
-
 end;
 
 procedure TLCXPSettings.FontBClick(Sender: TObject);
@@ -2851,7 +1985,6 @@ begin
   floatingw.Font.size:=FontDialog1.Font.Size;
   floatingw.ozeit.Font.size:=  floatingw.Font.Size*2;
   floatingw.ocostlabel.font.size:= floatingw.Font.Size *2;
-
  end;
 end;
 end;
@@ -2913,7 +2046,6 @@ if (Autol.Keys[1] <> '') then
          or ((start = von) and (ende = bis)) )
         then begin check:= true; break; end;
      end;
-
   end;
 
 if not check then
@@ -2983,10 +2115,559 @@ AutoD_day.enabled   := AutoD.checked;
 AutoD_start.Enabled := AutoD.checked;
 AutoD_End.Enabled   := AutoD.checked;
 Autol.Enabled       := AutoD.checked;
-if not AutoD.checked then autol.font.Color:= clsilver else autol.font.Color:= clWindowText; 
+if not AutoD.checked then autol.font.Color:= clsilver else autol.font.Color:= clWindowText;
 Button9.Enabled     := AutoD.checked;
 Button11.Enabled    := AutoD.checked;
+end;
 
+procedure TLCXPSettings.UseAutoBlacklistClick(Sender: TObject);
+begin
+Label40.enabled             := UseAutoBlacklist.checked;
+Label42.enabled             := UseAutoBlacklist.checked;
+Label43.enabled             := UseAutoBlacklist.checked;
+Label44.enabled             := UseAutoBlacklist.checked;
+Label45.enabled             := UseAutoBlacklist.checked;
+AutoBlacklist.Enabled       := UseAutoBlacklist.checked;
+AutoBlackListScore.Enabled  := UseAutoBlacklist.checked;
+end;
+
+procedure TLCXPSettings.autostartMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+memo1.Text:= misc(Help01,'Help01');
+end;
+
+procedure TLCXPSettings.minimiertMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+memo1.Text:= misc(Help02,'Help02');
+end;
+
+procedure TLCXPSettings.minimizeMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+memo1.Text:= misc(Help03,'Help03');
+end;
+
+procedure TLCXPSettings.timeMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+memo1.Text:= misc(Help04,'Help04');
+end;
+
+procedure TLCXPSettings.noBalloonMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+memo1.Text:= misc(Help05,'Help05');
+end;
+
+procedure TLCXPSettings.DaystoSaveLogsMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+memo1.Text:= misc(Help06,'Help06');
+end;
+
+procedure TLCXPSettings.Button3MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+memo1.Text:= misc(Help07,'Help07');
+end;
+
+procedure TLCXPSettings.Button7MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+memo1.Text:= misc(Help08,'Help08');
+end;
+
+procedure TLCXPSettings.gelbMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+memo1.Text:= misc(Help09,'Help09');
+end;
+
+procedure TLCXPSettings.setupmodemsMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+memo1.text:= misc(Help19,'Help19');
+end;
+
+procedure TLCXPSettings.modemlabelMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+memo1.text:= misc(Help20,'Help20');
+end;
+
+procedure TLCXPSettings.MultilinkMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+memo1.text:= misc(Help21,'Help21');
+end;
+
+procedure TLCXPSettings.vorwahllabelMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+memo1.text:= misc(Help22,'Help22');
+end;
+
+procedure TLCXPSettings.Button8MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help23,'Help23');
+end;
+
+procedure TLCXPSettings.Label15MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help24,'Help24');
+end;
+
+procedure TLCXPSettings.hidetrayMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help25,'Help25');
+end;
+
+procedure TLCXPSettings.OpenWebsiteMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help26,'Help26');
+end;
+
+procedure TLCXPSettings.GroupBox11MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help27,'Help27');
+end;
+
+procedure TLCXPSettings.BitBtn3MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help28,'Help28');
+end;
+
+procedure TLCXPSettings.programs_killMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help29,'Help29');
+end;
+
+procedure TLCXPSettings.programs_pathMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help30,'Help30');
+end;
+
+procedure TLCXPSettings.programs_paramsMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help31,'Help31');
+end;
+
+procedure TLCXPSettings.programs_timeoutMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help32,'Help32');
+end;
+
+procedure TLCXPSettings.programs_mintimeMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help33,'Help33');
+end;
+
+procedure TLCXPSettings.opendaysMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help34,'Help34');
+end;
+
+procedure TLCXPSettings.programs_addMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help35,'Help35');
+end;
+
+procedure TLCXPSettings.BitBtn2MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help36,'Help36');
+end;
+
+procedure TLCXPSettings.Label23MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help37,'Help37');
+end;
+
+procedure TLCXPSettings.updateboxMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help38,'Help38');
+end;
+
+procedure TLCXPSettings.keepfilesMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help39,'Help39');
+end;
+
+procedure TLCXPSettings.keepfiles_oneMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help40,'Help40');
+end;
+
+procedure TLCXPSettings.Button10MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help41,'Help41');
+end;
+
+procedure TLCXPSettings.OnlineInfoMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help42,'Help42');
+end;
+
+procedure TLCXPSettings.SetOnlineInfoWidthMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help43,'Help43');
+end;
+
+procedure TLCXPSettings.bgeditMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help44,'Help44');
+end;
+
+procedure TLCXPSettings.FonteditMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help44,'Help45');
+end;
+
+procedure TLCXPSettings.InfoTextMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+   memo1.text:= misc(Help44,'Help46');
+end;
+
+procedure TLCXPSettings.InfoBGMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help47,'Help47');
+end;
+
+procedure TLCXPSettings.InfoSpecialTextMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help48,'Help48');
+end;
+
+procedure TLCXPSettings.GroupBox10MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help49,'Help49');
+end;
+
+procedure TLCXPSettings.leftMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help50,'Help50');
+end;
+
+procedure TLCXPSettings.rightMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help51,'Help51');
+end;
+
+procedure TLCXPSettings.ServerboxEnter(Sender: TObject);
+begin
+ memo1.text:= misc(Help52,'Help52');
+end;
+
+procedure TLCXPSettings.atomrepeatMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help53,'Help53');
+end;
+
+procedure TLCXPSettings.ipmail_activeMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help54,'Help54');
+end;
+
+procedure TLCXPSettings.ipmail_nameMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help55,'Help55');
+end;
+
+procedure TLCXPSettings.ipmail_adressMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help56,'Help56');
+end;
+
+procedure TLCXPSettings.DFUEMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help57,'Help57');
+end;
+
+procedure TLCXPSettings.DFUE2MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help58,'Help58');
+end;
+
+procedure TLCXPSettings.GroupBox8MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+   memo1.text:= misc(Help59,'Help59');
+end;
+
+procedure TLCXPSettings.GroupBox2MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+   memo1.text:= misc(Help60,'Help60');
+end;
+
+procedure TLCXPSettings.autotrennenMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help61,'Help61');
+end;
+
+procedure TLCXPSettings.autotrennen_kontiMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help62,'Help62');
+end;
+
+procedure TLCXPSettings.autotrennenaskMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help63,'Help63');
+end;
+
+procedure TLCXPSettings.autotrennenwaitMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help64,'Help64');
+end;
+
+procedure TLCXPSettings.autotrennenconfirmMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help65,'Help65');
+end;
+
+procedure TLCXPSettings.DisconnectSecondsMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help66,'Help66');
+end;
+
+procedure TLCXPSettings.GroupBox3MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help67,'Help67');
+end;
+
+procedure TLCXPSettings.LeerlaufPlaySoundMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help68,'Help68');
+end;
+
+procedure TLCXPSettings.Label12MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help69,'Help69');
+end;
+
+procedure TLCXPSettings.GroupBox1MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help70,'Help70');
+end;
+
+procedure TLCXPSettings.AutoConnectOnStartMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help71,'Help71');
+end;
+
+procedure TLCXPSettings.AutoReConnectMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help72,'Help72');
+end;
+
+procedure TLCXPSettings.AutoConnectIntervalMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help73,'Help73');
+end;
+
+procedure TLCXPSettings.AutoConnectEinwahlMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+ memo1.text:= misc(Help74,'Help74');
+end;
+
+procedure TLCXPSettings.Label30MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help75,'Help75');
+end;
+
+procedure TLCXPSettings.AutoDMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help76,'Help76');
+end;
+
+procedure TLCXPSettings.AutoLMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+ memo1.text:= misc(Help77,'Help77');
+end;
+
+procedure TLCXPSettings.GroupBox20MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help78,'Help78');
+end;
+
+procedure TLCXPSettings.GroupBox4MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help79,'Help79');
+end;
+
+procedure TLCXPSettings.PoEditMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help80,'Help80');
+end;
+
+procedure TLCXPSettings.StartButtonMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help81,'Help81');
+end;
+
+procedure TLCXPSettings.StopButtonMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help82,'Help82');
+end;
+
+procedure TLCXPSettings.serverautostartMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help83,'Help83');
+end;
+
+procedure TLCXPSettings.GroupBox5MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help84,'Help84');
+end;
+
+procedure TLCXPSettings.usernameMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help85,'Help85');
+end;
+
+procedure TLCXPSettings.oldpwMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help86,'Help86');
+end;
+
+procedure TLCXPSettings.pwMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help87,'Help87');
+end;
+
+procedure TLCXPSettings.pw2MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help88,'Help88');
+end;
+
+procedure TLCXPSettings.GroupBox12MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help89,'Help89');
+end;
+
+procedure TLCXPSettings.noFeedsMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help90,'Help90');
+end;
+
+procedure TLCXPSettings.RssUpdateMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help91,'Help91');
+end;
+
+procedure TLCXPSettings.Rss_maxitemsMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help92,'Help92');
+end;
+
+procedure TLCXPSettings.Rss_oldItemsMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help93,'Help93');
+end;
+
+procedure TLCXPSettings.GroupBox24MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help94,'Help94');
+end;
+
+procedure TLCXPSettings.activateMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help95,'Help95');
+end;
+
+procedure TLCXPSettings.registerMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help96,'Help96');
+end;
+
+procedure TLCXPSettings.unregisterMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help97,'Help97');
+end;
+
+procedure TLCXPSettings.plugSettingsMouseMove(Sender: TObject;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  memo1.text:= misc(Help98,'Help98');
+end;
+
+procedure TLCXPSettings.PoEditKeyPress(Sender: TObject; var Key: Char);
+begin
+if not (Key in ['0'..'9', Char(VK_BACK)]) then
+  Key := #0;
 end;
 
 end.
