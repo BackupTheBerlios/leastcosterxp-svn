@@ -38,7 +38,7 @@ object LCXPSettings: TLCXPSettings
     Top = 0
     Width = 439
     Height = 449
-    ActivePage = TabSheet3
+    ActivePage = TabSheet7
     Align = alTop
     MultiLine = True
     TabOrder = 0
@@ -961,7 +961,7 @@ object LCXPSettings: TLCXPSettings
           Top = 54
           Width = 145
           Height = 21
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 3
           Text = 'Serverliste'
           OnEnter = ServerboxEnter
@@ -1432,7 +1432,7 @@ object LCXPSettings: TLCXPSettings
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1672,7 +1672,7 @@ object LCXPSettings: TLCXPSettings
           AutoComplete = False
           Style = csDropDownList
           DropDownCount = 13
-          ItemHeight = 0
+          ItemHeight = 13
           ItemIndex = 7
           TabOrder = 6
           Text = 't'#228'glich'
@@ -1722,208 +1722,6 @@ object LCXPSettings: TLCXPSettings
           ColWidths = (
             75
             152)
-        end
-      end
-    end
-    object TabSheet5: TTabSheet
-      Caption = 'WebInterface'
-      ImageIndex = 4
-      object GroupBox4: TGroupBox
-        Left = 0
-        Top = 0
-        Width = 431
-        Height = 97
-        Align = alTop
-        Caption = 'WebInterface'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        OnMouseMove = GroupBox4MouseMove
-        object Label5: TLabel
-          Left = 24
-          Top = 24
-          Width = 19
-          Height = 13
-          Caption = 'Port'
-          OnMouseMove = PoEditMouseMove
-        end
-        object serverautostart: TCheckBox
-          Left = 24
-          Top = 60
-          Width = 353
-          Height = 17
-          Caption = 'Server mit LeastCoster XP starten'
-          TabOrder = 3
-          OnMouseMove = serverautostartMouseMove
-        end
-        object PoEdit: TEdit
-          Left = 50
-          Top = 20
-          Width = 53
-          Height = 21
-          TabOrder = 0
-          OnExit = PoEditExit
-          OnKeyPress = PoEditKeyPress
-          OnMouseMove = PoEditMouseMove
-        end
-        object StartButton: TButton
-          Left = 112
-          Top = 21
-          Width = 53
-          Height = 21
-          Caption = '&Start'
-          TabOrder = 1
-          OnClick = StartButtonClick
-          OnMouseMove = StartButtonMouseMove
-        end
-        object StopButton: TButton
-          Left = 176
-          Top = 21
-          Width = 53
-          Height = 21
-          Caption = 'St&op'
-          Enabled = False
-          TabOrder = 2
-          OnClick = StopButtonClick
-          OnMouseMove = StopButtonMouseMove
-        end
-      end
-      object GroupBox5: TGroupBox
-        Left = 0
-        Top = 97
-        Width = 431
-        Height = 153
-        Align = alTop
-        Caption = 'Userverwaltung'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-        OnMouseMove = GroupBox5MouseMove
-        object Label26: TLabel
-          Left = 16
-          Top = 18
-          Width = 238
-          Height = 16
-          Caption = '... zur Benutzung des WebInterface'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object Label7: TLabel
-          Left = 280
-          Top = 72
-          Width = 75
-          Height = 13
-          Caption = 'neues Passwort'
-          OnMouseMove = pwMouseMove
-        end
-        object Label8: TLabel
-          Left = 147
-          Top = 72
-          Width = 68
-          Height = 13
-          Caption = 'altes Passwort'
-          OnMouseMove = oldpwMouseMove
-        end
-        object Label9: TLabel
-          Left = 16
-          Top = 72
-          Width = 48
-          Height = 13
-          Caption = 'Username'
-          OnMouseMove = usernameMouseMove
-        end
-        object userbox1: TComboBox
-          Left = 16
-          Top = 48
-          Width = 170
-          Height = 21
-          Hint = 'W'#228'hlen Sie hier den User aus. '
-          ItemHeight = 13
-          ParentShowHint = False
-          ShowHint = True
-          Sorted = True
-          TabOrder = 0
-          Text = '<neuer User>'
-          OnChange = userbox1Change
-          Items.Strings = (
-            '<neuer User>')
-        end
-        object Button1: TButton
-          Left = 200
-          Top = 48
-          Width = 70
-          Height = 21
-          Caption = 'speichern'
-          TabOrder = 1
-          OnClick = Button1Click
-        end
-        object loeschen: TBitBtn
-          Left = 280
-          Top = 48
-          Width = 70
-          Height = 21
-          Caption = 'l'#246'schen'
-          TabOrder = 2
-          OnClick = loeschenClick
-        end
-        object pw: TEdit
-          Left = 280
-          Top = 88
-          Width = 121
-          Height = 21
-          Hint = '... das gew'#252'nschte Passwort.'
-          ParentShowHint = False
-          PasswordChar = '*'
-          ShowHint = True
-          TabOrder = 5
-          Text = 'pw'
-          OnMouseMove = pwMouseMove
-        end
-        object pw2: TEdit
-          Left = 280
-          Top = 112
-          Width = 121
-          Height = 21
-          Hint = '... das Passwort zu Best'#228'tigung.'
-          ParentShowHint = False
-          PasswordChar = '*'
-          ShowHint = True
-          TabOrder = 6
-          Text = 'pw2'
-          OnMouseMove = pw2MouseMove
-        end
-        object oldpw: TEdit
-          Left = 147
-          Top = 88
-          Width = 121
-          Height = 21
-          Hint = '... das alte Passwort ist zum '#196'ndern n'#246'tig.'
-          ParentShowHint = False
-          PasswordChar = '*'
-          ShowHint = True
-          TabOrder = 4
-          OnMouseMove = oldpwMouseMove
-        end
-        object username: TEdit
-          Left = 16
-          Top = 88
-          Width = 121
-          Height = 21
-          TabOrder = 3
-          Text = 'username'
-          OnMouseMove = usernameMouseMove
         end
       end
     end

@@ -106,15 +106,16 @@ type
     Blacklist: TBitBtn;
     Icons: TImageList;
     Vordergrund: TCheckBox;
-    ApplicationEvents1: TApplicationEvents;
+    applicationevents1: TApplicationEvents;
     Eingabemode: TPanel;
     tarifliste_size: TPanel;
     PBar: TProgressBar;
     Label12: TLabel;
     Label23: TLabel;
+    TaMindestumsatz: TLabeledEdit;
     procedure tarifliste_sizeClick(Sender: TObject);
     procedure EingabemodeClick(Sender: TObject);
-    procedure ApplicationEvents1Deactivate(Sender: TObject);
+    procedure applicationevents1Deactivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure CheckBox8Click(Sender: TObject);
@@ -1587,7 +1588,7 @@ if not (Key in ['0'..'9', Char(VK_BACK)]) then
      Key := #0;            //  dann sofort löschen
 end;
 
-procedure TTaVerwaltung.ApplicationEvents1Deactivate(Sender: TObject);
+procedure TTaVerwaltung.applicationevents1Deactivate(Sender: TObject);
 begin
 if Vordergrund.Checked then
   SetWindowPos(Handle, HWND_TOPMOST, Left,Top, Width,

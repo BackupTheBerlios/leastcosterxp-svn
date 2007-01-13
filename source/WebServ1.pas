@@ -23,7 +23,7 @@ uses
   StrUtils,
   {$ENDIF}
   IniFiles, StdCtrls, ExtCtrls, WinSock, WSocket, WSocketS, HttpSrv,
-  Buttons, CHCrypt, {CHPanel,jpeg,} DateUtils, icsMD5;
+  Buttons, CHCrypt, DateUtils, icsMD5, inilang, messagestrings;
 
 const
   WebServVersion     = 109;
@@ -48,14 +48,12 @@ type
   { all clients. Put private data in TMyHttpConnection class (see above).   }
   TWebServForm = class(TForm)
     HttpServer1: THttpServer;
-    ToolsPanel: TPanel;
     Label3: TLabel;
     ClientCountLabel: TLabel;
     Label5: TLabel;
     StartButton: TButton;
     StopButton: TButton;
     PortEdit: TEdit;
-    Panel2: TPanel;
     username: TEdit;
     pw: TEdit;
     pw2: TEdit;
@@ -67,6 +65,30 @@ type
     Label4: TLabel;
     loeschen: TBitBtn;
     Timer1: TTimer;
+    serverautostart: TCheckBox;
+    GroupBox1: TGroupBox;
+    memo1: TMemo;
+    GroupBox2: TGroupBox;
+    procedure pw2MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure pwMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure oldpwMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure usernameMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure GroupBox1MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure GroupBox2MouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure serverautostartMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure StopButtonMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure StartButtonMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure PortEditMouseMove(Sender: TObject; Shift: TShiftState; X,
+      Y: Integer);
+    procedure PortEditKeyPress(Sender: TObject; var Key: Char);
 
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -197,7 +219,7 @@ begin
           end
           else  tabelle:= tabelle + '<tr><td><font size=-1>';
 
-          if (not(hauptfenster.Liste.Cells[11,i] = 'Webseite') and not(  hauptfenster.Liste.Cells[11,i]=''))
+          if (not(hauptfenster.Liste.Cells[11,i] = misc(M173,'M173')) and not(  hauptfenster.Liste.Cells[11,i]=''))
           then tabelle:= tabelle + '<a href="'+hauptfenster.Liste.Cells[11,i]+'">'+hauptfenster.Liste.Cells[1,i] + '</a></font></td>'
           else tabelle:= tabelle + hauptfenster.Liste.Cells[0,i] + '</font></td>'+#13#10;
 
@@ -214,10 +236,10 @@ begin
                     + '</tr>' + #13#10;
           end;
           tabelle:= tabelle + '</table>'+#13#10;
-  end else tabelle:= '<font size+1><b>Keine Tarife verfügbar (Surfzeit verkleinern ?)</b></font>+#13#10';
+  end else tabelle:= '<font size+1><b>'+misc(M222,'M222')+'</b></font>+#13#10';
 
  Result:= '<FORM METHOD="POST" name="Dialform" ACTION="/cgi-bin/LeastCosterDial?='+user+'">' +#13#10
-		     +'<p align=left><input type="submit" name="action" value="Verbindung wählen"><input type="submit" name="action" value="Aktualisieren"><INPUT TYPE="edit" NAME="basetime" value="'+inttostr(surftime)+'" MAXLENGTH="5"></p>' +#13#10
+		     +'<p align=left><input type="submit" name="action" value="'+misc(M223,'M223')+'"><input type="submit" name="action" value="'+misc(M224,'M224')+'"><INPUT TYPE="edit" NAME="basetime" value="'+inttostr(surftime)+'" MAXLENGTH="5"></p>' +#13#10
 			   +'<p align=center valign=middle>'+#13#10
          + tabelle + #13#10
          +'</p>' +#13#10
@@ -248,14 +270,14 @@ begin
    else options:=options+'<option>'+crypter.DoDecrypt(sections.Strings[i])+'</option>';
 
    count:=UserSettings.ReadInteger(crypter.DoEncrypt(user),'count',0);
-   nachrichten:= '<tr><td><b><a name="lesen">Nachrichten lesen</a></b><hr></td></tr>';
+   nachrichten:= '<tr><td><b><a name="lesen">'+misc(M225,'M225')+'</a></b><hr></td></tr>';
 
    if count >0 then
    for i:= count downto 1 do
    begin
 
    if (crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),'')) <> '') then
-        anhang:= '<b>Anhang: <a href="files\'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'">'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'</a></b> &nbsp;</b>'
+        anhang:= '<b>'+misc(M226,'M226')+': <a href="files\'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'">'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'</a></b> &nbsp;</b>'
    else anhang:= '';
 
    if (UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('gelesen'+inttostr(i)),'1')) = '0'
@@ -274,7 +296,7 @@ begin
     else
     nachrichten:= nachrichten + '<tr><td>'+
         '<input type="checkbox" name="delete'+inttostr(i)+'" value="'+inttostr(i)+'">'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('zeitpunkt'+inttostr(i)),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0)))) + '&nbsp; von : '+
+        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('zeitpunkt'+inttostr(i)),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0)))) + '&nbsp; '+misc(M227,'M227')+' : '+
         crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('sender'+inttostr(i)),''))+ '</b> &nbsp;'+
         anhang+
         '</td></tr>'+ '<tr><td>'+
@@ -284,23 +306,23 @@ begin
   sections.Free;
 
   Result:=  '<p>' +#13#10+
-						'	 <b><a href="#posten">Nachrichten schreiben</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#lesen">Nachrichten lesen</a></b>' +#13#10+
+						'	 <b><a href="#posten">'+misc(M228,'M228')+'</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#lesen">'+misc(M228,'M228')+'</a></b>' +#13#10+
 					  '</p>' +#13#10+
             '<FORM METHOD="POST" ACTION="/cgi-bin/deletemessage.html?='+user+'">' +#13#10+
 						'			<P>' +#13#10+
             '			<TABLE BORDER="0" width="100%" ALIGN="DEFAULT">' +#13#10
            +nachrichten+
-					  '      <tr><td><input type="submit" name="delete" value="markierte Nachrichten löschen" ></td></tr>' +#13#10+
+					  '      <tr><td><input type="submit" name="delete" value="'+misc(M229,'M229')+'" ></td></tr>' +#13#10+
 					  '			</TABLE>' +#13#10+
 					  '			<hr><br>' +#13#10+
-            '			<b><a name="posten">Nachrichten schreiben</a></b>' +#13#10+
+            '			<b><a name="posten">'+misc(M228,'M228')+'</a></b>' +#13#10+
 					  '			<br>' +#13#10+
 					  '			</table>' +#13#10+
 					  '</FORM>' +#13#10+
             '<FORM METHOD="POST" enctype="multipart/form-data" ACTION="/cgi-bin/sendmessage.html?='+user+'">'+#13#10+
             '			<TABLE BORDER="0" width="100%" ALIGN="DEFAULT">'+#13#10+
             '						 <tr>'+#13#10+
-            '						 		 <td>Empfänger:<br> <select size="3" name="to">'+options+'</select></td>'+#13#10+
+            '						 		 <td>'+misc(M231,'M231')+':<br> <select size="3" name="to">'+options+'</select></td>'+#13#10+
             '						 </tr>'+#13#10+
             '						 <tr>'+#13#10+
             '						 		 <td><textarea cols="60" rows="10" name="text" wrap="soft"></textarea></td>'+#13#10+
@@ -309,11 +331,31 @@ begin
             '						 		 <td><input type="file" name="datei" size="60"></input></td>'+#13#10+
             '						 </tr>'+#13#10+
             '						 <TR>'+#13#10+
-            '						 		 <TD><INPUT TYPE="SUBMIT" NAME="Submit" VALUE="Send"></TD>'+#13#10+
+            '						 		 <TD><INPUT TYPE="SUBMIT" NAME="Submit" VALUE="'+misc(M230,'M230')+'"></TD>'+#13#10+
             '							</TR>'+#13#10+
             '			</TABLE>'+#13#10+
             '</FORM>';
 end;
+end;
+
+function LogInForm: string;
+begin
+
+result:= '<FORM METHOD="POST" ACTION="/cgi-bin/LCRXP">'+#13#10+
+         '						<P>'+#13#10+
+				 '      			 <TABLE BORDER="0" ALIGN="DEFAULT">'+#13#10+
+				 '			 				<TR>'+#13#10+
+				 '								<TD>'+misc(M232,'M232')+': </TD><TD><INPUT TYPE="TEXT" NAME="User" MAXLENGTH="25"></TD>'+#13#10+
+				 '							</TR>'+#13#10+
+				 '						 <TR>'+#13#10+
+				 '						 		<TD>'+misc(M233,'M233')+': </TD><TD><INPUT TYPE="password" NAME="Passwort" MAXLENGTH="25"></TD>'+#13#10+
+				 '						 </TR>'+#13#10+
+				 '						 <TR>'+#13#10+
+				 '						 		<TD>&nbsp;</TD><TD><INPUT TYPE="SUBMIT" NAME="Submit" VALUE="'+misc(M230,'M230')+'"></TD>'+#13#10+
+				 '						 </TR>'+#13#10+
+				 '			 </TABLE>'+#13#10+
+				 '		</FORM>'+#13#10;
+
 end;
 
 
@@ -338,7 +380,7 @@ begin
   Result:= AnsireplaceStr(Result,'%%DISCONNECT%%','disconnect.html?='+user+'?=disconnect');
   Result:= AnsireplaceStr(Result,'%%STATUS%%',Hauptfenster.online.Caption);
   Result:= AnsireplaceStr(Result,'%%LAST_STATUS%%', status);
-  Result:= AnsireplaceStr(Result,'%%LOGIN%%', '/cgi-bin/LCRXP');
+  Result:= AnsireplaceStr(Result,'%%LOGINFORM%%', LogInForm);
   Result:= AnsireplaceStr(Result,'%%NOW%%', DateTimeToStr(now));
 
   Result:= AnsireplaceStr(Result,'%%LINK_CONNECT%%',     'basetime.html?='+user);
@@ -487,14 +529,23 @@ end;
 procedure TWebServForm.FormShow(Sender: TObject);
 var    wsi     : TWSADATA;
 begin
-       PortEdit.Text        := '85';
-       ClientCountLabel.Caption := '0';     { Initialize client count caption }
-       wsi := WinsockInfo;                  { Display version info for program and used components }
+//       PortEdit.Text        := '85';
+//       ClientCountLabel.Caption := '0';     { Initialize client count caption }
+//       wsi := WinsockInfo;                  { Display version info for program and used components }
+//
+//{$IFNDEF DELPHI3}
+//        if wsi.lpVendorInfo <> nil then     { A bug in Delphi 3 makes lpVendorInfo invalid }
+//{$ENDIF}
+//        StartButtonClick(Self);             { Automatically start server }
 
-{$IFNDEF DELPHI3}
-        if wsi.lpVendorInfo <> nil then     { A bug in Delphi 3 makes lpVendorInfo invalid }
-{$ENDIF}
-        StartButtonClick(Self);             { Automatically start server }
+ //WebInterface
+ Portedit.text:= settings.ReadString('Server','Port','85');
+ serverautostart.checked:= settings.readbool('Server','Autostart',false);
+ startbutton.Enabled:= false;
+ stopbutton.enabled:= false;
+ if (webservform.HttpServer1.Tag = 0 ) then startbutton.enabled:= true else stopbutton.Enabled:= true;
+
+ ClientCountLabel.Caption := IntToStr(HttpServer1.ClientCount);
 end;
 
 
@@ -524,13 +575,21 @@ end;
 { client.                                                                   }
 { When server is started, we will get OnServerStarted event triggered.      }
 procedure TWebServForm.StartButtonClick(Sender: TObject);
+var i,code: integer;
 begin
-    HttpServer1.DocDir      := Trim(Extractfilepath(paramstr(0))+'www\');
-    HttpServer1.DefaultDoc  := Trim('index.htm');
-    HttpServer1.Port        := Trim(PortEdit.Text);
 
-    HttpServer1.ClientClass := TMyHttpConnection;
-    try
+   Val(PortEdit.Text, I, Code);
+   if Code <> 0 then exit;   { Error during conversion to integer? }
+
+   stopbutton.Enabled:= true;
+   startbutton.Enabled:=false;
+
+   HttpServer1.DocDir      := Trim(Extractfilepath(paramstr(0))+'www\');
+   HttpServer1.DefaultDoc  := Trim('index.htm');
+   HttpServer1.Port        := Trim(PortEdit.Text);
+
+   HttpServer1.ClientClass := TMyHttpConnection;
+   try
         HttpServer1.Start;
     except
         on E:Exception do begin
@@ -546,6 +605,8 @@ end;
 { stop the server. We will get OnServerStopped event triggered.             }
 procedure TWebServForm.StopButtonClick(Sender: TObject);
 begin
+   stopbutton.Enabled:= false;
+   startbutton.Enabled:=true;
    HttpServer1.Stop;
 end;
 
@@ -569,7 +630,7 @@ begin
 
     allowedip:= '';
     servertime:= Datetimetostr(now);
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Server gestartet' +#13#10;
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+misc(M234,'M234') +#13#10;
     status:= buf;
 
     { Save data to a text file }
@@ -597,7 +658,7 @@ begin
 
     allowedip:= '';
 
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Server gestoppt' +#13#10;
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+misc(M235,'M235') +#13#10;
     status:= buf;
 
     { Save data to a text file }
@@ -759,7 +820,7 @@ begin
     begin
       hauptfenster.disconnect;
       if not hauptfenster.noballoon then
-      hauptfenster.tray.ShowBalloonHint('WebServer: Hinweis','Windows wird beendet',bitinfo, 10);
+      hauptfenster.tray.ShowBalloonHint(misc(M236,'M236'),misc(M237,'M237'),bitinfo, 10);
       hauptfenster.hinttimer.Enabled:= true;
     end;
 
@@ -767,65 +828,65 @@ begin
     begin
     user:= ansireplacestr(user,'poweroff','');
 
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ 'Windows ausgeschaltet' +
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ misc(M237,'M237') +
                 #9+ User + '@' + HostName  +#13#10;
     logfile_add(buf);
     status:= buf;
 
     shutter.art:= 'poweroff';
-    shutter.label4.caption:= 'Ausschalten';
-    shutter.Label3.Caption:= 'von '+user;
+    shutter.label4.caption:= misc(M238,'M238');
+    shutter.Label3.Caption:= misc(M232,'M232')+':'+ user;
     end
     else
     if ansicontainsstr(user,'restart') then
     begin
     user:= ansireplacestr(user,'restart','');
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+'Windows neu gestartet' +#9+
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M239,'M239') +#9+
                 #9+ User + '@' + HostName  +#13#10;
     logfile_add(buf);
     status:= buf;
 
     shutter.art:= 'restart';
-    shutter.label4.caption:= 'Neustart';
-    shutter.Label3.Caption:= 'von '+user;
+    shutter.label4.caption:= misc(M240,'M240');
+    shutter.Label3.Caption:= misc(M232,'M232')+':'+user;
     end
     else
     if ansicontainsstr(user,'logoff') then
     begin
     user:= ansireplacestr(user,'logoff','');
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ 'User abgemeldet' +#9+
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ misc(M241,'M241') +#9+
                 #9+ User + '@' + HostName  +#13#10;
     logfile_add(buf);
     status:= buf;
     shutter.art:= 'logoff';
-    shutter.label4.caption:= 'Abmelden';
-    shutter.label3.caption:= 'von '+user;
+    shutter.label4.caption:= misc(M242,'M242');
+    shutter.label3.caption:= misc(M232,'M232')+':'+user;
     end
     else
     if ansicontainsstr(user,'standby') then
     begin
     user:= ansireplacestr(user,'standby','');
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+'Windows ausschalten > Standby' +#9+
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M243,'M243') +#9+
                 #9+ User + '@' + HostName  +#13#10;
     logfile_add(buf);
     status:= buf;
 
     shutter.art:= 'standby';
-    shutter.label4.caption:= 'Standby';
-    shutter.Label3.Caption:= 'von '+user;
+    shutter.label4.caption:= misc(M244,'M244');
+    shutter.Label3.Caption:= misc(M232,'M232')+':'+user;
     end
     else
     if ansicontainsstr(user,'hibernate') then
     begin
     user:= ansireplacestr(user,'hibernate','');
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+'Windows ausschalten > Ruhezustand' +#9+
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M245,'M245') +#9+
                 #9+ User + '@' + HostName  +#13#10;
     logfile_add(buf);
     status:= buf;
 
     shutter.art:= 'ruhezustand';
-    shutter.label4.caption:= 'Ruhezustand';
-    shutter.Label3.Caption:= 'von '+user;
+    shutter.label4.caption:= misc(M246,'M246');
+    shutter.Label3.Caption:= misc(M232,'M232')+':'+user;
     end;
     shutter.show;
 
@@ -906,7 +967,7 @@ begin
 
 { Build the record to write to data file }
     HostName := ClientCnx.PeerAddr;
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Ausgeloggt ' +
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+misc(M247,'M247') +
                 #9+ User + '@' + HostName  +#13#10;
     logfile_add(buf);
     status:= buf;
@@ -965,7 +1026,7 @@ begin
 
 { Build the record to write to data file }
 
-    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Ausgeloggt (Logout vergessen !) ' +
+    Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+misc(M248,'M248') +
                 #9+ User + '@' + ip  +#13#10;
     status:= buf;
     allowedip:= ansireplacestr(allowedip,ip,'');
@@ -1038,12 +1099,12 @@ begin
      begin
 
        if not hauptfenster.noballoon then
-           hauptfenster.tray.ShowBalloonHint('WebServer: Hinweis',user +' versucht Einwahl. ',bitinfo, 10);
+           hauptfenster.tray.ShowBalloonHint(misc(M236,'M236'),user +' '+misc(M249,'M249'),bitinfo, 10);
 
        settings.Writedatetime('Server','dialtime',now);
        settings.Writestring('Server','dialtimeuser',user);
 
-        Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Onlinesession vorbereitet ('+ inttostr(hauptfenster.Surfdauer.Position)+' mins) ' +
+        Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+user +' '+misc(M249,'M249')+' ('+ inttostr(hauptfenster.Surfdauer.Position)+' min)' +
                   #9+ User + '@' + HostName  +#13#10;
          status:= buf;
 
@@ -1116,13 +1177,13 @@ begin
       user:= ansireplacetext(user,'?','');
       user:= ansireplacetext(user,'disconnect','');
 
-      Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now)+#9+ 'Verbindung getrennt ' +
+      Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now)+#9+ misc(M85,'M85') +' ' +
                 #9+ User + '@' + HostName  +#13#10;
       status:= buf;
       logfile_add(buf);
 
       if rascheck then hauptfenster.disconnect else hauptfenster.disconnect;
-      if not hauptfenster.noballoon then hauptfenster.tray.ShowBalloonHint('WebServer: Hinweis',user +' hat die Verbindung getrennt.',bitinfo, 10);
+      if not hauptfenster.noballoon then hauptfenster.tray.ShowBalloonHint(misc(M236,'M236'),user +' '+misc(M250,'M250'),bitinfo, 10);
 
       hauptfenster.hinttimer.Enabled:= true;
 
@@ -1446,7 +1507,7 @@ begin
        UserSettings.writeString('active','ip_'+inttostr(counter),ClientCnx.PeerAddr);
        UserSettings.writeString('active','login_'+inttostr(counter),datetimetostr(now));
 
-       Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ 'erfolgreicher Login ' +#9+ User + '@' + HostName  +#13#10;
+       Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+ misc(M251,'M251')+' ' +#9+ User + '@' + HostName  +#13#10;
        allowedip:= clientcnx.PeerAddr + ';';
        status:= buf;
      end;
@@ -1460,7 +1521,7 @@ begin
     end
     else //falsches Passwort oder Username
     begin
-        Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+'fehlgeschlagener Login '+
+        Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M252,'M252') +' '+
                 #9+ User + '@' + HostName  +#13#10;
         status:= buf;
         ClientCnx.AnswerString(Dummy,
@@ -1503,14 +1564,14 @@ begin
 
     hauptfenster.Liste.Row:= tarifnr;
 
-    if command = 'Verbindung wählen' then
+    if command = misc(M223,'M223') then
     begin
      if ( (dateof(now) <= strtodate(hauptfenster.liste.cells[13,tarifnr])) and (secondsbetween(hauptfenster.timeofliste, now) < 60) ) then
      begin
       hauptfenster.webzugriff:=true;
        hauptfenster.DialBtnClick(nil);
        { Build the record to write to data file }
-        Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+'Wählen mit LeastCosterXP ' +
+        Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9+misc(M253,'M253') +
                   #9+ User + '@' + HostName  +#13#10;
         status:= buf;
       { Save data to a text file }
@@ -1519,7 +1580,7 @@ begin
       { HTML answer.}
       hauptfenster.webzugriff:=true;
       if not hauptfenster.noballoon then
-        hauptfenster.tray.ShowBalloonHint('WebInterface: Hinweis',user +' stellt die Verbindung mit LeastCosterXP zum Internet her.',bitinfo, 10);
+        hauptfenster.tray.ShowBalloonHint(misc(M236,'M236'),user +' '+misc(M254,'M254') ,bitinfo, 10);
 
       ClientCnx.AnswerString(Dummy,
           '',                            { Default Status '200 OK'            }
@@ -1538,7 +1599,7 @@ begin
     end
    // wenn nicht action=Verbindung wählen
     else
-    if command = 'Aktualisieren' then
+    if command = misc(M224,'M224') then
     begin
           hauptfenster.surfdauer.position:= base;
           SurfTime:= base;
@@ -1779,53 +1840,58 @@ end;
 procedure TWebServForm.userboxChange(Sender: TObject);
 var i: integer;
 begin
-
  i:= userbox.ItemIndex;
- if not (userbox.items[i]= '<neuer User>') then
- begin
- username.Text:= userbox.items[i];
+ if not (userbox.items[i]= misc(M118,'M118')) then username.Text:= userbox.items[i]
+  else username.Text:='';
  pw.Text:= '';
  pw2.Text:= '';
  oldpw.Text:= '';
- end else username.Text:='';
 end;
 
 procedure TWebServForm.Button1Click(Sender: TObject);
 var oldpw_buf, pw_buf: string;
 begin
-oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
-pw_buf:= 'Sorry no password to read:'+pw.Text + #0;
+
 if username.text <> '' then
 begin
+  oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
+  pw_buf:= 'Sorry no password to read:'+pw.Text + #0;
 
-if UserSettings.sectionexists(crypter.doencrypt(username.text)) then
-begin
-if ( GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1) = UserSettings.readstring(crypter.doencrypt(username.text),crypter.DoEncrypt('pass'),'no password!!')) then
-  if (pw.text=pw2.text) then UserSettings.writestring(crypter.DoEncrypt(username.text),crypter.DoEncrypt('pass'),GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1))
-    else showmessage('Die beiden Passwortfelder stimmen nicht überein !')
-  else showmessage('Falsches Passwort !!')
-end
-else if (pw.text=pw2.text) then UserSettings.writestring(crypter.DoEncrypt(username.text),crypter.doencrypt('pass'),GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1))
-else showmessage('Die beiden Passwortfelder stimmen nicht überein !');
-
+  if UserSettings.sectionexists(webservform.crypter.doencrypt(username.text)) then
+  begin
+  if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1) = UserSettings.readstring(webservform.crypter.doencrypt(username.text),webservform.crypter.doencrypt('pass'),'no password!!')) then
+    if (pw.text=pw2.text) then UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1))
+      else showmessage(misc(M124,'M124'))
+    else showmessage(misc(M125,'M125')) //falsches PW
+  end
+  else if (pw.text=pw2.text) then
+  begin
+    UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1));
+    username.Text:='';
+    oldpw.Text:='';
+    pw.Text:= '';
+    pw2.Text:= '';
+  end
+  else showmessage(misc(M124,'M124'));
 end;
 filluserbox;
+
 end;
 
 procedure TWebServForm.filluserbox;
 var
   counter: integer;
 begin
+  UserSettings.ReadSections(userbox.items);
 
-  UserSettings.ReadSections(userbox.Items);
   userbox.ItemIndex := userbox.items.IndexOf('active');
   userbox.items.Delete(userbox.itemindex);
 
   if userbox.Items.count >0 then for counter:=0 to userbox.Items.Count-1 do
   begin
-    userbox.items[counter]:=crypter.DoDecrypt(userbox.items[counter])
+    userbox.items[counter]:=Webservform.crypter.DoDecrypt(userbox.items[counter])
   end;
-  userbox.items.Append('<neuer User>');
+  userbox.items.Append(misc(M118,'M118'));
   userbox.ItemIndex := 0;
 end;
 
@@ -1843,17 +1909,19 @@ begin
 if username.text <> '' then
 begin
 
-if UserSettings.sectionexists(crypter.doencrypt(username.text)) then
+if UserSettings.sectionexists(webservform.crypter.doencrypt(username.text)) then
   begin
-   oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
-   if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1)) = UserSettings.readstring(crypter.doencrypt(username.text),crypter.DoEncrypt('pass'),'no password!!') then
-     UserSettings.erasesection(crypter.DoEncrypt(username.text))
-   else showmessage('Falsches Passwort !!')
+  oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
+  if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1)) = UserSettings.readstring(webservform.crypter.doencrypt(username.text),webservform.crypter.doencrypt('pass'),'no password!!') then
+    UserSettings.erasesection(webservform.crypter.DoEncrypt(username.text))
+      else showmessage(misc(M125,'M125'))
   end;
 end;
 filluserbox;
 username.Text:='';
 oldpw.Text:='';
+pw.Text:= '';
+pw2.Text:= '';
 end;
 
 procedure TWebServForm.Timer1Timer(Sender: TObject);
@@ -1869,6 +1937,78 @@ begin
       temptime:= UserSettings.ReadDateTime('active','login_'+inttostr(i),yesterday);
       if secondsbetween(temptime, now)>600 then logout(tempuser);
     end;
+end;
+
+procedure TWebServForm.PortEditKeyPress(Sender: TObject; var Key: Char);
+begin
+if not (Key in ['0'..'9', Char(VK_BACK)]) then
+  Key := #0;
+end;
+procedure TWebServForm.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+ //Server Autostart
+  settings.writebool('Server','Autostart',serverautostart.Checked);
+  settings.writestring('Server','Port',Portedit.text);
+end;
+
+procedure TWebServForm.GroupBox2MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+ memo1.text:= misc(Help79,'Help79');
+end;
+
+procedure TWebServForm.PortEditMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help80,'Help80');
+end;
+
+procedure TWebServForm.StartButtonMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help81,'Help81');
+end;
+
+procedure TWebServForm.StopButtonMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help82,'Help82');
+end;
+
+procedure TWebServForm.serverautostartMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help83,'Help83');
+end;
+
+procedure TWebServForm.GroupBox1MouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
+begin
+  memo1.text:= misc(Help84,'Help84');
+end;
+
+procedure TWebServForm.usernameMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help85,'Help85');
+end;
+
+procedure TWebServForm.oldpwMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help86,'Help86');
+end;
+
+procedure TWebServForm.pwMouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help87,'Help87');
+end;
+
+procedure TWebServForm.pw2MouseMove(Sender: TObject; Shift: TShiftState; X,
+  Y: Integer);
+begin
+  memo1.text:= misc(Help88,'Help88');
 end;
 
 end.

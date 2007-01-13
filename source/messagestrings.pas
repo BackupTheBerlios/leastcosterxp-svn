@@ -294,6 +294,63 @@ const
 //screen
   M221= 'Konnte Befehl nicht ausführen.';
 
+//Webserv
+  M222= 'Keine Tarife verfügbar (Surfzeit verkleinern ?)';
+  M223= 'Verbindung wählen';
+  M224= 'Aktualisieren';
+  M225= 'Nachrichten lesen';
+  M226= 'Anhang';
+  M227= 'von';
+  M228= 'Nachrichten schreiben';
+  M229= 'markierte Nachrichten löschen';
+  M230= 'Absenden';
+  M231= 'Empfänger';
+  M232= 'User';
+  M233= 'Passwort';
+
+  M234= 'Server gestartet';
+  M235= 'Server gestoppt';
+
+  M236= 'WebInterface Hinweis';
+  M237= 'Windows wird beendet';
+  M238= 'Ausschalten';
+  M239= 'Windows neu gestartet';
+  M240= 'Neustart';
+  M241= 'User abgemeldet';
+  M242= 'Abmelden';
+  M243= 'Windows ausschalten > Standby';
+  M244= 'StandBy';
+  M245= 'Windows ausschalten > Ruhezustand';
+  M246= 'Ruhezustand';
+
+  M247= 'Ausgeloggt';
+  M248= 'Ausgeloggt (Logout vergessen !)';
+  M249= 'versucht Einwahl.';
+
+  M250= 'hat die Verbindung getrennt.';
+  M251= 'erfolgreicher Login';
+  M252= 'fehlgeschlagener Login';
+
+  M253= 'Einwahl gestartet';
+  M254= 'stellt die Verbindung mit LeastCosterXP zum Internet her.';
+
+//tarife
+  M255= '%s für %1.2f ct/min (Einwahl : %f ct).';
+  M256= 'Dieser gilt von %s Uhr bis %s Uhr.';
+  M257= 'Der Preis ab %s Uhr ist %s';
+  M258= 'Von %s Uhr - %s Uhr steht Ihnen der Tarif';
+  M259= '%s für %s ct/min (Einwahl %s ct)';
+  M260= 'zur Verfügung !';
+  M261= 'Um %s trennen';
+
+  M262= 'Es ist kein Tarif bekannt, der nach';
+  M263= '%s Uhr';
+  M264= 'gilt !';
+
+  M265= 'Tag';
+  M266= 'Score (alle)';
+  M267= 'Score (ok)';
+
   Help00= 'Hinweise:' +cr
               +' werden beim Zeigen auf ein Objekt angezeigt.';
   Help01= 'Autostart:' +cr

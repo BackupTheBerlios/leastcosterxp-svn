@@ -19,7 +19,6 @@ type
     TabSheet1: TTabSheet;
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
-    TabSheet5: TTabSheet;
     TabSheet6: TTabSheet;
     TabSheet7: TTabSheet;
     beenden: TBitBtn;
@@ -42,12 +41,6 @@ type
     leerlaufwait: TRadioButton;
     leerlaufwaitval: TSpinEdit;
     leerlaufconfirm: TRadioButton;
-    GroupBox4: TGroupBox;
-    serverautostart: TCheckBox;
-    PoEdit: TEdit;
-    Label5: TLabel;
-    StartButton: TButton;
-    StopButton: TButton;
     GroupBox6: TGroupBox;
     Label24: TLabel;
     Label23: TLabel;
@@ -127,18 +120,6 @@ type
     AutoSurfdauer: TTrackBar;
     Label30: TLabel;
     Label33: TLabel;
-    GroupBox5: TGroupBox;
-    Label26: TLabel;
-    Label7: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
-    userbox1: TComboBox;
-    Button1: TButton;
-    loeschen: TBitBtn;
-    pw: TEdit;
-    pw2: TEdit;
-    oldpw: TEdit;
-    username: TEdit;
     GroupBox10: TGroupBox;
     Label6: TLabel;
     Label37: TLabel;
@@ -234,7 +215,6 @@ type
     Button11: TButton;
     AutoL: TValueListEditor;
     UseAutoBlacklist: TCheckBox;
-    procedure PoEditKeyPress(Sender: TObject; var Key: Char);
     procedure plugSettingsMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure unregisterMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -254,24 +234,6 @@ type
     procedure noFeedsMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure GroupBox12MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure pw2MouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-    procedure pwMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
-    procedure oldpwMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure usernameMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure GroupBox5MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure serverautostartMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure StopButtonMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure StartButtonMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure PoEditMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure GroupBox4MouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure UseAutoBlacklistClick(Sender: TObject);
     procedure GroupBox20MouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -414,13 +376,6 @@ type
 
     procedure beendenClick(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
-    procedure PoEditExit(Sender: TObject);
-    procedure StartButtonClick(Sender: TObject);
-    procedure StopButtonClick(Sender: TObject);
-    procedure userbox1Change(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
-    procedure loeschenClick(Sender: TObject);
-    procedure filluserbox;
     procedure autostartClick(Sender: TObject);
     procedure serverdeleteClick(Sender: TObject);
     procedure ServeraddbuttonClick(Sender: TObject);
@@ -544,25 +499,6 @@ begin
  end;
 end;
 
-procedure TLCXPSettings.filluserbox;
-var
-  counter: integer;
-begin
-
-  UserSettings.ReadSections(userbox1.items);
-
-  userbox1.ItemIndex := userbox1.items.IndexOf('active');
-  userbox1.items.Delete(userbox1.itemindex);
-
-  if userbox1.Items.count >0 then for counter:=0 to userbox1.Items.Count-1 do
-  begin
-    userbox1.items[counter]:=Webservform.crypter.DoDecrypt(userbox1.items[counter])
-  end;
-  userbox1.items.Append(misc(M118,'M118'));
-  userbox1.ItemIndex := 0;
-
-end;
-
 procedure TLCXPSettings.BitBtn1Click(Sender: TObject);
 begin
   bitBtn1.caption:= misc(M119,'M119');
@@ -597,10 +533,6 @@ begin
   settings.writebool('lokale IP','IP_Notify',ipmail_active.checked);
   settings.writestring('lokale IP','IP_Notify_Name',ipmail_name.text);
   settings.writeString('lokale IP','IP_Notify_Adress',ipmail_adress.text);
-
- //Server Autostart
-  settings.writebool('Server','Autostart',serverautostart.Checked);
-  settings.writestring('Server','Port',Poedit.text);
 
   settings.writeBool('LeastCoster','autostart',autostart.Checked);
   settings.writeBool('LeastCoster','minimiert',minimiert.checked);
@@ -825,93 +757,6 @@ begin
  rsslist.Strings.SaveToFile(extractfilepath(paramstr(0)) + 'Rsslist.txt');
 
  LCXPSettings.Close;
-end;
-
-procedure TLCXPSettings.PoEditExit(Sender: TObject);
-begin
-webservform.portedit.Text:= Poedit.text;
-end;
-
-procedure TLCXPSettings.StartButtonClick(Sender: TObject);
-var i, Code: integer;
-begin
-  Val(PoEdit.Text, I, Code);
-  if Code <> 0 then exit;   { Error during conversion to integer? }
-
-  webservform.startbutton.click;
-  stopbutton.Enabled:= true;
-  startbutton.Enabled:=false;
-end;
-
-procedure TLCXPSettings.StopButtonClick(Sender: TObject);
-begin
-  Webservform.Stopbutton.click;
-  stopbutton.Enabled:= false;
-  startbutton.Enabled:=true;
-end;
-
-procedure TLCXPSettings.userbox1Change(Sender: TObject);
-var i: integer;
-begin
- i:= userbox1.ItemIndex;
- if not (userbox1.items[i]= misc(M118,'M118')) then username.Text:= userbox1.items[i]
-  else username.Text:='';
- pw.Text:= '';
- pw2.Text:= '';
- oldpw.Text:= '';
-end;
-
-procedure TLCXPSettings.Button1Click(Sender: TObject);
-var oldpw_buf, pw_buf: string;
-begin
-if username.text <> '' then
-begin
-oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
-pw_buf:= 'Sorry no password to read:'+pw.Text + #0;
-
-
-if UserSettings.sectionexists(webservform.crypter.doencrypt(username.text)) then
-begin
-if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1) = UserSettings.readstring(webservform.crypter.doencrypt(username.text),webservform.crypter.doencrypt('pass'),'no password!!')) then
-  if (pw.text=pw2.text) then UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1))
-    else showmessage(misc(M124,'M124'))
-  else showmessage(misc(M125,'M125')) //falsches PW
-end
-else if (pw.text=pw2.text) then
-begin
-  UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1));
-  username.Text:='';
-  oldpw.Text:='';
-  pw.Text:= '';
-  pw2.Text:= '';
-end
-else showmessage(misc(M124,'M124'));
-
-end;
-filluserbox;
-
-end;
-
-procedure TLCXPSettings.loeschenClick(Sender: TObject);
-var oldpw_buf: string;
-begin
-if username.text <> '' then
-begin
-
-if UserSettings.sectionexists(webservform.crypter.doencrypt(username.text)) then
-  begin
-  oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
-  if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1)) = UserSettings.readstring(webservform.crypter.doencrypt(username.text),webservform.crypter.doencrypt('pass'),'no password!!') then
-    UserSettings.erasesection(webservform.crypter.DoEncrypt(username.text))
-      else showmessage(misc(M125,'M125'))
-  end;
-end;
-filluserbox;
-username.Text:='';
-oldpw.Text:='';
-pw.Text:= '';
-pw2.Text:= '';
-
 end;
 
 procedure TLCXPSettings.autostartClick(Sender: TObject);
@@ -1205,7 +1050,6 @@ PageControl1.ActivePageIndex:= 0;
 groupbox11.Visible:=  hauptfenster.MM3_2.checked;
 
 tabsheet4.tabVisible :=  hauptfenster.MM3_2.checked;
-tabsheet5.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet6.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet7.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet8.tabVisible :=  hauptfenster.MM3_2.checked;
@@ -1216,11 +1060,6 @@ for i:= 0 to hauptfenster.pluglist.count-1 do
     Plugbox.Items.Append(hauptfenster.pluglist.strings[i]);
 
 memo1.Text:= Misc(Help00,'Help00');
-filluserbox;
-
-  username.text:= '';
-  pw.text:= '';
-  pw2.Text:='';
 
 noballoon.Checked:= hauptfenster.noBalloon;
 
@@ -1234,13 +1073,6 @@ DaysToSaveLogs.Value:= Hauptfenster.DaysToSaveLogs;
 SoundOn.Text:=   settings.readstring('LeastCoster','SoundON',  '' );
 SoundOFF.Text:=  settings.readstring('LeastCoster','SoundOFF',  '' );
 
-//WebInterface
-Poedit.text:= settings.ReadString('Server','Port','85');
-webservform.PortEdit.Text:= Poedit.Text;
-serverautostart.checked:= settings.readbool('Server','Autostart',false);
-startbutton.Enabled:= false;
-stopbutton.enabled:= false;
-if (webservform.HttpServer1.Tag = 0 ) then startbutton.enabled:= true else stopbutton.Enabled:= true;
 //Dialfunktion
 device.Clear;
 with hauptfenster.MagRasCon do
@@ -2544,66 +2376,6 @@ begin
  memo1.text:= misc(Help78,'Help78');
 end;
 
-procedure TLCXPSettings.GroupBox4MouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
- memo1.text:= misc(Help79,'Help79');
-end;
-
-procedure TLCXPSettings.PoEditMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
-begin
-  memo1.text:= misc(Help80,'Help80');
-end;
-
-procedure TLCXPSettings.StartButtonMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  memo1.text:= misc(Help81,'Help81');
-end;
-
-procedure TLCXPSettings.StopButtonMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-  memo1.text:= misc(Help82,'Help82');
-end;
-
-procedure TLCXPSettings.serverautostartMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  memo1.text:= misc(Help83,'Help83');
-end;
-
-procedure TLCXPSettings.GroupBox5MouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-  memo1.text:= misc(Help84,'Help84');
-end;
-
-procedure TLCXPSettings.usernameMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-  memo1.text:= misc(Help85,'Help85');
-end;
-
-procedure TLCXPSettings.oldpwMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
-begin
-  memo1.text:= misc(Help86,'Help86');
-end;
-
-procedure TLCXPSettings.pwMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
-begin
-  memo1.text:= misc(Help87,'Help87');
-end;
-
-procedure TLCXPSettings.pw2MouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
-begin
-  memo1.text:= misc(Help88,'Help88');
-end;
-
 procedure TLCXPSettings.GroupBox12MouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
 begin
@@ -2662,12 +2434,6 @@ procedure TLCXPSettings.plugSettingsMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
   memo1.text:= misc(Help98,'Help98');
-end;
-
-procedure TLCXPSettings.PoEditKeyPress(Sender: TObject; var Key: Char);
-begin
-if not (Key in ['0'..'9', Char(VK_BACK)]) then
-  Key := #0;
 end;
 
 end.

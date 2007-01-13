@@ -179,70 +179,70 @@ object TaVerwaltung: TTaVerwaltung
         TabOrder = 0
         object Label1: TLabel
           Left = 8
-          Top = 20
+          Top = 13
           Width = 21
           Height = 13
           Caption = 'Tarif'
         end
         object Label2: TLabel
           Left = 148
-          Top = 19
+          Top = 12
           Width = 54
           Height = 13
           Caption = 'Rufnummer'
         end
         object Label3: TLabel
           Left = 8
-          Top = 61
+          Top = 49
           Width = 33
           Height = 13
           Caption = 'Beginn'
         end
         object Label4: TLabel
           Left = 148
-          Top = 61
+          Top = 49
           Width = 25
           Height = 13
           Caption = 'Ende'
         end
         object Label11: TLabel
           Left = 148
-          Top = 119
+          Top = 103
           Width = 105
           Height = 13
           Caption = 'Einwahlgeb'#252'hr in cent'
         end
         object Label8: TLabel
           Left = 8
-          Top = 119
+          Top = 102
           Width = 58
           Height = 13
           Caption = 'Preis in cent'
         end
         object Label9: TLabel
           Left = 8
-          Top = 162
+          Top = 172
           Width = 22
           Height = 13
           Caption = 'Takt'
         end
         object Label5: TLabel
           Left = 8
-          Top = 198
+          Top = 210
           Width = 48
           Height = 13
           Caption = 'Username'
         end
         object Label6: TLabel
           Left = 148
-          Top = 198
+          Top = 210
           Width = 43
           Height = 13
           Caption = 'Passwort'
         end
         object Label7: TLabel
           Left = 8
-          Top = 246
+          Top = 254
           Width = 107
           Height = 13
           Caption = 'Webseite (inkl. http://)'
@@ -263,7 +263,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaNumber: TEdit
           Left = 148
-          Top = 34
+          Top = 27
           Width = 130
           Height = 21
           TabOrder = 1
@@ -271,7 +271,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaName: TEdit
           Left = 8
-          Top = 34
+          Top = 27
           Width = 130
           Height = 21
           TabOrder = 0
@@ -279,7 +279,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaStart: TDateTimePicker
           Left = 8
-          Top = 77
+          Top = 65
           Width = 130
           Height = 21
           Date = 38713.000000000000000000
@@ -289,7 +289,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object ganztags: TCheckBox
           Left = 8
-          Top = 98
+          Top = 86
           Width = 73
           Height = 17
           Caption = 'ganztags'
@@ -298,7 +298,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaEnd: TDateTimePicker
           Left = 148
-          Top = 77
+          Top = 65
           Width = 130
           Height = 21
           Date = 38713.041666666660000000
@@ -308,7 +308,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaPrice: TEdit
           Left = 8
-          Top = 133
+          Top = 116
           Width = 130
           Height = 21
           TabOrder = 5
@@ -317,7 +317,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaEinwahl: TEdit
           Left = 148
-          Top = 133
+          Top = 117
           Width = 130
           Height = 21
           TabOrder = 6
@@ -326,7 +326,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaTaktbox: TComboBox
           Left = 148
-          Top = 174
+          Top = 184
           Width = 130
           Height = 21
           Style = csDropDownList
@@ -341,7 +341,7 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaTakt: TEdit
           Left = 8
-          Top = 174
+          Top = 184
           Width = 130
           Height = 21
           TabOrder = 7
@@ -350,21 +350,21 @@ object TaVerwaltung: TTaVerwaltung
         end
         object TaUser: TEdit
           Left = 8
-          Top = 214
+          Top = 226
           Width = 130
           Height = 21
           TabOrder = 9
         end
         object TaPass: TMaskEdit
           Left = 148
-          Top = 214
+          Top = 226
           Width = 130
           Height = 21
           TabOrder = 10
         end
         object TaWebsite: TEdit
           Left = 8
-          Top = 262
+          Top = 270
           Width = 273
           Height = 21
           TabOrder = 11
@@ -518,6 +518,18 @@ object TaVerwaltung: TTaVerwaltung
           Height = 17
           Caption = 'l'#246'schen bei Ablauf'
           TabOrder = 26
+        end
+        object TaMindestumsatz: TLabeledEdit
+          Left = 149
+          Top = 154
+          Width = 130
+          Height = 21
+          EditLabel.Width = 105
+          EditLabel.Height = 13
+          EditLabel.Caption = 'Mindestumsatz in cent'
+          LabelSpacing = 1
+          TabOrder = 27
+          OnKeyPress = TaPriceKeyPress
         end
       end
     end
@@ -987,7 +999,7 @@ object TaVerwaltung: TTaVerwaltung
         object Label14: TLabel
           Left = 2
           Top = 15
-          Width = 250
+          Width = 285
           Height = 26
           Align = alClient
           Alignment = taCenter
@@ -1284,8 +1296,8 @@ object TaVerwaltung: TTaVerwaltung
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
   end
-  object ApplicationEvents1: TApplicationEvents
-    OnDeactivate = ApplicationEvents1Deactivate
+  object applicationevents1: TApplicationEvents
+    OnDeactivate = applicationevents1Deactivate
     Left = 664
     Top = 24
   end

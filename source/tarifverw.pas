@@ -72,17 +72,17 @@ with hauptfenster do
    begin
      Application.CreateForm(TPriceWarning, PriceWarning);
 
-     PriceWarning.info2.Caption:= Format('%s für %1.2f ct/min (Einwahl : %f ct).',[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
-     PriceWarning.info3.Caption:= Format('Dieser gilt von %s Uhr bis %s Uhr).',[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
+     PriceWarning.info2.Caption:= Format(misc(M255,'M255'),[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
+     PriceWarning.info3.Caption:= Format(misc(M256,'M256'),[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
 
      PriceWarning.info4.visible:= (thisprice_when <> timetoStr(onlineset.vbegin)); //ausbelnnden wenn die gleiche zeit wie Anfang
-     PriceWarning.info4.Caption:= 'Der Preis ab  ' + thisprice_when + ' Uhr ist ' + thisprice_then;
-     if thisprice_then <> misc(M149,'M149') then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' ct/min .';
+     PriceWarning.info4.Caption:= Format(misc(M257,'M257'),[thisprice_when, thisprice_then]);
+     if thisprice_then <> misc(M149,'M149') then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' '+misc(M12,'M12')+'/min .';
 
-     PriceWarning.neu1.Caption:= Format('Von %s Uhr - %s Uhr steht Ihnen der Tarif',[liste.cells[2,1] ,liste.cells[3,1]]);
-     PriceWarning.neu2.Caption:= Format('%s für %s ct/min (Einwahl %s ct)',[UpperCase(liste.cells[1,1]),liste.cells[4,1],liste.cells[5,1]]);
-     PriceWarning.neu3.Caption:= 'zur Verfügung !';
-     Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
+     PriceWarning.neu1.Caption:= Format(misc(M258,'M258'),[liste.cells[2,1] ,liste.cells[3,1]]);
+     PriceWarning.neu2.Caption:= Format(misc(M259,'M259'),[UpperCase(liste.cells[1,1]),liste.cells[4,1],liste.cells[5,1]]);
+     PriceWarning.neu3.Caption:= misc(M260,'M260');
+     Pricewarning.trennen2.Caption:= Format(misc(M261,'M261'),[TimeToStr(onlineset.vend)]);
 
      Pricewarning.Timer1.enabled:= true;
      Pricewarning.Show;
@@ -129,16 +129,16 @@ with hauptfenster do
   begin
      Application.CreateForm(TPriceWarning, PriceWarning);
 
-     PriceWarning.info2.Caption:= Format('%s für %1.2f ct/min (Einwahl : %f ct).',[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
-     PriceWarning.info3.Caption:= Format('Dieser gilt von %s Uhr bis %s Uhr).',[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
-     PriceWarning.info4.Caption:= 'Der Preis ab  ' + timeToStr(onlineset.vend) + 'Uhr ist ' + thisprice_then;
-     if thisprice_then <> misc(M149,'M149') then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' ct/min .';
+     PriceWarning.info2.Caption:= Format(misc(M255,'M255'),[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
+     PriceWarning.info3.Caption:= Format(misc(M256,'M256'),[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
+     PriceWarning.info4.Caption:=  Format(misc(M257,'M257'),[timeToStr(onlineset.vend), thisprice_then]);
+     if thisprice_then <> misc(M149,'M149') then  PriceWarning.info4.caption:= PriceWarning.info4.caption + ' '+misc(M12,'M12')+'/min .';
 
-     PriceWarning.neu1.Caption:= 'Es ist kein Tarif bekannt, der nach';
-     PriceWarning.neu2.Caption:=  TimeToStr(onlineset.endzeit) + ' Uhr';
-     PriceWarning.neu3.Caption:= 'gilt !';
+     PriceWarning.neu1.Caption:= misc(M262,'262');
+     PriceWarning.neu2.Caption:= Format(misc(M263,'M263'),[TimeToStr(onlineset.endzeit)]);
+     PriceWarning.neu3.Caption:= misc(M264,'M264');
 
-     Pricewarning.trennen2.Caption:= 'Um ' + TimeToStr(onlineset.vend) + ' trennen';
+     Pricewarning.trennen2.Caption:= Format(misc(M261,'M261'),[TimeToStr(onlineset.vend)]);
      Pricewarning.Timer1.enabled:= true;
      Pricewarning.Show;
      Pricewarning.bringtofront;
@@ -488,23 +488,23 @@ begin
     rows[1].Clear;
     rowcount:= 2;
 
-    Cells[1,0] := 'Tarif';
-    Cells[2,0] := 'Beginn';
-    Cells[3,0] := 'Ende';
-    Cells[4,0] := 'Preis';
-    Cells[5,0] := 'Einwahl';
-    Cells[6,0] := 'Takt';
-    Cells[7,0] := 'Kosten';
-    Cells[8,0] := 'Nummer';
-    Cells[9,0] := 'User';
-    Cells[10,0] := 'Passwort';
-    Cells[11,0] := 'Webseite';
-    Cells[12,0] := 'gilt seit';
-    Cells[13,0] := 'gilt bis';
-    Cells[14,0] := 'eingetragen';
-    Cells[15,0] := 'Score (alle)';
-    Cells[16,0] := 'Score (ok)';
-    Cells[17,0] := 'Tag';
+    Cells[1,0] := misc(M140,'M140');
+    Cells[2,0] := misc(M165,'M165');
+    Cells[3,0] := misc(M166,'M166');
+    Cells[4,0] := misc(M167,'M167');
+    Cells[5,0] := misc(M168,'M168');
+    Cells[6,0] := misc(M169,'M169');
+    Cells[7,0] := misc(M50,'M50');
+    Cells[8,0] := misc(M170,'M170');
+    Cells[9,0] := misc(M171,'M171');
+    Cells[10,0]:= misc(M172,'M172');
+    Cells[11,0]:= misc(M173,'M173');
+    Cells[12,0]:= misc(M174,'M174');
+    Cells[13,0]:= misc(M175,'M175');
+    Cells[14,0]:= misc(M166,'M166');
+    Cells[15,0]:= misc(M266,'M266');
+    Cells[16,0]:= misc(M267,'M267');
+    Cells[17,0]:= misc(M265,'M265');
   end;
 end;
 
@@ -784,10 +784,8 @@ end;
 function isFeiertag(date: TDate): string;
 var i: integer;
     temp: string;
-
 begin
   temp:= '';
-
   if feiertagsliste.count >0 then
     for i:= 0 to feiertagsliste.Count-1 do
       if Ansicontainstext(feiertagsliste.Strings[i],datetostr(date)) then begin temp:= feiertagsliste.Strings[i]; break; end;
@@ -802,7 +800,6 @@ procedure LoescheTarif(tarif: string);
 var i: integer;
     Deletelist: TStringlist;
 begin
-
 DeleteList:= TStringList.Create;
 
 for i := hauptfenster.liste.RowCount-1 downto 1   do
@@ -836,11 +833,9 @@ begin
    hauptfenster.tarife[i] := hauptfenster.Tarife[length(hauptfenster.tarife) -1]; //letzten Datensatz an stelle
    setlength(hauptfenster.tarife, length(hauptfenster.tarife)-1); //um eine Stelle kürzen
   end;
-
 end;
 
 WriteTarifeToHD;
-
 end;
 
 procedure SaveTrafficData(Tarif: string; Dauer: integer; download, upload: LongInt);
@@ -907,9 +902,7 @@ with Hauptfenster do begin
     end
     else //wenn alte Daten noch gültig (nächster Reste liegt in der Zukunft
     begin
-//         showmessage(kontingente[i].tarif + ' ' + inttostr(kontingente[i].freisekunden));
          kontingente[i].FreiSekunden:= kontingente[i].FreiSekunden -  SettingsTraffic.ReadInteger(kontis.strings[i],'Surfdauer_takt',0);
-//         showmessage(inttostr(kontingente[i].freisekunden));
          kontingente[i].FreikB:= kontingente[i].FreikB -  SettingsTraffic.ReadFloat(kontis.strings[i],'Download',0);
          if kontingente[i].MB_both then kontingente[i].FreikB:= kontingente[i].FreikB -  SettingsTraffic.ReadFloat(kontis.strings[i],'Upload',0);
          if kontingente[i].freisekunden < 0 then kontingente[i].freisekunden:= 0;
@@ -940,7 +933,6 @@ begin
 
  changelist.free;
  WriteTarifeToHD;
-
  hauptfenster.aktualisierenclick(nil);
 end;
 
@@ -956,10 +948,10 @@ begin
      onlineset.wechsel:= incday(onlineset.wechsel, 10*365); //10 Jahre in die Zukunft setzen, damit das nciht gleich wieder ausgelöst wird
      if assigned(floatingW) then
      begin
-      if (onlineset.vbegin=onlineset.vend) then edtime.text:='ganztags'
+      if (onlineset.vbegin=onlineset.vend) then edtime.text:=misc(M111,'M111')
        else edtime.text:= TimeToStr(onlineset.vbegin) +'-'+TimeToStr(onlineset.vend);
       floatingW.valid.caption:= edtime.text;
-      floatingW.preis.caption:= Format('%.2f c/min',[onlineset.preis]);
+      floatingW.preis.caption:= Format('%.2f '+misc(M12,'M12')+'/min',[onlineset.preis]);
      end;
 end;
 end;
