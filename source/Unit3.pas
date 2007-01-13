@@ -517,6 +517,9 @@ end;
 
 procedure Tauswert.FormCreate(Sender: TObject);
 begin
+ CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+ if CL<>nil then fillProps([auswert],CL);
+
  hauptfenster.Enabled:= false;
  nomove:= false;
  auswert.Top:= hauptfenster.Top;

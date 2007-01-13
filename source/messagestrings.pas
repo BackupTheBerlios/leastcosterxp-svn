@@ -17,22 +17,14 @@ const
 
   M09='Ende des Freikontingents';
 
-  M10='für';
-  M11='Einwahl';
   M12='ct';
   M13='€';
-  M14='Dieser gilt von';
-  M15='Uhr';
-  M16='bis';
-  
+
   M17='Große Zeitdifferenz nach Atomzeitupdate';
   M18='Der gewählte Tarif ist noch gültig.';
   M19='Trennen ist nicht nötig.';
   M20='Der gewählte Tarif ist im Moment NICHT gültig.';
   M21='Trennen wird empfohlen!';
-
-  M22='Um';
-  M23='trennen';
 
   M24='&Wählen';
   M25='Autoeinwahl gescheitert.';
@@ -109,7 +101,7 @@ const
   M85='Verbindung getrennt';
   M86='ist ein ungültiger Paramter.';
   M87='kein RSS-Update (nicht online)';
-  
+
   M88='Ihre Verbindung ist im Leerlauf.';
   M89='aktiv';
   M90='inaktiv';
@@ -290,9 +282,6 @@ const
   M218= 'RSS-Update gestartet.';
   M219= 'RSS-Update beendet.';
   M220= 'Letzte Aktualisierung der Rss-Feeds um';
-
-//screen
-  M221= 'Konnte Befehl nicht ausführen.';
 
 //Webserv
   M222= 'Keine Tarife verfügbar (Surfzeit verkleinern ?)';
@@ -558,16 +547,6 @@ const
               +'Hier können sie das ausgewählte PlugIn deinstallieren.';
  Help98= 'Einstellungen' +cr
               +'Rufen Sie hier die Einstellungen des gewählten PlugIns auf.';
-
-
-
-
-
-
-
-
-
-
 
 implementation
 

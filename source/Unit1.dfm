@@ -679,7 +679,7 @@ object Hauptfenster: THauptfenster
         Width = 177
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
         Items.Strings = (
           'Tue nichts'
@@ -857,8 +857,6 @@ object Hauptfenster: THauptfenster
       end
       object MM3_3: TMenuItem
         Caption = 'Sprache'
-        Enabled = False
-        Visible = False
       end
     end
     object RSSMenu: TMenuItem

@@ -13,6 +13,7 @@ type
     Label1: TLabel;
     Timer1: TTimer;
     Image2: TImage;
+    procedure FormShow(Sender: TObject);
     procedure quitClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Image1Click(Sender: TObject);
@@ -26,7 +27,7 @@ var
   DonateWindow: TDonateWindow;
 
 implementation
-uses ShellAPI, Unit1, DateUtils;
+uses ShellAPI, Unit1, DateUtils, inilang, messagestrings;
 
 {$R *.dfm}
 
@@ -57,6 +58,12 @@ procedure TDonateWindow.quitClick(Sender: TObject);
 begin
  settings.WriteDate('LeastCoster','Donation', incday(Dateof(now),7));
  donatewindow.close;
+end;
+
+procedure TDonateWindow.FormShow(Sender: TObject);
+begin
+  CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+  if CL<>nil then fillProps([DonateWindow],CL);
 end;
 
 end.

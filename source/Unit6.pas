@@ -26,6 +26,7 @@ type
     email: TCheckBox;
     Progress: TProgressBar;
     Newimport: TBitBtn;
+    procedure FormCreate(Sender: TObject);
     procedure ClearImport;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure alleClick(Sender: TObject);
@@ -726,4 +727,11 @@ begin
 formshow(self);
 newimport.visible:= false;
 end;
+
+procedure Twndlist.FormCreate(Sender: TObject);
+begin
+ CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+ if CL<>nil then fillProps([wndlist],CL);
+end;
+
 end.

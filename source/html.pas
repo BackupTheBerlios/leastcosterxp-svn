@@ -252,8 +252,11 @@ end;
 
 procedure Thtmlwindow.FormCreate(Sender: TObject);
 begin
+
+CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+if CL<>nil then fillProps([htmlwindow],CL);
+
 BrowseForFolder:= TBrowseForfolder.Create(self);
-//if not hauptfenster.german then lang.SetLangStrings_export;
 
 nomove:= false;
 

@@ -64,7 +64,7 @@ object shutter: Tshutter
     object Label1: TLabel
       Left = 6
       Top = 6
-      Width = 216
+      Width = 190
       Height = 20
       Align = alTop
       Alignment = taCenter

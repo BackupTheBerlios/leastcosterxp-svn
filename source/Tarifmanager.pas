@@ -545,6 +545,9 @@ sort_descending:= false;
 nomove:= false;
 myident:='';
 
+CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+if CL<>nil then fillProps([TaVerwaltung],CL);
+
 PageControl1.ActivePage:= TabSheet2;
 
 tarifliste.cells[0,0]:= misc(M164,'M164');

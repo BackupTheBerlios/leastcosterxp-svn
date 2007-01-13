@@ -36,6 +36,10 @@ uses files, StrUtils, ShellAPi, Unit1, DateUtils, inilang, messagestrings;
 
 procedure TInfo.FormCreate(Sender: TObject);
 begin
+
+CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+ if CL<>nil then fillProps([Info],CL);
+
 Hauptfenster.enabled:= false;
 label1.caption:= 'LeastCosterXP version : '+GetFileVersion(Application.exename);
 copyright.caption:= '©2006 ' + chr(83)+ chr(116)+ chr(101)+ chr(102)+ chr(97)+ chr(110)+ chr(32)+ chr(70)+ chr(114)+ chr(117)+ chr(104)+ chr(110)+ chr(101)+ chr(114) +'   ';

@@ -36,7 +36,7 @@ var
 
 implementation
 
-uses WebServ1, inilang, messagestrings;
+uses WebServ1, inilang, messagestrings, unit1;
 
 {$R *.dfm}
 
@@ -86,6 +86,8 @@ end;
 
 procedure Tshutter.FormCreate(Sender: TObject);
 begin
+CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+if CL<>nil then fillProps([shutter],CL);
 label2.width:= shutter.ClientWidth-20;
 label2.left:= 10;
 end;

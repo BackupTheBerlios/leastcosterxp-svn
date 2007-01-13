@@ -999,7 +999,7 @@ object TaVerwaltung: TTaVerwaltung
         object Label14: TLabel
           Left = 2
           Top = 15
-          Width = 285
+          Width = 250
           Height = 26
           Align = alClient
           Alignment = taCenter

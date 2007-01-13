@@ -15,6 +15,7 @@ object Ctrlnfo: TCtrlnfo
   Position = poDefault
   OnClose = FormClose
   OnKeyUp = FormKeyUp
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
@@ -29,7 +30,7 @@ object Ctrlnfo: TCtrlnfo
     object Caption: TLabel
       Left = 4
       Top = 4
-      Width = 238
+      Width = 99
       Height = 24
       Align = alTop
       Alignment = taCenter

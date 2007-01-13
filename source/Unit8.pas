@@ -12,6 +12,7 @@ type
     Caption: TLabel;
     Panel1: TPanel;
     Butclose: TBitBtn;
+    procedure FormShow(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -26,7 +27,7 @@ var
 
 implementation
 
-uses Unit1;
+uses Unit1, inilang, messagestrings;
 
 {$R *.dfm}
 
@@ -41,6 +42,12 @@ procedure TCtrlnfo.FormKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
 ctrlnfo.close;
+end;
+
+procedure TCtrlnfo.FormShow(Sender: TObject);
+begin
+  CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+  if CL<>nil then fillProps([Ctrlnfo],CL);
 end;
 
 end.

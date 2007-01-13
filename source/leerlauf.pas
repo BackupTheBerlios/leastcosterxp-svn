@@ -59,6 +59,9 @@ end;
 procedure Tdisconnect_leerlauf.FormCreate(Sender: TObject);
 begin
 
+CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+ if CL<>nil then fillProps([disconnect_leerlauf],CL);
+
 grad := TSRGradient.Create(self);
 grad.parent:= disconnect_leerlauf;
 grad.Align:= alClient;

@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, ExtCtrls, jpeg, AppEvnts, unit1, DateUtils, StrUtils;
+  Dialogs, StdCtrls, Buttons, ExtCtrls, jpeg, AppEvnts, unit1, DateUtils, StrUtils, inilang, messagestrings;
 
 type
   TPriceWarning = class(TForm)
@@ -104,8 +104,11 @@ end;
 
 procedure TPriceWarning.FormCreate(Sender: TObject);
 begin
-     hauptfenster.warnung_gezeigt:= true;
-     hauptfenster.warnung_unterdruecken.enabled:= true;
+  CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+  if CL<>nil then fillProps([PriceWarning],CL);
+
+  hauptfenster.warnung_gezeigt:= true;
+  hauptfenster.warnung_unterdruecken.enabled:= true;
 end;
 
 procedure TPriceWarning.Timer1Timer(Sender: TObject);

@@ -1038,6 +1038,9 @@ begin
 leastcosterrow:=0;
 hauptfenster.Enabled:= false;
 
+CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+if CL<>nil then fillProps([LCXPSettings],CL);
+
 //netzwerkeinstellungen öffen ausblenden wenn nicht WinXP
 if (MagRasOSVersion >= OSW2K) then button8.Visible:= true else
 begin

@@ -527,8 +527,9 @@ end;
 
 {* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *}
 procedure TWebServForm.FormShow(Sender: TObject);
-var    wsi     : TWSADATA;
+//var    wsi     : TWSADATA;
 begin
+
 //       PortEdit.Text        := '85';
 //       ClientCountLabel.Caption := '0';     { Initialize client count caption }
 //       wsi := WinsockInfo;                  { Display version info for program and used components }
@@ -537,6 +538,9 @@ begin
 //        if wsi.lpVendorInfo <> nil then     { A bug in Delphi 3 makes lpVendorInfo invalid }
 //{$ENDIF}
 //        StartButtonClick(Self);             { Automatically start server }
+
+ CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+ if CL<>nil then fillProps([WebServForm],CL);
 
  //WebInterface
  Portedit.text:= settings.ReadString('Server','Port','85');

@@ -14,6 +14,7 @@ object DonateWindow: TDonateWindow
   FormStyle = fsStayOnTop
   OldCreateOrder = False
   Position = poDesktopCenter
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object Image1: TImage

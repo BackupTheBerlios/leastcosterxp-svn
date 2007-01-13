@@ -68,7 +68,7 @@ var
   floatingW: TfloatingW;
 
 implementation
-uses unit1;
+uses unit1, inilang;
 
 {$R *.dfm}
 
@@ -108,6 +108,9 @@ var bgfile: string;
     H: HWnd;
     Taskbar: TRect;
 begin
+
+CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+ if CL<>nil then fillProps([floatingW],CL);
 
 if (MagRasOSVersion < OSW2K) then
 begin
@@ -183,6 +186,8 @@ begin
 end;
 
 floatingW.visible:= true;
+
+fillcustomini;
 
 end;
 

@@ -1,0 +1,989 @@
+;This is the language file for LeastCosterXP
+;language: german (standard)
+;date: 13.01.2007
+;
+;instuctions:
+;------------
+; - You can comment the file while using ;
+; - Do not delete sections or section identifiers ( [section] )
+; - do not delete any items
+; - replace every string after = and avoid using the symbol =
+; - & stands for hotkeys: you should use hotkeys where they are already defined
+; - *|* stands for a line break:you will find them in the text
+; - most strings are captions, e.g. for buttons: try using strings of equal length
+; - when you find items like %s, %1.2lf ... : it is importent to leave these 
+;   strings there. They are replaced by LeastCosterXP with some infoamrtion. 
+;		Do not change the order of these replacements (you would receive errors).
+; - the file should be named like <language>.lng
+;
+; - share your language file with others. If you have translated the file please
+; 	send it to author@leastcosterxp.de (i would be pleased if you contact me in 
+		english or german)
+;	
+; - if you find any errors, please contact me too. I will fix it, if possible.
+;
+;Have fun
+;Stefan Fruhner :) 
+ 
+[Hauptfenster]
+Hauptfenster.Caption=LeastCosterXP
+Hauptfenster.LEDTime.Hint=Das automatische Atomzeitupdate ist deaktiviert.
+Hauptfenster.LedRSS.Hint=Noch kein Rss-Feed Update seit dem Start.
+Hauptfenster.Label3.Caption=( 0 h 1 min )
+Hauptfenster.OCostLabel.Caption=0.0000
+Hauptfenster.online.Caption=Offline
+Hauptfenster.AutoDialStatus.Hint=Auto-Einwahl
+Hauptfenster.Liste.Hint=[Enter] oder [Wählen] wählt den selektierten Tarif an.
+Hauptfenster.DialBtn.Caption=&Wählen
+Hauptfenster.Aktualisieren.Caption=&Aktualisieren
+Hauptfenster.DateLabel.Hint=Zeitpunkt der Gültigkeit der Tariftabelle
+Hauptfenster.Takt2.Hint=Takt ( Kanal 2 )
+Hauptfenster.Takt1.Hint=Takt ( Kanal 1 )
+Hauptfenster.beliebig_check.Caption=zeige beliebige Zeit
+Hauptfenster.TabSheet1.Caption=Auto-Trennen
+Hauptfenster.Label1.Caption=um
+Hauptfenster.Label6.Caption=trennen
+Hauptfenster.trennask.Caption=mit Nachfrage
+Hauptfenster.NoChangeWarning.Caption=keine Wechselmeldung
+Hauptfenster.TabSheet4.Caption=Auto-Verbinden
+Hauptfenster.Autobasis.Caption=0 h 10 min
+Hauptfenster.AutoDialEinwahl.Caption=mit Einwahlgebühren
+Hauptfenster.TabSheet2.Caption=Leerlaufschutz
+Hauptfenster.Label4.Caption=nach
+Hauptfenster.Label5.Caption=min Leerlauf trennen
+Hauptfenster.leerlaufboxask.Caption=mit Nachfrage
+Hauptfenster.TabSheet3.Caption=Auto-Aus
+Hauptfenster.Autoaus.Items[0]=Tue nichts
+Hauptfenster.Autoaus.Items[1]=Abmelden
+Hauptfenster.Autoaus.Items[2]=Ausschalten
+Hauptfenster.Autoaus.Items[3]=Neustart
+Hauptfenster.Autoaus.Items[4]=Ruhezustand
+Hauptfenster.Autoaus.Items[5]=StandBy
+Hauptfenster.setmultilink.Caption=Kanalbündelung
+Hauptfenster.Button1.Caption=SetOnline
+Hauptfenster.MM1.Caption=&Datei
+Hauptfenster.MM1_1.Caption=&Lade Tarife ...
+Hauptfenster.MM1_2.Caption=&Speichere Tarife ...
+Hauptfenster.MM1_5.Caption=&Export
+Hauptfenster.MM1_5_1.Caption=Protokoll - Export
+Hauptfenster.MM1_7.Caption=&abgelaufene Tarife löschen
+Hauptfenster.MM1_9.Caption=Minimieren
+Hauptfenster.MM1_10.Caption=&Beenden
+Hauptfenster.MM2.Caption=&Tools
+Hauptfenster.MM2_1.Caption=&Tarifmanager
+Hauptfenster.MM2_2.Caption=&Verbindungsübersicht
+Hauptfenster.MM2_2_1.Caption=Monats&kalender
+Hauptfenster.MM2_2_2.Caption=&Einzelverbindungsübersicht
+Hauptfenster.MM2_3.Caption=&Online
+Hauptfenster.MM2_3_1.Caption=OnlineInfo anzeigen
+Hauptfenster.MM2_3_2.Caption=Atomzeitabgleich starten
+Hauptfenster.MM2_3_3.Caption=RSS-Feeds jetzt updaten
+Hauptfenster.MM2_3_4.Caption=Auf Programmupdates prüfen
+Hauptfenster.MM2_4.Caption=&Programme
+Hauptfenster.MM2_4_1.Caption='online' - Programme starten
+Hauptfenster.MM2_4_2.Caption='offline' -Programme starten
+Hauptfenster.MM2_7.Caption=&LeastCosterXP-Dateien
+Hauptfenster.MM2_7_1.Caption=mit LeastCosterXP verknüpfen
+Hauptfenster.MM2_7_2.Caption=Verknüpfungen entfernen
+Hauptfenster.MM2_8.Caption=Plugins
+Hauptfenster.MM3.Caption=&Einstellungen
+Hauptfenster.MM3_1.Caption=&Programmeinstellungen
+Hauptfenster.WebServ.Caption=WebInterface
+Hauptfenster.MM3_2.Caption=Fortgeschrittener Modus
+Hauptfenster.MM3_3.Caption=Sprache
+Hauptfenster.RSSMenu.Caption=&RSS
+Hauptfenster.LeastCosterXP1.Caption=LeastCosterXP
+Hauptfenster.MM5.Caption=&Hilfe
+Hauptfenster.MM5_1.Caption=&Über
+Hauptfenster.MM5_2.Caption=&Hilfe
+Hauptfenster.Donate.Caption=Spenden
+Hauptfenster.MM2_5.Caption=Newsletter
+Hauptfenster.MM7.Caption=&Windows beenden
+Hauptfenster.MM7_1.Caption=Standby
+Hauptfenster.MM7_2.Caption=Ruhezustand
+Hauptfenster.MM7_4.Caption=Abmelden
+Hauptfenster.MM7_5.Caption=Ausschalten
+Hauptfenster.MM7_6.Caption=Neustart
+Hauptfenster.Tray.Hint=LeastCosterXP
+Hauptfenster.PM1.Caption=OFFLINE
+Hauptfenster.PM3.Caption=IP
+Hauptfenster.PM4.Caption=Onlinedauer heute
+Hauptfenster.PM6.Caption=Statistik heute
+Hauptfenster.PM7.Caption=Dauer:
+Hauptfenster.PM8.Caption=Kosten:
+Hauptfenster.PM9.Caption=Verbindungen:
+Hauptfenster.PM10.Caption=Kosten/min:
+Hauptfenster.PM12.Caption=LeastCoster beenden
+Hauptfenster.PM13.Caption=Windows beenden
+Hauptfenster.PM13_1.Caption=Standby
+Hauptfenster.PM13_2.Caption=Ruhezustand
+Hauptfenster.PM13_3.Caption=Abmelden
+Hauptfenster.PM13_4.Caption=Ausschalten
+Hauptfenster.PM13_5.Caption=Neustart
+Hauptfenster.PM14.Caption=maximieren
+Hauptfenster.PM15.Caption=Verbindung trennen
+Hauptfenster.N1Kanal1.Caption=Verbindung
+Hauptfenster.rennen1.Caption=    Trennen
+Hauptfenster.N2Kanal1.Caption=2. Kanal
+Hauptfenster.Verbinden2Methode1.Caption=    Verbinden
+Hauptfenster.rennen2.Caption=    Trennen
+Hauptfenster.TS1.Caption=zur Blacklist hinzufügen
+Hauptfenster.TS2.Caption=Ablaufdatum
+Hauptfenster.TS2_1.Caption=gestern
+Hauptfenster.TS2_2.Caption=heute
+Hauptfenster.TS2_3.Caption=morgen
+Hauptfenster.TS2_4.Caption=heute in einer Woche
+Hauptfenster.TS2_5.Caption=am Ende des Monats
+Hauptfenster.TS3.Caption=Tarifmarkierung
+Hauptfenster.TS3_1.Caption=neue Farbe
+Hauptfenster.TS3_2.Caption=verwende Standards
+Hauptfenster.TS3_3.Caption=Standards
+Hauptfenster.TS3_3_1.Caption=Tarife mit Einwahlgebühr
+Hauptfenster.TS3_3_2.Caption=Tarife mit Freikontingent
+Hauptfenster.TS3_3_3.Caption=Tarife aus der Blacklist
+Hauptfenster.TS3_3_4.Caption=abgelaufene Tarife
+Hauptfenster.TS3_3_5.Caption=sonstige
+Hauptfenster.TS4.Caption=zurücksetzen
+Hauptfenster.TS5.Caption=Tarif löschen
+Hauptfenster.TS6.Caption=Einstellungen
+Hauptfenster.TS6_1.Caption=keine Tarife mit Einwahlgebühr
+Hauptfenster.TS6_2.Caption=keine Farbmarkierung
+Hauptfenster.Spalten1.Caption=sichtbare Spalten
+Hauptfenster.S_1.Caption=Tarif
+Hauptfenster.S_2.Caption=Beginn
+Hauptfenster.S_3.Caption=Ende
+Hauptfenster.S_4.Caption=Preis
+Hauptfenster.S_5.Caption=Einwahl
+Hauptfenster.S_6.Caption=Takt
+Hauptfenster.S_7.Caption=Kosten
+Hauptfenster.S_8.Caption=Nummer
+Hauptfenster.S_9.Caption=User
+Hauptfenster.S_10.Caption=Passwort
+Hauptfenster.S_11.Caption=Webseite
+Hauptfenster.S_12.Caption=gilt seit
+Hauptfenster.S_13.Caption=gilt bis
+Hauptfenster.S_14.Caption=eingetragen
+Hauptfenster.S_15.Caption=Einwahlversuche
+Hauptfenster.S_16.Caption=erfolgreiche Einwahlen
+Hauptfenster.S_17.Caption=Tag der Gültigkeit
+Hauptfenster.ForceDial.Caption=erzwinge Einwahl
+Hauptfenster.WebIntLabel.Caption=>>> WebInterface <<<
+[WebServForm]
+WebServForm.Caption=WebInterface
+WebServForm.GroupBox1.Caption=Userverwaltung
+WebServForm.Label4.Caption=altes Passwort
+WebServForm.Label2.Caption=neues Passwort
+WebServForm.Label1.Caption=Username
+WebServForm.loeschen.Caption=löschen
+WebServForm.Button1.Caption=speichern
+WebServForm.userbox.Items[0]=<neuer User>
+WebServForm.GroupBox2.Caption=Starten/Stoppen
+WebServForm.Label5.Caption=verbundene Clients
+WebServForm.ClientCountLabel.Caption=0
+WebServForm.Label3.Caption=Port
+WebServForm.StopButton.Caption=St&op
+WebServForm.StartButton.Caption=&Start
+WebServForm.serverautostart.Caption=Server mit LeastCosterXP starten
+[DonateWindow]
+DonateWindow.Caption=Bitte unterstützen Sie LeastCosterXP !!
+DonateWindow.Label1.Caption=LeastCosterXP ist Freeware. Die Entwicklung dieser Anwendung nimmt jedoch viel Zeit in Anspruch. Mit Ihrer Spende unterstützen Sie den Entwickler und sichern die Weiterentwicklung von LeastCosterXP !
+DonateWindow.quit.Caption=5
+[LCXPSettings]
+LCXPSettings.Caption=Einstellungen
+LCXPSettings.Memo1.Lines[0]=Hinweise:
+LCXPSettings.Memo1.Lines[1]= werden beim Zeigen auf ein Objekt angezeigt.
+LCXPSettings.TabSheet1.Caption=Einstellungen
+LCXPSettings.settingbox.Caption=Programmstart und Hinweise
+LCXPSettings.minimiert.Caption=LeastCoster XP minimiert starten
+LCXPSettings.noBalloon.Caption=keine BalloonTips anzeigen
+LCXPSettings.autostart.Caption=Autostart aktivieren
+LCXPSettings.minimize.Caption=Klick auf [X] minimiert LCXP
+LCXPSettings.time.Caption=zeige aktuelle Uhrzeit an
+LCXPSettings.GroupBox17.Caption=Balkendiagramme im HTML-Protokoll
+LCXPSettings.Label2.Caption=Einfärbung der Balkendiagramme :
+LCXPSettings.Label3.Caption=gelb : 
+LCXPSettings.Label4.Caption=rot :
+LCXPSettings.Button6.Caption=Standard wiederherstellen
+LCXPSettings.GroupBox16.Caption=Log Dateien
+LCXPSettings.Label10.Caption=Tage speichern.
+LCXPSettings.Label11.Caption=Die letzten
+LCXPSettings.Button3.Caption=Atomzeit-Log  &anzeigen
+LCXPSettings.Button7.Caption=Einwahl-Log  &anzeigen
+LCXPSettings.TabSheet3.Caption=Online
+LCXPSettings.GroupBox9.Caption=Modemeinstellungen
+LCXPSettings.modemlabel.Caption=Modem :
+LCXPSettings.vorwahllabel.Caption=Nummer vorwählen
+LCXPSettings.Device.Hint=Welches Modem wird verwendet, um ins Internet zu gehen ?
+LCXPSettings.Device.Items[0]=Generic 56K HCF Data Fax Modem=modem
+LCXPSettings.Button8.Caption=Netzwerk- und DFÜ-Verbindungen
+LCXPSettings.Multilink.Caption=Kanalbündelung ermöglichen / Modem 2 
+LCXPSettings.Device2.Hint=Welches Modem wird verwendet, um ins Internet zu gehen ?
+LCXPSettings.Device2.Items[0]=Generic 56K HCF Data Fax Modem=modem
+LCXPSettings.setupmodems.Caption=benutze immer die Einstellung der DFÜ-Verbindung
+LCXPSettings.GroupBox11.Caption=Programme starten bei Online-/ Offlinewechsel
+LCXPSettings.Label20.Caption=Timeout
+LCXPSettings.Label21.Caption=mind. Basiszeit
+LCXPSettings.Label22.Caption=Programm
+LCXPSettings.Label19.Caption=Parameter
+LCXPSettings.programs_suchen.Caption=...
+LCXPSettings.Label36.Caption=alle
+LCXPSettings.Label38.Caption=Tage
+LCXPSettings.BitBtn2.Caption=&Felder löschen
+LCXPSettings.programs_add.Caption=h&inzufügen
+LCXPSettings.programs_kill.Caption=wieder beenden
+LCXPSettings.Programs.Hint=... Liste aller bereits eingerichteten Programme.
+LCXPSettings.Programs.Items[0]=ONLINE
+LCXPSettings.Programs.Items[1]=----------------------------------------
+LCXPSettings.Programs.Items[2]=----------------------------------------
+LCXPSettings.Programs.Items[3]=OFFLINE
+LCXPSettings.Programs.Items[4]=----------------------------------------
+LCXPSettings.BitBtn3.Caption=lö&schen
+LCXPSettings.programs_online.Caption=online
+LCXPSettings.programs_offline.Caption=offline
+LCXPSettings.programs_style.Hint=In welchem Modus soll das Programm ausgeführt werden ?
+LCXPSettings.programs_style.Items[0]=maximiert
+LCXPSettings.programs_style.Items[1]=minimiert
+LCXPSettings.programs_style.Items[2]=normal 
+LCXPSettings.programs_style.Items[3]=versteckt
+LCXPSettings.GroupBox19.Caption=Verhalten nach dem Verbinden
+LCXPSettings.Label15.Caption=Tariftabelle 
+LCXPSettings.Label16.Caption=Minuten im Voraus berechnen und anzeigen
+LCXPSettings.hidetray.Caption=nach Verbinden im Tray verstecken
+LCXPSettings.OpenWebsite.Caption=öffne Webseite des Anbieters
+LCXPSettings.TabSheet4.Caption=Online(2)
+LCXPSettings.GroupBox6.Caption=Sounds
+LCXPSettings.Label24.Caption=Sound bei Verbindung
+LCXPSettings.Label23.Caption=Online
+LCXPSettings.Label25.Caption=Offline
+LCXPSettings.SoundOffBut.Caption=...
+LCXPSettings.SoundOnBut.Caption=...
+LCXPSettings.GroupBox7.Caption=OnlineInfo
+LCXPSettings.Label17.Caption=Hintergrundbild
+LCXPSettings.Label18.Caption=Schriftart :
+LCXPSettings.OnlineInfo.Caption=OnlineInfo beim Verbinden anzeigen 
+LCXPSettings.bgbutton.Caption=...
+LCXPSettings.GroupBox25.Caption=Farbeinstellungen
+LCXPSettings.InfoBG.Caption=Hintergrundfarbe
+LCXPSettings.InfoSpecialText.Caption=Farbe der Kostenanzeige
+LCXPSettings.InfoText.Caption=Textfarbe
+LCXPSettings.SetOnlineInfoWidth.Caption=Tarifnamen immer vollständig lesbar
+LCXPSettings.FontB.Caption=...
+LCXPSettings.GroupBox22.Caption=Programmupdates
+LCXPSettings.keepfiles.Caption=Backups beim Updaten anlegen
+LCXPSettings.updatebox.Caption=auf Programmupdates prüfen
+LCXPSettings.Button10.Caption=Zeige BackUp-Ordner
+LCXPSettings.keepfiles_one.Caption=nur die letzten Änderungen sichern
+LCXPSettings.TabSheet6.Caption=Online - Tools
+LCXPSettings.GroupBox10.Caption=Atomzeit - Update
+LCXPSettings.Label6.Caption=Atomzeitserver:
+LCXPSettings.Label37.Caption=min wiederholen
+LCXPSettings.Atombox.Caption=Systemzeit mit der Atomzeit abgleichen
+LCXPSettings.showatomlog.Caption=Logfile &anzeigen
+LCXPSettings.serverdelete.Caption=&löschen
+LCXPSettings.Serveraddbutton.Caption=&hinzufügen
+LCXPSettings.Serverbox.Items[0]=ntps1-0.cs.tu-berlin.de
+LCXPSettings.atomrepeat.Caption=alle
+LCXPSettings.left.Caption=<
+LCXPSettings.right.Caption=>
+LCXPSettings.GroupBox18.Caption=IP Adresse per eMail versenden
+LCXPSettings.Label34.Caption=Name
+LCXPSettings.Label35.Caption=eMail Adresse
+LCXPSettings.ipmail_active.Caption=aktiv
+LCXPSettings.GroupBox8.Caption=IP Adressen
+LCXPSettings.Edit2.Hint=mehrere Ip's bitte mit Semikolon trennen.
+LCXPSettings.BitBtn1.Caption=IP ermitteln
+LCXPSettings.GroupBox23.Caption=Windows Internet Einstellungen
+LCXPSettings.DFUE.Caption=DFÜ-Einwahl > keine Verbindung
+LCXPSettings.DFUE2.Caption=DFÜ-Einwahl > Standardverbindung
+LCXPSettings.TabSheet8.Caption=Automatik
+LCXPSettings.Label27.Caption=... Standardeinstellungen
+LCXPSettings.GroupBox2.Caption=Auto - Trennen nach Uhrzeit
+LCXPSettings.Label29.Caption=Sekunden abwarten.
+LCXPSettings.Label39.Caption=Sekunden vor Ende eines Tarifes trennen.
+LCXPSettings.autotrennen.Caption=Automatisch bei Tarifende trennen
+LCXPSettings.autotrennenask.Caption=vor dem Trennen nachfragen und 
+LCXPSettings.autotrennenconfirm.Caption=nur nach Bestätigung trennen.
+LCXPSettings.autotrennen_konti.Caption=Trennen am Ende von Zeitkontingenten
+LCXPSettings.GroupBox3.Caption=Leerlaufschutz
+LCXPSettings.Label31.Caption=Minuten.
+LCXPSettings.Label32.Caption=Sekunden abwarten.
+LCXPSettings.Label12.Caption=Leerlaufschwelle
+LCXPSettings.Label28.Caption=bytes/Sekunde
+LCXPSettings.leerlauf.Caption=Automatisch trennen bei Leerlauf nach
+LCXPSettings.leerlaufask.Caption=vor dem Trennen nachfragen und 
+LCXPSettings.leerlaufconfirm.Caption=nur nach Bestätigung trennen.
+LCXPSettings.leerlaufsoundbut.Caption=...
+LCXPSettings.LeerlaufPlaySound.Caption=Spiele Sound ab 
+LCXPSettings.GroupBox1.Caption=Auto - Auschalten
+LCXPSettings.AutoAus.Items[0]=Tue nichts
+LCXPSettings.AutoAus.Items[1]=Abmelden
+LCXPSettings.AutoAus.Items[2]=Ausschalten
+LCXPSettings.AutoAus.Items[3]=Neustart
+LCXPSettings.AutoAus.Items[4]=Ruhezustand
+LCXPSettings.AutoAus.Items[5]=StandBy
+LCXPSettings.TabSheet9.Caption=Automatik (2)
+LCXPSettings.GroupBox20.Caption=Auto - Blacklist
+LCXPSettings.Label40.Caption=Automatisch zur Blacklist, wenn mehr als 
+LCXPSettings.Label42.Caption=Einwahlversuche
+LCXPSettings.Label43.Caption=und
+LCXPSettings.Label44.Caption=mindestens 
+LCXPSettings.Label45.Caption=Prozent fehlgeschlagener Einwahlen.
+LCXPSettings.UseAutoBlacklist.Caption=aktiv
+LCXPSettings.AutoEinwahl.Caption=Auto - Einwahl  |  Wiederverbinden
+LCXPSettings.Label30.Caption=Basiszeit bei Autoeinwahl :
+LCXPSettings.Label33.Caption=0 h 10 min
+LCXPSettings.Label48.Caption=Sekunden zwischen zwei Einwahlversuchen
+LCXPSettings.Label51.Caption=--
+LCXPSettings.AutoConnectOnStart.Caption=Auto-Einwahl bei Programmstart aktivieren
+LCXPSettings.AutoReConnect.Caption=Wiederverbinden aktivieren
+LCXPSettings.AutoConnectEinwahl.Caption=Tarife mit Einwahlgebühren berücksichtigen
+LCXPSettings.AutoD.Caption=zeitgesteuert online : 
+LCXPSettings.AutoD_Day.Items[0]=montags
+LCXPSettings.AutoD_Day.Items[1]=dienstags
+LCXPSettings.AutoD_Day.Items[2]=mittwochs
+LCXPSettings.AutoD_Day.Items[3]=donnerstags
+LCXPSettings.AutoD_Day.Items[4]=freitags
+LCXPSettings.AutoD_Day.Items[5]=samstags
+LCXPSettings.AutoD_Day.Items[6]=sonntags
+LCXPSettings.AutoD_Day.Items[7]=täglich
+LCXPSettings.AutoD_Day.Items[8]=wochentags
+LCXPSettings.AutoD_Day.Items[9]=Wochenende
+LCXPSettings.Button9.Caption=hinzufügen
+LCXPSettings.Button11.Caption=löschen
+LCXPSettings.TabSheet7.Caption=RSS
+LCXPSettings.GroupBox12.Caption=RSS-Feeds
+LCXPSettings.label_min.Caption=min
+LCXPSettings.Label13.Caption=Update alle
+LCXPSettings.Label14.Caption=Adressliste : 
+LCXPSettings.Label49.Caption=zeige max.
+LCXPSettings.Label50.Caption=News
+LCXPSettings.Button4.Caption=löschen
+LCXPSettings.Button5.Caption=hinzufügen
+LCXPSettings.rssup.Caption=+
+LCXPSettings.noFeeds.Caption=keine RSS-Feeds laden
+LCXPSettings.Rss_oldItems.Caption=speichere/ zeige alte News
+LCXPSettings.TabSheet10.Caption=PlugIns
+LCXPSettings.GroupBox24.Caption=PlugIns
+LCXPSettings.Label46.Caption=Status :
+LCXPSettings.Label47.Caption=installierte PlugIns
+LCXPSettings.unregister.Caption=deinstallieren
+LCXPSettings.register.Caption=installieren
+LCXPSettings.plugSettings.Caption=Einstellungen
+LCXPSettings.activate.Caption=aktivieren
+LCXPSettings.beenden.Caption=&OK
+[htmlwindow]
+htmlwindow.Caption=HTMLExport
+htmlwindow.balken.Hint=... zeigt den Fortschirtt des Exports an.
+htmlwindow.Export.Caption=Protokoll - Export
+htmlwindow.ok1.Caption=      &Export             
+htmlwindow.ok1.Hint=... startet den Export.
+htmlwindow.kind.Hint=Wählen Sie hier aus, welches Protokoll Sie exportieren möchten.
+htmlwindow.kind.Items[0]=*.csv
+htmlwindow.kind.Items[1]=*.html
+htmlwindow.CheckBox2.Caption=keine auswählen
+htmlwindow.CheckBox2.Hint=... wählt alle Protokolle aus.
+htmlwindow.CheckBox1.Caption=alle auswählen
+htmlwindow.CheckBox1.Hint=... wählt kein Protokoll aus.
+htmlwindow.BitBtn1.Caption=&Schließen
+htmlwindow.BitBtn1.Hint=... schließt dieses Fenster.
+htmlwindow.auswahlbox.Hint=Auswählen durch klicken, Mehrfachauswahl möglich ... 
+htmlwindow.BitBtn2.Caption=     &Löschen             
+htmlwindow.BitBtn2.Hint=... verschiebt die *.csv und *.htm Protokolle in den Papierkorb.
+htmlwindow.BitBtn3.Caption=Lösche &Importdaten
+htmlwindow.BitBtn3.Hint=... löscht Daten, die aus Oleco/Discountsurfer importiert wurden
+[shutter]
+shutter.Caption=shutdown
+shutter.Label1.Caption=Windows wird beendet !
+shutter.Label2.Caption=30
+shutter.Stop.Caption=&Stop
+[auswert]
+auswert.Caption=
+auswert.Caption.Caption=Einzelverbindungsübersicht
+auswert.Filter.Caption=Filter :
+auswert.FilterName.Hint=alle Tarife die mit dem Filter beginnen werden angezeigt
+auswert.Label3.Caption=Ende
+auswert.Label2.Caption=Start
+auswert.Sortbox.Items[0]=chronologisch
+auswert.Sortbox.Items[1]=Uhrzeit
+auswert.Sortbox.Items[2]=Verbindungsdauer
+auswert.Sortbox.Items[3]=Kosten
+auswert.Sortbox.Items[4]=Tarif
+auswert.Sortbox.Items[5]=Rufnummer
+auswert.Sortbox.Items[6]=wie im Protokoll
+auswert.ok.Caption=&Laden
+auswert.FormatBox.Items[0]=HTML (Webseite)
+auswert.FormatBox.Items[1]=CSV
+auswert.Exportiere.Caption=&Export
+auswert.BitBtn1.Caption=&Schließen
+auswert.sizer.Caption=>
+auswert.deletelist.Caption=Übersicht löschen
+[TaVerwaltung]
+TaVerwaltung.Caption=Tarifmanager
+TaVerwaltung.Caption.Caption=Tarifmanager
+TaVerwaltung.Eingabemode.Caption=>
+TaVerwaltung.Vordergrund.Caption=Im Vordergrund halten
+TaVerwaltung.Blacklist.Caption=Whitelist
+TaVerwaltung.GroupBox2.Caption=Alle Tarife löschen
+TaVerwaltung.DelAll.Caption=Alles Lö&schen
+TaVerwaltung.GroupBox3.Caption=Import/ Export
+TaVerwaltung.butBatchExport.Caption=&Export
+TaVerwaltung.ButBatchImport.Caption=&Import
+TaVerwaltung.TabSheet2.Caption=Tarifdaten
+TaVerwaltung.Label1.Caption=Tarif
+TaVerwaltung.Label2.Caption=Rufnummer
+TaVerwaltung.Label3.Caption=Beginn
+TaVerwaltung.Label4.Caption=Ende
+TaVerwaltung.Label11.Caption=Einwahlgebühr in cent
+TaVerwaltung.Label8.Caption=Preis in cent
+TaVerwaltung.Label9.Caption=Takt
+TaVerwaltung.Label5.Caption=Username
+TaVerwaltung.Label6.Caption=Passwort
+TaVerwaltung.Label7.Caption=Webseite (inkl. http://)
+TaVerwaltung.Label13.Caption=beginnt am ...
+TaVerwaltung.Label10.Caption=verfällt am ...
+TaVerwaltung.TaTaktbox.Items[0]=Minutentakt
+TaVerwaltung.TaTaktbox.Items[1]=Sekundentakt
+TaVerwaltung.CheckBox1.Caption=Mo
+TaVerwaltung.CheckBox2.Caption=Di
+TaVerwaltung.CheckBox3.Caption=Mi
+TaVerwaltung.CheckBox4.Caption=Do
+TaVerwaltung.CheckBox5.Caption=Fr
+TaVerwaltung.CheckBox6.Caption=Sa
+TaVerwaltung.CheckBox7.Caption=So
+TaVerwaltung.CheckBox10.Caption=feiertags
+TaVerwaltung.CheckBox9.Caption=Wochenende
+TaVerwaltung.CheckBox8.Caption=wochentags
+TaVerwaltung.TaStarts.Hint=... der erste Tag der Gültigkeit bzw. Tag der letzten Verlängerung.
+TaVerwaltung.Taexpires.Hint=... der letzte Tag der Gültigkeit.
+TaVerwaltung.Button2.Caption=&Felder löschen
+TaVerwaltung.Button1.Caption=&Tarif hinzufügen
+TaVerwaltung.Tadelend.Caption=löschen bei Ablauf
+TaVerwaltung.TabSheet1.Caption=Freikontingente und Datenvolumen
+TaVerwaltung.Label24.Caption=gilt ab dem x. Tag des Monats
+TaVerwaltung.Label25.Caption=h
+TaVerwaltung.Label26.Caption=MB
+TaVerwaltung.Label22.Caption=m
+TaVerwaltung.Konti_upvol.Hint=Angabe in [MB]
+TaVerwaltung.konti_change.Caption=speichern
+TaVerwaltung.konti_tag.Hint=Der Zähler wird immer am angegebenen Tag im Monat zurückgesetzt.
+TaVerwaltung.konti_voltype_both.Caption=Up - und  Downstream
+TaVerwaltung.konti_voltype_down.Caption=nur Downstream
+TaVerwaltung.konti_zeit.Hint=Angabe in [Stunden]
+TaVerwaltung.radio_zeit.Caption=Zeitkontingent
+TaVerwaltung.Radio_Vol.Caption=Volumenkontingent
+TaVerwaltung.radio_NO.Caption=kein Kontingent
+TaVerwaltung.konti_min.Hint=Angabe in [Minuten]
+TaVerwaltung.Label18.Caption=Empfangen 
+TaVerwaltung.Label19.Caption=Gesendet
+TaVerwaltung.Label20.Caption=Zeit 
+TaVerwaltung.Label20.Hint=... ohne Berücksichtigung der Taktung.
+TaVerwaltung.Label21.Caption=Zähler seit 
+TaVerwaltung.Label12.Caption=Verbrauch 
+TaVerwaltung.Label12.Hint=... in diesem Wert ist die Taktung berücksichtigt
+TaVerwaltung.reset.Caption=Reset
+TaVerwaltung.reset.Hint=Setzt den Zähler zurück.
+TaVerwaltung.RadioButton1.Caption=MB
+TaVerwaltung.RadioButton1.Hint=Werte in Megabyte
+TaVerwaltung.RadioButton2.Caption=GB
+TaVerwaltung.RadioButton2.Hint=Werte in Gigabyte
+TaVerwaltung.RadioButton3.Caption=kB
+TaVerwaltung.RadioButton3.Hint=Werte in Kilobyte
+TaVerwaltung.Freikontis_online.Caption=Freikontingente
+TaVerwaltung.Label14.Caption=Während Sie online sind, können Sie keine Kontingente verwalten.
+TaVerwaltung.Tarifbox.Hint=Wählen Sie hier den Tarif, den Sie anzeigen oder bearbeiten möchten.
+TaVerwaltung.Tarifliste.Hint=[Mehrfachauswahl durch Linksklick halten und Maus ziehen.]
+TaVerwaltung.BitBtn1.Caption=S&chließen
+TaVerwaltung.ButDelExp.Caption=&abgelaufene löschen
+TaVerwaltung.ButDelExp.Hint=... löscht alle abgelaufenen Tarife (unwiderruflich !)
+TaVerwaltung.Butkopieren.Caption=Datensatz &kopieren
+TaVerwaltung.Butkopieren.Hint=... kopiert einen Datensatz in die Eingabefelder zum Hinzufügen neuer Daten mit ähnlichen Einstellungen (spart ne Menge Tipparbeit)
+TaVerwaltung.Button4.Caption=Eintrag &löschen
+TaVerwaltung.Button4.Hint=... löscht die selektierten Einträge.
+TaVerwaltung.tarifliste_size.Caption=>
+TaVerwaltung.tarifliste_size.Hint=Tabellengröße ändern
+[wndlist]
+wndlist.Caption.Caption=Import
+wndlist.NotImported_Label.Caption=Achtung: Tarifüberschneidung 
+wndlist.Memo1.Lines[0]=M
+wndlist.Memo1.Lines[1]=e
+wndlist.Memo1.Lines[2]=m
+wndlist.Memo1.Lines[3]=o
+wndlist.Memo1.Lines[4]=1
+wndlist.NotImported_OverWrite.Caption=Weiter
+wndlist.ok.Caption=OK
+wndlist.sclose.Caption=&Schließen
+wndlist.Newimport.Caption=neuer Import
+wndlist.keine.Caption=keine auswählen
+wndlist.alle.Caption=alle auswählen
+wndlist.email.Caption=per eMail versenden
+[PriceWarning]
+PriceWarning.Caption=Achtung !
+PriceWarning.neu2.Caption=IchbineinTarif für 0,02ct/min (Einwahl 10ct)
+PriceWarning.neu1.Caption=Von 16:00:00 bis 18:00:00 steht Ihnen der Tarif
+PriceWarning.info1.Caption=Sie sind zur Zeit verbunden mit dem Tarif
+PriceWarning.info3.Caption=Dieser gilt von 00:00:00 bis 12:00:00 Uhr
+PriceWarning.neu3.Caption=zur Verfügung !
+PriceWarning.info4.Caption=Der Preis ab 12:00:00 Uhr beträgt  0,5ct/min.
+PriceWarning.close.Caption=&Schließen
+PriceWarning.trennen.Caption=Jetzt trennen
+PriceWarning.trennen2.Caption=Um ... trennen
+PriceWarning.time.Caption=59
+PriceWarning.Panel2.Caption=Es folgt ein Tarifwechsel-Info :
+[Ctrlnfo]
+Ctrlnfo.Caption.Caption=Shortcuts
+Ctrlnfo.Butclose.Caption=&Schließen
+[disconnect_leerlauf]
+disconnect_leerlauf.Label2.Caption=30 Sekunden
+disconnect_leerlauf.Label1.Caption=Ihre Verbindung ist im Leerlauf.
+disconnect_leerlauf.label3.Caption=getrennt.
+disconnect_leerlauf.Label4.Caption=Es wird in
+disconnect_leerlauf.Stop.Caption=&Stop
+disconnect_leerlauf.Trennen.Caption=Jetzt &Trennen
+[Info]
+Info.Label1.Caption=LeastCosterXP
+Info.Label2.Caption=( Verweise und Links sind klickbar ! )
+Info.copyright.Caption=©2006 Stefan Fruhner   
+Info.Label3.Caption=LeastCosterXP ist Freeware.  Kommerzielle Nutzung ist ausdrücklich untersagt.
+Info.BitBtn1.Caption=&Schließen
+Info.Edit.Lines[0]=about.txt existiert nicht.
+
+[floatingW]
+floatingW.Caption=OnlineInfo
+floatingW.preis.Caption=Preis
+floatingW.valid.Caption=06:00:00 - 08:00:00
+floatingW.OCostlabel.Caption=0.0000
+floatingW.Ozeit.Caption=00:00:00
+floatingW.Label3.Caption=Empfangen :
+floatingW.Label2.Caption=Gesendet :
+floatingW.labelx.Caption=Geschwindigkeit :
+floatingW.Label1.Caption=immer sichtbar
+floatingW.beenden.Caption=x
+floatingW.mini.Caption=_
+floatingW.changepos.Caption=^
+floatingW.fontup.Caption=>
+floatingW.fontup.Hint=Schrift vergrößern
+floatingW.fontdown.Caption=<
+floatingW.fontdown.Hint=Schrift verkleinern
+floatingW.ScaleUp.Caption=+
+
+[misc]
+;unit1
+M01=Hinweis
+M02=Der LeastCoster ist nun im Tray minimiert. *|* Doppelklick zum maximieren.
+
+M03=Wenn Sie LeastCosterXP jetzt beenden, wird die aktuelle Verbindung getrennt ! Schließen ?
+M04=Wenn Sie LeastCosterXP jetzt beenden, wird die aktuelle Verbindung nicht protokolliert ! Schließen ?
+M05=Beim Beenden stehen die WebInterface-Funktionen nicht mehr zur Verfügung ! Schließen ?
+
+M06=Automatisches Trennen
+M07=Rufnummer
+M08=Verbindung
+M09=Ende des Freikontingents
+
+M11=Einwahl
+M12=ct
+M13=€
+
+M17=Große Zeitdifferenz nach Atomzeitupdate
+M18=Der gewählte Tarif ist noch gültig.
+M19=Trennen ist nicht nötig.
+M20=Der gewählte Tarif ist im Moment NICHT gültig.
+M21=Trennen wird empfohlen!
+
+M24=&Wählen
+M25=Autoeinwahl gescheitert.
+M26=Verbindung beendet.
+
+M27=Übersicht aller aktiven Verbindungen
+M28=Verbindungen
+M29=Ihre Verbindung: 
+M30=Verbindung Nr.
+M31=Name
+M32=Modemtyp
+M33=Modemname
+M34=Multilinkgeräte
+M35=Download
+M36=Upload
+
+M37=Verbindung getrennt, weil Windows beendet wird.
+M38=Bitte die Einstellungen überprüfen !
+M39=Dies scheint der erste Start vom LeastCosterXP zu sein. Bitte nehmen Sie zunächst alle Einstellungen vor.
+
+M40=Verbindung getrennt und LeastCosterXP beendet.
+M41=Starte Programm
+M42=läuft bereits.
+M43=existiert nicht.
+
+M44=Kein RAS installiert !
+
+M45=Das automatische Atomzeitupdate ist deaktiviert.
+M46=RSSFeeds sind deaktiviert.
+M47=Programm bereit.
+
+M48=Onlinezeit
+M49=Dauer
+M50=Kosten
+
+M51=Einwahl erfolglos.
+M52=Wählen abgebrochen.
+
+M53=a&bbrechen
+M54=Die Verbindung
+M55=wird getrennt.
+M56=Prüfe Anfrage ...
+M57=Keine Einwahl solange Zeige beliebige Zeit aktiviert ist !
+M58=Die Tarifliste ist älter als 60s. Sie wird aktualisiert.*|*Bitte danach erneut versuchen
+M59=Kein Eintrag in der Tarifliste aktiv.
+M60=Dieser Tarif ist am 
+M61=abgelaufen.
+M62=Ein unbekannter Fehler trat auf. Bitte die Liste aktualisieren und neu versuchen zu wählen.
+M63=Tarife der Blacklist werden nicht gewählt.
+M64=Es wurde kein gültiges Modem eingtragen !
+M65=Wähle ... 
+M67=Anwahlversuch (LeastCosterXP)
+
+M68=Tarif wurde verändert !
+M69=Onlinesession vorbereitet
+
+M70=Empfänger nicht eindeutig.
+M71=Datei zum Anhängen nicht gefunden
+M72=Datei zum Anhängen konnte nicht geöffnet werden.
+M73=Empfängertyp nicht MAPI_TO, MAPI_CC oder MAPI_BCC.
+M74=Unbekannter Fehler.
+M75=Nicht genug Speicher.
+M76=Benutzerlogin (z.B. bei Outlook) fehlgeschlagen.
+M77=Text zu groß.
+M78=Benutzer hat Senden abgebrochen oder MAPI nicht installiert.
+
+M79=Die Verbindung wurde soeben getrennt.
+M80=Verbindung getrennt (automatisch ausgelöst)
+
+M81=Online/Connected
+M82=&Trennen !
+M83=Verbunden mit
+M84=Letzte Onlinesession dauerte
+M85=Verbindung getrennt
+M86=ist ein ungültiger Paramter.
+M87=kein RSS-Update (nicht online)
+
+M88=Ihre Verbindung ist im Leerlauf.
+M89=aktiv
+M90=inaktiv
+
+M91=Automatisches Verbinden
+M92=gewählt.
+M93=Sekunden
+
+M94=Die aktuelle IP-Adresse Ihres Computers lautet
+M95=Diese eMail wurde automatisch versandt und ist ein Service bereitgestellt von LeastCosterXP ( http://www.leastcosterxp.de )*|**|*Keine Haftung für unerwünschtes Spamming. Sollten Sie diese eMail bekommen, ohne zu wissen warum, so wenden Sie sich direkt an den Absender.
+M96=Ihr LeastCosterXP WebInterface
+
+M97=Es wurden Dateien heruntergeladen, die jetzt ausgetauscht werden. Soll sich LeastCosterXP jetzt neu starten ? *|**|*Bitte warten Sie ab, bis LeastCosterXP von selbst neu startet!
+
+M98=abgelaufen
+M99=Die Kosten können nicht berechnet werden. Der aktuelle Preis ist unbekannt !
+
+M100=Durchschnittliche Kosten/min
+M101=aus Blacklist entfernen
+M102=zur Blacklist hinzufügen
+
+M103=Atomzeit-Update gestartet
+M104=Starte Atomzeit-Update mit
+M105=alte Zeit
+M106=neue Zeit
+M107=Zeitdifferenz in s
+M108=Server
+M109=Erfolgreiches Atomzeit-Update
+M110=Fehler beim Verbinden mit
+
+M111=ganztags
+M112=ungültig seit
+M113=noch frei
+
+M114=Die Automatische Einwahl ist aktiviert.
+M115=Die Automatische Einwahl ist deaktiviert.
+
+;unit2
+M116=ist ein ungültiger Eintrag.
+M117=Titelleiste von
+M118=<neuer User>
+M119=OK
+
+M120=Die Titelzeile von
+M121=ist nicht eingetragen. Bitte korrigieren !!
+
+M122=Noch kein Atomzeit-Update seit dem Start.
+M123=Noch kein Rss-Feed Update seit dem Start.
+
+M124=Die beiden Passwortfelder stimmen nicht überein !
+M125=falsches Passwort !
+M126=Titel nicht gefunden. Bitte Versuch wiederholen.
+M127=Fehler beim Löschen von
+M128=&speichern
+M129=&hinzufügen
+
+M130=aktiviert
+M131=aktivieren
+M132=deaktiviert
+M133=deaktivieren
+M134=Löschen Sie nun das folgende Verzeichnis:
+
+;unit3
+M135=Nr.
+M136=Datum
+M137=Uhrzeit
+M138=Dauer
+M139=Kosten
+M140=Tarif
+M141=getrennt um ..
+M142=Rufnr.
+M143=Anmerkungen
+
+M144=Sortiere Datensätze ... 
+M145=Lade Datensätze ... 
+M146=Fehler: Endzeit liegt vor der Startzeit.
+M147=Fehler: Startzeitpunkt liegt in der Zukunft.
+M148=Keine Datensätze gefunden ... 
+M149=unbekannt
+M150=Speichere Kommentare ... 
+M151=Export des Einzelverbindungsnachweises
+M152=Einzelverbindungsübersicht
+M153=Gesamtdauer
+M154=Teilsumme
+M155=Gesamtsumme
+
+;unit4
+M156=Windows beenden geblockt !
+;TarifManger
+M157=Hinweis: Es wurde keine Webseite angegeben.
+M158=Hinweis: Startzeit gleich Endzeit: Ganztags wurde aktiviert.
+M159=Eintragen abgebrochen: Bitte rote Markierungen beachten !
+M160=Tarifüberschneidung, bitte Daten korrigieren.
+
+M161=ja
+M162=nein
+M163=&Tarif hinzufügen
+
+M164=Gültigkeit
+M165=Beginn
+M166=Ende
+M167=Preis
+M168=Einwahl
+M169=Takt
+M170=Nummer
+M171=User
+M172=Passwort
+M173=Webseite
+M174=gültig ab
+M175=gültig bis
+M176=eingetragen
+M177=Löschen bei Ablauf
+M178=Tarif-Editor
+
+M179=Dieser Tarif befindet sich auf der Whitelist. Klick zum Umschalten
+M180=Dieser Tarif befindet sich auf der Blacklist. Klick zum Umschalten
+
+M181=Eintrag &löschen
+M182=Der Tarif wird verwaltet von
+
+M183=Achtung : Mehrfachauswahl.*|* eim Ändern werden die Daten für alle markierten Datensätze übernommen. Ausnahme sind die Felder "Beginn" und "Ende".
+M184=Einträge &löschen
+M185=Eintrag &löschen
+
+M186=Nächster Reset
+M187=Mit dem Zurücksetzen der Zähler werden bestehende Kontingente wieder aktiviert.*|*Wirklich zurücksetzen ?
+M188=Achtung: Zähler-Reset !
+M189=Achtung: Beim Umbenennen werden Kontingente und Zähler nicht übernommen.
+M190=Alles löschen nicht möglich im Online-Modus.
+M191=Wollen Sie die Tarifdatenbank, Kontingente und Zähler wirklich löschen ?
+
+;unit6
+M192=Import
+M193=Export
+M194=LeastCosterXP Tarifpaket
+M195=Enthaltene Tarife
+M196=neue Tarife
+
+M197=Die angezeigten Tarife wurden nur teilweise oder gar nicht importiert, da es Überschneidungen zu bestehenden Tarifen gibt. Sie können jetzt die alten Tarife löschen und die neuen importieren, indem sie oben die betreffenden Tarife markieren und auf den Button "Weiter" klicken.
+M198=Zusammenfassung
+M199=neu aufgenommene Tarife
+M200=neu datierte Tarife
+M201=Keine Änderungen.
+M202=überschriebene Tarife
+
+;auswertung.pas
+M203=Legende
+M204=mind.
+M205=€/Tag
+M206=weniger als
+M207=durchschnittl. Kosten pro Minute
+
+;Export
+M208=Übersicht der verfügbaren Tabellen
+M209=existiert bereits. Überschreiben ?
+M210=wurde nicht in den Papierkorb verschoben.
+;leerlauf
+M211=Auto-Einwahl deaktiviert
+;menues
+M212=konnte erfolgreich registriert werden.
+M213=konnte erfolgreich gelöscht werden.
+
+;protokolle
+M214=Verbindung(en) exportiert nach
+M215=Dateien neu angelegt
+M216=Kostenprotokolle
+
+;RSS
+M217=Starte RSS-Update
+M218=RSS-Update gestartet.
+M219=RSS-Update beendet.
+M220=Letzte Aktualisierung der Rss-Feeds um
+
+//Webserv
+M222=Keine Tarife verfügbar (Surfzeit verkleinern ?)
+M223=Verbindung wählen
+M224=Aktualisieren
+M225=Nachrichten lesen
+M226=Anhang
+M227=von
+M228=Nachrichten schreiben
+M229=markierte Nachrichten löschen
+M230=Absenden
+M231=Empfänger
+M232=User
+M233=Passwort
+
+M234=Server gestartet
+M235=Server gestoppt
+
+M236=WebInterface Hinweis
+M237=Windows wird beendet
+M238=Ausschalten
+M239=Windows neu gestartet
+M240=Neustart
+M241=User abgemeldet
+M242=Abmelden
+M243=Windows ausschalten > Standby
+M244=StandBy
+M245=Windows ausschalten > Ruhezustand
+M246=Ruhezustand
+
+M247=Ausgeloggt
+M248=Ausgeloggt (Logout vergessen !)
+M249=versucht Einwahl.
+
+M250=hat die Verbindung getrennt.
+M251=erfolgreicher Login
+M252=fehlgeschlagener Login
+
+M253=Einwahl gestartet
+M254=stellt die Verbindung mit LeastCosterXP zum Internet her.
+
+//tarife
+M255=%s für %1.2f ct/min (Einwahl : %f ct).
+M256=Dieser gilt von %s Uhr bis %s Uhr.
+M257=Der Preis ab %s Uhr ist %s
+M258=Von %s Uhr - %s Uhr steht Ihnen der Tarif
+M259=%s für %s ct/min (Einwahl %s ct)
+M260=zur Verfügung !
+M261=Um %s trennen
+
+M262=Es ist kein Tarif bekannt, der nach
+M263=%s Uhr
+M264=gilt !
+
+M265=Tag
+M266=Score (alle)
+M267=Score (ok)
+
+Help00=Hinweise:*|*werden beim Zeigen auf ein Objekt angezeigt.
+Help01=Autostart:*|*LeastCoster XP startet mit Windows. Wenn der Webserver nach dem Einschalten der Rechners zur Verfügung stehen soll, dann unbedingt aktivieren !
+Help02=minimiert:*|*LeastCosterXP startet nur in der Tray-Leiste (kleines graues Symbol, das bei Onlineverbindung gelb wird). Ein Klick darauf maximiert LeastCosterXP.
+Help03=Klick auf [X]:*|*Ist diese Option aktiviert, so wird LeastCosterXP nicht geschlossen wenn [x] gedrückt wird. Beenden ist dann nur über das Menü möglich.
+Help04=zeige Uhrzeit*|*...über der Tariftabelle kann die uhrzeit eingeblendet werden.
+Help05=keine BalloonTips*|*BalloonTips sind diese kleinen gelben Fensterchen, dieHin und wieder neben der Windows-Uhr erscheinen. Möchten Sie, dass der LeastCosterXP nicht auf diesem Wege mit Ihnen kommuniziert, so können Sie dieseHinweiseHier ausschalten.
+Help06=Log-Dateien*|*Datensätze die älter als xx Tage sind werden automatisch aus den Log-Dateien entfernt.So wird vermieden, dass die Log-Dateien immer länger werden.
+Help07=Logfile anzeigen*|*Die Änderungen der Uhrzeit werden in der Datei "Atomzeit.txt" protokolliert.*|*Ein Klick auf diesen Button öffnet das Logfile.
+Help08=Einwahl-Log anzeigen*|*Einwahlen werden in der Datei "www\log\log.txt" protokolliert.*|*Ein Klick auf diesen Button öffnet das Logfile.
+Help09=Einfärbung der Balkendiagramme*|*Die Balkendiagramme werden blau, gelb und rot eingefärbt.Hier einzutragen sind die vorrausichtlichen Monatskosten.*|*Dier Wert wird intern durch die Anzahl der Tage geteilt. Eine Einfärbung findet dann statt wenn der jeweilige Anteil an einem Tag überschritten wurde.*|*Standardwerte: gelb: 10 | rot 15
+Help19=benutze Einstellungen der DFÜ-Verbindung*|*Die Modem-Einstellungen der DFÜ-Verbindung blieben unangetastet. Nur in Ausnahmefällen nötig. Die DFÜ-Verbindung LeastCosterXP MUSS dann korrekt eingerichtet sein.*|*Empfehlung: daektiviert lassen, solange es keine Probleme gibt.
+Help20=Modem*|*Welches Modem wird verwendet um ins Internet zu gehen ?
+Help21=Multilink*|*... auch Kanalbündelung genannt. Es kann ein zweites Modem angegeben werden um dieses zu realisieren. Nicht unter Windows 9x. Ist dieserHaken gesetzt, so wird die Verbindung beim nächsten Mal mit beidem Modems aufgebaut.*|*Ist diese Option gesetzt ist das Zuschalten des 2. Kanales möglich.
+Help22=Modem-Vorwahlstring*|*Manchmal ist es notwendig eine Nummer vorzuwählen, um z.B. eine Telefonanlage zu passieren.*|*z.B.: "0,"
+Help23=Netzwerk- und DFÜ-Verbindungen*|*... öffnet das Fenster Netzwerk- und DFÜ-Verbindungen.*|*(nur Win2k/WinXP)
+Help24=Anzeige im Voraus*|*Im Online-Modus wird die Tariftabelle für die kommenden Minuten angezeigt.Hier wird angezeigt, wie lange im Voraus die Tabelle berechnet wird.*|*Achtung: Auch die Warnung, wenn ein Tarif teurer wird, endet oder ein billigerer Tarif zur Verfügung steht, richtet sich anch dieser Zeit.
+Help25=Verstecken nach dem Online- Wechsel*|*Das Hauptfenster wird nach dem Onlinewechsel minimiert und im Tray versteckt.
+Help26=Öffne die Webseite des Anbieters*|*Beim Verbinden wird der Browser mit der Anbieterwebseite geöffnet. So kann sofort nach der Einwahl die Gültigkeit des Tarifes überprüft werden.
+Help27=Programmstart*|*... wechselt der Rechner in den OFFLINE- oder ONLINE-Zustand können Programme gestartet werden
+Help28=löschen*|*...löscht den gewählten Eintrag.
+Help29=Programm wieder beenden*|*Ein Programm, das bei ONLINE-Verbindungen gestartet wird, kann beendet werden.*|*Achtung: Das Programm wird dann einfach "abgeschossen". Es kann zu Datenverlust kommen.
+Help30=Programm*|*... geben SieHier das Programm an.
+Help31=Parameter*|*Manche Programme können Kommandozeilenparameter verarbeiten, um spezielle Funktionen auszuführen. Diese Parameter sind derHilfe des jeweiligen Programms zu entnehmen.
+Help32=Timeout*|*... gibt die Zeit in Millisekunden an, die vor dem Start des Programms gewartet werden soll.
+Help33=mindeste Basiszeit*|*... nur wenn die eingestellte Surfdauer den Mindestwert in Minuten überschreitet, dann wird das Programm gestartet. 
+Help34=alle xx Tage*|*... das Programm wird nur jeden x-ten Tag nach dem letzten Aufruf ausgeführt
+Help35=Hinzufügen*|*... speichert den Eintrag.
+Help36=löschen*|*... löscht den Eintrag.
+Help37=Sound*|*Beim Verbinden und Trennen kann je ein Sound abgespielt werden. Dieser muss im Wave- Format (*.wav) vorliegen.
+Help38=Programmupdates*|*... Überprüfung auf Updates (empfohlen)
+Help39=Backups anlegen*|*Die aktualisierten Dateien werden im Ordner BackUp abgelegt, damit eine Änderung wieder rückgängig gemacht werden kann.
+Help40=Nur die letzte Änderung sichern*|*Vor einem Update wird der BackUp-Ordner gelöscht, so dass nur die letzte Änderung gespeichert wird (spart Speicherplatz).
+Help41=Zeige BackUp-Ordner*|*... öffnet den Ordner "BackUp"
+Help42=OnlineInfo*|*Das Infofenster wird angezeigt, sobald sie eine Verbindung mit LeastCosterXPHerstellen.
+Help43=Tarifnamen vollständig*|*Je nach Länge des Tarifnamens passt sich das OnlineInfo selbst in der Breite an.
+Help44=OnlineInfo*|*Geben Sie hier das gewünschte Hintergrundbild an.
+Help45=OnlineInfo*|*Geben SieHier die gewünschte Schriftart an.
+Help46=Textfarbe*|*Welche Farbe soll der TextHaben ? 
+Help47=Hintergrundfarbe*|*Welche Farbe soll derHintergrundHaben ? 
+Help48=Textfarbe*|*Welche Farbe sollen Zeit und PreisHaben ? 
+Help49=Atomzeit:*|*Damit es nicht zu unnötigen Tarifüberschreitungen kommt, muss die Uhrzeit des Computers immer genau sein. Mit dem Atomzeit-Update wird die Uhrzeit bei Online-Verbindung mit einem Time-Server abgeglichen.*|*Achtung: andere Atomzeit-Update Programme und die Windows-Funktion müssen deaktiviert sein.
+Help50=Atomzeit-Server: Sortierung*|*... verschiebt den ausgewählten Server nach oben in der Prioritätenliste.
+Help51=Atomzeit-Server: Sortierung*|*... verschiebt den ausgewählten Server nach unten in der Prioritätenliste.
+Help52=Atomzeit-Server*|*Server, die das SNTP-Protokoll unterstützen, könnenHier eingetragen werden. Der LeastCoster XP versucht die Liste in angegebener Reihenfolge abzuarbeiten, wenn ein Server nicht antwortet.
+Help53=Wiederholung*|*Solange der Computer online ist, kann die Uhrzeit wiederholt abgeglichen werden. Geben SieHier das Intervall in Minuten an.
+Help54=eMail-Benachrichtigung*|*Sie können sich per eMail benachrichtigen lassen, wenn der Computer eine VerbindungHerstellt. SoHaben Sie immer Zugriff auf Dienste des Computers wenn Sie unterwegs sind. Voraussetzung ist ein eingerichtetes eMail-Programm (welches unter Umständen eine Warnmeldung beim Versenden gibt > bitte deaktivieren).
+Help55=eMail-Benachrichtigung : Name*|*Bitte tragen Sie Ihren Namen ein, wie er in der eMail erscheinen soll.*|*Ist das Feld leer findet KEIN Versand statt.
+Help56=eMail-Benachrichtigung : Adresse*|*Bitte tragen Sie Ihre eMail-AdresseHier ein.*|*Eine Überprüfung der Adresse findet nicht statt. Für Spamming übernimmt der Autor keineHaftung.
+Help57=... setzt als Windows Standard Verbindung Keine Verbindung (WinXP)
+Help58=... öffnet die Netzwerkverbindungen. (WinXP)
+Help59=IP-Adresse*|*Listet alle dem Computer zugewiesenen IP-Adressen auf. Sofern der Rechner Offline ist und er KEINE Netzwerkverbindungen besitzt mussHier der Wert 127.0.0.1 erscheinen ... EinstellungHat keine Relevanz - nur zur Info ... 
+Help60=Automatisches Trennen*|*Diese Einstellungen werden bei Online-Wechsel automatisch gesetzt und können dann aber individuell für die Verbindung angepasst werden.
+Help61=Trennen zum Ende des Tarifes*|*Das automatisches Trennen wird zur Uhrzeit des Tarifendes programmiert.
+Help62=Trennen zum Ende von Kontingenten*|*60s bevor ein Kontingent aufgebraucht ist, wird einHinweis angezeigt und die Verbindung nach 30s getrennt. Bei Volumenkontingenten wird getrennt sobald weniger als 512kB übrig sind.
+Help63=... mit Nachfrage*|*Wenn gewünscht erscheint einHinweisfenster vor dem Trennen der Verbindung.
+Help64=Warten bis zum Trennen*|*... dasHinweisfenster wartet xx Sekunden und trennt nach Ablauf dieser Zeit, wenn nicht zuvor auf Stop gedrückt wurde.
+Help65=Nur nach Bestätigung*|*Das Hinweisfenster erscheint, aber es wird nur getrennt, wenn Jetzt trennen gedrückt wird.
+Help66=Sekunden vor dem Ende trennen*|*... bestimmt die Zeit, wie lange vor dem Ende eines Zeitfensters getrennt werden soll.
+Help67= Trennen bei Leerlauf und Leerlaufzeit*|*Werden keine Daten über die aktuelle Verbindung empfangen oder gesendet, so ist die Verbindung im Leerlauf und verursacht unnötig Kosten. Nach einer zulässigen Leerlaufzeit von xx Minuten können solche Verbindungen getrennt werden.
+Help68=Sound bei Leerlauf*|*Welcher Sound soll abgespielt werden ? (muss im *.wav-Format angegeben werden)
+Help69=Leerlaufschwelle*|*Die Verbindung wird als im Leerlauf betrachtet, wenn die Summe aus gesendeten und empfangenen Bytes kleiner als diese Leerlaufschwelle ist. Je kleiner dieser Wert ist, desto empfindlicher ist die Leerlauferkennung auf Datenbewegungen. Ist dieser Wert zu groß gewählt, so wird nahezu jede Verbindung gemeldet.*|*Empfehlung: 500 bytes/Sekunde
+Help70=Ausschalten*|*Nach dem automatischen Trennen kann der Computer im jeweiligen Modus ausgeschaltet werden.*|*Auch dies ist die Standardeinstellung, die bei jedem Online-Wechsel aktiviert wird.
+Help71=Auto-Verbinden bei Programmstart*|*Beim Programmstart wird sofort begonnen zu wählen. Schlägt die Verbindung fehl, wird nach Ablauf des Einwahl-Intervalls ein neuer Einwahlversuch gestartet.
+Help72=Wiedereinwahl*|*Wird die Verbindung getrennt, so kann eine automatische Wiedereinwahl mit dem billigsten Tarif veranlasst werden. Dies wird versucht, bis der Rechner online ist oder durch drücken der stop-Taste abgebrochen.
+Help73=Sekunden zwischen zwei Einwahlversuchen*|*Ist ein Einwahlversuch nicht erfolgreich, so wird ein neuer Versuch nach xx Sekunden gestartet.
+Help74=... Einwahlgebühr berücksichtigen*|*Nur wenn dieserHaken gesetzt ist, dann wird auch ein Tarif mit Einwahlgebühr gewählt, ansonsten wird gesucht bis ein Tarif ohne EWG gefunden ist.
+Help75=Basiszeit bei Auto-Einwahl*|*Da der Computer automatisch entscheiden muss, welches der für ihn billgste Tarif ist, muss er die gewünschte Basiszeit selbst setzen. Dieser Wert wirdHier angegeben.
+Help76=zeitgesteuert online*|*Sie können Zeiten angeben, zu denen der Computer versuchen soll online zu sein. Während dieser Zeit wird automatisch versucht zu wählen sobald der COmputer offline ist.
+Help77=Zeitübersicht*|*Zu Zeiten, die in dieser Übersicht angegeben sind werden automatisch Verbindungen aufgebaut.
+Help78=Auto Blacklist*|*Die Blacklist enthält alle Tarife, die nicht gewählt werden dürfen. Tarife werden automatisch auf die Blacklist gesetzt sobal eine Mindestanzahl an Einwahlenversuchen erfolgte UND ein gewisser Prozentsatz davon fehlgeschlagen ist.
+Help79=WebInterface*|*Das WebInterface stellt Basisfunktionen für ein (lokales) Netzwerk zur Verfügung. So können Sie die Einwahl und das Trennen über einen entfernten Rechner steuern.
+Help80=Port*|*Auf welchem Port soll das WebInterface bereitgestellt werden ?*|*Empfohlene Einstellung: 85*|*Die Adresse des Interfaces ist dannHttp://{servername}:{port}, z.B.http://192.168.0.1:85 .
+Help81=Start*|*... startet das WebInterface
+Help82=Stop*|*... beendet das WebInterface
+Help83=Automatischer Start*|*... startet das WebInterface bei Programmstart.
+Help84=Userverwaltung*|*Hier werden die User eingtragen, die das WebInterface nutzen dürfen. Um das WebInterface zu Nutzen, muss mindestens ein User eingetragen sein.
+Help85=User*|*Geben SieHier den Namen an, mit dem sich ein User beim WebInterface einloggen soll.
+Help86= altes Passwort*|*Wenn Sie einen neuen BenutzerHinzufügen, dann können sie dieses Feld leer lassen. Zum Ändern und Löschen, aber muss Ihnen das Benutzerpasswort bekannt sein.
+Help87=neues Passwort*|*Tragen SieHier das Passwort ein. Möchten Sie ihr Passwort ändern, dann muss zusätzlich das zuvor gültige Passwrot angegeben werden (siehe altes Passwort).
+Help88=Passwortbestätigung*|*Bitte geben SieHier ihr Passwort ein zweites Mal ein. Dies ist eine Sicherheitsabfrage, um zu vermeiden, dass Sie sich beim ersten mal vertipptHaben
+Help89=RSS Feeds*|*RSS FeedsHalten sie über neueste Nachrichten oder Veränderungen auf Webseiten/ in Foren auf dem laufenden. Sie werden direkt beim Verbinden aktualisiert und stehen Ihnen über dasHauptmenü zur Verfügung.
+Help90=keine Feeds*|*... deaktiviert die RSS-Funktionen.
+Help91=Update*|*Die eingestellten RSS-Feeds werden bei Online-Verbindungen aktualisiert und dann alle xx Minuten neuHeruntergeladen.
+Help92=Maximal anzeigen*|*Es werden nur die xx neuesten Meldungen angezeigt.
+Help93=alte News*|*Ist diese Option aktiviert, werden auch News gezeigt, die nicht mehr durch den Feed verbreitet werden.
+Help94=PlugIns*|*Es könneHier PlugIns eingebunden werden, die zum Beispiel die Tarifliste bearbeiten.
+Help95=PlugIns aktivieren*|*PlugIns müssen aktiviert werden, damit sie Ihre Funktion erfüllen.
+Help96=Installieren*|*Hier können sie PlugIns installieren, die im *lcp-Format vorliegen.
+Help97=Deinstallieren*|*Hier können sie das ausgewählte PlugIn deinstallieren.
+Help98=Einstellungen*|*Rufen Sie hier die Einstellungen des gewählten PlugIns auf.
+

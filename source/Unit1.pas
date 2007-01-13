@@ -363,6 +363,7 @@ type
     procedure OneInstanceInstanceStarted(Sender: TObject;params: TStringList);
     procedure ReloadTimer(Sender: TObject);
     procedure PlugInClick(Sender: TObject);
+    procedure LangClick(Sender: TObject);
     procedure RsstimerTimer(Sender: TObject);
     procedure UpdateTimerTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
@@ -726,6 +727,18 @@ begin
  lastpluginclicked:= stripHotkey((sender as TMenuItem).caption);
  StartPlugins('menu');
 end;
+
+procedure THauptfenster.langClick(Sender: TObject);
+var language: string;
+    i: integer;
+begin
+ for i:= 0 to MM3_3.Count-1 do MM3_3.items[i].Checked:= false;
+ 
+ language:= stripHotkey((sender as TMenuItem).caption);
+ settings.WriteString('LeastCoster','language',language);
+ (sender as TMenuItem).checked:= true;
+end;
+
 
 procedure SetLEDs;
 begin
@@ -1223,8 +1236,8 @@ end;
 
            Application.CreateForm(TPriceWarning, PriceWarning);
 
-           PriceWarning.info2.Caption:= Format('%s '+ misc(M10,'M10')+'%1.2f'+misc(M12,'M12')+'/min ('+misc(m11,'M11')+': %f ct).',[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
-           PriceWarning.info3.Caption:= Format(misc(M14,'M14')+' %s '+misc(M15,'M15')+' '+misc(M16,'M16')+' %s '+misc(M15,'M15')+').',[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
+           PriceWarning.info2.Caption:= Format(misc(M255,'M255'),[onlineset.Tarif ,onlineset.Preis ,onlineset.Einwahl]);
+           PriceWarning.info3.Caption:= Format(misc(M256,'M256'),[timetoStr(onlineset.vbegin) ,timeToStr(onlineset.vend)]);
            PriceWarning.info4.Caption:= '';
 
            PriceWarning.neu1.Caption:= misc(M17,'M17')+' : ' +timetostr(now-oldtime);
@@ -1234,7 +1247,7 @@ end;
            begin
              PriceWarning.neu2.Caption:= misc(M18,'M18');
              PriceWarning.neu3.Caption:= misc(M19,'M19');
-             Pricewarning.trennen2.Caption:= misc(M22,'M22')+ ' '+ TimeToStr(onlineset.vend) + ' '+misc(M23,'M23');
+             Pricewarning.trennen2.Caption:= Format(misc(M261,'M261'),[TimeToStr(onlineset.vend)]);
              Pricewarning.Timer1.enabled:= true;
            end;
            if ((now < beginn) or (now > ende)) then
@@ -1846,19 +1859,20 @@ if (progcountoff < length(oprogoff)) then
 end;
 
 procedure THauptfenster.FormCreate(Sender: TObject);
-var con: TmemInifile;
-    i: integer;
-    sr : TSearchRec;
-    F: string;
-    ple: TIniFile;
-    reg: TRegistry;
+var con     : TmemInifile;
+    i       : integer;
+    sr      : TSearchRec;
+    F       : string;
+    ple     : TIniFile;
+    reg     : TRegistry;
+    langlist: TStringlist;
 begin
-closeallowed:= false;
-autoclose:= false;
-ConnHandle:= 0;
+closeallowed := false;
+autoclose    := false;
+ConnHandle   := 0;
 Disconnecting:= false;
-neuladen:= false;
-isonline:= false;
+neuladen     := false;
+isonline     := false;
 
 reg:= TRegistry.Create;
   //lcz-Dateien wieder unregistrieren -> nicht mehr nötig
@@ -1870,13 +1884,13 @@ Rssread:= TRss.Create;
 //gradienten erzeugen
 if MagRasOSVersion > OSW9x then
 begin
-  grad2 := TSRGradient.Create(self);
-  grad2.parent:= hauptfenster;
-  grad2.Align:= alClient;
-  grad2.Direction:= gdUpLeft;
-  grad2.EndColor:= $00DBAF95;
+  grad2           := TSRGradient.Create(self);
+  grad2.parent    := hauptfenster;
+  grad2.Align     := alClient;
+  grad2.Direction := gdUpLeft;
+  grad2.EndColor  := $00DBAF95;
   grad2.StartColor:= clBtnFace;
-  grad2.Style:= gsPyramid;
+  grad2.Style     := gsPyramid;
   grad2.SendToBack;//nach hinten schieben
 end;
 
@@ -1884,107 +1898,100 @@ end;
  EdWebsite.Parent := hauptfenster;
  with EdWebsite do
   begin
-    Name := 'EdWebsite';
-    Left := 27;
-    Top := 374;
-    Width := 60;
-    Height := 13;
-    Constraints.MaxWidth := 360;
-    Constraints.MinWidth := 60;
-    Font.Charset := DEFAULT_CHARSET;
-    Font.Color := clBlue;
-    Font.Height := -11;
-    Font.Name := 'MS Sans Serif';
-    Font.Style := [fsBold];
-    ParentFont := False;
-    Transparent := true;
-    HoverFontColor:=clHotlight;
-    Font.Color:= clBlue;
-    LinkActive:= true;
-    LinkType:= ltWWW;
-    ShortenFilenames:= false;
-    ShowHighlight:= false;
-    ShowShadow:= false;
-    Style:= lsCustom;
-    UnderlineOnEnter:= false;
-    Visible:= true;
+    Name                := 'EdWebsite';
+    Left                := 27;
+    Top                 := 374;
+    Width               := 60;
+    Height              := 13;
+    Constraints.MaxWidth:= 360;
+    Constraints.MinWidth:= 60;
+    Font.Charset        := DEFAULT_CHARSET;
+    Font.Color          := clBlue;
+    Font.Height         := -11;
+    Font.Name           := 'MS Sans Serif';
+    Font.Style          := [fsBold];
+    ParentFont          := False;
+    Transparent         := true;
+    HoverFontColor      :=clHotlight;
+    Font.Color          := clBlue;
+    LinkActive          := true;
+    LinkType            := ltWWW;
+    ShortenFilenames    := false;
+    ShowHighlight       := false;
+    ShowShadow          := false;
+    Style               := lsCustom;
+    UnderlineOnEnter    := false;
+    Visible             := true;
   end;
-
 
   WebIntLabel := TSRLabel.Create(Self);
   WebIntLabel.Parent := hauptfenster;
   with WebIntLabel do
   begin
-    Name := 'WebIntLabel';
-    Left := 135;
-    Top := 483;
-    Width := 149;
-    Height := 16;
-    Anchors := [akLeft, akTop, akRight];
-    Caption := '>>> WebInterface <<<';
-    Font.Color := clBlue;
-    Font.Height := -13;
-    Font.Name := 'MS Sans Serif';
-    Font.Style := [fsBold];
-    ParentFont := False;
-    Transparent := True;
-    HoverFontColor:=clHotlight;
-    Font.Color:= clBlue;
-    LinkActive:= true;
-    LinkType:= ltWWW;
+    Name             := 'WebIntLabel';
+    Left            := 135;
+    Top             := 483;
+    Width           := 149;
+    Height          := 16;
+    Anchors         := [akLeft, akTop, akRight];
+    Caption         := '>>> WebInterface <<<';
+    Font.Color      := clBlue;
+    Font.Height     := -13;
+    Font.Name       := 'MS Sans Serif';
+    Font.Style      := [fsBold];
+    ParentFont      := False;
+    Transparent     := True;
+    HoverFontColor  :=clHotlight;
+    Font.Color      := clBlue;
+    LinkActive      := true;
+    LinkType        := ltWWW;
     ShortenFilenames:= false;
-    ShowHighlight:= false;
-    ShowShadow:= false;
-    Style:= lsCustom;
+    ShowHighlight   := false;
+    ShowShadow      := false;
+    Style           := lsCustom;
     UnderlineOnEnter:= false;
-    Visible := False;
+    Visible         := False;
   end;
 
 
-//Fenstertitle erzeugen
-Title2:= TSRLabel.Create(self);
+  //Fenstertitle erzeugen
+  Title2                 := TSRLabel.Create(self);
+  title2.Parent          := Hauptfenster;
+  title2.Alignment       := taCenter;
+  title2.Anchors         := [akTop];
+  title2.BevelStyle      := bvnone;
+  title2.Caption         := 'LeastCosterXP';
+  title2.Hint            := 'www.leastcosterxp.de';
+  title2.HoverFontColor  :=$000000BF;
+  title2.Left            := 120;
+  title2.Height          := 29;
+  title2.Font.Color      := $0000007B;
+  title2.Font.Name       := 'Verdana';
+  title2.font.Style      := [fsBold];
+  title2.Font.Size       := 15;
+  title2.Layout          := tlTop;
+  title2.LinkActive      := true;
+  title2.LinkedAdress    := 'http://www.leastcosterxp.de';
+  title2.LinkType        := ltWWW;
+  title2.ShadowColor     := $00D7E0E1;
+  title2.ShadowOffset    := 3;
+  title2.ShortenFilenames:= false;
+  title2.ShowHighlight   := true;
+  title2.ShowShadow      := true;
+  title2.Style           := lsCustom;
+  title2.Top             := 0;
+  title2.Transparent     := true;
+  title2.UnderlineOnEnter:= false;
+  title2.Width           := 166;
+  title2.Visible         := true;
 
-title2.Parent:= Hauptfenster;
-title2.Alignment:= taCenter;
-title2.Anchors:= [akTop];
-title2.BevelStyle:= bvnone;
-title2.Caption:= 'LeastCosterXP';
-title2.Hint:= 'www.leastcosterxp.de';
-title2.HoverFontColor:=$000000BF;
-title2.Left:= 120;
-title2.Height:= 29;
-title2.Font.Color:= $0000007B;
-title2.Font.Name:= 'Verdana';
-title2.font.Style:= [fsBold];
-title2.Font.Size:= 15;
-title2.Layout:= tlTop;
-title2.LinkActive:= true;
-title2.LinkedAdress:= 'http://www.leastcosterxp.de';
-title2.LinkType:= ltWWW;
-title2.ShadowColor:= $00D7E0E1;
-title2.ShadowOffset:= 3;
-title2.ShortenFilenames:= false;
-title2.ShowHighlight:= true;
-title2.ShowShadow:= true;
-title2.Style:= lsCustom;
-title2.Top:= 0;
-title2.Transparent:= true;
-title2.UnderlineOnEnter:= false;
-title2.Width:= 166;
-title2.Visible:= true;
-
-settings            := TMemIniFile.Create(extractfilepath(paramstr(0))+'lcr.cfg');
-UserSettings        := TMemIniFile.Create(extractfilepath(paramstr(0))+'user.pwd');
-SettingsTraffic     := TMemIniFile.Create(extractfilepath(paramstr(0))+'traffic.ini');
-SettingsKontingente := TMemIniFile.Create(extractfilepath(paramstr(0))+'Kontingente.ini');
-SettingsScores      := TMemIniFile.Create(extractfilepath(paramstr(0))+'Scores.ini');
-SettingsOnline      := TMemInifile.Create(ExtractFilepath(Paramstr(0)) + 'online.ini');
-SettingsOffline     := TMemInifile.Create(ExtractFilepath(Paramstr(0)) + 'offline.ini');
-
-CL:=loadIni('lang\Custom.ini');
- if CL<>nil then
-	fillProps([Hauptfenster],CL);
-
+  settings               := TMemIniFile.Create(extractfilepath(paramstr(0))+'lcr.cfg');
+  UserSettings           := TMemIniFile.Create(extractfilepath(paramstr(0))+'user.pwd');
+  SettingsTraffic        := TMemIniFile.Create(extractfilepath(paramstr(0))+'traffic.ini');
+  SettingsKontingente    := TMemIniFile.Create(extractfilepath(paramstr(0))+'Kontingente.ini');
+  SettingsScores         := TMemIniFile.Create(extractfilepath(paramstr(0))+'Scores.ini');
+  SettingsOnline         := TMemInifile.Create(ExtractFilepath(Paramstr(0)) + 'online.ini');
+  SettingsOffline        := TMemInifile.Create(ExtractFilepath(Paramstr(0)) + 'offline.ini');
 
 //Tarifliste
   liste.colwidths[0]:= -1; //erste spalte : ScoreWerte (immer unsichtbar)
@@ -2007,48 +2014,44 @@ CL:=loadIni('lang\Custom.ini');
   useColors := settings.ReadBool('Tariflist','Colors', false);
   TS6_2.checked:= not usecolors;
 
-TarifeDisabled:= false;
+  TarifeDisabled        := false;
+  KontingenteWarned     := false;
+  parameters            := TStringList.Create;
+  kill_list             := TStringList.Create;
+  parameters.Duplicates := dupIgnore;
+  atomcount             := 0;
+  startwithimport       := false;
+  importfilename        := '';
+  selfdial              := false;
+  webzugriff            := false;
+  rascheck              := true;
+  writeme               := false;
+  startcount            :=0;
+  firststart            := false;
+  rssrunning            := false;
+  warnung_gezeigt       := false;
+  dialing               := false;
+  beliebig_check.checked:= false;
+  Hauptfenster.Caption  := 'LeastCosterXP '+GetFileVersion(application.exename);
+  ozeit.caption         := '';
+  usecolors             := true;
+  TS6_2.checked         := false;
+  disconnectseconds     := 5;
+  minimizeonclose       := true;
+  ConnectionCostvisible := true;
+  TS6_1.Checked         := not ConnectionCostvisible;
+  DaysToSaveLogs        := 60;
 
-KontingenteWarned:= false;
-parameters:= TStringList.Create;
-kill_list:= TStringList.Create;
-parameters.Duplicates:= dupIgnore;
-atomcount:= 0;
+  F:= ExtractFilepath(Paramstr(0));
 
-startwithimport:= false;
-importfilename:= '';
-selfdial:= false;
-webzugriff:= false;
-rascheck:= true;
-writeme:= false;
-startcount:=0;
-firststart:= false;
-rssrunning:= false;
-
-warnung_gezeigt:= false;
-dialing:= false;
-beliebig_check.checked:= false;
-Hauptfenster.Caption:= 'LeastCosterXP '+GetFileVersion(application.exename);
-ozeit.caption:= '';
-usecolors:= true;
-TS6_2.checked:= false;
-disconnectseconds  := 5;
-minimizeonclose:= true;
-ConnectionCostvisible:= true;
-TS6_1.Checked:= not ConnectionCostvisible;
-DaysToSaveLogs:= 60;
-
-german:= true;
-
-F:= ExtractFilepath(Paramstr(0));
-
-if not directoryexists(F+ 'log')  then mkdir(F + 'log');
-if not directoryexists(F + 'www') then mkdir(F + 'www');
-if not directoryexists(F + 'www\log') then mkdir(F + 'www\log');
-if not directoryexists(F + 'www\files') then mkdir(F + 'www\files');
-if not directoryexists(F + 'www\img') then mkdir(F + 'www\img');
-if not directoryexists(F + 'RSS')  then mkdir(F + 'RSS');
-if not directoryexists(F + 'PlugIns')  then mkdir(F + 'PlugIns');
+  if not directoryexists(F + 'log')      then mkdir(F + 'log');
+  if not directoryexists(F + 'www')      then mkdir(F + 'www');
+  if not directoryexists(F + 'www\log')  then mkdir(F + 'www\log');
+  if not directoryexists(F + 'www\files')then mkdir(F + 'www\files');
+  if not directoryexists(F + 'www\img')  then mkdir(F + 'www\img');
+  if not directoryexists(F + 'RSS')      then mkdir(F + 'RSS');
+  if not directoryexists(F + 'PlugIns')  then mkdir(F + 'PlugIns');
+  if not directoryexists(F + 'lang')     then mkdir(F + 'lang');
 
 pluglist:= TStringlist.Create;
 //einlesen aller PlugInverzeichnisse
@@ -2068,11 +2071,27 @@ begin
    if con.readbool('General','enabled', false)=true then
      if con.SectionExists('menu') then
       mm2_8.Add(NewItem(pluglist.strings[i],TextToShortCut(''),False,True,PlugInClick,0,'Item1'));
-//     menu.Items.items[1].items[7]
   con.Free;
  end;
-
 end;
+
+//einlesen aller Sprachdateien
+langlist:= TStringlist.Create;
+if FindFirst(ExtractFilePath(paramStr(0))+ 'lang\*.*', faAnyFile, SR) = 0 then
+    repeat
+        if ( (sr.name <> '.') and (sr.name<>'..') and (ExtractFileExt(sr.name)='.lng') ) then begin langlist.Append(sr.name); end;
+    until FindNext(SR) <> 0;
+findclose(sr);
+
+//Einlesen der Language-Menü-Punkte
+for i:= 0 to langlist.Count -1 do
+ if fileexists(ExtractFilePath(paramStr(0))+ 'lang\' + langlist.Strings[i]) then
+   mm3_3.Add(NewItem(ExtractFileName(langlist.strings[i]),TextToShortCut(''),False,True,langClick,0,'Item1'));
+langlist.free;
+
+for i:= 0 to mm3_3.count -1 do
+ if striphotkey(mm3_3.items[i].caption) = settings.readstring('LeastCoster','language','') then mm3_3.items[i].checked:= true;
+
 
 //prüfen ob RAS installiert
 if not MagRasCon.TestRas then
@@ -3307,6 +3326,9 @@ end;
 
 procedure THauptfenster.FormShow(Sender: TObject);
 begin
+  CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+  if CL<>nil then fillProps([Hauptfenster],CL);
+
   formhidden:= false;
 
   if assigned(Floatingw) then
