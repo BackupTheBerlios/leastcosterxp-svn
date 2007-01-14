@@ -116,9 +116,10 @@ var zeilen: TStringlist;
     i, k: integer;
     mailtext: string;
     neu: string;
-    Datei: file of TTarif;
-    Datensatz: TTarif;
+    Datensatz: TTarif02;
     FName, CName: String;
+    Stream: TFileStream;
+    header: TTarifHeader;
 begin
 
 savedialog.Title:= misc(M193,'M193');
@@ -137,38 +138,44 @@ begin
   begin
     fName:= changeFileExt(SaveDialog.FileName,'.$$$');
     cName:= SaveDialog.FileName;
-    AssignFile(Datei,fname);
-    ReWrite(Datei);
+
+    header.programm:= 'LeastCosterXP';
+    header.datum:= now;
+    header.Version:= 2;
+
+    Stream := TFileStream.Create(fname , fmCreate ) ;
+    Stream.write(header, sizeof(header));
+
     for i:= 0 to length(Hauptfenster.tarife) -1 do
      if (zeilen.IndexOf(Hauptfenster.tarife[i].tarif) > -1) then
      begin
         Datensatz:= Hauptfenster.tarife[i];
         DatenSatz.Editor:= ''; //editor jetzt vergessen
-        write(Datei,Datensatz);
+        Stream.write(Datensatz,sizeof(Datensatz));
      end;
-    CloseFile(Datei);
+    stream.Free;
 
     Compress(fName, cName);
     DeleteFile(PChar(fName));
-    
+
   end;  
   zeilen.free;
 
   if email.checked then  //eMail schreiben
   begin
-  mailtext:= #13#10+ '~~~~~~~~~~~~~~~~~~~~~~~'+#13#10 + datetimetostr(now) +#13#10;
-  if hauptfenster.german then mailtext:= mailtext + misc(M195,'M195') + ' :'+#13#10;
+   mailtext:= #13#10+ '~~~~~~~~~~~~~~~~~~~~~~~'+#13#10 + datetimetostr(now) +#13#10;
+   mailtext:= mailtext + misc(M195,'M195') + ' :'+#13#10;
 
 
-  for i:= 0 to listbox.Count-1 do
-  if listbox.Selected[i] then
-    mailtext:= mailtext + listbox.Items.Strings[i] +#13#10;
-    
-  wndlist.Visible:= false;
+   for i:= 0 to listbox.Count-1 do
+   if listbox.Selected[i] then
+     mailtext:= mailtext + listbox.Items.Strings[i] +#13#10;
 
-  neu:= misc(M196,'M196') + ' ';
+   wndlist.Visible:= false;
 
-  hauptfenster.sendmail(neu + datetimetostr(now),mailtext,'','','','',savedialog.FileName,extractfilename(savedialog.filename),true);
+   neu:= misc(M196,'M196') + ' ';
+
+   hauptfenster.sendmail(neu + datetimetostr(now),mailtext,'','','','',savedialog.FileName,extractfilename(savedialog.filename),true);
   end;
 
   end; //vom SaveDialog
@@ -176,7 +183,7 @@ begin
   wndlist.Close;
 end;
 
-function tarifisvalid(Data:TTarif): boolean;
+function tarifisvalid(Data:TTarif02): boolean;
 var i: integer;
     ergebnis: boolean;
     mo,di,mi,don,fr,sa,so,feiertag: string;
@@ -273,8 +280,11 @@ end;
 
 procedure Twndlist.batchimport;
 var i,pos, count: integer;
-    Datei: file of TTarif;
-    DatenSatz: TTarif;
+    Datei       : file of TTarif;
+    DatenSatz   : TTarif;
+    Daten02     : TTarif02;
+    Stream      : TFileStream;
+    header      : TTarifheader;
 begin
  count:= 0;
 if listbox.count > 0 then
@@ -285,26 +295,51 @@ if listbox.count > 0 then
        if not listbox.Selected[i] then
           allnames.Delete(allnames.indexof(listbox.Items.Strings[i]));
 
-    if not FileExists(ImportFile) then exit;
+    if not FileExists(ImportFile) then exit;                                    //Importfile ist schon dekomprimiert hier
 
+    Stream := TFileStream.Create(ImportFile , fmOpenRead ) ;
+    header.Version:= 0;
+    Header.programm:= '';
+
+    Stream.Read(header,sizeof(header));
+    Stream.Free;
+
+   if header.programm <> 'LeastCosterXP' then
+   begin
     assignfile(Datei,Importfile);
     reset(Datei);
-
     progress.min:=0;
     progress.max:=FileSize(datei)-1;
 
     while not EOF(Datei) do
     begin
-
      read(Datei, Datensatz);
+     Daten02.tarif            := DatenSatz.Tarif;
+     Daten02.Tag              := datensatz.Tag;
+     Daten02.Nummer           := datensatz.Nummer;
+     Daten02.User             := Datensatz.User;
+     Daten02.Passwort         := Datensatz.Passwort;
+     Daten02.Editor           := Datensatz.Editor;
+     Daten02.Webseite         := Datensatz.Webseite;
+     TaktToInteger(Datensatz.Takt,Daten02.takt_a,Daten02.takt_b);
+     Daten02.Preis            := Datensatz.Preis;
+     Daten02.Einwahl          := Datensatz.Einwahl;
+     Daten02.Beginn           := Datensatz.Beginn;
+     Daten02.Ende             := Datensatz.Ende;
+     Daten02.eingetragen      := Datensatz.Eingetragen;
+     Daten02.validfrom        := Datensatz.validfrom;
+     Daten02.expires          := Datensatz.expires;
+     Daten02.DeleteWhenExpires:= Datensatz.DeleteWhenExpires;
+     Daten02.Mindestumsatz    := 0.0;
+
      inc(count);
      progress.position:= count;
      if (listbox.Items.IndexOf(Datensatz.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Datensatz.tarif)] then
-       if tarifisvalid(Datensatz) then
+       if tarifisvalid(Daten02) then
        begin
          pos:= length(hauptfenster.tarife);
          setlength(hauptfenster.tarife, pos+1);
-         hauptfenster.tarife[pos] := Datensatz;
+         hauptfenster.tarife[pos] := Daten02;
        end
        else  //wenn Tarif nicht geschrieben wurde
        begin
@@ -318,6 +353,39 @@ if listbox.count > 0 then
        end;
     end;
    Closefile(Datei);
+   end
+   else  //header.programm='LeastCosterXP'
+   if (header.programm = 'LeastCosterXP') and (header.Version=2) then
+   begin
+       Stream := TFileStream.Create(ImportFile , fmOpenRead ) ;
+
+       Stream.Position:= sizeof(header);
+       while Stream.Position < Stream.Size do
+        begin
+         stream.Read(Daten02,sizeof(Daten02));
+
+         inc(count);
+         progress.position:= count;
+         if (listbox.Items.IndexOf(Datensatz.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Datensatz.tarif)] then
+         if tarifisvalid(Daten02) then
+          begin
+             pos:= length(hauptfenster.tarife);
+             setlength(hauptfenster.tarife, pos+1);
+             hauptfenster.tarife[pos] := Daten02;
+          end
+          else  //wenn Tarif nicht geschrieben wurde
+           begin
+            if notimported.IndexOf(Datensatz.tarif) = -1 then
+              begin
+                if (NotImported.IndexOf(Datensatz.Tarif)= -1) then
+                    NotImported.Append(Datensatz.Tarif);
+                if AllNames.IndexOf(Datensatz.Tarif)> -1 then
+                    AllNames.Delete(AllNames.IndexOf(DatenSatz.Tarif));
+              end;
+           end;
+        end;
+       Stream.Free;
+   end;
  end;
 end;
 
@@ -436,10 +504,57 @@ begin
      end;
 end;
 
-procedure Twndlist.FormShow(Sender: TObject);
+procedure LoadListBox(cname: string);
 var DatenSatz: TTarif;
     Datei: file of TTarif;
-    fname, cname: string;
+    daten02 : TTarif02;
+    Stream: TFileStream;
+    header: TTarifheader;
+begin
+
+            Stream:= TFileStream.Create(cname,fmopenread);
+            Stream.Read(header,sizeof(header));
+            stream.free;
+            if header.programm <> 'LeastCosterXP' then
+            begin
+              assignFile(Datei,cname);
+              Reset(datei);
+              While not EOF(datei) do
+              begin
+               read(datei,DatenSatz);
+              //Jeden tarif nur 1x hinzufügen
+               if (wndlist.Listbox.Items.IndexOf(Datensatz.Tarif) = -1)  then
+                begin
+                  wndlist.Listbox.Items.Append(Datensatz.Tarif);
+                  wndlist.AllNames.Append(Datensatz.Tarif);
+               end;
+              end;
+              CloseFile(datei);
+            end
+            else
+            if (header.programm = 'LeastCosterXP') and (header.version=2) then
+            begin
+              Stream:= TFileStream.Create(cname,fmopenread);
+              Stream.Read(header,sizeof(header));
+
+              while stream.position < stream.Size do
+              begin
+               stream.read(Daten02, sizeof(Daten02));
+                 //Jeden tarif nur 1x hinzufügen
+               if (wndlist.Listbox.Items.IndexOf(Daten02.Tarif) = -1)  then
+                begin
+                  wndlist.Listbox.Items.Append(Daten02.Tarif);
+                  wndlist.AllNames.Append(Daten02.Tarif);
+               end;
+              end;
+
+              stream.free;
+            end;
+
+end;
+
+procedure Twndlist.FormShow(Sender: TObject);
+var fname, cname: string;
 begin
 hauptfenster.enabled:= false;
 listbox.Sorted:= true;
@@ -475,19 +590,7 @@ begin
             DeCompress(fname,cname);
             ImportFile:=cname;
 
-            assignFile(Datei,cname);
-            Reset(datei);
-            While not EOF(datei) do
-            begin
-             read(datei,DatenSatz);
-            //Jeden tarif nur 1x hinzufügen
-             if (Listbox.Items.IndexOf(Datensatz.Tarif) = -1)  then
-             begin
-              Listbox.Items.Append(Datensatz.Tarif);
-              AllNames.Append(Datensatz.Tarif);
-             end;
-            end;
-            CloseFile(datei);
+            LoadListBox(cname);
 
             ok.Visible:= true;
             ok.Enabled:= true;
@@ -502,20 +605,9 @@ begin
             fname:= hauptfenster.importfilename;
             cname:= changeFileExt(fname,'.$$$');
             DeCompress(fname,cname);
-            assignFile(Datei,cname);
             ImportFile:=cname;
-            Reset(datei);
-            While not EOF(datei) do
-            begin
-             read(datei,DatenSatz);
-            //Jeden tarif nur 1x hinzufügen
-             if (Listbox.Items.IndexOf(Datensatz.Tarif) = -1)  then
-             begin
-              Listbox.Items.Append(Datensatz.Tarif);
-              AllNames.Append(Datensatz.Tarif);
-             end;
-            end;
-            CloseFile(datei);
+
+            LoadListBox(cname);
             
             hauptfenster.startwithimport:= false;
             hauptfenster.importfilename:= '';
@@ -536,14 +628,22 @@ end;
 
 procedure TWndlist.WriteDataToHD;
 var fName,cname: string;
-    i: integer;
-    Datei: file of TTarif;
+    i          : integer;
+    header     : TTarifHeader;
+    Stream     : TFileStream;
 begin
-fName:= ExtractfilePath(paramstr(0)) + 'Tarife.tmp';
-cName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
+ fName:= ExtractfilePath(paramstr(0)) + 'Tarife.$$$';
+ cName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
 
-assignfile(Datei,fName);
-rewrite(Datei);
+ header.programm:= 'LeastCosterXP';
+ header.datum:= now;
+ header.Version:= 2;
+
+ Stream := TFileStream.Create(fname , fmCreate ) ;
+
+ Stream.write(header, sizeof(header));
+  for i:= 0 to length(hauptfenster.tarife)-1 do
+
 
 progress.min:= 0;
 progress.max:= length(hauptfenster.tarife)-1;
@@ -551,7 +651,7 @@ progress.visible:= true;
 
 for i:= 0 to length(hauptfenster.tarife)-1 do
 begin
- write(Datei, Hauptfenster.tarife[i]); //Datensatz abspeichern
+ Stream.write(Hauptfenster.tarife[i], sizeof(hauptfenster.tarife[i]));
 
  //neuen Tarif zu Scores hinzufügen - wenn noch nicht drin
  if IndexofScores(hauptfenster.tarife[i].Tarif) = -1 then
@@ -566,7 +666,7 @@ begin
 
 progress.position:= i;
 end;
-closefile(Datei);
+Stream.free;
 Compress(fName, cName);
 DeleteFile(PChar(fName));
 progress.visible:= false;
@@ -574,8 +674,8 @@ end;
 
 procedure Twndlist.NotImported_OverWriteClick(Sender: TObject);
 var i,j, count: integer;
-    Datei: File of TTarif;
-    Datensatz: TTarif;
+    Datei: File of TTarif02;
+    Datensatz: TTarif02;
     posi: integer;
 begin
 count:= 0;

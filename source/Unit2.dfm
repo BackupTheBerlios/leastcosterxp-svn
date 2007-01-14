@@ -38,7 +38,7 @@ object LCXPSettings: TLCXPSettings
     Top = 0
     Width = 439
     Height = 449
-    ActivePage = TabSheet7
+    ActivePage = TabSheet2
     Align = alTop
     MultiLine = True
     TabOrder = 0
@@ -1825,8 +1825,7 @@ object LCXPSettings: TLCXPSettings
           Strings.Strings = (
             
               'LeastCosterXP=http://rss.groups.yahoo.com/group/leastcosterxp/rs' +
-              's'
-            '=')
+              's')
           TabOrder = 1
           TitleCaptions.Strings = (
             'Name'
@@ -1996,6 +1995,59 @@ object LCXPSettings: TLCXPSettings
           OnClick = activateClick
           OnMouseMove = activateMouseMove
         end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Feiertage'
+      ImageIndex = 8
+      object holicheck: TLabel
+        Left = 57
+        Top = 24
+        Width = 305
+        Height = 25
+        Alignment = taCenter
+        AutoSize = False
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        WordWrap = True
+      end
+      object holidays: TValueListEditor
+        Left = 56
+        Top = 48
+        Width = 306
+        Height = 300
+        KeyOptions = [keyEdit, keyAdd, keyDelete]
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goEditing, goTabs, goThumbTracking]
+        TabOrder = 0
+        TitleCaptions.Strings = (
+          'Feiertag'
+          'Datum')
+        OnValidate = holidaysValidate
+        ColWidths = (
+          132
+          168)
+      end
+      object holiday_delete: TButton
+        Left = 56
+        Top = 352
+        Width = 145
+        Height = 25
+        Caption = 'Eintrag l'#246'schen'
+        TabOrder = 1
+        OnClick = holiday_deleteClick
+      end
+      object holiday_insert: TButton
+        Left = 216
+        Top = 352
+        Width = 145
+        Height = 25
+        Caption = 'Zeile hinzuf'#252'gen'
+        TabOrder = 2
+        OnClick = holiday_insertClick
       end
     end
   end

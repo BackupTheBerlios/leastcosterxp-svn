@@ -261,6 +261,13 @@ object TaVerwaltung: TTaVerwaltung
           Height = 13
           Caption = 'verf'#228'llt am ...'
         end
+        object Label27: TLabel
+          Left = 70
+          Top = 189
+          Width = 5
+          Height = 13
+          Caption = '/'
+        end
         object TaNumber: TEdit
           Left = 148
           Top = 27
@@ -339,14 +346,14 @@ object TaVerwaltung: TTaVerwaltung
             'Minutentakt'
             'Sekundentakt')
         end
-        object TaTakt: TEdit
+        object TaTakt_a: TEdit
           Left = 8
           Top = 184
-          Width = 130
+          Width = 57
           Height = 21
           TabOrder = 7
-          Text = '60/60'
-          OnKeyPress = TaTaktKeyPress
+          Text = '60'
+          OnKeyPress = TaTakt_aKeyPress
         end
         object TaUser: TEdit
           Left = 8
@@ -529,7 +536,16 @@ object TaVerwaltung: TTaVerwaltung
           EditLabel.Caption = 'Mindestumsatz in cent'
           LabelSpacing = 1
           TabOrder = 27
-          OnKeyPress = TaPriceKeyPress
+          OnKeyPress = TaMindestumsatzKeyPress
+        end
+        object TaTakt_b: TEdit
+          Left = 80
+          Top = 184
+          Width = 57
+          Height = 21
+          TabOrder = 28
+          Text = '60'
+          OnKeyPress = TaTakt_aKeyPress
         end
       end
     end
@@ -1047,7 +1063,7 @@ object TaVerwaltung: TTaVerwaltung
     Hint = '[Mehrfachauswahl durch Linksklick halten und Maus ziehen.]'
     TabStop = False
     Color = cl3DLight
-    ColCount = 16
+    ColCount = 17
     DefaultRowHeight = 18
     FixedCols = 0
     RowCount = 2
@@ -1062,6 +1078,7 @@ object TaVerwaltung: TTaVerwaltung
     OnMouseUp = TariflisteMouseUp
     ColWidths = (
       128
+      64
       64
       64
       64

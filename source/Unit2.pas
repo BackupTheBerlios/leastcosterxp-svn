@@ -215,6 +215,15 @@ type
     Button11: TButton;
     AutoL: TValueListEditor;
     UseAutoBlacklist: TCheckBox;
+    TabSheet2: TTabSheet;
+    holidays: TValueListEditor;
+    holicheck: TLabel;
+    holiday_delete: TButton;
+    holiday_insert: TButton;
+    procedure holiday_insertClick(Sender: TObject);
+    procedure holiday_deleteClick(Sender: TObject);
+    procedure holidaysValidate(Sender: TObject; ACol, ARow: Integer;
+      const KeyName, KeyValue: string);
     procedure plugSettingsMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure unregisterMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -523,9 +532,44 @@ Var
    end;
   End;
 
+procedure saveholidays;
+var holi: Tholidays;
+    f   : file of THolidays;
+    i   : integer;
+    err: boolean;
+begin
+with LCXPsettings do
+begin
+  assignfile(f, extractfilepath(paramstr(0))+'holidays.dat');
+  rewrite(f);
+
+  setlength(holidaylist,0);
+
+  for i:= 1 to holidays.rowcount-1 do
+  begin
+   err:= false;
+   holi.name:= holidays.Keys[i];
+   try
+    holi.date:= strtodate(holidays.Strings.ValueFromIndex[i-1]);
+   except
+    err:= true;
+   end;
+   if not err then
+   begin
+    write(f,holi);
+    setlength(holidaylist,i);
+    holidaylist[i-1]:= holi;
+   end;
+  end;
+ closefile(f);
+end;
+end;
+
 procedure TLCXPSettings.beendenClick(Sender: TObject);
 var i: integer;
 begin
+
+  saveholidays;
 
   //IP speichern
   settings.writestring('lokale IP','IP',Edit2.text);
@@ -1058,7 +1102,6 @@ tabsheet7.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet8.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet9.tabVisible :=  hauptfenster.MM3_2.checked;
 
-
 for i:= 0 to hauptfenster.pluglist.count-1 do
     Plugbox.Items.Append(hauptfenster.pluglist.strings[i]);
 
@@ -1228,6 +1271,14 @@ begin
   plugbox.Selected[0]:= true;
   PlugOnMouseUp;
 end;
+
+if length(holidaylist) > 0 then
+  for i:= 0 to length(holidaylist)-1 do
+   holidays.InsertRow(holidaylist[i].name,Datetostr(holidaylist[i].date), true);
+
+holidays.TitleCaptions[0]:= misc(M270,'M270');
+holidays.TitleCaptions[1]:= misc(M271,'M271');
+
 end;
 
 procedure TLCXPSettings.programs_suchenClick(Sender: TObject);
@@ -2437,6 +2488,38 @@ procedure TLCXPSettings.plugSettingsMouseMove(Sender: TObject;
   Shift: TShiftState; X, Y: Integer);
 begin
   memo1.text:= misc(Help98,'Help98');
+end;
+
+procedure TLCXPSettings.holidaysValidate(Sender: TObject; ACol, ARow: Integer;
+  const KeyName, KeyValue: string);
+var d: TDate;
+begin
+if (acol = 1) then
+  begin
+    try
+      d:= StrTodate(keyvalue);
+      holicheck.caption:= '';
+    except
+      d:= dateof(now);
+      holicheck.caption := Keyvalue+ ' ' +misc(M269,'M269');
+    end;
+
+  end;
+end;
+
+procedure TLCXPSettings.holiday_deleteClick(Sender: TObject);
+begin
+  Holidays.DeleteRow(holidays.row);
+end;
+
+procedure TLCXPSettings.holiday_insertClick(Sender: TObject);
+begin
+
+if holidays.row < holidays.rowcount-1 then
+begin
+  holidays.Row:= holidays.row+1;
+  holidays.InsertRow('','',false);
+end else holidays.InsertRow('','',true);
 end;
 
 end.

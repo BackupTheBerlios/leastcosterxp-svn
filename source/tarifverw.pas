@@ -3,6 +3,8 @@ unit tarifverw;
 interface
 uses grids,controls, GridEvents, floating, files, unit1;
 
+procedure TaktToInteger(takt: string; var tleft, tright: integer);
+
 procedure watchoutforcheaperprice(checktime: TDateTime);
 function IndexOfScores(tarif: string): integer;
 function ToggleSuspendScores(tarif: string): integer;
@@ -224,19 +226,44 @@ delete(temp,1, 6);//alles vor dem Jahr löschen
 y:= strtoint(temp);
 end;
 
+procedure TaktToInteger(takt: string; var tleft, tright: integer);
+var taktstring: string;
+begin
+//takt_a
+  taktstring:= takt;
+  Delete(taktstring,pos('/', taktstring),length(taktstring) - pos('/', taktstring) +1);
+  try
+    tleft:= strtoint(taktstring);
+    if tleft > 60 then tleft:= 60;
+  except
+    tleft:= 60; //wenn Fehler dann minutentakt annehmen
+  end;
+//takt B
+  taktstring:= takt;
+  Delete(taktstring,1, pos('/', taktstring)  );
+  try
+    tright:= strtoint(taktstring);
+  except
+    tright:= 60; //wenn Fehler dann minutentakt annehmen
+  end;
+end;
+
 procedure Ladetarife;
-var sections: TStringlist;
-    i, k: integer;
+var sections            : TStringlist;
+    i, k                : integer;
     DeleteWhenExpireDate: boolean;
-    expDate: TDate;
-    lengthS: integer;
-    zeilen: TStringlist;
-    zeile: string;
-    count: integer;
-    UpdateFile: boolean;
-    dd,mm,yy: integer;
-    Datei: file of Ttarif;
-    DatenSatz: TTarif;
+    expDate             : TDate;
+    lengthS             : integer;
+    zeilen              : TStringlist;
+    zeile               : string;
+    count               : integer;
+    UpdateFile          : boolean;
+    dd,mm,yy            : integer;
+    Datei               : file of Ttarif;
+    DatenSatz           : TTarif;
+    temptakt            : string[5];
+    Stream              : TFileStream;
+    header              : TTarifHeader;
 begin
  UpdateFile:= false;
  //Rücksetzen des Arrays
@@ -280,7 +307,8 @@ begin
         Nummer        := '0';
         Preis         := 0.0;
         Einwahl       := 0.0;
-        Takt          := '60/60';
+        takt_a        := 60;
+        takt_b        := 60;
         User          := '';
         Passwort      := '';
         Webseite      := '';
@@ -289,6 +317,7 @@ begin
         validfrom     := EncodeDate(1970,02,02);
         expires       := EncodeDate(1970,02,02);
         DeleteWhenExpires:= false;
+        Mindestumsatz := 0.0;
       end;
    end
    else
@@ -331,7 +360,8 @@ begin
    if ansicontainsstr(zeile,'Takt=') then
    begin
     delete(zeile,1,5);
-    hauptfenster.tarife[count-1].Takt:= trim(zeile);
+    TaktToInteger(trim(zeile),hauptfenster.tarife[count-1].Takt_a,hauptfenster.tarife[count-1].Takt_b);
+//    hauptfenster.tarife[count-1].Takt:= trim(zeile);
    end
    else
    if ansicontainsstr(zeile,'User=') then
@@ -399,17 +429,77 @@ else //lcx nur laden, wenn keine Tarife.ini vorhanden war
 if FileExists(extractfilepath(paramstr(0))+'Tarife.lcx') then
 begin
   DeCompress(extractfilepath(paramstr(0))+'Tarife.lcx',extractfilepath(paramstr(0))+'Tarife.$$$');
-  assignfile(Datei,extractfilepath(paramstr(0))+'Tarife.$$$');
-  reset(datei);
+
+//  assignfile(Datei,extractfilepath(paramstr(0))+'Tarife.$$$');
+//  reset(datei);
+//  count:= 0;
+
+//  while not EOF(Datei) do
+//  begin
+//    read(Datei, DatenSatz);
+//    count:= count+1;
+//    setlength(hauptfenster.tarife, count);
+////    Hauptfenster.tarife[count-1]:= DatenSatz;
+//    Hauptfenster.tarife[count-1].Tarif:= DatenSatz.Tarif;
+//    Hauptfenster.tarife[count-1].User := DatenSatz.User;
+//  end;
+//  closefile(datei);
+
+  Stream := TFileStream.Create(extractfilepath(paramstr(0))+'Tarife.$$$' , fmOpenRead ) ;
   count:= 0;
-  while not EOF(Datei) do
+  header.Version:= 0;
+  Header.programm:= '';
+
+  Stream.Read(header,sizeof(header));
+
+  if header.programm <> 'LeastCosterXP' then
   begin
-    read(Datei, DatenSatz);
-    count:= count+1;
-    setlength(hauptfenster.tarife, count);
-    Hauptfenster.tarife[count-1]:= DatenSatz;
+    Stream.Position:= 0;
+    try
+     while Stream.Position < Stream.Size do
+      begin
+         count:= count+1;
+         setlength(hauptfenster.tarife, count);
+         Stream.Read( Hauptfenster.tarife[count-1].Tarif , SizeOf( Hauptfenster.tarife[count-1].Tarif ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].Tag , SizeOf( Hauptfenster.tarife[count-1].Tag ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].Nummer , SizeOf( Hauptfenster.tarife[count-1].Nummer ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].User , SizeOf( Hauptfenster.tarife[count-1].User ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].Passwort , SizeOf( Hauptfenster.tarife[count-1].Passwort ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].Editor, SizeOf( Hauptfenster.tarife[count-1].Editor ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].Webseite , SizeOf( Hauptfenster.tarife[count-1].Webseite ) ) ;
+         Stream.Read( temptakt , sizeof(temptakt) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].Preis , SizeOf( Hauptfenster.tarife[count-1].Preis ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].Einwahl , SizeOf( Hauptfenster.tarife[count-1].einwahl ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].Beginn , SizeOf( Hauptfenster.tarife[count-1].Beginn ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].ende , SizeOf( Hauptfenster.tarife[count-1].Ende ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].eingetragen , SizeOf( Hauptfenster.tarife[count-1].eingetragen ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].validfrom , SizeOf( Hauptfenster.tarife[count-1].validfrom ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].expires , SizeOf( Hauptfenster.tarife[count-1].expires ) ) ;
+         Stream.Read( Hauptfenster.tarife[count-1].DeleteWhenExpires , SizeOf( Hauptfenster.tarife[count-1].DeleteWhenexpires ) ) ;
+         TaktToInteger(temptakt,Hauptfenster.tarife[count-1].takt_a,Hauptfenster.tarife[count-1].takt_b);
+         Hauptfenster.Tarife[count-1].mindestumsatz:= 0.0;
+        Stream.Position:= count * sizeof(Datensatz);
+      end;
+    finally
+      Stream.Free ;
+    end ;
+   end
+  else //wenn im Header programm=LeastCosterXP steht : DateiVersion vom Typ TTarif02 mit header
+  if header.version = 2 then
+  begin
+   Stream.Position:= sizeof(header);
+    try
+     while Stream.Position < Stream.Size do
+      begin
+         count:= count+1;
+         setlength(hauptfenster.tarife, count);
+         stream.Read(hauptfenster.tarife[count-1],sizeof(hauptfenster.tarife[count-1]));
+      end;
+     finally
+      Stream.free;
+     end;
   end;
-  closefile(datei);
+
   DeleteFile(PChar(extractfilepath(paramstr(0))+'Tarife.$$$'));
 end;
 
@@ -505,6 +595,7 @@ begin
     Cells[15,0]:= misc(M266,'M266');
     Cells[16,0]:= misc(M267,'M267');
     Cells[17,0]:= misc(M265,'M265');
+    Cells[18,0]:= misc(M268,'M268');
   end;
 end;
 
@@ -655,12 +746,14 @@ end;
 
 
 procedure LoadListaddline(var rows:integer;i: integer; var Einwahl,Preis: real; timeofdisplay: TDatetime; thisdauer: integer);
-var k, FreiSekunden, index: integer;
+var k, FreiSekunden, index           : integer;
     Dials, DialAll, state, ScoreIndex: integer;
-    tarif: string;
-    score, score2: real;
+    tarif                            : string;
+    score, score2                    : real;
     AutoBlacklist, AutoBlacklistScore: integer;
-    UseAutoBlacklist: Boolean;
+    UseAutoBlacklist                 : Boolean;
+    mindest                          : real;
+    kosten_mind                      : real;
 begin
  UseAutoBlacklist   := settings.ReadBool('AutoBlacklist','active',false);
  AutoBlackList      := settings.Readinteger('AutoBlacklist','Value',10);
@@ -670,26 +763,27 @@ with hauptfenster do
 begin
   rows := rows+1;
 
-  liste.Cells[1,rows] := tarife[i].Tarif;
-  liste.Cells[2,rows] := TimeToStr(tarife[i].Beginn);
-  liste.Cells[3,rows] := TimeToStr(tarife[i].Ende);
-  liste.Cells[4,rows] := Format('%.2f',[tarife[i].Preis]);
-  liste.Cells[5,rows] := Format('%.2f',[tarife[i].Einwahl]);
-  liste.Cells[6,rows] := tarife[i].Takt;
+  liste.Cells[1,rows]  := tarife[i].Tarif;
+  liste.Cells[2,rows]  := TimeToStr(tarife[i].Beginn);
+  liste.Cells[3,rows]  := TimeToStr(tarife[i].Ende);
+  liste.Cells[4,rows]  := Format('%.2f',[tarife[i].Preis]);
+  liste.Cells[5,rows]  := Format('%.2f',[tarife[i].Einwahl]);
+  liste.Cells[6,rows]  := Format('%d/%d',[tarife[i].Takt_a,tarife[i].Takt_b]);
 
-  liste.Cells[8,rows] := tarife[i].Nummer;
-  liste.Cells[9,rows] := tarife[i].User;
+  liste.Cells[8,rows]  := tarife[i].Nummer;
+  liste.Cells[9,rows]  := tarife[i].User;
   liste.Cells[10,rows] := tarife[i].Passwort;
   liste.Cells[11,rows] := tarife[i].Webseite;
   liste.Cells[12,rows] := DateToStr(tarife[i].validfrom);
   liste.Cells[13,rows] := DateToStr(tarife[i].expires);
   liste.Cells[14,rows] := DateToStr(tarife[i].eingetragen);
 
-  tarif:= tarife[i].Tarif;
+  tarif                := tarife[i].Tarif;
   getScores(tarif, DialAll, Dials, state, ScoreIndex);
-  liste.cells[15,rows]:= inttostr(DialAll);{gesamversuche}
-  liste.cells[16,rows]:= inttostr(Dials); {erfolgreiche}
+  liste.cells[15,rows] := inttostr(DialAll);{gesamversuche}
+  liste.cells[16,rows] := inttostr(Dials); {erfolgreiche}
   liste.Cells[17, rows]:= tarife[i].Tag;
+  liste.Cells[18, rows]:= Format('%.2f',[tarife[i].Mindestumsatz]);
 
   if (DialAll> 0) then score := 1.- dials/DialAll
                   else score := 1.;
@@ -721,21 +815,24 @@ begin
             try
              preis:= strtofloat(liste.Cells[4,Rows]);
              Einwahl:= strtofloat(liste.Cells[5,Rows]);
+             Mindest:= strtofloat(liste.Cells[18,Rows]);
+
+             kosten_mind:= thisdauer * preis;
+             if Mindest > kosten_mind then kosten_mind:= mindest; //Mindestumsätze berücksichtigen
 
              //Blacklist
              if state = 1 then liste.Cells[7,rows]:= 'Blacklist'
              else
              //es gibt nocht FreiKB
-             if ((length(kontingente) > 0) and (index > -1) and (kontingente[index].FreikB > 0)) then liste.cells[7,rows]:= Format('%.4f',[1/100 *(Einwahl + thisdauer*preis)])
+             if ((length(kontingente) > 0) and (index > -1) and (kontingente[index].FreikB > 0)) then liste.cells[7,rows]:= Format('%.4f',[1/100 *(Einwahl + kosten_mind)])
              else
              //normale Kosten berechnen
              if Freisekunden <= 0 then
-                    liste.Cells[7,rows] := Format('%.4f',[1/100 *(Einwahl + thisdauer*preis)])//Format('%.4f (%.4f)',[1/100 *(Einwahl + thisdauer*preis), score+ Score2])
+                    liste.Cells[7,rows] := Format('%.4f',[1/100 *(Einwahl+ + kosten_mind)])
                    else // Freisekunden reichen dicke
                     if ((thisdauer*60) < Freisekunden) then liste.cells[7,rows]:= Format('%.4f',[0.])// Format('%.4f (%.4f)',[0., score+ Score2])
                      else //Freisekunden reichen nur teilweise und Volumen reicht nicht
-                      if (thisdauer*60) >= Freisekunden then liste.Cells[7,rows] :=Format('%.4f',[1/100 *((Einwahl + thisdauer*preis)- (Freisekunden/60 * preis) )])// Format('%.4f (%.4f)',[1/100 *((Einwahl + thisdauer*preis)- (Freisekunden/60 * preis) ), score+ Score2])
-
+                      if (thisdauer*60) >= Freisekunden then liste.Cells[7,rows] :=Format('%.4f',[1/100 *((Einwahl + thisdauer * preis)- (Freisekunden/60 * preis) )])
             except
              preis:= 0;
              einwahl:= 0;
@@ -746,9 +843,8 @@ begin
              //Blacklist vor Ablauf markieren
              if state = 1 then liste.Cells[7,rows]:= 'Blacklist'
              else //abglaufen
-              liste.Cells[7,rows]:= misc(M98,'M98'); {Hauptfenster.Scores[ScoreIndex].state:= 2;}
+              liste.Cells[7,rows]:= misc(M98,'M98');
             end;
-
             if rows>1 then liste.RowCount:= liste.rowcount+1;
 end;
 end;
@@ -786,12 +882,14 @@ var i: integer;
     temp: string;
 begin
   temp:= '';
-  if feiertagsliste.count >0 then
-    for i:= 0 to feiertagsliste.Count-1 do
-      if Ansicontainstext(feiertagsliste.Strings[i],datetostr(date)) then begin temp:= feiertagsliste.Strings[i]; break; end;
 
-  if pos('|', temp)>0 then
-    Delete(temp,pos('|', temp), length(temp));
+  if length(holidaylist) >0 then
+  for i:= 0 to length(holidaylist)-1 do
+    if date = holidaylist[i].date then
+    begin
+     temp:= holidaylist[i].name;
+     break;
+    end;
 
   Result:= temp;
 end;
@@ -975,13 +1073,13 @@ begin
 
  //getaktete Surfdauer berechnen
  if ((takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
-     or (taktlaenge = 1                    ))  then
-      dauer_takt:= dauer_takt +  taktlaenge;
+     or (taktlaenge = 1                    ))
+     then dauer_takt:= dauer_takt +  taktlaenge;
 
 if Kanalbuendelung then
  if ( (takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
-     or (taktlaenge = 1                    ))  then
-      dauer_takt:= dauer_takt +  taktlaenge;
+     or (taktlaenge = 1                    ))
+     then dauer_takt:= dauer_takt +  taktlaenge;
 
 //wenn noch Volumenkontingente vorhanden, dann abbrechen .. keine Kosten berechnen
  if ((length(kontingente) > 0) and (kontingente[kontingentindex].freikb > 0) and (kontingentindex > -1))
@@ -1003,8 +1101,8 @@ if Kanalbuendelung then
     if (kontingente[kontingentindex].Freisekunden > 0) then
     begin
       result:= true;
-      Takt1.Tag:= dauer mod Taktlaenge; //alten Wert merken damit Taktberechnung funtioniert !!!
-      Takt2.Tag:= dauer2 mod Taktlaenge;
+      Takt1.Tag := dauer mod Taktlaenge; //alten Wert merken damit Taktberechnung funtioniert !!!
+      Takt2.Tag := dauer2 mod Taktlaenge;
       exit;
     end
     else kontingente[kontingentindex].Freisekunden:= 0;
@@ -1012,16 +1110,33 @@ if Kanalbuendelung then
 
  if ((takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
    or (taktlaenge = 1                   )) then
-     //Kosten:= bisherige Kosten + Kosten/s * taktlaenge
-     onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+   begin
+
+     if (onlineset.mindestumsatz > 0.0) then
+      begin
+       onlineset.kosten_mindest:= onlineset.kosten_mindest + onlineset.Preis/60/100 * taktlaenge;
+       if (onlineset.kosten_mindest > onlineset.mindestumsatz)
+           then onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+      end
+      else
+       //Kosten:= bisherige Kosten + Kosten/s * taktlaenge
+       onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+
+   end;
      //alten Wert merken
    Takt1.Tag:= dauer mod Taktlaenge;
 
  if Kanalbuendelung then
  if ( (takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
      or (taktlaenge = 1                    ))  then
-     //Kosten:= bisherige Kosten + Kosten/s * taktlaenge
-     onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+     begin
+       onlineset.kosten_mindest:= onlineset.kosten_mindest + onlineset.Preis/60/100 * taktlaenge;
+       if (onlineset.kosten_mindest > onlineset.mindestumsatz)
+           then onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+     end
+     else
+       //Kosten:= bisherige Kosten + Kosten/s * taktlaenge
+       onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
      //alten Wert merken
    Takt2.Tag:= dauer2 mod Taktlaenge;
  end;
@@ -1030,18 +1145,25 @@ end;
 procedure WriteTarifeToHD;
 var fName,cName: string;
     i: integer;
-    Datei: file of TTarif;
+    Datei: file of TTarif02;
+    header: TTarifHeader;
+    stream: TFileStream;
 begin
+
+  header.programm:= 'LeastCosterXP';
+  header.datum:= now;
+  header.Version:= 2;
+
   fName:= ExtractfilePath(paramstr(0)) + 'Tarife.$$$';
   cName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
 
-  assignfile(Datei,fName);
-  rewrite(Datei);
+  Stream := TFileStream.Create(fname , fmCreate ) ;
 
+  Stream.write(header, sizeof(header));
   for i:= 0 to length(hauptfenster.tarife)-1 do
-   write(Datei,hauptfenster.tarife[i]);
+    Stream.write(Hauptfenster.tarife[i], sizeof(hauptfenster.tarife[i]));
+  Stream.free;
 
-  closefile(Datei);
   Compress(fName, cName);
   DeleteFile(PChar(fName));
 

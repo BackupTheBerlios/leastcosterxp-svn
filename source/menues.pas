@@ -151,13 +151,10 @@ with hauptfenster do
       usecolors:= not TS6_2.Checked;
       AktualisierenClick(sender);
     end;
-
-
 end;
 
 procedure MainMenueClick(sender: TObject);
 var lcx: boolean;
-    FileName, mailtext: String;
 begin
 with hauptfenster do
   if sender = MM1_1 then

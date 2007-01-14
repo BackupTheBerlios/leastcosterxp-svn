@@ -340,6 +340,12 @@ const
   M266= 'Score (alle)';
   M267= 'Score (ok)';
 
+  M268= 'Mindestumsatz';
+  M269= 'ist kein gültiges Datumsformat.';
+
+  M270= 'Feiertag';
+  M271= 'Datum';
+
   Help00= 'Hinweise:' +cr
               +' werden beim Zeigen auf ein Objekt angezeigt.';
   Help01= 'Autostart:' +cr

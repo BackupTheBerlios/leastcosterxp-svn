@@ -371,6 +371,8 @@ LCXPSettings.register.Caption=installieren
 LCXPSettings.plugSettings.Caption=Einstellungen
 LCXPSettings.activate.Caption=aktivieren
 LCXPSettings.beenden.Caption=&OK
+LCXPSettings.holiday_delete=Eintrag löschen
+LCXPSettings.holiday_insert=Zeile hinzufügen
 [htmlwindow]
 htmlwindow.Caption=HTMLExport
 htmlwindow.balken.Hint=... zeigt den Fortschirtt des Exports an.
@@ -895,6 +897,12 @@ M264=gilt !
 M265=Tag
 M266=Score (alle)
 M267=Score (ok)
+
+M268=Mindestumsatz
+M269=ist kein gültiges Datumsformat.
+
+M270=Feiertag
+M271=Datum
 
 Help00=Hinweise:*|*werden beim Zeigen auf ein Objekt angezeigt.
 Help01=Autostart:*|*LeastCoster XP startet mit Windows. Wenn der Webserver nach dem Einschalten der Rechners zur Verfügung stehen soll, dann unbedingt aktivieren !

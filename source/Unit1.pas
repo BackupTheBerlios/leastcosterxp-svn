@@ -38,6 +38,31 @@ type
     DeleteWhenExpires: boolean;
   end;
 
+  TTarif02 = record
+    Tarif: String[70];
+    Tag: String[39];
+    Nummer,User,Passwort, Editor: String[40];
+    Webseite: String[150];
+//    Takt: String[5];
+    takt_a, takt_b: integer;
+    Preis, Einwahl: real;
+    Beginn, Ende: TTime;
+    eingetragen,validfrom, expires:TDate;
+    DeleteWhenExpires: boolean;
+    Mindestumsatz: real;
+  end;
+
+  TTarifheader = record
+    programm : String[40];
+    Version  : integer;
+    Datum    : TDateTime;
+   end;
+
+   Tholidays = record
+    name      : string[40];
+    date      : TDate;
+   end; 
+
 //Rss - Reader
   TInhalt = record
     title, link: String;
@@ -77,7 +102,9 @@ type
     end;
 
     Onlinewerte = record
-      Startzeit,Dauer,Tarif,Rufnummer, Takt, Webseite, tag: string;
+      Startzeit,Dauer,Tarif,Rufnummer, Webseite, tag: string;
+      takt_a, takt_b: integer;
+      mindestumsatz, kosten_mindest: real;
       Datum: TDateTime;
       vbegin, vend, Endzeit: TTime;
       Einwahl2, kostenbisjetzt,Kosten,Preis,Einwahl: real;
@@ -295,6 +322,7 @@ type
     AutoDialStatus: TAMAdvLed;
     Button1: TButton;
     WebServ: TMenuItem;
+    S_18: TMenuItem;
     procedure WebServClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure AutoDialStatusLedStateChanged(Sender: TObject; LedOn: Boolean;
@@ -462,9 +490,7 @@ type
       RSSItems: array of array of tInhalt;
       Rss_max: word;
       rss_old: boolean;
-
       EdWebSite, WebIntLabel: TSRLabel;
-
       closeallowed: boolean;
       autoclose: boolean;
       ConnectionCostVisible: boolean;
@@ -473,7 +499,6 @@ type
       lastpluginclicked: string;
       disconnectseconds: integer;
       DisconnectStopped: boolean;
-
       ctrlcount: integer;
       onlineset: Onlinewerte;
       modemname, modemtype, modemname2, modemtype2, modemstring: string;
@@ -484,16 +509,14 @@ type
       startwithimport:boolean;
       importfilename: string;
       rss_update: integer;
-      tarife: array of TTarif;
+      tarife: array of TTarif02;
       lookforward: integer;
       selfdial: boolean;
       noFeeds: boolean;
       noBalloon: boolean;
       Autodisconnect, Leerlaufdisconnect: Automatics;
       leerlaufdisconnectzeit, AutoAusindex: integer;
-
       AutoSurfdauer : integer;
-
       DaysToSaveLogs, leerlaufschwelle: integer;
       Kontingente: Array of Kontingentdatensatz;
       kontingentindex: integer;
@@ -501,9 +524,6 @@ type
       UseColors: boolean;
       SetupModems: boolean;
       Scores : array of TScores;
-//      AutoBlacklist, AutoBlacklistScore: integer;
-
-      german: boolean;
       TarifeDisabled,neuladen: boolean;
       pluglist: TStringlist;
       rssrunning: boolean; //läuft RSS-Update ?
@@ -547,7 +567,7 @@ var
   SettingsOffline     : TMemIniFile; //Offline.ini
 
   atomserver: TStringlist;
-  feiertagsliste: TStringlist;
+  holidaylist   : array of THolidays;
 implementation
 
 uses Unit2, Unit4, WebServ1, shutdown, Unit3, tarifverw,
@@ -1000,7 +1020,7 @@ begin//Onlinezeitmessung
  end else oCostlabel.Visible:= false;
 
  onlineset.Dauer:= ozeit.caption;
- onlineset.Kosten:= -1.0; //wenn KOsten unbekannt, weil nicht selbst gewählt
+ onlineset.Kosten:= -1.0; //wenn Kosten unbekannt, weil nicht selbst gewählt
 
  if selfdial then
  if noerror then
@@ -1858,12 +1878,33 @@ if (progcountoff < length(oprogoff)) then
   else  hauptfenster.calloff.interval:=1000;
 end;
 
+procedure loadholidays;
+var f: file of THolidays;
+    hol: THolidays;
+    c: integer;
+begin
+
+  c:= 0;
+  setlength(holidaylist, c);
+  if not fileExists(extractfilepath(paramstr(0))+'holidays.dat') then exit;
+  
+  assignfile(f, extractfilepath(paramstr(0))+'holidays.dat');
+  reset(f);
+  while not eof(f) do
+   begin
+    read(f, hol);
+    inc(c);
+    setlength(holidaylist, c);
+    holidaylist[c-1]:= hol;
+   end;
+  closefile(f);
+end;
+
 procedure THauptfenster.FormCreate(Sender: TObject);
 var con     : TmemInifile;
     i       : integer;
     sr      : TSearchRec;
     F       : string;
-    ple     : TIniFile;
     reg     : TRegistry;
     langlist: TStringlist;
 begin
@@ -2106,15 +2147,7 @@ if fileexists(extractfilepath(paramstr(0))+'Atomzeitserver.txt') then
  atomserver.LoadFromFile(extractfilepath(paramstr(0))+'Atomzeitserver.txt');
 
 //Feiertage einlesen
-feiertagsliste:= TStringlist.Create;
-if fileexists(extractfilepath(paramstr(0))+'feiertage.txt') then
-begin
-  try
-    feiertagsliste.LoadFromFile(extractfilepath(paramstr(0))+'feiertage.txt');
-  except
-    feiertagsliste.Append('1. Weichnachtstag|25.12.2006');
-  end;
-end;
+loadholidays;
 
 //Einträge prüfen und wenn leer setzen
 if (atomserver.count = 0) then
@@ -2296,13 +2329,28 @@ begin
    selfdial:= false;  //alles erledigt ... rücksetzen
    with onlineset do
    begin
-    Datum:= EncodeDateTime(1970,01,01,0,0,0,0); Dauer:=''; Kosten:=0.0; tarif:='';
-    Einwahl:= 0.0; Rufnummer:=''; Preis:= 0.0; takt:='';
-    webseite:= ''; vbegin:= EncodeTime(0,0,0,0); vend:= EncodeTime(0,0,0,0); tag:='';
-    wechsel:= EncodeDateTime(1970,01,01,0,0,0,0);
-    kostenbisjetzt:= 0; wechselpreis:= 0; wechseleinwahl:= 0;
-    Einwahl2:= 0;
-    download:= 0; upload:= 0;
+    Datum         := EncodeDateTime(1970,01,01,0,0,0,0);
+    Dauer         := '';
+    Kosten        := 0.0;
+    tarif         := '';
+    Einwahl       := 0.0;
+    Rufnummer     := '';
+    Preis         := 0.0;
+    takt_a        := 60;
+    takt_b        := 60;
+    webseite      := '';
+    vbegin        := EncodeTime(0,0,0,0);
+    vend          := EncodeTime(0,0,0,0);
+    tag           := '';
+    wechsel       := EncodeDateTime(1970,01,01,0,0,0,0);
+    kostenbisjetzt:= 0;
+    wechselpreis  := 0;
+    wechseleinwahl:= 0;
+    Einwahl2      := 0;
+    download      := 0;
+    upload        := 0;
+    Mindestumsatz := 0.0;
+    kosten_mindest:= 0.0;
    end;
 
    dauer:= 0;
@@ -2381,7 +2429,6 @@ procedure THauptfenster.FormDestroy(Sender: TObject);
 begin
 
 if assigned(atomserver) then atomserver.Free;
-if assigned(feiertagsliste) then feiertagsliste.Free;
 
 parameters.free;
 kill_list.free;
@@ -2533,7 +2580,7 @@ end;
 procedure THauptfenster.DialBtnClick(Sender: TObject);
 var buf: string;
     foundRasConn: boolean;
-    taktstring: string;
+//    taktstring: string;
 begin
 
 if isonline then
@@ -2609,49 +2656,36 @@ else
  //~~~~~~~~~~~~Fehler sind hier abgearbeitet~~~~~~~~~~~~~~~~~~
 
  //ScoreWert erhöhen (DialAll)
- if IndexOfScores(liste.Cells[1,liste.row])>-1 then
-  inc(Scores[IndexOfScores(liste.Cells[1,liste.row])].gesamt);
+  if IndexOfScores(liste.Cells[1,liste.row])>-1 then
+    inc(Scores[IndexOfScores(liste.Cells[1,liste.row])].gesamt);
 
   Kontingente_Laden;
-  kanalbuendelung:= false; //Standardwert
-  selfdial:= true; //LeastCoster ist der Dialer, das soll er auch wissen
-  aktualisieren.enabled:= false;
 
-  status.SimpleText:= misc(M65,'M65');
-  dialing:= true;
+  kanalbuendelung         := false; //Standardwert
+  selfdial                := true; //LeastCoster ist der Dialer, das soll er auch wissen
+  aktualisieren.enabled   := false;
+  status.SimpleText       := misc(M65,'M65');
+  dialing                 := true;
+
   //Datensatz in den Speicher übernehmen
-
-  onlineset.Datum:= now;
-  onlineset.Tarif:= liste.Cells[1,liste.row];
-  onlineset.Rufnummer:= liste.Cells[8,liste.row];
-  onlineset.Preis:= StrToFloat(liste.Cells[4,liste.row]);
-  onlineset.Einwahl:= StrToFloat(liste.Cells[5,liste.row]);
-  onlineset.einwahl2:= onlineset.einwahl;
-  onlineset.Takt:= liste.Cells[6,liste.row];
-  onlineset.tag:= liste.Cells[17,liste.row];
-
-  taktstring:= onlineset.takt;
-  Delete(taktstring,pos('/', taktstring),length(taktstring) - pos('/', taktstring) +1);
-  try
-    taktlaenge:= strtoint(taktstring);
-    if taktlaenge > 60 then taktlaenge:= 60;
-  except
-    taktlaenge:= 60; //wenn Fehler dann minutentakt annehmen
-  end;
-
-  taktstring:= onlineset.takt;
-  Delete(taktstring,1, pos('/', taktstring)  );
-  try
-    taktlaenge2:= strtoint(taktstring);
-  except
-    taktlaenge2:= 60; //wenn Fehler dann minutentakt annehmen
-  end;
-
-  onlineset.vbegin:= StrToTime(liste.Cells[2,liste.row]);
-  onlineset.vend:= StrToTime(liste.Cells[3,liste.row]);
-  onlineset.webseite:= liste.Cells[11,liste.row];
+  onlineset.Datum         := now;
+  onlineset.Tarif         := liste.Cells[1,liste.row];
+  onlineset.Rufnummer     := liste.Cells[8,liste.row];
+  onlineset.Preis         := StrToFloat(liste.Cells[4,liste.row]);
+  onlineset.Einwahl       := StrToFloat(liste.Cells[5,liste.row]);
+  onlineset.einwahl2      := onlineset.einwahl;
+  onlineset.mindestumsatz := strtofloat(liste.cells[18,liste.row]);
+  onlineset.kosten_mindest:= 0.0;
+  onlineset.tag           := liste.Cells[17,liste.row];
+  onlineset.vbegin        := StrToTime(liste.Cells[2,liste.row]);
+  onlineset.vend            := StrToTime(liste.Cells[3,liste.row]);
+  onlineset.webseite      := liste.Cells[11,liste.row];
   onlineset.kostenbisjetzt:= 0;
-  onlineset.wechsel:= incday(now, 10*365);
+  onlineset.wechsel       := incday(now, 10*365);
+
+  TaktToInteger(liste.Cells[6,liste.row],onlineset.Takt_a,onlineset.Takt_b);
+  TaktLaenge              := onlineset.takt_a;
+  TaktLaenge2             := onlineset.takt_b;
 
   //Logfile schreiben
   buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M67,'M67')+' ' + onlineset.Tarif +
@@ -2660,20 +2694,19 @@ else
   webservform.logfile_add(buf);
 
  //Leerlaufinterval setzen
- AutoLeerlaufLed.LedOn:= leerlaufdisconnect.Enabled;
- leerlaufboxask.Checked:= leerlaufdisconnect.Ask;
- leertime.Value:= leerlaufdisconnectzeit;
- leerlauf.Interval:= leerlaufdisconnectzeit *60 * 1000;
+ AutoLeerlaufLed.LedOn   := leerlaufdisconnect.Enabled;
+ leerlaufboxask.Checked  := leerlaufdisconnect.Ask;
+ leertime.Value          := leerlaufdisconnectzeit;
+ leerlauf.Interval       := leerlaufdisconnectzeit *60 * 1000;
 
   //Ausschalten bei Automatischem Trennen
-  AutoAus.ItemIndex:= AutoAusIndex;
+  AutoAus.ItemIndex      := AutoAusIndex;
 
  //AutoConnect setzen
   AutoDialEinwahl.checked:= settings.Readbool('AutoConnect','mitEinwahl',false);
-  AutoBase.Position:= Autosurfdauer;
-
-  Autodiscled.ledon:= AutoDisconnect.Enabled;
-  trennask.checked:= AutoDisconnect.Ask;
+  AutoBase.Position      := Autosurfdauer;
+  Autodiscled.ledon      := AutoDisconnect.Enabled;
+  trennask.checked       := AutoDisconnect.Ask;
 
  //Autotrennen setzen
   //wenn Ende > als Beginn oder ende ist noch in der Zukunft
@@ -2741,10 +2774,10 @@ begin
  begin
    if assigned(disconnect_leerlauf) then disconnect_leerlauf.close;
     Application.CreateForm(Tdisconnect_leerlauf, disconnect_leerlauf);
-    disconnect_leerlauf.usetimer:= true;
-    disconnect_leerlauf.timer1.tag:= 30;
+    disconnect_leerlauf.usetimer      := true;
+    disconnect_leerlauf.timer1.tag    := 30;
     disconnect_leerlauf.Label1.Caption:= misc(M68,'M68');
-    disconnect_leerlauf.grad.endcolor:= $009191DB; {rot}
+    disconnect_leerlauf.grad.endcolor := $009191DB; {rot}
     disconnect_leerlauf.Show;
  end;
 
@@ -2802,41 +2835,37 @@ begin
     flFlags            := 0;
 
     // Absender festlegen
-    Absender.ulReserved:=0;
-    Absender.ulRecipClass:=MAPI_ORIG;
-    Absender.lpszName:= PChar(FromName);
-    Absender.lpszAddress:= PChar(FromAdress);
-    Absender.ulEIDSize:=0;
-    Absender.lpEntryID:=nil;
-    lpOriginator := @Absender;
+    Absender.ulReserved       := 0;
+    Absender.ulRecipClass     := MAPI_ORIG;
+    Absender.lpszName         := PChar(FromName);
+    Absender.lpszAddress      := PChar(FromAdress);
+    Absender.ulEIDSize        := 0;
+    Absender.lpEntryID        := nil;
+    lpOriginator              := @Absender;
 
     // Empfänger festlegen (Hier: nur 1 Empfänger)
-    nRecipCount := 1;
+    nRecipCount               := 1;
 
-    Empfaenger[0].ulReserved:=0;
-    Empfaenger[0].ulRecipClass:=MAPI_TO;
-    Empfaenger[0].lpszName:= PChar(ToName);
-    Empfaenger[0].lpszAddress:= PChar(ToAdress);
-    Empfaenger[0].ulEIDSize:=0;
-    Empfaenger[0].lpEntryID:=nil;
-    lpRecips := @Empfaenger;
+    Empfaenger[0].ulReserved  := 0;
+    Empfaenger[0].ulRecipClass:= MAPI_TO;
+    Empfaenger[0].lpszName    := PChar(ToName);
+    Empfaenger[0].lpszAddress := PChar(ToAdress);
+    Empfaenger[0].ulEIDSize   := 0;
+    Empfaenger[0].lpEntryID   := nil;
+    lpRecips                  := @Empfaenger;
 
     // Dateien anhängen (Hier: nur 1 Datei)
     if AttachedFileName = '' then nFileCount := 0
     else
     begin
-     nFileCount := 1;
-
-     // Name der Datei auf der Festplatte
-     Datei[0].lpszPathName:= PChar(AttachedFilename);
-
-     // Name, der in der Email angezeigt wird
-     Datei[0].lpszFileName:= PChar(DisplayFilename);
-     Datei[0].ulReserved:=0;
-     Datei[0].flFlags:=0;
-     Datei[0].nPosition:=Cardinal(-1);
-     Datei[0].lpFileType:=nil;
-     lpFiles := @Datei;
+     nFileCount           := 1;
+     Datei[0].lpszPathName:= PChar(AttachedFilename);     // Name der Datei auf der Festplatte
+     Datei[0].lpszFileName:= PChar(DisplayFilename);      // Name, der in der Email angezeigt wird
+     Datei[0].ulReserved  := 0;
+     Datei[0].flFlags     := 0;
+     Datei[0].nPosition   := Cardinal(-1);
+     Datei[0].lpFileType  := nil;
+     lpFiles              := @Datei;
     end;
   end;
 
@@ -2849,31 +2878,16 @@ begin
     MError := MapiSendMail(0, Application.Handle, MapiMessage, 0, 0);
 
   Case MError of
-    MAPI_E_AMBIGUOUS_RECIPIENT:
-      MessageDlg(misc(M70,'M70'),mterror,[mbok],0);
-    MAPI_E_ATTACHMENT_NOT_FOUND:
-      MessageDlg(misc(M71,'M71'),mterror,[mbok],0);
-
-    MAPI_E_ATTACHMENT_OPEN_FAILURE:
-      MessageDlg(misc(M72,'M72'),mterror,[mbok],0);
-
-    MAPI_E_BAD_RECIPTYPE:
-      MessageDlg(misc(M73,'M73'),mterror,[mbok],0);
-
-    MAPI_E_FAILURE:
-      MessageDlg(misc(M74,'M74'),mterror,[mbok],0);
-
-    MAPI_E_INSUFFICIENT_MEMORY:
-      MessageDlg(misc(M75,'M75'),mterror,[mbok],0);
-
-    MAPI_E_LOGIN_FAILURE:
-      MessageDlg(misc(M76,'M76'),mterror,[mbok],0);
-
-    MAPI_E_TEXT_TOO_LARGE:
-      MessageDlg(misc(M77,'M77'),mterror,[mbok],0);
-
-    MAPI_E_USER_ABORT:
-      MessageDlg(misc(M78,'M78'),mterror,[mbok],0);  End;
+    MAPI_E_AMBIGUOUS_RECIPIENT    : MessageDlg(misc(M70,'M70'),mterror,[mbok],0);
+    MAPI_E_ATTACHMENT_NOT_FOUND   : MessageDlg(misc(M71,'M71'),mterror,[mbok],0);
+    MAPI_E_ATTACHMENT_OPEN_FAILURE: MessageDlg(misc(M72,'M72'),mterror,[mbok],0);
+    MAPI_E_BAD_RECIPTYPE          : MessageDlg(misc(M73,'M73'),mterror,[mbok],0);
+    MAPI_E_FAILURE                : MessageDlg(misc(M74,'M74'),mterror,[mbok],0);
+    MAPI_E_INSUFFICIENT_MEMORY    : MessageDlg(misc(M75,'M75'),mterror,[mbok],0);
+    MAPI_E_LOGIN_FAILURE          : MessageDlg(misc(M76,'M76'),mterror,[mbok],0);
+    MAPI_E_TEXT_TOO_LARGE         : MessageDlg(misc(M77,'M77'),mterror,[mbok],0);
+    MAPI_E_USER_ABORT             : MessageDlg(misc(M78,'M78'),mterror,[mbok],0);
+  End;
 end; {Christian "NineBerry" Schwarz}
 
 procedure THauptfenster.disconnectviatrennticker;
@@ -2881,8 +2895,8 @@ var buf: string;
 begin
       Autodiscled.ledon:= false;
       disconnect;
-      if not noballoon then
-      tray.ShowBalloonHint(misc(M01,'M01'),misc(M79,'M79'),bitInfo, 10);
+
+      if not noballoon then tray.ShowBalloonHint(misc(M01,'M01'),misc(M79,'M79'),bitInfo, 10);
 
       Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) +#9 +misc(M80,'M80')+#13#10;
       webserv1.status:= buf;
@@ -2941,88 +2955,87 @@ begin
    kontingentindex:= -1;
    if selfdial then //Kontingente
      begin
-            onlineset.kostenbisjetzt:= onlineset.einwahl2/100;
+        onlineset.kostenbisjetzt:= onlineset.einwahl2/100;                                //einwahlgebühr addieren
+        onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.mindestumsatz/100; //mindestumsatz in € addieren
 
-            if length(Kontingente) > 0 then
-               for i:= 0 to (length(Kontingente)-1) do
-                  if kontingente[i].Tarif = onlineset.tarif then
+        if length(Kontingente) > 0 then
+             for i:= 0 to (length(Kontingente)-1) do
+                if kontingente[i].Tarif = onlineset.tarif then
                    begin
                     kontingentindex:= i;
                     break;
                    end;
 
-            oCostlabel.Visible:= true;
+        oCostlabel.Visible:= true;
     end
     else Dialstatus.text:= misc(M81,'M81');
 
-          isonline:= true;
-          AutoDialLed.ledon:= settings.Readbool('AutoConnect','AutoReConnect',false); //Wiedereinwahl setzen
-          Aktualisieren.Enabled:= false;
+    isonline:= true;
+    AutoDialLed.ledon:= settings.Readbool('AutoConnect','AutoReConnect',false); //Wiedereinwahl setzen
+    Aktualisieren.Enabled:= false;
 
-          //Ausblenden der OfflineElemente und Einblenden des online-Mode
-           modes.setOnlinemode;
+    //Ausblenden der OfflineElemente und Einblenden des online-Mode
+     modes.setOnlinemode;
 
-           DialBtn.Font.Color:= clRed;
-           DialBtn.Font.Size:= 8;
-           DialBtn.caption:= misc(M82,'M82');;
+    DialBtn.Font.Color     := clRed;
+    DialBtn.Font.Size      := 8;
+    DialBtn.caption        := misc(M82,'M82');
 
-           hauptfenster.PopupMenu1.Items.Items[0].Caption:='ONLINE';
-           hauptfenster.PopupMenu1.Items.Items[2].Visible:=true;
-           hauptfenster.PopupMenu1.Items.Items[3].Visible:=true;
-           hauptfenster.PopupMenu1.Items.Items[4].Visible:=true;
-           hauptfenster.PopupMenu1.Items.Items[14].Visible:=true;
-           Tray.IconIndex:=1; //Online-Tray-Symbol setzen
+    hauptfenster.PopupMenu1.Items.Items[0].Caption:='ONLINE';
+    hauptfenster.PopupMenu1.Items.Items[2].Visible:=true;
+    hauptfenster.PopupMenu1.Items.Items[3].Visible:=true;
+    hauptfenster.PopupMenu1.Items.Items[4].Visible:=true;
+    hauptfenster.PopupMenu1.Items.Items[14].Visible:=true;
+    Tray.IconIndex:=1; //Online-Tray-Symbol setzen
 
-           //Menü >Tools > Online
-           hauptfenster.MM2_3.Enabled:= true;
+    //Menü >Tools > Online
+    hauptfenster.MM2_3.Enabled:= true;
 
-           //Onlineinfo zeigen
-          if selfdial and settings.readbool('Onlineinfo','show', true )
-                      and (not Assigned(floatingW))
-          then
-            begin
+    //Onlineinfo zeigen
+    if selfdial and settings.readbool('Onlineinfo','show', true )
+                and (not Assigned(floatingW))
+       then
+         begin
              Application.CreateForm(TfloatingW, floatingW);
              floatingW.tarif.caption:= onlineset.Tarif;//edtarif.text;
-            if settings.ReadBool('OnlineInfo', 'AutoWidth', true) then floatingW.setwidth;
-            floatingW.valid.caption:= TimeToStr(onlineset.vbegin) + '-'+ TimeToStr(onlineset.vend);
-            floatingW.preis.caption:= Format('%.2f  '+ misc(M12,'M12') +'/min',[onlineset.preis]);
-            floatingW.Show;
-           end;
+             if settings.ReadBool('OnlineInfo', 'AutoWidth', true) then floatingW.setwidth;
+             floatingW.valid.caption:= TimeToStr(onlineset.vbegin) + '-'+ TimeToStr(onlineset.vend);
+             floatingW.preis.caption:= Format('%.2f  '+ misc(M12,'M12') +'/min',[onlineset.preis]);
+             floatingW.Show;
+        end;
+    //Logfile schreiben
+    buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+ misc(M83,'M83')+ ' ' + MagRasCon.CurConnName +' (detection)'+#13#10;
+    webserv1.status:= buf;
+    webservform.logfile_add(buf);
 
-           //Logfile schreiben
-           buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+ misc(M83,'M83')+ ' ' + MagRasCon.CurConnName +' (detection)'+#13#10;
-           webserv1.status:= buf;
-           webservform.logfile_add(buf);
+    progcount:=0;
+    loadprogs;             //Programme starten
 
-           //Programme starten
-           progcount:=0;
-           loadprogs;
-
-           //aktualisieren der tariftabelle wieder aktivieren
-           reload.enabled:= true;
+    reload.enabled:= true; //aktualisieren der tariftabelle wieder aktivieren
 
            //Sound
-           if fileexists(settings.readstring('LeastCoster','SoundON',  '' ))
-              then sndPlaySound(PChar(settings.readstring('LeastCoster','SoundON',  '' )),SND_ASYNC);
+    if fileexists(settings.readstring('LeastCoster','SoundON',  '' ))
+      then sndPlaySound(PChar(settings.readstring('LeastCoster','SoundON',  '' )),SND_ASYNC);
 
-           if settings.Readbool('lokale IP','IP_Notify',false) then ipemail.Enabled:= true;
+    if settings.Readbool('lokale IP','IP_Notify',false) then ipemail.Enabled:= true;
 
            //~~~~~~~~~~~~~~~~~ SPEED
            // W2K/XP keep handle and subentry for perf stats - base 1
-            if MagRasOSVersion >= OSW2K then
-            begin
-             MagRasPer.ResetPerfStats ;		// clear stats
-             MagRasPer.PerfRasConn [1] := DialHandle ;
-             LastXmit := MagRasPer.PerfXmitCur [0] ;
-             LastRecv := MagRasPer.PerfRecvCur [0] ;
-            end;
-            LastTime := GetTickCount ;
-            //verstecken, wenn online
-            if settings.readbool('Dialer','Tray',false) and selfdial then MM1_9.Click;
-            dialing:= false;
-            aktualisieren.click;
-            refreshall;
-            oldtime:= now;
+    if MagRasOSVersion >= OSW2K then
+      begin
+        MagRasPer.ResetPerfStats ;		// clear stats
+        MagRasPer.PerfRasConn [1] := DialHandle ;
+        LastXmit                  := MagRasPer.PerfXmitCur [0] ;
+        LastRecv                  := MagRasPer.PerfRecvCur [0] ;
+      end;
+
+      LastTime := GetTickCount ;
+      //verstecken, wenn online
+      if settings.readbool('Dialer','Tray',false) and selfdial then MM1_9.Click;
+      dialing:= false;
+      aktualisieren.click;
+      refreshall;
+      oldtime:= now;
 end;
 
 procedure THauptfenster.OnDisconnect;
@@ -3031,22 +3044,22 @@ begin
          //wenn noch am Wahlen, dann kurz warten
          if dialing then begin WaitOnDisconnect.enabled:= true; exit; end;
 
-          ConnHandle:= 0;
-          DialHandle:= 0;
-          disconnectStopped:= false;
-          actofftime:= now;
-          onlineset.Endzeit:= timeof(now);
+          ConnHandle         := 0;
+          DialHandle         := 0;
+          disconnectStopped  := false;
+          actofftime         := now;
+          onlineset.Endzeit  := timeof(now);
 
-          isonline:= false;
-          leerlauf.enabled:= false;
+          isonline           := false;
+          leerlauf.enabled   := false;
 
-          takt1.Visible:= false;
-          takt2.Visible:= false;
+          takt1.Visible      := false;
+          takt2.Visible      := false;
 
-          takt1.tag:= 0;
-          takt1.tag:= 0;
+          takt1.tag          := 0;
+          takt1.tag          := 0;
 
-          rsstimer.enabled:=false;
+          rsstimer.enabled   :=false;
           updatetimer.enabled:= false;
 
           if (allow_multilink and (modemname2<>'')) then
@@ -3054,36 +3067,38 @@ begin
 
           modes.setOfflineMode;
 
-          StatLED1.LEDon:= false;
-          StatLED2.LEDon:= false;
+          StatLED1.LEDon     := false;
+          StatLED2.LEDon     := false;
 
-          actofftime:= Timeof(now);
-          status.SimpleText:= misc(M84,'M84')+': ' + ozeit.Caption;
-          ozeit.caption:='';
+          actofftime         := Timeof(now);
+          status.SimpleText  := misc(M84,'M84')+': ' + ozeit.Caption;
+          ozeit.caption      :='';
 
           Aktualisieren.Enabled:= true;
           AktualisierenClick(nil);
-          Disconnecting:= false;
-          Dialbtn.Font.Color:= clWindowText;
-          Dialbtn.Font.Size:= 8;
-          DialBtn.caption:= misc(M24,'M24');
-          hauptfenster.PopupMenu1.Items.Items[0].Caption:='OFFLINE';
-          hauptfenster.PopupMenu1.Items.Items[2].Visible:=false;
-          hauptfenster.PopupMenu1.Items.Items[3].Visible:=false;
-          hauptfenster.PopupMenu1.Items.Items[14].Visible:=false;
-          Tray.IconIndex:=0; //setzen des Offline-Tray-Icons
+          Disconnecting        := false;
+          Dialbtn.Font.Color   := clWindowText;
+          Dialbtn.Font.Size    := 8;
+          DialBtn.caption      := misc(M24,'M24');
+          Tray.IconIndex       := 0; //setzen des Offline-Tray-Icons
 
-          sntptimer.enabled:= false;
-          //Autoexport und updaten
-          if selfdial then closer.Interval:= 500
-          else closer.Interval:= 10000;
-          closer.Enabled:=true;
+          hauptfenster.PopupMenu1.Items.Items[0].Caption :='OFFLINE';
+          hauptfenster.PopupMenu1.Items.Items[2].Visible :=false;
+          hauptfenster.PopupMenu1.Items.Items[3].Visible :=false;
+          hauptfenster.PopupMenu1.Items.Items[14].Visible:=false;
+
+
+          sntptimer.enabled               := false;
+
+          if selfdial then closer.Interval:= 500      //Autoexport und updaten
+                      else closer.Interval:= 10000;
+          closer.Enabled                  :=true;
 
           if Assigned(floatingW) then floatingW.close;
 
           // OfflineElemente sichtbar machen
-          surfdauer.enabled:= true;
-          Dialbtn.enabled:= true;
+          surfdauer.enabled               := true;
+          Dialbtn.enabled                 := true;
 
            //Logfile schreiben
            Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M85,'M85')+#13#10;
@@ -3261,22 +3276,21 @@ begin
 rsstimer.enabled:= false;
 if not nofeeds then
 begin
-if isonline and not rssrunning then
-  begin
-   RssReader.StartRssUpdate;
-  end
-  else
-  if not isonline then
-  begin
-  ledrss.coloroff:= clMaroon;
-  ledtimer.enabled:= false;
-  LEDRSS.Hint:= misc(M87,'M87')+' ( ' + timetostr(timeof(now)) + ' )';
-  end;
+if isonline and not rssrunning
+    then
+     RssReader.StartRssUpdate
+    else
+      if not isonline then
+      begin
+        ledrss.coloroff := clMaroon;
+        ledtimer.enabled:= false;
+        LEDRSS.Hint     := misc(M87,'M87')+' ( ' + timetostr(timeof(now)) + ' )';
+      end;
 
 if rss_update > 0 then
   begin
-   rsstimer.interval:= rss_update * 60*1000;
-   rsstimer.enabled:= true;
+   rsstimer.interval := rss_update * 60*1000;
+   rsstimer.enabled  := true;
   end;
 end;
 end;
@@ -4042,7 +4056,7 @@ TS3.visible           := MM3_2.checked;
 
 if MM3_2.checked then
 begin
-  label3.Top:= 324;
+  label3.Top:= 393;//324;
   ozeit.Top:= 318;
   ocostlabel.Top:= 318;
   online.top:= 318;
@@ -4061,7 +4075,7 @@ end
 else
 begin
   bevel1.top:= 268;
-  label3.Top:= 280;
+  label3.Top:= 300;
   ozeit.Top:= 274;
   ocostlabel.Top:= 274;
   online.top:= 274;

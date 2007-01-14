@@ -94,18 +94,6 @@ object Hauptfenster: THauptfenster
     OnMouseDown = LedRSSMouseDown
     OnMouseUp = LedRSSMouseUp
   end
-  object Label3: TLabel
-    Left = 213
-    Top = 325
-    Width = 5
-    Height = 13
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    ParentFont = False
-  end
   object OCostLabel: TLabel
     Left = 130
     Top = 317
@@ -195,6 +183,19 @@ object Hauptfenster: THauptfenster
     OnMouseDown = LedRSSMouseDown
     OnMouseUp = LedRSSMouseUp
   end
+  object Label3: TLabel
+    Left = 309
+    Top = 399
+    Width = 5
+    Height = 13
+    Anchors = [akTop, akRight]
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+  end
   object Liste: TStringGrid
     Tag = -1
     Left = 10
@@ -204,7 +205,7 @@ object Hauptfenster: THauptfenster
     Hint = '[Enter] oder [W'#228'hlen] w'#228'hlt den selektierten Tarif an.'
     Anchors = [akLeft, akTop, akRight]
     Color = cl3DLight
-    ColCount = 18
+    ColCount = 19
     DefaultRowHeight = 16
     FixedCols = 0
     RowCount = 2
@@ -232,6 +233,7 @@ object Hauptfenster: THauptfenster
       41
       47
       47
+      64
       64
       64
       64
@@ -277,7 +279,7 @@ object Hauptfenster: THauptfenster
     Kind = bkOK
   end
   object Aktualisieren: TBitBtn
-    Left = 152
+    Left = 288
     Top = 431
     Width = 123
     Height = 25
@@ -327,8 +329,8 @@ object Hauptfenster: THauptfenster
   end
   object surfdauer: TTrackBar
     Left = 20
-    Top = 388
-    Width = 385
+    Top = 386
+    Width = 269
     Height = 33
     Anchors = [akLeft, akTop, akRight]
     Ctl3D = True
@@ -502,7 +504,7 @@ object Hauptfenster: THauptfenster
     OnClick = beliebig_check1Click
   end
   object AutoTrennen: TPageControl
-    Left = 28
+    Left = 20
     Top = 345
     Width = 365
     Height = 57
@@ -692,8 +694,8 @@ object Hauptfenster: THauptfenster
     end
   end
   object setmultilink: TCheckBox
-    Left = 35
-    Top = 482
+    Left = 147
+    Top = 436
     Width = 97
     Height = 18
     Caption = 'Kanalb'#252'ndelung'
@@ -1237,14 +1239,14 @@ object Hauptfenster: THauptfenster
     Enabled = False
     Interval = 1
     OnTimer = Aktualisieren_timerTimer
-    Left = 136
-    Top = 416
+    Left = 168
+    Top = 408
   end
   object Reload: TTimer
     Interval = 60000
     OnTimer = ReloadTimer
-    Left = 200
-    Top = 416
+    Left = 224
+    Top = 408
   end
   object Rsstimer: TTimer
     Enabled = False
@@ -1592,6 +1594,11 @@ object Hauptfenster: THauptfenster
         object S_17: TMenuItem
           Tag = 17
           Caption = 'Tag der G'#252'ltigkeit'
+          OnClick = S_1Click
+        end
+        object S_18: TMenuItem
+          Tag = 18
+          Caption = 'Mindestumsatz'
           OnClick = S_1Click
         end
       end
