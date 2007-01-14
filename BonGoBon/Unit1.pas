@@ -61,6 +61,25 @@ type
     DeleteWhenExpires: boolean;
   end;
 
+  TTarif02 = record
+    Tarif: String[70];
+    Tag: String[39];
+    Nummer,User,Passwort, Editor: String[40];
+    Webseite: String[150];
+    takt_a, takt_b: integer;
+    Preis, Einwahl: real;
+    Beginn, Ende: TTime;
+    eingetragen,validfrom, expires:TDate;
+    DeleteWhenExpires: boolean;
+    Mindestumsatz: real;
+  end;
+
+ TTarifheader = record
+    programm : String[40];
+    Version  : integer;
+    Datum    : TDateTime;
+   end;
+
   TForm1 = class(TForm)
     Http: THttpCli;
     Label1: TLabel;
@@ -115,6 +134,29 @@ implementation
 uses RegExpr, StrUtils, DateUtils, IniFiles, zlib;
 
 {$R *.dfm}
+
+procedure TaktToInteger(takt: string; var tleft, tright: integer);
+var taktstring: string;
+begin
+//takt_a
+  taktstring:= takt;
+  Delete(taktstring,pos('/', taktstring),length(taktstring) - pos('/', taktstring) +1);
+  try
+    tleft:= strtoint(taktstring);
+    if tleft > 60 then tleft:= 60;
+  except
+    tleft:= 60; //wenn Fehler dann minutentakt annehmen
+  end;
+//takt B
+  taktstring:= takt;
+  Delete(taktstring,1, pos('/', taktstring)  );
+  try
+    tright:= strtoint(taktstring);
+  except
+    tright:= 60; //wenn Fehler dann minutentakt annehmen
+  end;
+end;
+
 procedure Compress(InputFileName, OutputFileName: string);
 var InputStream, OutputStream: TFileStream;
   CompressionStream: ZLib.TCompressionStream;
@@ -177,18 +219,20 @@ begin
 end;
 
 procedure TForm1.BonGoParse(txtinput:TStringStream);
-var r    : TRegExpr;
-    i    : integer;
-    split: TStringlist;
-    Beginn, Ende, gilt : String;
-    preis, einwahl: string;
-    tag  : integer;
+var r                 : TRegExpr;
+    i                 : integer;
+    split             : TStringlist;
+    Beginn, Ende, gilt: String;
+    preis, einwahl    : string;
+    tag               : integer;
 
-    DatenSatz: TTarif;
-    Tarife: array of TTarif;
-    Datei: file of TTarif;
+    DatenSatz         : TTarif02;
+    Tarife            : array of TTarif02;
+//    Datei           : file of TTarif02;
+    Stream            : TFileStream;
+    header            : TTarifheader;
+    fname, cname      : string;
 
-    fname, cname: string;
 begin
 
  setlength(Tarife,0);
@@ -242,18 +286,20 @@ begin
     3: gilt:= '[So]';
     4: gilt:= '[Mo][Di][Mi][Do][Fr][Sa][So][feiertags]';
    end;
-   Datensatz.Tag         := gilt;
-   DatenSatz.Nummer      := r.Replace(split.Strings[i], '$9', true);
-   DatenSatz.Takt        := r.Replace(split.Strings[i], '$8', true);
-   DatenSatz.User        := r.Replace(split.Strings[i], '$10', true);
-   DatenSatz.Passwort    := r.Replace(split.Strings[i], '$11', true);
-   DatenSatz.Webseite    := r.Replace(split.Strings[i], '$12', true);
-   DatenSatz.eingetragen := dateof(lastdate);
-   DatenSatz.expires     := dateof(incDay(lastdate,2));
-   DatenSatz.validfrom   := dateof(lastdate);
+   Datensatz.Tag              := gilt;
+   DatenSatz.Nummer           := r.Replace(split.Strings[i], '$9', true);
+//   DatenSatz.Takt           := r.Replace(split.Strings[i], '$8', true);
+   TaktToInteger(r.Replace(split.Strings[i], '$8', true), DatenSatz.takt_a, Datensatz.Takt_b);
+   DatenSatz.User             := r.Replace(split.Strings[i], '$10', true);
+   DatenSatz.Passwort         := r.Replace(split.Strings[i], '$11', true);
+   DatenSatz.Webseite         := r.Replace(split.Strings[i], '$12', true);
+   DatenSatz.eingetragen      := dateof(lastdate);
+   DatenSatz.expires          := dateof(incDay(lastdate,2));
+   DatenSatz.validfrom        := dateof(lastdate);
 
-   DatenSatz.Editor      := 'BonGo';
+   DatenSatz.Editor           := 'BonGo';
    DatenSatz.DeleteWhenExpires:= false;
+   Datensatz.Mindestumsatz    := 0.0;
 
     //wenn Tarif innerhalb der Bedingungen, dann mitnehmen
     if((maxP.Value >= DatenSatz.Preis) and ( maxE.Value >= DatenSatz.Einwahl)) then
@@ -271,7 +317,6 @@ begin
  split.Clear;
  status.simpletext:= 'Suche Tarife.lcx';
 
-
  //ab hier die alten Tarife einlesen
  if fileexists('..\..\Tarife.lcx') then
  begin
@@ -279,16 +324,17 @@ begin
    fname:=changeFileExt(fname, '.$$$');
    Decompress(cname, fname);
 
-   assignFile(Datei,fname);
-   ReSet(Datei);
+   Stream:= TFileStream.Create(fname,fmOpenRead);
+
+   Stream.Read(header, sizeof(header));
 
    Progress.min:= 0;
-   Progress.Max:= FileSize(Datei);
-   
-   while not eof(Datei) do
+   Progress.Max:= Stream.size;
+
+   if (header.programm = 'LeastCosterXP') and (header.Version = 2) then
+   while stream.position < Stream.size do
     begin
-     Read(Datei, Datensatz);
-//     showmessage(Datensatz.Editor + ' ' + inttostr(length(Tarife)));
+     Stream.Read(Datensatz, sizeof(datensatz));
      //nur speichern wenn nicht schon ein Bongotarif
      if not (DatenSatz.Editor = 'BonGo') then
       begin //anhängen
@@ -297,9 +343,10 @@ begin
         //an der neuen freien Stelle hinzufügen
           Tarife[length(Tarife)-1] := DatenSatz;
       end;
-      Progress.Position:= Progress.Position + 1;
+      Progress.Position:= stream.position;
     end;
-   closefile(Datei);
+    
+   Stream.Free;
    DeleteFile(fname);
    RenameFile('..\..\Tarife.lcx','..\..\Tarife.lcx.bak');
  end; //if fileExists
@@ -312,19 +359,24 @@ begin
     cname:='..\..\Tarife.lcx';
     fname:=changeFileExt(fname, '.$$$');
 
-    assignFile(Datei,fname);
-    ReWrite(Datei);
+    stream:= TFileStream.Create(fname,fmCreate);
 
-    Progress.min:= 0;
-    Progress.Max:= length(tarife);
+    header.programm:= 'LeastCosterXP';
+    header.Version := 2;
+    header.Datum   := now;
+
+    stream.write(header,sizeof(header));
+
+    Progress.min   := 0;
+    Progress.Max   := length(tarife);
 
     For i:= 0 to length(tarife)-1 do
     begin
-      write(Datei, Tarife[i]);
+      Stream.Write(Tarife[i], sizeof(tarife[i]));
       progress.position:= Progress.Position + 1;
     end;
+    Stream.free;
 
-    CloseFile(Datei);
     Compress(fname, cname);
     DeleteFile(fname);
   end;
