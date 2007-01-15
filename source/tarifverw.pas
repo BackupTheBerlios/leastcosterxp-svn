@@ -430,21 +430,6 @@ if FileExists(extractfilepath(paramstr(0))+'Tarife.lcx') then
 begin
   DeCompress(extractfilepath(paramstr(0))+'Tarife.lcx',extractfilepath(paramstr(0))+'Tarife.$$$');
 
-//  assignfile(Datei,extractfilepath(paramstr(0))+'Tarife.$$$');
-//  reset(datei);
-//  count:= 0;
-
-//  while not EOF(Datei) do
-//  begin
-//    read(Datei, DatenSatz);
-//    count:= count+1;
-//    setlength(hauptfenster.tarife, count);
-////    Hauptfenster.tarife[count-1]:= DatenSatz;
-//    Hauptfenster.tarife[count-1].Tarif:= DatenSatz.Tarif;
-//    Hauptfenster.tarife[count-1].User := DatenSatz.User;
-//  end;
-//  closefile(datei);
-
   Stream := TFileStream.Create(extractfilepath(paramstr(0))+'Tarife.$$$' , fmOpenRead ) ;
   count:= 0;
   header.Version:= 0;
@@ -483,6 +468,9 @@ begin
     finally
       Stream.Free ;
     end ;
+
+   WriteTarifeToHD; //lcx-Datei in neuem Format auf die Platte schreiben schreiben
+
    end
   else //wenn im Header programm=LeastCosterXP steht : DateiVersion vom Typ TTarif02 mit header
   if header.version = 2 then
@@ -591,7 +579,7 @@ begin
     Cells[11,0]:= misc(M173,'M173');
     Cells[12,0]:= misc(M174,'M174');
     Cells[13,0]:= misc(M175,'M175');
-    Cells[14,0]:= misc(M166,'M166');
+    Cells[14,0]:= misc(M176,'M176');
     Cells[15,0]:= misc(M266,'M266');
     Cells[16,0]:= misc(M267,'M267');
     Cells[17,0]:= misc(M265,'M265');

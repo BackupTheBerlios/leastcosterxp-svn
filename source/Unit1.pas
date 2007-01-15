@@ -751,14 +751,21 @@ end;
 procedure THauptfenster.langClick(Sender: TObject);
 var language: string;
     i: integer;
+    checked: boolean;
 begin
- for i:= 0 to MM3_3.Count-1 do MM3_3.items[i].Checked:= false;
- 
- language:= stripHotkey((sender as TMenuItem).caption);
- settings.WriteString('LeastCoster','language',language);
- (sender as TMenuItem).checked:= true;
-end;
 
+ checked:= (sender as TMenuItem).checked;
+
+ for i:= 0 to MM3_3.Count-1 do MM3_3.items[i].Checked:= false;
+
+ if not checked then
+ begin
+   language:= stripHotkey((sender as TMenuItem).caption);
+   settings.WriteString('LeastCoster','language',language);
+   (sender as TMenuItem).checked:= true;
+ end
+ else settings.WriteString('LeastCoster','language','');
+end;
 
 procedure SetLEDs;
 begin
