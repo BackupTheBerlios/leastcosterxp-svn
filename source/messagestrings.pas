@@ -345,6 +345,7 @@ const
 
   M270= 'Feiertag';
   M271= 'Datum';
+  M272= 'Originalsprache wird nach Neustart eingestellt.';
 
   Help00= 'Hinweise:' +cr
               +' werden beim Zeigen auf ein Objekt angezeigt.';

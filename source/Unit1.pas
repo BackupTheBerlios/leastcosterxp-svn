@@ -107,7 +107,7 @@ type
       mindestumsatz, kosten_mindest: real;
       Datum: TDateTime;
       vbegin, vend, Endzeit: TTime;
-      Einwahl2, kostenbisjetzt,Kosten,Preis,Einwahl: real;
+      Einwahl2, Kosten,Preis,Einwahl: real;
       wechselpreis, wechseleinwahl: real;
       wechsel: TDatetime;
       upload, download: Cardinal;
@@ -544,7 +544,7 @@ var
   startcount: integer;
   verbindungsname: string;
   nooncheck: boolean;
-  dauer, dauer2, taktlaenge, taktlaenge2: integer; //onlinedauer in s
+  dauer, dauer2, taktlaenge: integer; //onlinedauer in s
   dauer_takt: longint;
   gesamtdauer: longint;
   rascheck: boolean;
@@ -765,6 +765,14 @@ begin
    (sender as TMenuItem).checked:= true;
  end
  else settings.WriteString('LeastCoster','language','');
+
+  CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+  if CL<>nil then
+    begin
+      fillProps([Hauptfenster],CL);
+      if isonline then DialBtn.Caption := misc(M82,'M82') else misc(M24,'M24');
+      surfdauerchange(nil);
+    end else status.simpletext:= misc(M272,'M272');
 end;
 
 procedure SetLEDs;
@@ -799,7 +807,7 @@ case MagRasCon.StateSubEntry of
      if statLED1.LedOn then //wenn erster Kanal belegt war, dann muss getrennt werden
         begin
              StatLED1.Ledon:= false;
-             if isonline then OnDisconnect; 
+             if isonline then OnDisconnect;
         end;
 
 2: if MagRasCon.ConnectState = RASCS_Connected then
@@ -810,7 +818,7 @@ case MagRasCon.StateSubEntry of
           StatLED2.LEDon:= true; //schalten damit einwahl nicht doppelt gezählt wird
 
           //Einwahlgebühren für den zweiten Kanal addieren
-          if selfdial then onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.einwahl2/100;
+          if selfdial then onlineset.kosten:= onlineset.kosten + onlineset.einwahl2/100;
           onlinetime2_start:= gettickcount;
           Kanalbuendelung:= true;
           takt2.Tag:= taktlaenge;
@@ -1013,7 +1021,7 @@ begin//Onlinezeitmessung
  gesamtdauer:= dauer +dauer2;
  zeitumrechnen(gesamtdauer,h,m,s);
 
- if dauer >= 60 then begin taktlaenge:= taktlaenge2; takt1.Max:= taktlaenge; takt2.max:= taktlaenge; end;
+ if (dauer >= onlineset.takt_a) then begin taktlaenge:= onlineset.takt_b; takt1.Max:= taktlaenge; takt2.max:= taktlaenge; end;
 
  ozeit.caption:=timetostr(encodetime(h,m,s,0));
  ocostlabel.left:= ozeit.left + ozeit.width + 10; //position richtig setzen
@@ -1027,20 +1035,20 @@ begin//Onlinezeitmessung
  end else oCostlabel.Visible:= false;
 
  onlineset.Dauer:= ozeit.caption;
- onlineset.Kosten:= -1.0; //wenn Kosten unbekannt, weil nicht selbst gewählt
+// onlineset.Kosten:= -1.0; //wenn Kosten unbekannt, weil nicht selbst gewählt
 
  if selfdial then
  if noerror then
  begin
   OCostlabel.Font.Color:= clGreen;
-  OCostLabel.Caption:= Format('%.4m',[onlineset.kostenbisjetzt]);
-  onlineset.Kosten:= onlineset.kostenbisjetzt;
+  OCostLabel.Caption:= Format('%.4m',[onlineset.kosten]);
+//  onlineset.Kosten:= onlineset.kostenbisjetzt;
  end
  else
  begin
-  onlineset.Kosten:= onlineset.kostenbisjetzt;
+//  onlineset.Kosten:= onlineset.kostenbisjetzt;
   OCostlabel.Font.Color:= clRed;
-  OCostLabel.Caption:= Format('> %.4m',[onlineset.kostenbisjetzt]);
+  OCostLabel.Caption:= Format('> %.4m',[onlineset.kosten]);
  end;
 
 if Assigned(floatingW) then
@@ -2136,6 +2144,13 @@ for i:= 0 to langlist.Count -1 do
  if fileexists(ExtractFilePath(paramStr(0))+ 'lang\' + langlist.Strings[i]) then
    mm3_3.Add(NewItem(ExtractFileName(langlist.strings[i]),TextToShortCut(''),False,True,langClick,0,'Item1'));
 langlist.free;
+//Sprache laden
+CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
+  if CL<>nil then
+  begin
+    fillProps([Hauptfenster],CL);
+    if isonline then DialBtn.Caption := misc(M82,'M82') else misc(M24,'M24');
+  end;
 
 for i:= 0 to mm3_3.count -1 do
  if striphotkey(mm3_3.items[i].caption) = settings.readstring('LeastCoster','language','') then mm3_3.items[i].checked:= true;
@@ -2338,7 +2353,6 @@ begin
    begin
     Datum         := EncodeDateTime(1970,01,01,0,0,0,0);
     Dauer         := '';
-    Kosten        := 0.0;
     tarif         := '';
     Einwahl       := 0.0;
     Rufnummer     := '';
@@ -2350,7 +2364,7 @@ begin
     vend          := EncodeTime(0,0,0,0);
     tag           := '';
     wechsel       := EncodeDateTime(1970,01,01,0,0,0,0);
-    kostenbisjetzt:= 0;
+    kosten        := 0;
     wechselpreis  := 0;
     wechseleinwahl:= 0;
     Einwahl2      := 0;
@@ -2393,9 +2407,9 @@ if isOnline then
    begin
       hauptfenster.PopupMenu1.Items.Items[3].Caption:=misc(M48,'M48')+': ' +chr(9)+ ozeit.Caption;
       Popupmenu1.Items.Items[6].Caption:= misc(M49,'M49')+':'+ chr(9) + timetostr(strtotime(ozeit.caption)+settings.ReadTime('Tageskosten','Zeit',Encodetime(0,0,0,0)));
-      Popupmenu1.Items.Items[7].Caption:= misc(M50,'M50')+':'+ chr(9) + '> '+format('%3m',[settings.ReadFloat('Tageskosten','Kosten',0)]);
+      Popupmenu1.Items.Items[7].Caption:= misc(M50,'M50')+':'+ chr(9) + format('%3m',[onlineset.kosten + settings.ReadFloat('Tageskosten','Kosten',0)]);
       Popupmenu1.Items.Items[8].Caption:= misc(M28,'M28')+':'+ chr(9) + Inttostr(settings.ReadInteger('Tageskosten','Verbindungen',0)+1);
-      Popupmenu1.Items.Items[9].Caption:= misc(M12,'M12')+'/min:'+ chr(9) + '~ ' +format('%1.3f',[settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
+      Popupmenu1.Items.Items[9].Caption:= misc(M12,'M12')+'/min:'+ chr(9) + format('%1.3f',[0.5* onlineset.kosten/(dauer/60) + 0.5 * settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
    end
    else
     begin
@@ -2404,12 +2418,11 @@ if isOnline then
     Popupmenu1.Items.Items[8].Caption:= misc(M28,'M28')+ ':'+chr(9) + Inttostr(settings.ReadInteger('Tageskosten','Verbindungen',0));
     Popupmenu1.Items.Items[9].Caption:= misc(M12,'M12')+'/min:'+ chr(9) + format('%1.3f',[settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
     end;
-
 end;
 
 procedure THauptfenster.PM15Click(Sender: TObject);
 begin
-Dialbtn.click;
+  Dialbtn.click;
 end;
 
 procedure THauptfenster.TrayClick(Sender: TObject);
@@ -2527,7 +2540,7 @@ begin
   begin
   if setmultilink.checked then //wenn Kanalbuendelung
   begin
-   onlineset.kostenbisjetzt:= onlineset.einwahl; //Einwahl 1x mehr berechnen
+   onlineset.kosten:= onlineset.einwahl; //Einwahl 1x mehr berechnen
    MagRasCon.SubEntry:= 0;
   end
   else
@@ -2687,12 +2700,11 @@ else
   onlineset.vbegin        := StrToTime(liste.Cells[2,liste.row]);
   onlineset.vend            := StrToTime(liste.Cells[3,liste.row]);
   onlineset.webseite      := liste.Cells[11,liste.row];
-  onlineset.kostenbisjetzt:= 0;
+  onlineset.kosten        := 0;
   onlineset.wechsel       := incday(now, 10*365);
 
   TaktToInteger(liste.Cells[6,liste.row],onlineset.Takt_a,onlineset.Takt_b);
-  TaktLaenge              := onlineset.takt_a;
-  TaktLaenge2             := onlineset.takt_b;
+  TaktLaenge   := onlineset.takt_a;
 
   //Logfile schreiben
   buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M67,'M67')+' ' + onlineset.Tarif +
@@ -2776,7 +2788,7 @@ begin
 
  tarifverw.LadeTarife;
 
- if not disconnecting then
+{ if not disconnecting then //prüfen, ob der Tarif noch in der Datenbank steht
  if isonline and (onlineset.tarif <> '') and (tarifverw.CheckOnlineset = false) then //Tarif nicht mehr vorhanden
  begin
    if assigned(disconnect_leerlauf) then disconnect_leerlauf.close;
@@ -2784,9 +2796,10 @@ begin
     disconnect_leerlauf.usetimer      := true;
     disconnect_leerlauf.timer1.tag    := 30;
     disconnect_leerlauf.Label1.Caption:= misc(M68,'M68');
-    disconnect_leerlauf.grad.endcolor := $009191DB; {rot}
+    disconnect_leerlauf.grad.endcolor := $009191DB; //rot
     disconnect_leerlauf.Show;
  end;
+}
 
 end; //if neuladen ...
 
@@ -2808,12 +2821,8 @@ begin
 end;
 //tarif auswählen
 if onlineset.tarif <> '' then
-begin
   for i:= 0 to liste.rowcount-1 do
-  begin
    if liste.cells[1,i] = onlineset.tarif then liste.row:= i;
-  end;
-end;
 
 liste.Repaint;
 end;
@@ -2962,8 +2971,8 @@ begin
    kontingentindex:= -1;
    if selfdial then //Kontingente
      begin
-        onlineset.kostenbisjetzt:= onlineset.einwahl2/100;                                //einwahlgebühr addieren
-        onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.mindestumsatz/100; //mindestumsatz in € addieren
+        onlineset.kosten:= onlineset.einwahl2/100;                                //einwahlgebühr addieren
+        onlineset.kosten:= onlineset.kosten + onlineset.mindestumsatz/100; //mindestumsatz in € addieren
 
         if length(Kontingente) > 0 then
              for i:= 0 to (length(Kontingente)-1) do
@@ -3347,9 +3356,6 @@ end;
 
 procedure THauptfenster.FormShow(Sender: TObject);
 begin
-  CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
-  if CL<>nil then fillProps([Hauptfenster],CL);
-
   formhidden:= false;
 
   if assigned(Floatingw) then
@@ -3919,7 +3925,7 @@ if ansicontainsstr(caption,'> ')
   hint:= misc(M99,'M99')
  else
   if ((gesamtdauer/60) >= 1.0) then
-    hint:= Format(misc(M100,'M100')+ ' : %.4m',[onlineset.kostenbisjetzt/(gesamtdauer/60)]);
+    hint:= Format(misc(M100,'M100')+ ' : %.4m',[onlineset.kosten/(gesamtdauer/60)]);
 end;
 
 procedure THauptfenster.TarifStatusPopup(Sender: TObject);

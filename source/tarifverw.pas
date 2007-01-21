@@ -234,7 +234,6 @@ begin
   Delete(taktstring,pos('/', taktstring),length(taktstring) - pos('/', taktstring) +1);
   try
     tleft:= strtoint(taktstring);
-    if tleft > 60 then tleft:= 60;
   except
     tleft:= 60; //wenn Fehler dann minutentakt annehmen
   end;
@@ -726,6 +725,7 @@ hauptfenster.liste.Row:=1;
 hauptfenster.listeclick(nil);
 
 //Wechselmeldung
+
 if not hauptfenster.NoChangeWarning.checked then
    if (isonline and (not hauptfenster.warnung_gezeigt)) then
    if hauptfenster.selfdial and not hauptfenster.beliebig_check.checked then
@@ -858,8 +858,7 @@ begin
   and
     (onlineset.Einwahl = tarife[i].Einwahl)
     )
-  then begin result:= true; break; end;
-
+  then begin result:= true; exit; end;
 end;
 
 end;
@@ -1104,11 +1103,10 @@ if Kanalbuendelung then
       begin
        onlineset.kosten_mindest:= onlineset.kosten_mindest + onlineset.Preis/60/100 * taktlaenge;
        if (onlineset.kosten_mindest > onlineset.mindestumsatz)
-           then onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+           then onlineset.kosten:= onlineset.kosten + onlineset.Preis/60/100 * taktlaenge;
       end
       else
-       //Kosten:= bisherige Kosten + Kosten/s * taktlaenge
-       onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+       onlineset.kosten:= onlineset.kosten + onlineset.Preis/60/100 * taktlaenge;
 
    end;
      //alten Wert merken
@@ -1120,11 +1118,10 @@ if Kanalbuendelung then
      begin
        onlineset.kosten_mindest:= onlineset.kosten_mindest + onlineset.Preis/60/100 * taktlaenge;
        if (onlineset.kosten_mindest > onlineset.mindestumsatz)
-           then onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+           then onlineset.kosten:= onlineset.kosten + onlineset.Preis/60/100 * taktlaenge;
      end
      else
-       //Kosten:= bisherige Kosten + Kosten/s * taktlaenge
-       onlineset.kostenbisjetzt:= onlineset.kostenbisjetzt + onlineset.Preis/60/100 * taktlaenge;
+       onlineset.kosten:= onlineset.kosten + onlineset.Preis/60/100 * taktlaenge;
      //alten Wert merken
    Takt2.Tag:= dauer2 mod Taktlaenge;
  end;

@@ -222,6 +222,7 @@ begin
  Tadelend.Enabled       := edit;
  button1.Enabled        := edit;
  TaMindestumsatz.Enabled:= edit;
+ ganztags.enabled       := edit;
 end;
 end;
 
@@ -429,7 +430,7 @@ begin
           wert:= TaEinwahl.Text
           else
           if changedvalues.Strings[i] = 'Takt' then
-          wert:= Format('%d/%d',[TaTakt_a.Text,taTakt_b.Text])
+          wert:= Format('%s/%s',[TaTakt_a.Text,taTakt_b.Text])
           else
           if changedvalues.Strings[i] = 'User' then
           wert:= TaUser.Text

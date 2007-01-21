@@ -903,6 +903,7 @@ M269=ist kein gültiges Datumsformat.
 
 M270=Feiertag
 M271=Datum
+M272=Originalsprache wird nach Neustart eingestellt.
 
 Help00=Hinweise:*|*werden beim Zeigen auf ein Objekt angezeigt.
 Help01=Autostart:*|*LeastCoster XP startet mit Windows. Wenn der Webserver nach dem Einschalten der Rechners zur Verfügung stehen soll, dann unbedingt aktivieren !
