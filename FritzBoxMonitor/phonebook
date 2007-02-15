@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<head>
+<title>Telefonbuch - Druckansicht</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="expires" content="0">
+<style type="text/css">
+<!--
+body			{ font-family: Arial, Helvetica, sans-serif; color: #000000; margin: 15px 0px 0px 0px; 
+				 background-color: #fff1b1;
+				 background-image: url(../html/de/images/bg_ramp.jpg);
+				 background-repeat: repeat-x;
+				 background-position: 0 0; }
+p, table, form, div, textarea, label, ul, ol, li
+				{ font-size: 13px; padding: 0px; margin: 0px; }
+input, select, button
+				{ font-size: 13px; }
+div,ul,ol,li		{ text-align: left; }
+tr,td			{ padding: 1px 0px; margin: 0px; text-align: left; }
+img				{ border: 0px none; }
+a:link			{ color: #003366; text-decoration: none; }
+a:visited		{ color: #003366; text-decoration: none; }
+a:active		{ color: #0066cc; text-decoration: underline; }
+a:hover		{ color: #0066cc; text-decoration: underline; }
+.fw_header	{ background: url("../html/de/images/fw_header.gif") top left no-repeat; width: 806px; height: 102px; }
+.fw_bg_body	{ background: url("../html/de/images/fw_bg_body.gif") top left; background-repeat: repeat-y; width: 806px; text-align: left; }
+.fw_footer		{ background: url("../html/de/images/fw_footer.gif") top left no-repeat; width: 806px; height: 44px; }
+table			{ border-collapse: collapse; }
+.fs10			{ font-size: 13px;}
+.fs9				{ font-size: 12px;}
+.pTitel, .pTitelo 
+				{ font-weight: bold; text-align: center; background-color: #E1F4FF; padding: 5px 10px; border: 1px solid #C6C7BF; }
+				 
+.pDialog, .pDialogo, .pDialogb, .pDialogob 
+				{ padding: 10px 10px; text-align: left; background-color: #FBFAF7/*#FEFCF0*/; border: 1px solid #C6C7BF; }
+.pButtonbar 	{ text-align: right; padding: 5px 10px; background-color: #E1F4FF; border: 1px solid #C6C7BF; }
+.pDialog, .pDialogo, .pTitelo, .pButtonbar 
+				{ border-top: 0px;}
+#Menuspalte	{ width: 200px; padding: 0px; vertical-align: top; }
+#Dataspalte	{ width: 606px; height: 400px; vertical-align: top; }
+/* Menü per List */
+ul.LMenu 		{ width: 174px; margin-left: 16px; list-style-type: none;}
+ul.LMenu li.LMenuitem 
+				{ height: 25px; background-image: url("../html/de/images/MenuL1.gif"); font-size: 12px; font-weight: bold; }
+ul.LMenu li.LSubitem 
+				{ height: 25px; background-image: url("../html/de/images/MenuL2.gif"); font-size: 12px; }
+ul.LMenu li.LMenuitemaktiv 
+				{ height: 25px; background-image: url("../html/de/images/Menuaktiv.gif"); font-size: 12px; font-weight: bold; }
+ul.LMenu li.LSubitemaktiv 
+				{ height:25px; background-image: url("../html/de/images/Menuaktiv.gif"); font-size: 12px; }
+ul.LMenu li.LMenuitem a, ul.LMenu li.LMenuitem img, ul.LMenu li.LMenuitemaktiv a, ul.LMenu li.LMenuitemaktiv img 
+				{ position: relative; top: 5px; left: 15px; }
+ul.LMenu li.LSubitem img, ul.LMenu li.LSubitem a, ul.LMenu li.LSubitemaktiv img, ul.LMenu li.LSubitemaktiv a 
+				{ position: relative; top: 5px; left: 26px; }
+ul.LMenu li.LMenutop, ul.LMenu li.LMenubottom, ul.LMenu li.LMenutrenner 
+				{ display:none; }
+.LMenudis 		{ position: relative; top: 5px; left: 40px; color: #999999; }
+.Iconbutton	{ width: 30px; }
+.Pushbutton 	{ width: 100px; }
+.Pushbuttonfett 
+				{ font-weight:bold; width:100px }
+.b5 			{ padding-bottom: 5px; }
+.b10 			{ padding-bottom: 10px; }
+.mb5 			{ margin-bottom: 5px; }
+.mb10 			{ margin-bottom: 10px; } 
+.mb20			{ margin-bottom: 20px; } 
+.mt10 			{ margin-top: 10px; } 
+.mt20 			{ margin-top: 20px; } 
+.ml25 			{ margin-left: 25px; }
+.errorMessage { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: bold; color: #CC0000; text-align: center;
+				 margin: 5px; padding: 2px; background-color: white; }
+.Dialogtitel 		{ font-weight: bold; }
+.Dialoglabel 	{ }
+.Dialoglabelfett 
+				{ font-weight: bold; }
+.DialogFehler 	{ font-weight: bold; color: #CC0000; }
+.Dialogtext 	{ }
+.Dialoglist 		{ color: black; background-color: #FFFFFF }
+.Minititel 		{ font-size: 12px; }
+.Minilabel		{ font-size: 12px; }
+.Minitext 		{ font-size: 12px; background-color: #FFFFFF }
+.Eingabefeld 	{ }
+.Hell 			{ background-color: #FFFFFF; }
+h1, h2, h3, h4, h5, h6 
+				{ font-size: 13px; font-weight: bold; }
+.tMinihell 		{ height: 12px; font-size: 12px; background-color:#FFFFFF; }
+.tMinidunkel 	{ height: 12px; font-size: 12px; }
+.tMinigrau 		{ height: 12px; font-size: 12px; background-color:#F8F8F8; }
+.tborder		{ background-color:#FFFFFF; border: 1px solid #C6C7BE; }
+.tborder th		{ background-color:#F8F8F8;}
+.rundlt			{ background: url("../html/de/images/brd_lt.gif") top left no-repeat; }
+.rundrt			{ background: url("../html/de/images/brd_rt.gif") top right no-repeat; }
+.rundlb			{ background: url("../html/de/images/brd_lb.gif") bottom left no-repeat; }
+.rundrb			{ background: url("../html/de/images/brd_rb.gif") bottom right no-repeat; }
+.ecklm			{ background: url("../html/de/images/beck_lm.gif") top left no-repeat; }
+.eckrm			{ background: url("../html/de/images/beck_rm.gif") top right no-repeat; }
+.ecklb 			{ background: url("../html/de/images/beck_lb.gif") bottom left no-repeat; }
+.eckrb			{ background: url("../html/de/images/beck_rb.gif") bottom right no-repeat; }
+.backtitel		{ background-color: #e1f4ff; margin: 0px; padding: 0px; clear:left; }
+.backdialog		{ background-color: #fbfaf7; margin: 0px; padding: 0px; clear:left; }
+.backframe		{ background-color: #ffffff; margin: 0px; padding: 0px; clear:left; }
+.backfolder		{ background-color: #fbfaf7; margin: 0px; padding: 0px; border-top: 1px solid #c6c7be; }
+.foretitel		{ text-align: center; font-weight: bold; padding: 5px 10px;}
+.foredialog		{ padding: 10px; }
+.forebuttons	{ text-align: right; padding: 7px 10px;}
+.tabs 			{ float: left; width: 100%; background: url("../html/de/images/beck_bm.gif") bottom left repeat-x; }
+.tabs li 			{ list-style:none; float:left; background: #edede5 url("../html/de/images/brd_rt.gif") right top no-repeat; margin: 0 2px 0 0;}
+.tabs a 		{ display:block; background: url("../html/de/images/brd_lt.gif") left top no-repeat; padding: 3px 15px; }
+.tabs a:link, .tabs a:visited
+				{ color: #000000; text-decoration: none; }
+.tabs a:hover, .tabs a:active
+				{ color: #0066cc; text-decoration: none; }
+.tabs .tabs_on { background-color: #fbfaf7; border-bottom: 1px solid #fbfaf7; font-weight: bold; }
+.bcWeiss 		{ background-color:#FFFFFF; }
+.bcGrau 		{ background-color:#F8F8F8; }
+
+@media print 	{input {display:none;}}
+td, th 			{padding: 2px 3px; vertical-align:top;}
+#content 		{width: 640px; margin: auto;}
+.fett			{font-weight: bold;}
+.pt10			{padding-top: 10px;}
+.ac 				{text-align: center;}
+#tList td, #tList th
+				{padding: 2px 5px;}
+-->
+</style>
+<script language="JavaScript">
+var g_txtHtml_1 = " &lt;Rufnummer&gt;</td><td>Anrufen über ";
+function ProviderDisplay (name, registrar) {
+	var provider = registrar;
+	switch (registrar) {
+		case "freenet.de": 	provider = "Freenet"; break;
+		case "sipgate.de": 	provider = "Sipgate"; break;
+		case "sip.web.de": 	provider = "WEB.DE"; break;
+		case "1und1.de": 		provider = "1&amp;1 Internet"; break;
+		case "gmx.de": 		provider = "GMX"; break;
+		case "schlund.de": 	provider = "Schlund + Partner"; break;
+		case "reg.aolphone.aol.de":	provider = "AOL"; break;
+		case "aolphone.aol.de":	provider = "AOL"; break;
+		case "strato-iphone.de":	provider = "Strato"; break;
+		case "tel.t-online.de":	provider = "T-Online"; break;
+	}
+	if (registrar.indexOf("sip.arcor.de") >= 0) provider = "Arcor";
+	return name+" bei "+provider;
+}
+function AuswahlDisplay (nr) {
+	if (nr == "9") return "*120#";
+	return "*12"+(Number(nr)+1)+"#";
+}
+function CodeDisplay (code, nr) {
+	if (nr == "") return "";
+	return "**"+code+nr;
+}
+function SipDisplay (name, registrar, ID) {
+	if (name == "") return "";
+	return "<tr><td>"+AuswahlDisplay(ID)+g_txtHtml_1+ProviderDisplay(name, registrar)+"</td></tr>";
+}
+function isVIP (name) {
+	return name.length > 0 && name.charAt(0) == '!';
+}
+function GetBuchName (name) {
+	if (isVIP(name)) return name.substr(1);
+	return name;
+}
+function GetVIP (name) {
+	if (isVIP(name)) return "X";
+	return "";
+}
+function TrFon(name, rufnr, code, vanity) {
+	var str = "<tr>";
+	str += "<td>"+GetBuchName(name)+"</td>";
+	str += "<td>"+rufnr+"</td>";
+	str += "<td>"+CodeDisplay("7", code)+"</td>";
+	str += "<td>"+CodeDisplay("8", vanity)+"</td>";
+	str += "<td class=\"ac\">"+GetVIP(name)+"</td>";
+	str += "</tr>";
+	return str;
+}
+</script>
+</head>
+<body>
+<div style="margin: auto; width: 640px">
+	<div style="margin: 5px 1px">
+		<p style="float: left;"><input type="button" onclick="window.print()" value="Diese Seite drucken"></p>
+		<p style="text-align: right;"><input type="button" onclick="window.close()" value="Fenster schlie&szlig;en"></p>
+	</div>
+	<div id="content">
+	 	<div class="backtitel" style="margin_top:10px"><div class="rundrt"><div class="rundlt"><div class="ecklb"><div class="eckrb"><div class="foretitel">
+	 		Telefonbuch
+		</div></div></div></div></div></div>
+		<div class="backdialog"><div class="ecklm"><div class="eckrm"><div class="ecklb"><div class="eckrb"><div class="foredialog">
+			<table id="tList" style="margin:auto;">
+				<tr>
+					<th>Name</th>
+					<th>Rufnummer</th>
+					<th>Kurzwahl</th>
+					<th>Vanity</th>
+					<th>wichtige Person</th>
+				</tr>
+
+				<script type="text/javascript">document.write(TrFon("!Biesdorf", "5147118", "02", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("!Karow", "0309432232", "03", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("!Mari", "017623984245", "04", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("!Noreen", "08517569070", "00", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("!O O Cottbus", "0355423766", "05", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("!Stefan Handy", "017624033791", "01", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("Bastian, Arlt", "03303548030", "07", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("Kai", "55153228", "08", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("Karow (Arbeitszi.)", "03094397540", "06", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("Mustermann3", "1231352327", "09", ""));</script>
+
+				<script type="text/javascript">document.write(TrFon("Mustermann4", "12456", "10", ""));</script>
+
+			</table>
+		</div></div></div></div></div></div>
+		<div class="backtitel"><div class="ecklm"><div class="eckrm"><div class="ecklb"><div class="eckrb"><div class="foretitel">
+			Tastenbefehle f&uuml;r das Telefon
+		</div></div></div></div></div></div>
+		<div class="backdialog"><div class="ecklm"><div class="eckrm"><div class="rundrb"><div class="rundlb"><div class="foredialog">
+			<table style="margin: auto">
+				<tr><td colspan=2 class="fett">WLAN</td></tr>
+				<tr><td style="width: 110px">#96*0*</td><td>WLAN ausschalten</td></tr>
+				<tr><td>#96*1*</td><td>WLAN anschalten</td></tr>
+				<tr><td colspan=2 class="fett pt10">Wecker</td></tr>
+				<tr><td>#881#</td><td>Wecker abschalten</td></tr>
+				<tr><td>#881**</td><td>Wecker mit den letzten Einstellungen aktivieren</td></tr>
+				<tr><td></td><td>Wecker f&uuml;r einmaliges Klingeln zu einer bestimmten Zeit (StdMin) und f&uuml;r ein bestimmtes Telefon (Fon1 = 1, Fon2 = 2, Fon3 = 3, ISDN = 4) aktivieren</td></tr>
+				<tr><td colspan=2 class="fett pt10">Auswahl der Verbindungsart</td></tr>
+
+				<script type="text/javascript">document.write(SipDisplay("","","0"));</script>
+
+				<script type="text/javascript">document.write(SipDisplay("27573971","freenet.de","1"));</script>
+
+				<tr><td>*111# &lt;Rufnummer&gt;</td><td></td></tr>
+				<tr><td colspan = 2 class=" pt10">Weitere Tastaturbefehle finden Sie im Handbuch.</td></tr>
+			</table>
+		</div></div></div></div></div></div>
+	</div>
+</div>
+</body>
+</html>

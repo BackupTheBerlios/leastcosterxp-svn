@@ -1,0 +1,8 @@
+Druckansicht-Telefonbuch
+http://fritz.box/cgi-bin/webcm?getpage=../html/de/fon/ppFonbuch.html&var:lang=de
+
+Anrufliste
+http://fritz.box/cgi-bin/webcm?getpage=../html/de/FRITZ!Box_Anrufliste.csv
+
+LogFile
+http://fritz.box/cgi-bin/webcm?getpage=../html/de/system/ppSyslog.html&var:lang=de

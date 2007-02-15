@@ -1,0 +1,44 @@
+function DailOnFBF: Boolean;
+var
+  ParamList : TStringList;
+  i : integer;
+  s : String;
+begin
+// dfXX sind einfache Datenfelder
+// idHPPT1 ist die TidHTTP Komponenten aus dem Indy Packet.
+  s := dfNR.Text;
+  dfNR.Text := '';
+// Port auf Numerischen Wert prüfen
+// Default = 1
+  dfPORT.Text := IntToStr(StrToIntDef(dfPORT.Text,1));
+// Rufnummer konvertieren erlaubt 0..9 * #
+  for i := 1 to Length(s) do begin
+    if s[i] in ['0','1','2','3','4','5','6','7','8','9','*','#'] then
+      dfNR.Text := dfNR.Text + s[i];
+  end;
+
+  try
+    ParamList := TStringList.Create;
+// Wenn Passwort gesetzt dann in Paramterliste einfügen
+    if Length(dfPW.Text) > 0 then
+      ParamList.Add('login:command/password='+dfPW.Text);
+
+    ParamList.Add('getpage=../html/de/menus/menu2.html');
+    ParamList.Add('errorpage=../html/de/menus/menu2.html');
+    ParamList.Add('var:lang=de');
+    ParamList.Add('var:errorpagename=foncalls');
+    ParamList.Add('var:menu=fon');
+    ParamList.Add('telcfg:settings/UseClickToDial=1');
+// Port einfügen
+    ParamList.Add('telcfg:settings/DialPort='+dfPORT.Text);
+// Telefonnummer einfügen
+    ParamList.Add('telcfg:command/Dial='+dfNR.Text);
+    ParamList.Add('var:pagename=fon');
+    ParamList.Add('var:menu=foncalls');
+// IP einfügen => OHNE Prüfung einfach übernehmen
+    idHTTP1.Post('http://'+dfIP.Text+'/cgi-bin/webcm',ParamList);
+  finally
+    ParamList.Free;
+  end;
+  Result := TRUE;
+end;
