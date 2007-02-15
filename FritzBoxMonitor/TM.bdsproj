@@ -121,7 +121,7 @@
 			<Directories Name="PackageDCPOutputDir"></Directories>
 			<Directories Name="SearchPath">C:\Programme\Borland\BDS\3.0\lib\CoolTrayIcon;C:\Programme\Borland\BDS\3.0\lib\ics\Delphi\Vc32</Directories>
 			<Directories Name="Packages">vclx;vcl;VclSmp;rtl;vclactnband;vclshlctrls;madBasic_;madDisAsm_;madExcept_;xmlrtl;IcsDel90;AdvLED;BrowseFolder;CHComponentsD2005;CoolTrayIcon_D6plus;BomeOneInst;magras90;SchUpdater;BMThreadDsnD9;BMThreadPkgD9;IniLang;FlatStyle_D6</Directories>
-			<Directories Name="Conditionals">madExcept</Directories>
+			<Directories Name="Conditionals"></Directories>
 			<Directories Name="DebugSourceDirs"></Directories>
 			<Directories Name="UsePackages">False</Directories>
 		</Directories>

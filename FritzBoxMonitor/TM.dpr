@@ -1,11 +1,6 @@
 program TM;
 
 uses
-  madExcept,
-  madLinkDisAsm,
-  madListHardware,
-  madListProcesses,
-  madListModules,
   Forms,
   main in 'main.pas' {Form1},
   Unit2 in 'Unit2.pas' {CallIn},

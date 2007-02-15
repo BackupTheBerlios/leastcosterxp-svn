@@ -697,13 +697,15 @@ case PageControl1.ActivePageIndex of
     begin
      Callerlist.PopupMenu:= PopupMenu1;
      PhoneBookList.PopupMenu:= nil;
-     reloadCallerList.Click;
+//  Laden der liste von der FritzBox
+//   reloadCallerList.Click;
     end;
 2:  if length(phonebook) = 0 then
     begin
       Callerlist.PopupMenu:= nil;
       PhoneBookList.PopupMenu:= PopupMenu2;
-      ReloadPhonebook.Click;
+//   Laden des Telefonbuches von der FritzBox
+//    ReloadPhonebook.Click;
     end;
 end;
 end;
@@ -783,7 +785,7 @@ procedure TForm1.reloadCallerListClick(Sender: TObject);
 var Data: string;
 begin
      Http.RcvdStream := TMemoryStream.Create;
-     http.URL:=  'http://fritz.box/cgi-bin/webcm?getpage=../html/de/menus/menu2.html&var:lang=de&var:menu=fon&var:pagename=foncalls';
+     http.URL:=  'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/menus/menu2.html&var:lang=de&var:menu=fon&var:pagename=foncalls';
      Http.Get;
 
      sleep(500);
