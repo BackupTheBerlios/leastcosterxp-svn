@@ -4,7 +4,7 @@ object Form1: TForm1
   ActiveControl = Start
   BorderStyle = bsNone
   Caption = 'BonGoBon 0.1'
-  ClientHeight = 132
+  ClientHeight = 133
   ClientWidth = 415
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -24,7 +24,7 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 415
-    Height = 132
+    Height = 133
     Align = alClient
     BevelWidth = 1
     BevelStyle = bvNone
@@ -39,14 +39,14 @@ object Form1: TForm1
     Left = 0
     Top = 0
     Width = 415
-    Height = 132
+    Height = 133
     Align = alClient
     Shape = bsFrame
     Style = bsRaised
   end
   object Label1: TLabel
     Left = 263
-    Top = 30
+    Top = 21
     Width = 116
     Height = 13
     Caption = 'maximale Einwahlgeb'#252'hr'
@@ -54,7 +54,7 @@ object Form1: TForm1
   end
   object Progress: TFlatProgressBar
     Left = 128
-    Top = 80
+    Top = 86
     Width = 255
     Height = 16
     Min = 0
@@ -62,7 +62,7 @@ object Form1: TForm1
   end
   object Label2: TLabel
     Left = 128
-    Top = 32
+    Top = 23
     Width = 72
     Height = 13
     Caption = 'maximaler Preis'
@@ -87,7 +87,7 @@ object Form1: TForm1
   end
   object maxE: TFlatSpinEditFloat
     Left = 264
-    Top = 48
+    Top = 39
     Width = 121
     Height = 20
     ColorFlat = clBtnFace
@@ -101,7 +101,7 @@ object Form1: TForm1
   end
   object maxP: TFlatSpinEditFloat
     Left = 128
-    Top = 48
+    Top = 39
     Width = 121
     Height = 20
     ColorFlat = clBtnFace
@@ -115,9 +115,9 @@ object Form1: TForm1
   end
   object Start: TFlatButton
     Left = 8
-    Top = 37
+    Top = 31
     Width = 97
-    Height = 45
+    Height = 51
     Caption = 'Start'
     TabStop = True
     TabOrder = 0
@@ -169,6 +169,16 @@ object Form1: TForm1
     Caption = 'Reset'
     TabOrder = 6
     OnClick = ResetBClick
+  end
+  object deleteit: TFlatCheckBox
+    Left = 128
+    Top = 64
+    Width = 257
+    Height = 17
+    Transparent = True
+    Caption = 'Tarife nach 2 tagen l'#246'schen'
+    TabOrder = 7
+    TabStop = True
   end
   object Http: THttpCli
     URL = 'http://www.bongosoft.de/Preistabelle-lang.txt'

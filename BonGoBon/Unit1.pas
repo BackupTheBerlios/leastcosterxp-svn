@@ -44,7 +44,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, HttpProt, ComCtrls, TFlatSpinEditUnit,
   TFlatProgressBarUnit, TFlatEditUnit, TFlatButtonUnit, ExtCtrls, SRGrad,
-  BMDThread, AppEvnts;
+  BMDThread, AppEvnts, TFlatCheckBoxUnit;
 
 type
 
@@ -98,6 +98,7 @@ type
     BMDThread1: TBMDThread;
     ApplicationEvents1: TApplicationEvents;
     ResetB: TFlatButton;
+    deleteit: TFlatCheckBox;
     procedure ResetBClick(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure BMDThread1Terminate(Sender: TObject; Thread: TBMDExecuteThread;
@@ -288,7 +289,6 @@ begin
    end;
    Datensatz.Tag              := gilt;
    DatenSatz.Nummer           := r.Replace(split.Strings[i], '$9', true);
-//   DatenSatz.Takt           := r.Replace(split.Strings[i], '$8', true);
    TaktToInteger(r.Replace(split.Strings[i], '$8', true), DatenSatz.takt_a, Datensatz.Takt_b);
    DatenSatz.User             := r.Replace(split.Strings[i], '$10', true);
    DatenSatz.Passwort         := r.Replace(split.Strings[i], '$11', true);
@@ -298,7 +298,7 @@ begin
    DatenSatz.validfrom        := dateof(lastdate);
 
    DatenSatz.Editor           := 'BonGo';
-   DatenSatz.DeleteWhenExpires:= false;
+   DatenSatz.DeleteWhenExpires:= deleteit.checked;
    Datensatz.Mindestumsatz    := 0.0;
 
     //wenn Tarif innerhalb der Bedingungen, dann mitnehmen
@@ -401,21 +401,20 @@ progress.Position:= round (100* http.RcvdCount/http.ContentLength);
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-var i: integer;
+var i  : integer;
     ini: TInifile;
 begin
  form1.tag:= 0;
 
  ini:= TInifile.create(ExtractFilepath(paramstr(0)) + 'BonGoBon.ini');
+  MaxP.Value      := ini.Readfloat('settings','MaxPreis',1.0);
+  MaxE.Value      := ini.Readfloat('settings','MaxEinwahl',3.0);
 
-  MaxP.Value:= ini.Readfloat('settings','MaxPreis',1.0);
-  MaxE.Value:= ini.Readfloat('settings','MaxEinwahl',3.0);
+  form1.Top       := ini.Readinteger('settings','top', 0);
+  form1.left      := ini.Readinteger('settings','left', 0);
 
-  form1.Top := ini.Readinteger('settings','top', 0);
-  form1.left:= ini.Readinteger('settings','left', 0);
-
-  lastdate:= ini.ReadDateTime('settings','lastdate', encodedate(1970,02,02));
-
+  lastdate        := ini.ReadDateTime('settings','lastdate', encodedate(1970,02,02));
+  deleteit.checked:= ini.ReadBool('settings', 'AutoDelete', false );
  ini.free;
 
  for i:= 0 to paramcount do
@@ -449,6 +448,7 @@ ini.writeinteger('settings','top', form1.Top);
 ini.writeinteger('settings','left', form1.left);
 
 ini.WriteDateTime('settings','lastdate', lastdate);
+ini.WriteBool('settings', 'AutoDelete', deleteit.checked );
 
 ini.free;
 
@@ -476,13 +476,13 @@ var txt:TStringStream;
     datum: TDateTime;
 begin
 //initialisieren
- Datum:= 0;
- TXT := TStringStream.Create('');
+ Datum            := 0;
+ TXT              := TStringStream.Create('');
 //disablen der Buttons
- MaxP.Enabled:= false;
- MaxE.Enabled:= false;
- Start.Enabled:= false;
- ResetB.enabled:= false;
+ MaxP.Enabled     := false;
+ MaxE.Enabled     := false;
+ Start.Enabled    := false;
+ ResetB.enabled   := false;
 
  Progress.Min     := 0;
  progress.Max     := 100;
@@ -498,9 +498,9 @@ begin
     else status.simpletext:= 'Konnte Dateidatum nicht identifizieren !';
       //form1.Refresh;
       //wieder alles enabled schalten
-      MaxP.Enabled:= true;
-      MaxE.Enabled:= true;
-      Start.Enabled:= true;
+      MaxP.Enabled  := true;
+      MaxE.Enabled  := true;
+      Start.Enabled := true;
       ResetB.Enabled:= true;
 
       // schlieﬂen wenn nicht im manullen Modus
@@ -524,9 +524,9 @@ begin
  if DownloadResume(http) then BonGoParse(txt);
 
  //wieder alles enabled schalten
- MaxP.Enabled:= true;
- MaxE.Enabled:= true;
- Start.Enabled:= true;
+ MaxP.Enabled  := true;
+ MaxE.Enabled  := true;
+ Start.Enabled := true;
  ResetB.Enabled:= true;
 
  txt.free;
@@ -558,9 +558,9 @@ begin
    tempstring:= (http.RcvdStream As TStringStream).DataString;
    if r.exec(tempstring) then
    begin
-    Result:= true;
-    unix:= strtoint( r.replace(tempstring,'$1', true));
-    lastdate := unixToDateTime(unix);
+    Result  := true;
+    unix    := strtoint( r.replace(tempstring,'$1', true));
+    lastdate:= unixToDateTime(unix);
    end
    else Result:=false;
  r.free;
@@ -598,12 +598,12 @@ end;
 
 function GetFileVersion(Path: string): string;
 var
-  lpVerInfo: pointer;
-  rVerValue: PVSFixedFileInfo;
-  dwInfoSize: cardinal;
+  lpVerInfo  : pointer;
+  rVerValue  : PVSFixedFileInfo;
+  dwInfoSize : cardinal;
   dwValueSize: cardinal;
-  dwDummy: cardinal;
-  lpstrPath: pchar;
+  dwDummy    : cardinal;
+  lpstrPath  : pchar;
 
 begin
   if Trim(Path) = EmptyStr
