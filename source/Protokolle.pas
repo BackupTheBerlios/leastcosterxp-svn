@@ -1,6 +1,7 @@
 unit Protokolle;
 
 interface
+uses unit1;
 
 type Lieferant = record
       Tag:Tdatetime;
@@ -11,7 +12,7 @@ type Lieferant = record
 
       Lieferung = array[1..31] of Lieferant;
 
-procedure append_own_data;
+procedure SaveConnection(Data: OnlineWerte);
 Procedure Abholung(Lageradresse:string);
 procedure monatshtml(path, filename: string);
 procedure CreateAllLogs;
@@ -20,35 +21,11 @@ procedure WebAuswertungErstellen;
 
 
 implementation
-uses unit1, files, DateUtils, SysUtils, StrUtils, Dialogs, RegExpr, Classes, IniFiles, inilang, messagestrings;
+uses files, DateUtils, SysUtils, StrUtils, Dialogs, RegExpr, Classes, IniFiles, inilang, messagestrings;
 
 var Lieferliste:Lieferung;
 
-procedure append_data(ausgabepfad,filename, data:string; var count: integer);//, nof: integer);
-var f: textfile;
-    temp:string;
-begin
-if fileexists(ausgabepfad+'\'+filename+'.csv') then
-begin   //anhängen
-     assignfile(f,ausgabepfad+'\'+filename+'.csv');
-     append(f);
-     writeln(f,data);
-     closefile(f);
-end
-else
-begin //neu anlegen
-     count:=1;
-     //nof:= nof+1;
-     Repeat Delete(data,1,1); temp:= data; until (temp[1] =chr(9));
-     temp:= '1'+ data;
-     assignfile(f,ausgabepfad+'\'+filename+'.csv');
-     rewrite(f);
-     writeln(f,temp);
-     closefile(f);
-end;
-end;
-
-procedure append_own_data;
+procedure SaveConnection(Data: OnlineWerte);
 var ausgabepfad, filename, savedata: string;
     linecount: integer;
     tmp_linecount: string;
@@ -58,11 +35,13 @@ var ausgabepfad, filename, savedata: string;
     FileList: Tstringlist;
 begin
 //zeilencounter des eigenen Logfiles auslesen
-act_file:=''; 
+act_file:='';
+linecount:= 1;
+Filelist:= TStringlist.create;
 
 //anfangsdatum in Dateinamen umwandeln
 try
-  datum_copy:=  hauptfenster.onlineset.datum;
+  datum_copy:=  data.datum;
 except //falls das Datum nicht mehr identifiziert werden kann
   datum_copy:= now;
 end;
@@ -73,35 +52,36 @@ if (fileexists(extractfilepath(paramstr(0)) + '\log\'+act_file+'.csv')) then
 begin
   r:= TRegExpr.Create;
   r.Expression:= '^(\d{1,})\t.*';
-  Filelist:= TStringlist.create;
+
   Filelist.LoadFromFile(extractfilepath(paramstr(0)) + '\log\'+act_file+'.csv');
 
   tmp_linecount:= R.Replace(Filelist.Strings[Filelist.count-1],'$1', true);
   linecount:=   Strtoint(tmp_linecount);
   inc(linecount);
   r.free;
-  Filelist.Free;
 end;
 
 verzeichnis_erzeugen(ExtractFilePath(paramstr(0))+'log');
 ausgabepfad:= ExtractFilePath(paramstr(0))+'log\';
 filename:= extractfilename(act_file);
 
-with hauptfenster.onlineset do
-begin
 savedata:=  inttostr(linecount)
             + #9 + Datetostr(Dateof(Datum_copy))
             + #9 + TimeToStr(Timeof(Datum_copy))
-            + #9 + Dauer
-            + #9 + FloatToStr(Kosten)
-            + #9 + Tarif
-            + #9 + TimeToStr(Endzeit)
-            + #9 + Rufnummer;
+            + #9 + Data.Dauer
+            + #9 + Format('%1.4f',[Data.Kosten])
+            + #9 + Data.Tarif
+            + #9 + TimeToStr(Data.Endzeit)
+            + #9 + Data.Rufnummer;
 
-if (Tarif<>'') then
-   append_data(ausgabepfad,filename, savedata, linecount);//, nof);
+if (Data.Tarif<>'') then
+begin
+  FileList.Append(savedata);
+  Filelist.SaveToFile(ausgabepfad + filename + '.csv');
 end;
+//   append_data(ausgabepfad,filename, savedata, linecount);//, nof);
 
+Filelist.Free;
 end;
 
 Function sekunden(Zeit:tdatetime): longint;

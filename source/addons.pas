@@ -18,7 +18,7 @@ function GetLocalIPs: string;
 
 function InternetIP(var sHostName, sIPAddr, sWSAError: string): Boolean;
 
-//function IsOnline: boolean;
+function IsDSLOnline: boolean;
 
 Procedure AskedClose(Progname: PAnsiChar);
 {Programmnamen übergeben}
@@ -171,13 +171,12 @@ begin
      WSACleanup;
 end;
 
-{
-function IsOnline: boolean;
 
+function IsDSLOnline: boolean;
 begin
-  IsOnline:=InternetGetConnectedState(nil, 0);
+  IsDSLOnline:=InternetGetConnectedState(nil, 0);
 end;
- }
+
  
 Procedure AskedClose(Progname: PAnsichar);
 begin

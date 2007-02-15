@@ -76,15 +76,15 @@ begin
 //trennen auf jeden Fall aktivieren
 hauptfenster.AutoDiscLED.LedOn:= true;
 
-if hauptfenster.onlineset.vbegin <> hauptfenster.onlineset.vend then
+if onlineset.vbegin <> onlineset.vend then
 begin
         //wenn das Ende (zeitlich) noch in der Zukunft liegt, aber heutiges Datum hat
-        if (dateof(now) + timeof(hauptfenster.onlineset.vend) > now) then
-                hauptfenster.trennticker.datetime:= dateof(now) + timeof(hauptfenster.onlineset.vend)
+        if (dateof(now) + timeof(onlineset.vend) > now) then
+                hauptfenster.trennticker.datetime:= dateof(now) + timeof(onlineset.vend)
         // wen Datumsgrenze überschritten wird
            else
-           if ansicontainstext(hauptfenster.onlineset.tag, Hauptfenster.Stringvonmorgen(now)) then
-            hauptfenster.trennticker.datetime:= incday(Dateof(now) + timeof(hauptfenster.onlineset.vend),1)
+           if ansicontainstext(onlineset.tag, Hauptfenster.Stringvonmorgen(now)) then
+            hauptfenster.trennticker.datetime:= incday(Dateof(now) + timeof(onlineset.vend),1)
            else
             hauptfenster.trennticker.datetime:= incday(Dateof(now) + TimeOf(EncodeTime(0,0,0,0)),1);
 
@@ -93,8 +93,8 @@ end
 else //wenn ganztags
 begin
  //wenn nicht der String von morgen enthalten ist
- if not ansicontainstext(hauptfenster.onlineset.tag, hauptfenster.Stringvonmorgen(now)) then
-   hauptfenster.trennticker.datetime:= dateof(tomorrow) + TimeOf(hauptfenster.onlineset.vend)
+ if not ansicontainstext(onlineset.tag, hauptfenster.Stringvonmorgen(now)) then
+   hauptfenster.trennticker.datetime:= dateof(tomorrow) + TimeOf(onlineset.vend)
  else
  hauptfenster.Autodiscled.ledon:= false;
 end;

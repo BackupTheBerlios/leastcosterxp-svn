@@ -111,6 +111,8 @@ type
       wechselpreis, wechseleinwahl: real;
       wechsel: TDatetime;
       upload, download: Cardinal;
+      gesamtdauer: longint;
+      dauer_takt: longint;
      end;
 
     TScores = record
@@ -500,7 +502,7 @@ type
       disconnectseconds: integer;
       DisconnectStopped: boolean;
       ctrlcount: integer;
-      onlineset: Onlinewerte;
+
       modemname, modemtype, modemname2, modemtype2, modemstring: string;
       allow_multilink: boolean;
       timeofliste: TDatetime;
@@ -518,8 +520,6 @@ type
       leerlaufdisconnectzeit, AutoAusindex: integer;
       AutoSurfdauer : integer;
       DaysToSaveLogs, leerlaufschwelle: integer;
-      Kontingente: Array of Kontingentdatensatz;
-      kontingentindex: integer;
       warnung_gezeigt: boolean;
       UseColors: boolean;
       SetupModems: boolean;
@@ -545,7 +545,6 @@ var
   verbindungsname: string;
   nooncheck: boolean;
   dauer, dauer2, taktlaenge: integer; //onlinedauer in s
-  dauer_takt: longint;
   gesamtdauer: longint;
   rascheck: boolean;
   actnumber: string;
@@ -568,6 +567,10 @@ var
 
   atomserver: TStringlist;
   holidaylist   : array of THolidays;
+  onlineset: Onlinewerte;
+
+  Kontingente: Array of Kontingentdatensatz;
+  kontingentindex: integer;
 implementation
 
 uses Unit2, Unit4, WebServ1, shutdown, Unit3, tarifverw,
@@ -600,7 +603,7 @@ http:= ThttpCli.Create(nil);
  outfile.free;
 
  if settings.readbool('Dialer','OpenWeb',true) then
-   Shellexecute(0, 'open', Pchar(hauptfenster.onlineset.webseite), nil, nil, SW_SHOWmaximized);
+   Shellexecute(0, 'open', Pchar(onlineset.webseite), nil, nil, SW_SHOWmaximized);
 
 end;
 
@@ -934,12 +937,13 @@ end;
 end;
 
 procedure THauptfenster.IsOntimerTimer(Sender: TObject);
-var h,m,s: word;
-    delaytime, k, index: integer;
-    ConnCount: integer;
+var h,m,s                     : word;
+    delaytime, k, index       : integer;
+    ConnCount                 : integer;
     curxmit, currecv, interval: LongWORD ;
-    noerror: boolean;
-    beginn, ende: TDateTime;
+    noerror                   : boolean;
+    beginn, ende              : TDateTime;
+    str                       : TFileStream;
 begin
 MagRasCon.GetConnections;
 //suche aktive Verbindungen > Achtung Win9x meldet Verbindungen als aktiv, die mit dem Wählen beginnen> Fehler werden nicht erkannt
@@ -1019,6 +1023,7 @@ begin//Onlinezeitmessung
  end else dauer2:= 0; //sekunden
 
  gesamtdauer:= dauer +dauer2;
+ Onlineset.gesamtdauer:= gesamtdauer;
  zeitumrechnen(gesamtdauer,h,m,s);
 
  if (dauer >= onlineset.takt_a) then begin taktlaenge:= onlineset.takt_b; takt1.Max:= taktlaenge; takt2.max:= taktlaenge; end;
@@ -1277,7 +1282,6 @@ end;
 
            PriceWarning.neu1.Caption:= misc(M17,'M17')+' : ' +timetostr(now-oldtime);
 
-
            if ((now > beginn) and (now < ende)) then
            begin
              PriceWarning.neu2.Caption:= misc(M18,'M18');
@@ -1297,6 +1301,15 @@ end;
       end;
 
 oldtime:= now;
+
+//alle 5 min Verbindungsdaten auf die platte schreiben
+if (dauer > 0) and (dauer mod 300 = 0) then
+begin
+ str:= TFileStream.create(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat',fmCreate);
+ str.write(onlineset, sizeof(onlineset));
+ str.free;
+end;
+
 end;
 end;
 
@@ -1922,6 +1935,8 @@ var con     : TmemInifile;
     F       : string;
     reg     : TRegistry;
     langlist: TStringlist;
+    str     : TFileStream;
+    lastConn: OnlineWerte;  
 begin
 closeallowed := false;
 autoclose    := false;
@@ -2323,6 +2338,18 @@ end;
    else
    status.SimpleText:= misc(M47,'M47');
 
+//  if isDSLOnline then hauptfenster.MM2_3.Enabled:= true;
+
+  if fileexists(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat') then
+  begin //alte Verbindung noch zum Protokoll hinzufügen
+   str:= TFileStream.Create(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat', fmOpenRead);
+   str.Read(lastConn, sizeof(onlinewerte));
+   Protokolle.SaveConnection(lastConn);
+   SaveTrafficData(lastConn);
+   SettingsTraffic.UpdateFile;//auf die Platte schreiben
+   deletefile(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat');
+  end;
+
   StartPlugins('OnStart');
 
 end;
@@ -2333,21 +2360,18 @@ var i: integer;
 begin
 closer.Enabled:= false;
 
-if (not selfdial) then
+if selfdial then
 begin
- askedclose(PAnsichar(settings.ReadString('Server','Titel','')));
-end
-else
-begin
-   Protokolle.append_own_data;
-   SaveTrafficData(onlineset.Tarif, Dauer, onlineset.download, onlineset.upload);
+    Protokolle.SaveConnection(onlineset);
+    SaveTrafficData(onlineset);
+    SettingsTraffic.UpdateFile;//auf die Platte schreiben
+    if fileexists(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat') then deletefile(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat');
 
-    //alles zurücksetzen
-    kontingentindex:= -1;
+    //Auto-Export
+    Protokolle.CreateAllLogs;
 
-//Auto-Export
-  Protokolle.CreateAllLogs;
-
+  //alles zurücksetzen
+   kontingentindex:= -1;
    selfdial:= false;  //alles erledigt ... rücksetzen
    with onlineset do
    begin
@@ -2372,12 +2396,12 @@ begin
     upload        := 0;
     Mindestumsatz := 0.0;
     kosten_mindest:= 0.0;
+    gesamtdauer   := 0;
    end;
 
    dauer:= 0;
+   dauer2:= 0;
 end;
-
-SettingsTraffic.UpdateFile;//auf die Platte schreiben
 
 //Programme beenden
 if kill_list.count > 0 then
@@ -2945,7 +2969,7 @@ begin
 
    ScoreTimer.enabled:= true;
 
-   dauer_takt:= 0;
+   onlineset.dauer_takt:= 0;
    if taktlaenge > 0 then
    begin
       takt1.max:= taktlaenge;
@@ -2971,7 +2995,7 @@ begin
    kontingentindex:= -1;
    if selfdial then //Kontingente
      begin
-        onlineset.kosten:= onlineset.einwahl2/100;                                //einwahlgebühr addieren
+        onlineset.kosten:= onlineset.einwahl2/100;                         //einwahlgebühr addieren
         onlineset.kosten:= onlineset.kosten + onlineset.mindestumsatz/100; //mindestumsatz in € addieren
 
         if length(Kontingente) > 0 then
@@ -2990,8 +3014,8 @@ begin
     AutoDialLed.ledon:= settings.Readbool('AutoConnect','AutoReConnect',false); //Wiedereinwahl setzen
     Aktualisieren.Enabled:= false;
 
-    //Ausblenden der OfflineElemente und Einblenden des online-Mode
-     modes.setOnlinemode;
+   //Ausblenden der OfflineElemente und Einblenden des online-Mode
+    modes.setOnlinemode;
 
     DialBtn.Font.Color     := clRed;
     DialBtn.Font.Size      := 8;
@@ -3029,14 +3053,14 @@ begin
 
     reload.enabled:= true; //aktualisieren der tariftabelle wieder aktivieren
 
-           //Sound
+   //Sound
     if fileexists(settings.readstring('LeastCoster','SoundON',  '' ))
       then sndPlaySound(PChar(settings.readstring('LeastCoster','SoundON',  '' )),SND_ASYNC);
 
     if settings.Readbool('lokale IP','IP_Notify',false) then ipemail.Enabled:= true;
 
-           //~~~~~~~~~~~~~~~~~ SPEED
-           // W2K/XP keep handle and subentry for perf stats - base 1
+   //~~~~~~~~~~~~~~~~~ SPEED
+   // W2K/XP keep handle and subentry for perf stats - base 1
     if MagRasOSVersion >= OSW2K then
       begin
         MagRasPer.ResetPerfStats ;		// clear stats
@@ -3128,6 +3152,7 @@ begin
            OCostlabel.Visible:= false;
 
            //Menü >Tools > Online
+//           if isDSLOnline = false then
            hauptfenster.MM2_3.Enabled:= false;
 
            DialStatus.Text:= misc(M85,'M85') + ' ('+timetostr(timeof(now))+')';
@@ -4002,7 +4027,7 @@ begin
        begin
         params :=  Ansireplacestr(params,'%DB',ExtractFilepath(Paramstr(0)) + 'Tarife.lcx');
         params :=  Ansireplacestr(params,'%IP',hauptfenster.IPAdress);
-        params :=  Ansireplacestr(params,'%Tarif',Hauptfenster.onlineset.Tarif);
+        params :=  Ansireplacestr(params,'%Tarif',onlineset.Tarif);
        end;
 
        hauptfenster.TarifeDisabled:= disableTarife;

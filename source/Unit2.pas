@@ -1075,8 +1075,7 @@ end;
 
 procedure TLCXPSettings.FormCreate(Sender: TObject);
 var leastcosterrow: integer;
-    code, i,j: integer;
-    showtime: integer;
+    i: integer;
 begin
 
 leastcosterrow:=0;
@@ -1950,7 +1949,6 @@ end;
 
 procedure TLCXPSettings.Button11Click(Sender: TObject);
 var i: integer;
-    check: boolean;
     von, bis, start, ende: TDateTime;
     r: Tregexpr;
     s: TStringlist;
@@ -1963,8 +1961,6 @@ begin
   r:= TRegExpr.Create;
   r.Expression:= ' - ';
   s:= TStringList.Create;
-
-  check:= false;
 
   s.Clear;
   r.Split(autol.Strings.ValueFromIndex[autol.row-1],s);
@@ -2492,15 +2488,15 @@ end;
 
 procedure TLCXPSettings.holidaysValidate(Sender: TObject; ACol, ARow: Integer;
   const KeyName, KeyValue: string);
-var d: TDate;
+//var d: TDate;
 begin
 if (acol = 1) then
   begin
     try
-      d:= StrTodate(keyvalue);
+//      d:= StrTodate(keyvalue);
       holicheck.caption:= '';
     except
-      d:= dateof(now);
+//      d:= dateof(now);
       holicheck.caption := Keyvalue+ ' ' +misc(M269,'M269');
     end;
 

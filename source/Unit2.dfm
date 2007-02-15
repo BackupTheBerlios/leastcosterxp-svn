@@ -282,7 +282,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'Welches Modem wird verwendet, um ins Internet zu gehen ?'
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
@@ -324,7 +324,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'Welches Modem wird verwendet, um ins Internet zu gehen ?'
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           TabOrder = 3
@@ -457,7 +457,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = '... Liste aller bereits eingerichteten Programme.'
           DropDownCount = 20
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
@@ -961,7 +961,7 @@ object LCXPSettings: TLCXPSettings
           Top = 54
           Width = 145
           Height = 21
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 3
           Text = 'Serverliste'
           OnEnter = ServerboxEnter

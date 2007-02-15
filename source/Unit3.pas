@@ -241,9 +241,8 @@ begin
     end;  //ende der if chr(9)
     // die letzte Spalte muss manuell eingetragen werdne, da am Ende kein tab mehr kommt
     if i = length(line) then
-    begin
        grid.Cells[tab,row]:= temp;
-    end;
+
 
     temp:= line; //nächste Spalte
    end; // ende der for-schleife > weiter zur nächsten zeile
@@ -254,9 +253,9 @@ begin
        then
         begin
           row:= row-1;
-          if (grid.rowcount > 2) then
-                           grid.RowCount:= grid.RowCount-1
-          else if grid.rowcount = 2 then grid.rows[1].clear;
+          if (grid.rowcount > 2) then grid.RowCount:= grid.RowCount-1
+          else
+          if (grid.rowcount = 2) then grid.rows[1].clear;
         end;
    end; //Data durchgehen
 
@@ -697,7 +696,7 @@ then
 begin
  errormsg.caption:= misc(M148,'M148');
  ok.enabled:= true;
-  SetCursor_Default;
+ SetCursor_Default;
  exit;
 end;
 

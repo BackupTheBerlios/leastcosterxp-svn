@@ -19,7 +19,8 @@ function CheckOnlineset: boolean;
 function isFeiertag(date: TDate): string;
 procedure LoescheTarif(tarif: string);
 procedure LoescheAbgelaufeneTarife;
-procedure SaveTrafficData(Tarif: string; Dauer: Integer; download, upload: longint);
+//procedure SaveTrafficData(Tarif: string; Dauer: Integer; download, upload: longint);
+procedure SaveTrafficData(Data: OnlineWerte);
 procedure Kontingente_Laden;
 procedure ResetExpireDate(Tarif: String;Datum: TDate);
 
@@ -258,11 +259,10 @@ var sections            : TStringlist;
     count               : integer;
     UpdateFile          : boolean;
     dd,mm,yy            : integer;
-    Datei               : file of Ttarif;
-    DatenSatz           : TTarif;
     temptakt            : string[5];
     Stream              : TFileStream;
     header              : TTarifHeader;
+    Datensatz           : TTarif;
 begin
  UpdateFile:= false;
  //Rücksetzen des Arrays
@@ -360,7 +360,6 @@ begin
    begin
     delete(zeile,1,5);
     TaktToInteger(trim(zeile),hauptfenster.tarife[count-1].Takt_a,hauptfenster.tarife[count-1].Takt_b);
-//    hauptfenster.tarife[count-1].Takt:= trim(zeile);
    end
    else
    if ansicontainsstr(zeile,'User=') then
@@ -725,7 +724,6 @@ hauptfenster.liste.Row:=1;
 hauptfenster.listeclick(nil);
 
 //Wechselmeldung
-
 if not hauptfenster.NoChangeWarning.checked then
    if (isonline and (not hauptfenster.warnung_gezeigt)) then
    if hauptfenster.selfdial and not hauptfenster.beliebig_check.checked then
@@ -923,24 +921,24 @@ end;
 WriteTarifeToHD;
 end;
 
-procedure SaveTrafficData(Tarif: string; Dauer: integer; download, upload: LongInt);
+procedure SaveTrafficData(Data: OnlineWerte);
 var bisher_gesurft, bisher_takt: Longint;
     bisher_down, bisher_up: double;
 begin
-if tarif ='' then exit; //keine Daten ?!?
+if Data.tarif ='' then exit; //keine Daten ?!?
 
-bisher_gesurft:= SettingsTraffic.ReadInteger(Tarif,'Surfdauer',0);
-bisher_takt:= SettingsTraffic.ReadInteger(Tarif,'Surfdauer_Takt',0);
-bisher_up:= SettingsTraffic.ReadFloat(Tarif,'Upload',0);
-bisher_down:= SettingsTraffic.ReadFloat(Tarif,'Download',0);
+bisher_gesurft:= SettingsTraffic.ReadInteger(Data.Tarif,'Surfdauer',0);
+bisher_takt:= SettingsTraffic.ReadInteger(Data.Tarif,'Surfdauer_Takt',0);
+bisher_up:= SettingsTraffic.ReadFloat(Data.Tarif,'Upload',0);
+bisher_down:= SettingsTraffic.ReadFloat(Data.Tarif,'Download',0);
 
 //start des Zählers setzen
-if bisher_gesurft = 0 then SettingsTraffic.WriteDateTime(Tarif,'seit', now);
+if bisher_gesurft = 0 then SettingsTraffic.WriteDateTime(Data.Tarif,'seit', now);
 
-SettingsTraffic.WriteInteger(Tarif,'Surfdauer',dauer + bisher_gesurft); //in sekunden
-SettingsTraffic.WriteInteger(Tarif,'Surfdauer_Takt',dauer_takt + bisher_takt); //in sekunden
-SettingsTraffic.WriteFloat(Tarif,'Download', download/1024 + bisher_down);     //in kB
-SettingsTraffic.WriteFloat(Tarif,'Upload', upload/1024 + bisher_up);           //in kB
+SettingsTraffic.WriteInteger(Data.Tarif,'Surfdauer',Data.gesamtdauer + bisher_gesurft); //in sekunden
+SettingsTraffic.WriteInteger(Data.Tarif,'Surfdauer_Takt',Data.dauer_takt + bisher_takt); //in sekunden
+SettingsTraffic.WriteFloat(Data.Tarif,'Download', Data.download/1024 + bisher_down);     //in kB
+SettingsTraffic.WriteFloat(Data.Tarif,'Upload', Data.upload/1024 + bisher_up);           //in kB
 end;
 
 procedure Kontingente_Laden;
@@ -1023,8 +1021,6 @@ end;
 
 procedure Tarifwechseln;
 begin
-with hauptfenster do
-begin
      onlineset.preis:= onlineset.wechselpreis;
      onlineset.einwahl:= onlineset.wechseleinwahl;
      onlineset.einwahl2:= onlineset.wechseleinwahl;
@@ -1033,18 +1029,15 @@ begin
      onlineset.wechsel:= incday(onlineset.wechsel, 10*365); //10 Jahre in die Zukunft setzen, damit das nciht gleich wieder ausgelöst wird
      if assigned(floatingW) then
      begin
-      if (onlineset.vbegin=onlineset.vend) then edtime.text:=misc(M111,'M111')
-       else edtime.text:= TimeToStr(onlineset.vbegin) +'-'+TimeToStr(onlineset.vend);
-      floatingW.valid.caption:= edtime.text;
+      if (onlineset.vbegin=onlineset.vend) then hauptfenster.edtime.text:=misc(M111,'M111')
+       else hauptfenster.edtime.text:= TimeToStr(onlineset.vbegin) +'-'+TimeToStr(onlineset.vend);
+      floatingW.valid.caption:= hauptfenster.edtime.text;
       floatingW.preis.caption:= Format('%.2f '+misc(M12,'M12')+'/min',[onlineset.preis]);
      end;
-end;
+
 end;
 
 function computecosts(Kanalbuendelung: boolean): boolean;
-begin
-
-with hauptfenster do
 begin
 
  if (onlineset.wechsel <= now) then //Tariffenster wechselt
@@ -1059,14 +1052,14 @@ begin
  else result:= true;
 
  //getaktete Surfdauer berechnen
- if ((takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
+ if ((hauptfenster.takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
      or (taktlaenge = 1                    ))
-     then dauer_takt:= dauer_takt +  taktlaenge;
+     then onlineset.dauer_takt:= onlineset.dauer_takt +  taktlaenge;
 
 if Kanalbuendelung then
- if ( (takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
+ if ( (hauptfenster.takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
      or (taktlaenge = 1                    ))
-     then dauer_takt:= dauer_takt +  taktlaenge;
+     then onlineset.dauer_takt:= onlineset.dauer_takt +  taktlaenge;
 
 //wenn noch Volumenkontingente vorhanden, dann abbrechen .. keine Kosten berechnen
  if ((length(kontingente) > 0) and (kontingente[kontingentindex].freikb > 0) and (kontingentindex > -1))
@@ -1075,12 +1068,12 @@ if Kanalbuendelung then
  //aktuelle Freisekundenanzahl ermitteln -> wichtig: nachdem auf Volumenkontingente geprüft wurde
  if ((length(kontingente) > 0) and (kontingentindex > -1) and (kontingente[kontingentindex].Freisekunden > 0)) then
  begin
-   if ((takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
+   if ((hauptfenster.takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
      or (taktlaenge = 1                    ))  then
        kontingente[kontingentindex].Freisekunden:= kontingente[kontingentindex].Freisekunden - taktlaenge;
 
    if Kanalbuendelung then
-    if ( (takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
+    if ( (hauptfenster.takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
      or (taktlaenge = 1                    ))  then
        kontingente[kontingentindex].Freisekunden:= kontingente[kontingentindex].Freisekunden - taktlaenge;
 
@@ -1088,14 +1081,14 @@ if Kanalbuendelung then
     if (kontingente[kontingentindex].Freisekunden > 0) then
     begin
       result:= true;
-      Takt1.Tag := dauer mod Taktlaenge; //alten Wert merken damit Taktberechnung funtioniert !!!
-      Takt2.Tag := dauer2 mod Taktlaenge;
+      hauptfenster.Takt1.Tag := dauer mod Taktlaenge; //alten Wert merken damit Taktberechnung funtioniert !!!
+      hauptfenster.Takt2.Tag := dauer2 mod Taktlaenge;
       exit;
     end
     else kontingente[kontingentindex].Freisekunden:= 0;
  end;
 
- if ((takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
+ if ((hauptfenster.takt1.Tag > (dauer mod taktlaenge)) //dann hat neuer Takt begonnen
    or (taktlaenge = 1                   )) then
    begin
 
@@ -1110,27 +1103,29 @@ if Kanalbuendelung then
 
    end;
      //alten Wert merken
-   Takt1.Tag:= dauer mod Taktlaenge;
+   hauptfenster.Takt1.Tag:= dauer mod Taktlaenge;
 
  if Kanalbuendelung then
- if ( (takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
+ if ( (hauptfenster.takt2.Tag > (dauer2 mod taktlaenge)) //dann hat neuer Takt begonnen (2. Kanal)
      or (taktlaenge = 1                    ))  then
      begin
-       onlineset.kosten_mindest:= onlineset.kosten_mindest + onlineset.Preis/60/100 * taktlaenge;
-       if (onlineset.kosten_mindest > onlineset.mindestumsatz)
-           then onlineset.kosten:= onlineset.kosten + onlineset.Preis/60/100 * taktlaenge;
-     end
-     else
+       if (onlineset.mindestumsatz > 0.0) then
+       begin
+        onlineset.kosten_mindest:= onlineset.kosten_mindest + onlineset.Preis/60/100 * taktlaenge;
+        if (onlineset.kosten_mindest > onlineset.mindestumsatz)
+            then onlineset.kosten:= onlineset.kosten + onlineset.Preis/60/100 * taktlaenge;
+       end
+       else
        onlineset.kosten:= onlineset.kosten + onlineset.Preis/60/100 * taktlaenge;
+     end;
      //alten Wert merken
-   Takt2.Tag:= dauer2 mod Taktlaenge;
- end;
+   hauptfenster.Takt2.Tag:= dauer2 mod Taktlaenge;
+
 end;
 
 procedure WriteTarifeToHD;
 var fName,cName: string;
     i: integer;
-    Datei: file of TTarif02;
     header: TTarifHeader;
     stream: TFileStream;
 begin
@@ -1142,7 +1137,7 @@ begin
   fName:= ExtractfilePath(paramstr(0)) + 'Tarife.$$$';
   cName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
 
-  Stream := TFileStream.Create(fname , fmCreate ) ;
+  Stream := TFileStream.Create(fname , fmCreate) ;
 
   Stream.write(header, sizeof(header));
   for i:= 0 to length(hauptfenster.tarife)-1 do

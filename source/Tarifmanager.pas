@@ -755,11 +755,15 @@ end;
 //alle Felder löschen
 procedure TTaVerwaltung.Button2Click(Sender: TObject);
 begin
-EnableEdits(true);
+if sender = button2 then
+begin
+  EnableEdits(true);
+  button1.caption   := misc(M163,'M163');
+end;
+
 myident             := '';
 changename          := '';
 errormsg.Caption    := '';
-button1.caption     := misc(M163,'M163');
 Taname.Text         :=  '';
 TaNumber.Text       := '';
 tastart.ShowCheckbox:= true;
@@ -942,7 +946,7 @@ procedure TTaVerwaltung.changeData;
 var edit: boolean;
     t1,t2: integer;
 begin
-button2.Click;
+button2Click(self);
 
 if tarifliste.Row < 1 then exit;
 button1.Caption:= misc(M128,'M128');
