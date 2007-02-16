@@ -218,8 +218,8 @@ with hauptfenster do
   else
   if sender = MM2_2_1 then //Monatsstatistik
   begin
-   Protokolle.CreateAllLogs;
-   Protokolle.WebAuswertungErstellen;
+//   Protokolle.CreateAllLogs;      //passiert nach jedem abspeichern
+//   Protokolle.WebAuswertungErstellen;
    ShellExecute(0,'open',Pchar(extractfilepath(paramstr(0))+'www\log\index.htm'),Pchar ('') ,nil,SW_SHOWNORMAL);
   end
   else

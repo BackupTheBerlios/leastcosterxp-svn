@@ -285,8 +285,9 @@ end;
 procedure Tauswert.Sortgrid(Grid : TStringGrid; SortCol, start, ende:integer);
 var
    i,j : integer;
-    dummy1, dummy2: real;
-    code1, code2: integer; 
+   dummy1, dummy2: real;
+   code1, code2: integer;
+   tickcount: Cardinal;
 begin
  if (sortcol > -1) //wenn Maus ausserhalb der Zelle war
  then
@@ -294,7 +295,7 @@ begin
   //GaugePanel.Visible:= true;
   progress1.min:= start;
   progress1.max:= ende;
-
+  tickcount:= GetTickCount;
 
   with Grid do
   //erste Zeile nicht mitsortieren
@@ -339,10 +340,12 @@ begin
 
     end;
   progress1.position:= i+2;
+  if gettickcount - tickcount > 50 then progressPanel.Visible:= true; 
   end; //end der innere For-Schleife
 
   lastsorted:= Sortcol;
  end;
+ progresspanel.Visible:= false;
 end;
 
 procedure Tauswert.Sortby2Col(Grid : TStringGrid; SortCol:integer; col2: integer);
@@ -350,7 +353,10 @@ var
    i,j : integer;
    start, ende: integer;
    dat, vgldat: TDate;
+   tickcount: cardinal;
 begin
+ tickcount:= gettickcount;
+
  if grid.cells[sortcol,0]= misc(M140,'M140') then sortedbytarif:= true else sortedbytarif:= false;
  if grid.cells[sortcol,0]= misc(M142,'M142') then sortedbyrufnummer:= true else sortedbyrufnummer:= false;
 
@@ -358,7 +364,7 @@ begin
  begin
 
   progress2.min:=  grid.FixedRows;
-  progress2.max:=   grid.RowCount - 2;
+  progress2.max:=  grid.RowCount - 2;
 
   with Grid do
   //erste Zeile nicht mitsortieren
@@ -391,8 +397,8 @@ begin
     else
      if dat < vgldat then ExchangeRows(grid, i, j);
     end;
-
     progress2.position:= i;
+    if gettickcount - tickcount > 50 then progresspanel.Visible:= true;
   end;
   lastsorted:= Sortcol;
 
@@ -409,11 +415,12 @@ begin
          if ende-start > 0 then sortgrid(grid,col2,start,ende);
          start:= ende;
          progress2.Position:= i;
+         if gettickcount - tickcount > 50 then progresspanel.Visible:= true;
          end;
   //letzter Block muss sortiert werden, ENDE ist ja bekannt
- if i = grid.RowCount-1 then
-              sortgrid(grid,col2,start,grid.rowcount);
+ if i = grid.RowCount-1 then sortgrid(grid,col2,start,grid.rowcount);
 end;
+ progresspanel.Visible:= false;
 end;
 
 procedure Tauswert.ReSetProgress;
@@ -466,9 +473,10 @@ with grid do
   grid.Enabled:= false;
   grid.Font.Color:= clSilver;
   grid.selection:= TGridRect(Rect(-1,-1,-1,-1));
-  ProgressPanel.visible:= true;
-  grid.refresh;
-  progresspanel.refresh;
+  grid.DefaultDrawing:= false;
+//  ProgressPanel.visible:= true;
+//  grid.refresh;
+//  progresspanel.refresh;
 
   if grid.Cells[column,0]= misc(M136,'M136') then  sortbox.itemindex:= 0
   else
@@ -510,7 +518,8 @@ errormsg.caption:= '';
 grid.Enabled:= true;
 grid.Font.Color:= clWindowText;
 Resetprogress;
-grid.refresh;
+grid.DefaultDrawing:= true;
+grid.Refresh;
 end;
 
 
@@ -538,7 +547,6 @@ begin
 
  sortbox.itemindex  :=    settings.ReadInteger('EVN','Sortierung',0);
  Formatbox.itemindex:=    settings.ReadInteger('EVN','Export',0);
-
 end;
 
 procedure Tauswert.TimePick1Change(Sender: TObject);
@@ -567,28 +575,27 @@ errormsg.Refresh;
 grid.Enabled:= false;
 grid.Font.Color:= clSilver;
 grid.selection:= TGridRect(Rect(-1,-1,-1,-1));
-ProgressPanel.visible:= true;
-grid.refresh;
-progresspanel.refresh;
-
+//ProgressPanel.visible:= true;
+//grid.refresh;
+//progresspanel.refresh;
 
 for i:=0  to grid.ColCount -1 do
 begin
-if ansicontainstext(grid.Cells[i,0],misc(M137,'M137')) then timecol:=i;
-if (grid.Cells[i,0]= misc(M135,'M135')) then nrcol:=i;
+  if ansicontainstext(grid.Cells[i,0],misc(M137,'M137')) then timecol:=i;
+  if (grid.Cells[i,0]= misc(M135,'M135')) then nrcol:=i;
 end;
 
 case(sortbox.ItemIndex) of
-0: begin vgl:= misc(M136,'M136'); end;
-1: begin vgl:= misc(M137,'M137'); progress2.Visible:= false; progress1.Top:= 16; end;
-2: begin vgl:= misc(M138,'M138'); progress2.Visible:= false; progress1.Top:= 16; end;
-3: begin vgl:= misc(M139,'M139'); progress2.Visible:= false; progress1.Top:= 16; end;
-4: vgl:= misc(M140,'M140');
-5: vgl:= misc(M142,'M142');
-6: begin vgl:= misc(M135,'M135'); progress2.Visible:= false; progress1.Top:= 16; end;
+  0: begin vgl:= misc(M136,'M136'); end;
+  1: begin vgl:= misc(M137,'M137'); progress2.Visible:= false; progress1.Top:= 16; end;
+  2: begin vgl:= misc(M138,'M138'); progress2.Visible:= false; progress1.Top:= 16; end;
+  3: begin vgl:= misc(M139,'M139'); progress2.Visible:= false; progress1.Top:= 16; end;
+  4: vgl:= misc(M140,'M140');
+  5: vgl:= misc(M142,'M142');
+  6: begin vgl:= misc(M135,'M135'); progress2.Visible:= false; progress1.Top:= 16; end;
 end;
 
-   if ((vgl=misc(M142,'M142')) or (vgl=misc(M140,'M140'))) then
+if ((vgl=misc(M142,'M142')) or (vgl=misc(M140,'M140'))) then
    begin
      for i:= 0 to grid.ColCount-1 do
        begin
@@ -699,7 +706,6 @@ begin
  SetCursor_Default;
  exit;
 end;
-
 
 //spaltenbreiten setzen
 if grid.ColCount > 4 then

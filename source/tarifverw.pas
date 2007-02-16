@@ -32,7 +32,7 @@ procedure SaveAutoDialTimes;
 
 implementation
 
-uses inifiles, classes, sysutils, Strutils,Dateutils, forms, unit7, windows, dialogs, inilang, messagestrings;
+uses inifiles, classes, sysutils, Strutils,Dateutils, forms, unit7, windows, dialogs, inilang, messagestrings, Protokolle;
 
 procedure watchoutforcheaperprice(checktime: TDateTime);
 var price_now: real;
@@ -925,20 +925,24 @@ procedure SaveTrafficData(Data: OnlineWerte);
 var bisher_gesurft, bisher_takt: Longint;
     bisher_down, bisher_up: double;
 begin
-if Data.tarif ='' then exit; //keine Daten ?!?
+ if Data.tarif ='' then exit; //keine Daten ?!?
 
-bisher_gesurft:= SettingsTraffic.ReadInteger(Data.Tarif,'Surfdauer',0);
-bisher_takt:= SettingsTraffic.ReadInteger(Data.Tarif,'Surfdauer_Takt',0);
-bisher_up:= SettingsTraffic.ReadFloat(Data.Tarif,'Upload',0);
-bisher_down:= SettingsTraffic.ReadFloat(Data.Tarif,'Download',0);
+ bisher_gesurft:= SettingsTraffic.ReadInteger(Data.Tarif,'Surfdauer',0);
+ bisher_takt:= SettingsTraffic.ReadInteger(Data.Tarif,'Surfdauer_Takt',0);
+ bisher_up:= SettingsTraffic.ReadFloat(Data.Tarif,'Upload',0);
+ bisher_down:= SettingsTraffic.ReadFloat(Data.Tarif,'Download',0);
 
-//start des Zählers setzen
-if bisher_gesurft = 0 then SettingsTraffic.WriteDateTime(Data.Tarif,'seit', now);
+ //start des Zählers setzen
+ if bisher_gesurft = 0 then SettingsTraffic.WriteDateTime(Data.Tarif,'seit', now);
 
-SettingsTraffic.WriteInteger(Data.Tarif,'Surfdauer',Data.gesamtdauer + bisher_gesurft); //in sekunden
-SettingsTraffic.WriteInteger(Data.Tarif,'Surfdauer_Takt',Data.dauer_takt + bisher_takt); //in sekunden
-SettingsTraffic.WriteFloat(Data.Tarif,'Download', Data.download/1024 + bisher_down);     //in kB
-SettingsTraffic.WriteFloat(Data.Tarif,'Upload', Data.upload/1024 + bisher_up);           //in kB
+ SettingsTraffic.WriteInteger(Data.Tarif,'Surfdauer',Data.gesamtdauer + bisher_gesurft); //in sekunden
+ SettingsTraffic.WriteInteger(Data.Tarif,'Surfdauer_Takt',Data.dauer_takt + bisher_takt); //in sekunden
+ SettingsTraffic.WriteFloat(Data.Tarif,'Download', Data.download/1024 + bisher_down);     //in kB
+ SettingsTraffic.WriteFloat(Data.Tarif,'Upload', Data.upload/1024 + bisher_up);           //in kB
+
+ //csv und html logs updaten sowie die Tagesstatistik
+  Protokolle.CreateAllLogs;
+  Protokolle.WebAuswertungErstellen;
 end;
 
 procedure Kontingente_Laden;

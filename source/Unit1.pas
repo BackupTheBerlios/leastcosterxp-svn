@@ -2314,18 +2314,11 @@ end;
   if settings.ReadDate('Tageskosten','Date',encodedate(1970,1,1)) <> dateof(now)
    then settings.EraseSection('Tageskosten');
 
- if fileexists(ExtractFilepath(ParamStr(0)) + 'UpdatedFiles.dat') then
-      CheckForUpdates;
-
   RSSRead.LoadRSSList;
 
   tarifverw.ladetarife;
   Kontingente_Laden;
   LoadAutoDialTimes;
-
-  //csv und html logs updaten sowie die Tagesstatistik
-  Protokolle.CreateAllLogs;
-  Protokolle.WebAuswertungErstellen;
 
   //LogFiles trimmen
   ShortenLogFiles(Extractfilepath(paramstr(0)) + 'www\log\log.txt',DaysToSaveLogs);
@@ -2343,15 +2336,18 @@ end;
   if fileexists(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat') then
   begin //alte Verbindung noch zum Protokoll hinzufügen
    str:= TFileStream.Create(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat', fmOpenRead);
-   str.Read(lastConn, sizeof(onlinewerte));
+   str.Read(lastConn, sizeof(lastConn));
+   str.Free;
    Protokolle.SaveConnection(lastConn);
    SaveTrafficData(lastConn);
    SettingsTraffic.UpdateFile;//auf die Platte schreiben
    deletefile(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat');
   end;
 
-  StartPlugins('OnStart');
+  if fileexists(ExtractFilepath(ParamStr(0)) + 'UpdatedFiles.dat') then
+      CheckForUpdates;
 
+  StartPlugins('OnStart');
 end;
 
 //wird nach dem Trennen ausgeführt ... hier wird alles gespeichert
@@ -2362,13 +2358,10 @@ closer.Enabled:= false;
 
 if selfdial then
 begin
-    Protokolle.SaveConnection(onlineset);
-    SaveTrafficData(onlineset);
-    SettingsTraffic.UpdateFile;//auf die Platte schreiben
-    if fileexists(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat') then deletefile(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat');
-
-    //Auto-Export
-    Protokolle.CreateAllLogs;
+   Protokolle.SaveConnection(onlineset);
+   SaveTrafficData(onlineset);
+   SettingsTraffic.UpdateFile;//auf die Platte schreiben
+   if fileexists(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat') then deletefile(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat');
 
   //alles zurücksetzen
    kontingentindex:= -1;

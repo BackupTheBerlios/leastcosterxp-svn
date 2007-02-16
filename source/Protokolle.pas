@@ -79,7 +79,6 @@ begin
   FileList.Append(savedata);
   Filelist.SaveToFile(ausgabepfad + filename + '.csv');
 end;
-//   append_data(ausgabepfad,filename, savedata, linecount);//, nof);
 
 Filelist.Free;
 end;
@@ -92,7 +91,7 @@ begin
   sekunden:= s + m*60 + h*3600 else sekunden:=1;
 end;
 
-//erst ausführen nachdem Abhoung gelaufen ist, da die Lieferliste dort gefüllt wird
+//erst ausführen nachdem Abholung gelaufen ist, da die Lieferliste dort gefüllt wird
 procedure monatshtml(path, filename: string);
 var   Exporteur,Importeur          :textfile;
       htmfilename,zwischenhandler  : string;
@@ -317,40 +316,46 @@ Var Zwischenhandler:string;
     monat, jahr: integer;
     i: integer;
 Begin
- for i:=1 to 31 do begin
-  lieferliste[i].tag:= EncodeDate(1970,01,01);
-  lieferliste[i].zeit:=EncodeTime(00,00,00,00);
-  lieferliste[i].kosten:= 0;
-  lieferliste[i].verbindungen:= 0;
-end;
+ for i:=1 to 31 do
+  begin
+   lieferliste[i].tag         := EncodeDate(1970,01,01);
+   lieferliste[i].zeit        := EncodeTime(00,00,00,00);
+   lieferliste[i].kosten      := 0;
+   lieferliste[i].verbindungen:= 0;
+  end;
 
  Assign(Lager, Lageradresse);
  Reset(Lager);
 
  Repeat
   Readln(Lager, Zwischenhandler);
-  tabs:=0;
-  Datum:='';
-  Zeit:='';
+  tabs  :=0;
+  Datum :='';
+  Zeit  :='';
   Kosten:='';
   For haekchen:=1 to length(Zwischenhandler) do
    Begin
     IF not(Zwischenhandler[haekchen]=chr(9)) Then
      Begin
-      If tabs=1 Then Datum:=Datum+Zwischenhandler[haekchen];
-      If tabs=3 Then Zeit:=Zeit+zwischenhandler[haekchen];
+      If tabs=1 Then Datum :=Datum+Zwischenhandler[haekchen];
+      If tabs=3 Then Zeit  :=Zeit+zwischenhandler[haekchen];
       If tabs=4 Then Kosten:=Kosten+zwischenhandler[haekchen];
      End
     Else Tabs:=tabs+1;
    End;
-  Punkt:= Dayof(strtoDate(Datum));
-  Monat:= monthof(strtoDate(Datum));
-  Jahr := yearof(strtoDate(Datum));
 
-  Lieferliste[Punkt].Tag:=strtoDate(Datum);
-  Lieferliste[Punkt].Zeit:=Lieferliste[Punkt].Zeit+strtotime(Zeit);
-  Lieferliste[Punkt].Kosten:=Lieferliste[Punkt].Kosten+strtofloat(Kosten);
-  Lieferliste[Punkt].Verbindungen:=Lieferliste[Punkt].Verbindungen+1;
+  Punkt    := Dayof(strtoDate(Datum));
+  Monat    := monthof(strtoDate(Datum));
+  Jahr     := yearof(strtoDate(Datum));
+
+  if (datum <> '') and(zeit <> '') and (kosten <> '') then //nur übernehmen wenn alle gefüllt sind
+  begin
+   Lieferliste[Punkt].Tag         :=strtoDate(Datum);
+   Lieferliste[Punkt].Zeit        :=Lieferliste[Punkt].Zeit+strtotime(Zeit);
+   Lieferliste[Punkt].Kosten      :=Lieferliste[Punkt].Kosten+strtofloat(Kosten);
+   Lieferliste[Punkt].Verbindungen:=Lieferliste[Punkt].Verbindungen+1;
+  end; 
+
  Until Eof(Lager);
  For haekchen:=1 to daysinamonth(jahr, monat) do
    Lieferliste[haekchen].Tag:= Dateof(encodeDate(Jahr,monat, haekchen));
