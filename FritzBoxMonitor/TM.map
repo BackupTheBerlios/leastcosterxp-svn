@@ -1,6 +1,6 @@
 
  Start         Length     Name                   Class
- 0001:00000000 0009BCD8H .text                   CODE
+ 0001:00000000 0009C0BCH .text                   CODE
  0002:00000000 00001DECH .data                   DATA
  0002:00001DEC 00001051H .bss                    BSS
 
@@ -86,8 +86,8 @@ Detailed map of segments
  0001:0009336C 00004D1C C=CODE     S=.text    G=(none)   M=RegExpr  ACBP=A9
  0001:00098088 00000290 C=CODE     S=.text    G=(none)   M=Unit2    ACBP=A9
  0001:00098318 00000394 C=CODE     S=.text    G=(none)   M=statistics ACBP=A9
- 0001:000986AC 000032FC C=CODE     S=.text    G=(none)   M=main     ACBP=A9
- 0001:0009B9A8 0000032D C=CODE     S=.text    G=(none)   M=TM       ACBP=A9
+ 0001:000986AC 000036E0 C=CODE     S=.text    G=(none)   M=main     ACBP=A9
+ 0001:0009BD8C 0000032D C=CODE     S=.text    G=(none)   M=TM       ACBP=A9
  0002:00000000 0000009C C=DATA     S=.data    G=DGROUP   M=System   ACBP=A9
  0002:0000009C 00000020 C=DATA     S=.data    G=DGROUP   M=SysInit  ACBP=A9
  0002:000000BC 00000250 C=DATA     S=.data    G=DGROUP   M=SysUtils ACBP=A9
@@ -209,62 +209,62 @@ Detailed map of segments
 
   Address         Publics by Name
 
- 0002:00002D70       .01
  0002:00002B40       .01
- 0002:00002B84       .1
- 0002:00002A68       .1
- 0002:00002A64       .1
- 0002:00002DA0       .1
- 0002:00002A70       .1
- 0002:00002B7C       .1
- 0002:00002894       .1
- 0002:00002A6C       .1
- 0002:00002D60       .1
- 0002:00002AA0       .1
- 0002:00002A84       .1
- 0002:00002D94       .1
- 0002:00002DA8       .1
- 0002:00002900       .1
- 0002:00002974       .1
+ 0002:00002D70       .01
  0002:00002D28       .1
- 0002:00002B6C       .1
- 0002:00002B70       .1
  0002:0000292C       .1
  0002:00002940       .1
- 0002:00002D20       .1
- 0002:00002A48       .1
  0002:00002680       .1
+ 0002:0000267C       .1
+ 0002:00002668       .1
  0002:00002A78       .1
  0002:00002A74       .1
+ 0002:00002D60       .1
+ 0002:00002A70       .1
+ 0002:00002A6C       .1
+ 0002:00002B6C       .1
+ 0002:00002B70       .1
  0002:00002B74       .1
- 0002:0000267C       .1
- 0002:00002D9C       .1
+ 0002:00002A68       .1
+ 0002:00002974       .1
  0002:00002B78       .1
- 0002:00002670       .1
+ 0002:00002B7C       .1
+ 0002:00002AA0       .1
  0002:00002840       .1
- 0002:00002668       .1
+ 0002:00002A64       .1
+ 0002:00002B84       .1
+ 0002:00002A48       .1
+ 0002:00002DA8       .1
+ 0002:00002DA0       .1
+ 0002:00002D20       .1
+ 0002:00002894       .1
+ 0002:00002D9C       .1
+ 0002:00002A84       .1
+ 0002:00002D94       .1
+ 0002:00002900       .1
+ 0002:00002670       .1
  0002:00002A88       .11
  0002:0000289C       .12
- 0002:00002B80       .2
- 0002:00002D98       .2
  0002:00002D1C       .2
- 0002:00002A58       .2
- 0002:00002A7C       .2
- 0002:00003038       .2
- 0002:00002DAC       .2
- 0002:00002D8C       .2
- 0002:00002944       .2
- 0002:000028F8       .2
- 0002:00002A98       .2
  0002:00003030       .2
- 0002:0000294C       .3
- 0002:00002950       .3
- 0002:00002DA4       .3
+ 0002:00002A58       .2
+ 0002:00002A98       .2
+ 0002:00002A7C       .2
+ 0002:000028F8       .2
+ 0002:00002944       .2
+ 0002:00002D8C       .2
+ 0002:00002DAC       .2
+ 0002:00002D98       .2
+ 0002:00003038       .2
+ 0002:00002B80       .2
  0002:00002B2C       .3
- 0002:00002848       .3
  0002:00003024       .3
- 0002:00003028       .3
+ 0002:00002950       .3
+ 0002:0000294C       .3
  0002:00002674       .3
+ 0002:00002848       .3
+ 0002:00002DA4       .3
+ 0002:00003028       .3
  0002:000028FC       .31
  0002:00002A80       .32
  0002:00002794       .35
@@ -274,11 +274,11 @@ Detailed map of segments
  0002:00002B50       .41
  0002:00002B88       .41
  0002:00002A60       .42
- 0002:00002890       .5
  0002:000027FC       .5
- 0002:00002D5C       .6
+ 0002:00002890       .5
  0002:00002844       .6
  0002:000025B8       .6
+ 0002:00002D5C       .6
  0002:00002D74       .66
  0002:00002988       .7
  0002:00002D64       .72
@@ -391,8 +391,8 @@ Detailed map of segments
  0001:000132D4       @VarAddRef
  0001:0000EAE8       @VarCast
  0001:0000E4F4       @VarClear
- 0001:0000E508       @VarClr
  0001:00003BC8       @VarClr
+ 0001:0000E508       @VarClr
  0001:00013BD4       @VarCmpEQ
  0001:0000E81C       @VarCopy
  0001:00003DE0       @VarCopy
@@ -472,11 +472,12 @@ Detailed map of segments
  0001:000519B0       ActnList
  0001:00000410       AddBlockAfter
  0002:00000458       AddDataModule
+ 0001:0009B0DC       AddEntry
  0001:0000723C       AddExitProc
  0001:0001B550       AddFinished
  0001:00055240       AddIn
- 0001:00004B60       AddModuleUnloadProc
  0001:00004B50       AddModuleUnloadProc
+ 0001:00004B60       AddModuleUnloadProc
  0001:0001B588       AddNotFinished
  0001:0001C0D8       AddSubComponentsToLoaded
  0001:00069CD4       AddTimer
@@ -486,19 +487,19 @@ Detailed map of segments
  0001:00007510       AdjustLineBreaks
  0001:0005C810       Adjustment
  0001:00005A64       AdjustWindowRectEx
- 0002:000008D8       Alignments
- 0002:00000E38       Alignments
  0002:000009C0       Alignments
- 0002:000010E4       Alignments
  0002:000009B0       Alignments
  0002:00000918       Alignments
  0002:000010F4       Alignments
+ 0002:000010E4       Alignments
+ 0002:000008D8       Alignments
+ 0002:00000E38       Alignments
  0002:00001310       AlignStyles
- 0001:000640C4       AlignWork
  0001:00047054       AlignWork
- 0001:0005C2C8       AllocateHWnd
- 0001:00084A34       AllocateHWnd
+ 0001:000640C4       AlignWork
  0001:00021C84       AllocateHWnd
+ 0001:00084A34       AllocateHWnd
+ 0001:0005C2C8       AllocateHWnd
  0001:000071F0       AllocMem
  0002:000025B0       AllocMemCount
  0002:000025B4       AllocMemSize
@@ -582,8 +583,8 @@ Detailed map of segments
  0002:00000328       BooleanToStringRule
  0001:00007B18       BoolToStr
  0001:000115A0       BoolToWStrViaOS
- 0002:00001358       BorderStyles
  0002:000008C0       BorderStyles
+ 0002:00001358       BorderStyles
  0002:00000E30       BorderStyles
  0001:000167FC       Bounds
  0001:00005500       Bounds
@@ -627,8 +628,8 @@ Detailed map of segments
  0001:00003240       CharFromWChar
  0001:0000BC1C       CharLength
  0001:00005A8C       CharLower
- 0001:00005A94       CharNext
  0001:00000264       CharNext
+ 0001:00005A94       CharNext
  0001:00025B7C       CharsetToIdent
  0001:0000BB30       CharToByteIndex
  0001:0000BB94       CharToByteLen
@@ -673,8 +674,8 @@ Detailed map of segments
  0002:00000368       CmpTypeMap
  0001:0000CE90       CmpUnimplemented
  0001:00014D64       CoCreateInstance
- 0002:00001344       Codes
  0002:000013D4       Codes
+ 0002:00001344       Codes
  0002:00002D88       CoInitExProcLoaded
  0001:00014D54       CoInitialize
  0002:00002D84       CoInitializeExProc
@@ -709,8 +710,8 @@ Detailed map of segments
  0002:00002ABC       ControlAtomString
  0001:0006174C       ControlHasHelp
  0001:00050600       Controls
- 0002:0000048C       Convert
  0002:0000049C       Convert
+ 0002:0000048C       Convert
  0001:0000ADBC       ConvertAddr
  0001:000093C4       ConvertEraString
  0001:000071B4       ConvertError
@@ -726,16 +727,16 @@ Detailed map of segments
  0001:0006C254       CopyImage
  0001:00005FAC       CopyMemory
  0001:00029344       CopyPalette
- 0002:00001774       CopyRight
  0002:00001874       CopyRight
+ 0002:0000085C       Copyright
+ 0002:00001774       CopyRight
+ 0002:00001840       CopyRight
+ 0002:000018C0       CopyRight
+ 0002:00001778       CopyRight
+ 0002:00001428       CopyRight
  0002:00001850       CopyRight
  0002:00001878       CopyRight
- 0002:0000085C       Copyright
- 0002:000018C0       CopyRight
- 0002:00001428       CopyRight
- 0002:00001778       CopyRight
  0002:0000184C       CopyRight
- 0002:00001840       CopyRight
  0001:00057968       CopyToBest
  0001:00014D6C       CoTaskMemAlloc
  0001:00014D5C       CoUninitialize
@@ -773,8 +774,8 @@ Detailed map of segments
  0002:000018DC       CRLF
  0002:00000138       cSimpleBoolStrs
  0002:000003E4       CText
- 0002:00000FC4       Ctl3DStyles
  0002:000009A0       Ctl3DStyles
+ 0002:00000FC4       Ctl3DStyles
  0002:0000261C       curAlloc
  0001:00012C20       CurrCompare
  0002:0000268C       CurrencyDecimals
@@ -801,9 +802,9 @@ Detailed map of segments
  0001:000091B0       DayOfWeek
  0002:00000174       DCon10
  0002:0000057C       DDBsOnly
- 0001:00084A48       DeallocateHWnd
- 0001:0005C2DC       DeallocateHWnd
  0001:00021D38       DeallocateHWnd
+ 0001:0005C2DC       DeallocateHWnd
+ 0001:00084A48       DeallocateHWnd
  0002:00000028       DebugHook
  0002:0000268B       DecimalSeparator
  0001:00009190       DecodeDate
@@ -812,8 +813,8 @@ Detailed map of segments
  0001:0000078C       Decommit
  0001:00000DB0       DecommitFree
  0002:000025F8       decommittedRoot
- 0001:00064F94       Default
  0001:0005EE28       Default
+ 0001:00064F94       Default
  0002:00000020       Default8087CW
  0001:0002D0BC       DefaultContextHelp
  0002:00000ECC       DefaultDockTreeClass
@@ -832,10 +833,10 @@ Detailed map of segments
  0001:00005AF4       DefWindowProc
  0001:0000467C       DelayLoadResourceModule
  0001:00000440       DeleteBlock
- 0001:0000569C       DeleteCriticalSection
  0001:000003B0       DeleteCriticalSection
+ 0001:0000569C       DeleteCriticalSection
  0001:000058EC       DeleteDC
- 0001:0009AE48       DeleteEntry
+ 0001:0009B2F8       DeleteEntry
  0001:00000BF8       DeleteFree
  0001:00005AFC       DeleteMenu
  0001:000058F4       DeleteObject
@@ -889,9 +890,9 @@ Detailed map of segments
  0001:0004ED8C       DoSaveZone
  0001:0004F050       DoSetNewBounds
  0002:00000454       DotSep
+ 0001:00052E60       DoWrite
  0001:00028454       DoWrite
  0001:00019154       DoWrite
- 0001:00052E60       DoWrite
  0001:00047C20       DoWriteDesignSize
  0001:000455B8       DoWriteIsControl
  0002:00002AD0       DragCapture
@@ -982,10 +983,10 @@ Detailed map of segments
  0001:0000A0D0       EraToYear
  0002:00002770       EraYearOffsets
  0002:00000064       errCaption
- 0001:00001870       Error
- 0001:0005455C       Error
  0001:0001B0B0       Error
+ 0001:00001870       Error
  0001:00016E68       Error
+ 0001:0005455C       Error
  0002:00000004       ErrorAddr
  0001:00001824       ErrorAt
  0001:0000B274       ErrorHandler
@@ -1055,87 +1056,87 @@ Detailed map of segments
  0001:00000D78       FillerSizeAfterGap
  0001:00000D08       FillerSizeBeforeGap
  0001:00005BAC       FillRect
+ 0001:0007F0F8       Finalization
+ 0001:0007E76C       Finalization
+ 0001:0007F51C       Finalization
+ 0001:0002BCBC       Finalization
+ 0001:0002BA0C       Finalization
+ 0001:0007E2C0       Finalization
+ 0001:0002B83C       Finalization
+ 0001:00039458       Finalization
  0001:00039498       Finalization
  0001:000394D0       Finalization
- 0001:00059E48       Finalization
- 0001:00067870       Finalization
- 0001:000982E0       Finalization
- 0001:00039458       Finalization
- 0001:000678A8       Finalization
- 0001:00013BE4       Finalization
- 0001:00067C04       Finalization
- 0001:00013E38       Finalization
- 0001:0002DD44       Finalization
- 0001:00024384       Finalization
- 0001:0002406C       Finalization
  0001:00039508       Finalization
+ 0001:0007C760       Finalization
  0001:00039540       Finalization
- 0001:0009801C       Finalization
- 0001:00014CFC       Finalization
- 0001:00014D74       Finalization
  0001:000395AC       Finalization
- 0001:00098674       Finalization
  0001:000395E4       Finalization
  0001:0003A330       Finalization
- 0001:00005250       Finalization
- 0001:00023990       Finalization
- 0001:00067CDC       Finalization
- 0001:0002DB98       Finalization
+ 0001:0007FF3C       Finalization
+ 0001:0008091C       Finalization
+ 0001:0008129C       Finalization
  0001:0003D778       Finalization
- 0001:0008BD14       Finalization
- 0001:00005474       Finalization
- 0001:0000CC28       Finalization
- 0001:0007C760       Finalization
- 0001:00067828       Finalization
+ 0001:0002F458       Finalization
  0001:0003D7CC       Finalization
- 0001:000932EC       Finalization
+ 0001:0008151C       Finalization
+ 0001:0002E6C8       Finalization
+ 0001:0002BF58       Finalization
  0001:0003DE00       Finalization
- 0001:00069AF0       Finalization
  0001:0003DE9C       Finalization
+ 0001:0006E654       Finalization
+ 0001:00005250       Finalization
  0001:0003DF48       Finalization
- 0001:0009B944       Finalization
- 0001:0002D874       Finalization
- 0001:00069F48       Finalization
- 0001:00069FA0       Finalization
+ 0001:0006C5C8       Finalization
+ 0001:0006C570       Finalization
  0001:0003E0B0       Finalization
- 0001:00069FD8       Finalization
+ 0001:0006C4CC       Finalization
+ 0001:0006C46C       Finalization
+ 0001:00005474       Finalization
  0001:00005548       Finalization
  0001:0006A060       Finalization
- 0001:0002D83C       Finalization
- 0001:000677F0       Finalization
- 0001:0002D7F4       Finalization
+ 0001:00069FD8       Finalization
+ 0001:00069FA0       Finalization
  0001:0000654C       Finalization
  0001:000061FC       Finalization
  0001:000061A4       Finalization
- 0001:0006C46C       Finalization
- 0001:00021D60       Finalization
- 0001:0002C714       Finalization
- 0001:000677B8       Finalization
  0001:0002C6D4       Finalization
- 0001:00067710       Finalization
- 0001:000535B0       Finalization
- 0001:0002BF58       Finalization
- 0001:00051980       Finalization
- 0001:0006C4CC       Finalization
- 0001:0002F458       Finalization
+ 0001:0002C714       Finalization
  0001:00050598       Finalization
- 0001:0009B9A8       Finalization
- 0001:0006C570       Finalization
- 0001:0006C5C8       Finalization
- 0001:0008151C       Finalization
- 0001:0008129C       Finalization
- 0001:0008091C       Finalization
- 0001:0007FF3C       Finalization
- 0001:0007F51C       Finalization
- 0001:0007F0F8       Finalization
- 0001:0007E76C       Finalization
- 0001:0002BCBC       Finalization
- 0001:0002BA0C       Finalization
- 0001:0002B83C       Finalization
- 0001:0002E6C8       Finalization
- 0001:0007E2C0       Finalization
- 0001:0006E654       Finalization
+ 0001:00051980       Finalization
+ 0001:000535B0       Finalization
+ 0001:0008BD14       Finalization
+ 0001:00059E48       Finalization
+ 0001:00069F48       Finalization
+ 0001:00069AF0       Finalization
+ 0001:00067CDC       Finalization
+ 0001:00024384       Finalization
  0001:0000D5E8       Finalization
+ 0001:0002D7F4       Finalization
+ 0001:0002406C       Finalization
+ 0001:000932EC       Finalization
+ 0001:00023990       Finalization
+ 0001:00021D60       Finalization
+ 0001:0002D83C       Finalization
+ 0001:0009801C       Finalization
+ 0001:000982E0       Finalization
+ 0001:00067C04       Finalization
+ 0001:000678A8       Finalization
+ 0001:00067870       Finalization
+ 0001:00098674       Finalization
+ 0001:00067828       Finalization
+ 0001:000677F0       Finalization
+ 0001:000677B8       Finalization
+ 0001:0002D874       Finalization
+ 0001:00067710       Finalization
+ 0001:0000CC28       Finalization
+ 0001:00013BE4       Finalization
+ 0001:00013E38       Finalization
+ 0001:0002DD44       Finalization
+ 0001:0009BD28       Finalization
+ 0001:0009BD8C       Finalization
+ 0001:00014D74       Finalization
+ 0001:00014CFC       Finalization
+ 0001:0002DB98       Finalization
  0001:00004434       FinalizeArray
  0001:00002DB4       FinalizeUnits
  0001:00058344       Find
@@ -1151,10 +1152,10 @@ Detailed map of segments
  0001:00013AE4       FindCustomVariantType
  0001:00042810       FindDragTarget
  0001:0001C424       FindExistingComponent
- 0001:00000284       FindFirstFile
  0001:000056CC       FindFirstFile
- 0001:000177EC       FindGlobalComponent
+ 0001:00000284       FindFirstFile
  0001:0005C22C       FindGlobalComponent
+ 0001:000177EC       FindGlobalComponent
  0002:00002864       FindGlobalComponentProcs
  0001:0000464C       FindHInstance
  0001:00017694       FindIdentToInt
@@ -1228,8 +1229,8 @@ Detailed map of segments
  0001:0000028C       FreeLibrary
  0001:000056E4       FreeLibrary
  0001:000287F0       FreeMemoryContexts
- 0001:00021C60       FreeObjectInstance
  0001:0005C2C0       FreeObjectInstance
+ 0001:00021C60       FreeObjectInstance
  0001:000056F4       FreeResource
  0001:00000638       FreeSpace
  0001:0000C34C       FreeTerminateProcs
@@ -1370,9 +1371,9 @@ Detailed map of segments
  0001:00014B2C       GetMethodProp
  0001:000002A4       GetModuleFileName
  0001:00005744       GetModuleFileName
+ 0001:0000536C       GetModuleHandle
  0001:000002AC       GetModuleHandle
  0001:0000574C       GetModuleHandle
- 0001:0000536C       GetModuleHandle
  0002:0000291C       GetMonitorInfo
  0002:00002920       GetMonitorInfoA
  0002:00002924       GetMonitorInfoW
@@ -1397,7 +1398,7 @@ Detailed map of segments
  0001:00005CCC       GetScrollPos
  0001:00005CD4       GetScrollRange
  0001:00067C9C       getservbyname
- 0001:000992E4       GetSessionTraffic
+ 0001:00099730       GetSessionTraffic
  0001:000141F4       GetSetElementName
  0001:00014284       GetSetElementValue
  0001:00040FA8       GetShortHint
@@ -1407,16 +1408,16 @@ Detailed map of segments
  0001:000005C0       GetSpaceAt
  0001:000545B4       GetSpecialName
  0001:000002BC       GetStartupInfo
- 0001:0000575C       GetStdHandle
  0001:0000023C       GetStdHandle
+ 0001:0000575C       GetStdHandle
  0001:00005964       GetStockObject
  0001:00014558       GetStrProp
  0001:00005CDC       GetSubMenu
  0001:00005CE4       GetSysColor
  0001:00005CEC       GetSysColorBrush
  0001:00005CF4       GetSystemMenu
- 0001:00005CFC       GetSystemMetrics
  0002:0000290C       GetSystemMetrics
+ 0001:00005CFC       GetSystemMetrics
  0001:0000596C       GetSystemPaletteEntries
  0001:00005974       GetTextExtentPoint32
  0001:0000597C       GetTextMetrics
@@ -1529,6 +1530,8 @@ Detailed map of segments
  0001:00064384       HookHintHooks
  0002:00002678       HtmlHelpModule
  0001:00067C54       htons
+ 0001:00098E38       httpget
+ 0001:00099064       httppost
  0001:00093364       HttpProt
  0001:000060AC       HwndMSWheel
  0002:000013EC       IAlignment
@@ -1578,8 +1581,8 @@ Detailed map of segments
  0002:00000FF4       IMM32DLL
  0001:00050314       Imm32IsIME
  0002:00000180       IMSecsPerDay
- 0001:0000E270       InBounds
  0001:0000E510       InBounds
+ 0001:0000E270       InBounds
  0001:0000E540       Increment
  0001:0000E2A0       Increment
  0001:00067C5C       inet_addr
@@ -1621,11 +1624,11 @@ Detailed map of segments
  0001:000053A0       InitThreadTLS
  0001:00002E18       InitUnits
  0001:00040C24       InitWndProc
- 0002:00000F94       InnerStyles
  0002:00000970       InnerStyles
+ 0002:00000F94       InnerStyles
  0002:0000204C       Input
- 0001:000469FC       InsertBefore
  0001:00063D30       InsertBefore
+ 0001:000469FC       InsertBefore
  0001:00000E60       InsertFree
  0001:000579EC       InsertHotkeyFarEastFormat
  0001:00005D5C       InsertMenu
@@ -1654,8 +1657,8 @@ Detailed map of segments
  0001:00005D6C       IntersectRect
  0001:00007888       IntToHex
  0001:00017750       IntToIdent
- 0001:00007774       IntToStr
  0001:00007860       IntToStr
+ 0001:00007774       IntToStr
  0001:00005D74       InvalidateRect
  0001:0002715C       InvalidBitmap
  0001:00027144       InvalidGraphic
@@ -1765,8 +1768,8 @@ Detailed map of segments
  0001:0000517C       LoadResString
  0001:000002D4       LoadString
  0001:00005DEC       LoadString
- 0001:00000378       LocalAlloc
  0001:00005374       LocalAlloc
+ 0001:00000378       LocalAlloc
  0001:00000380       LocalFree
  0001:0000A8C8       LocalGetLocaleStr
  0001:00088984       LocalHostName
@@ -1784,7 +1787,7 @@ Detailed map of segments
  0002:00002824       LVarTypes
  0002:00002828       LVarTypeSync
  0002:00001844       Magic
- 0001:0009B9A0       main
+ 0001:0009BD84       main
  0002:0000202C       MainInstance
  0002:00002030       MainThreadID
  0001:00000408       MakeEmpty
@@ -1815,8 +1818,8 @@ Detailed map of segments
  0001:00059EB8       Menus
  0001:00000458       MergeBlockAfter
  0001:00000F34       MergeCommit
- 0001:00000274       MessageBox
  0001:00005E04       MessageBox
+ 0001:00000274       MessageBox
  0001:0000622C       Messages
  0002:00001910       META
  0001:0007F558       MimeUtil
@@ -1882,8 +1885,8 @@ Detailed map of segments
  0001:00040D34       ObjectFromHWnd
  0002:0000090C       OEMConverts
  0001:00005E14       OemToAnsi
- 0001:00005E1C       OffsetRect
  0001:000054E8       OffsetRect
+ 0001:00005E1C       OffsetRect
  0002:0000298C       OpenThemeData
  0002:00000FD8       OrientArray
  0002:00000FA4       OuterStyles
@@ -1903,7 +1906,7 @@ Detailed map of segments
  0001:00001A4C       ParamStr
  0001:0004D1F8       ParentNotLast
  0001:00094CBC       parsenum
- 0001:0009A9D0       ParsePhoneBook
+ 0001:0009AE1C       ParsePhoneBook
  0001:00080AEC       ParseURL
  0001:00097B34       ParseVarName
  0002:000008E8       Passwords
@@ -1942,24 +1945,24 @@ Detailed map of segments
  0001:00008638       PutExponent
  0002:00002AF0       QualifyingSites
  0001:0000B370       RaiseAssertException
- 0001:00000244       RaiseException
  0001:0001A6D0       RaiseException
+ 0001:00000244       RaiseException
  0002:00002014       RaiseExceptionProc
- 0001:0000C278       RaiseLastOSError
  0001:0000C284       RaiseLastOSError
+ 0001:0000C278       RaiseLastOSError
  0001:000773B4       ReadCols
  0001:0004DF64       ReadControlName
  0001:0001DF24       ReadCustomVariant
- 0001:00023AA8       ReadError
  0001:0001B8AC       ReadError
+ 0001:00023AA8       ReadError
  0001:00005804       ReadFile
  0001:00027CCC       ReadIcon
  0002:000008F0       ReadOnlys
  0001:00012BC8       RealCompare
  0001:000059BC       RealizePalette
  0001:0001C214       Recover
- 0001:000167D4       Rect
  0001:000054AC       Rect
+ 0001:000167D4       Rect
  0001:000059CC       Rectangle
  0001:000059C4       RectVisible
  0001:00067C7C       recv
@@ -1983,8 +1986,8 @@ Detailed map of segments
  0002:000018F8       RegExprWordChars
  0001:0000565C       RegFlushKey
  0002:00002860       RegGroups
- 0001:00005E54       RegisterClass
  0001:000173A4       RegisterClass
+ 0001:00005E54       RegisterClass
  0001:00005E5C       RegisterClipboardFormat
  0001:00041BF8       RegisterDockSite
  0001:00017794       RegisterFindGlobalComponentProc
@@ -1995,8 +1998,8 @@ Detailed map of segments
  0001:0009776C       RegMatch
  0001:00005664       RegOpenKeyEx
  0001:000002FC       RegOpenKeyEx
- 0001:0000566C       RegQueryValueEx
  0001:00000304       RegQueryValueEx
+ 0001:0000566C       RegQueryValueEx
  0001:00039500       RegStr
  0001:00005E6C       ReleaseCapture
  0001:00005E74       ReleaseDC
@@ -2008,8 +2011,8 @@ Detailed map of segments
  0001:0001B828       RemoveFixups
  0001:0001BBC0       RemoveGlobalFixup
  0001:00005E7C       RemoveMenu
- 0001:00004B58       RemoveModuleUnloadProc
  0001:00004B80       RemoveModuleUnloadProc
+ 0001:00004B58       RemoveModuleUnloadProc
  0001:00005E84       RemoveProp
  0001:00069D00       RemoveTimer
  0001:0007D41C       RemoveTrayIcon
@@ -2020,10 +2023,10 @@ Detailed map of segments
  0001:000059D4       RestoreDC
  0001:0005BF48       RestoreFocusState
  0001:00097F24       ReturnAddr
- 0001:00054554       ReturnAddr
- 0001:00017D88       ReturnAddr
- 0001:000192B4       ReturnAddr
  0001:0000B018       ReturnAddr
+ 0001:00054554       ReturnAddr
+ 0001:000192B4       ReturnAddr
+ 0001:00017D88       ReturnAddr
  0001:0008D02C       RFC1123_Date
  0002:000018D8       RFC1123_StrMonth
  0002:000018D4       RFC1123_StrWeekDay
@@ -2035,8 +2038,8 @@ Detailed map of segments
  0002:00002614       rover
  0002:0000133C       RRStyles
  0002:000012E0       RTFConversionFormat
- 0002:00001300       RTL
  0002:00001308       RTL
+ 0002:00001300       RTL
  0002:000012F8       RTL
  0001:00013E68       RTLConsts
  0001:0000024C       RtlUnwind
@@ -2162,9 +2165,9 @@ Detailed map of segments
  0002:000026AC       ShortMonthNames
  0002:000026A4       ShortTimeFormat
  0002:000013A0       ShowColumns
- 0002:0000117C       ShowCommands
  0002:00001188       ShowCommands
  0002:00001194       ShowCommands
+ 0002:0000117C       ShowCommands
  0001:0000AF50       ShowException
  0002:00001230       ShowFlags
  0002:00000F8C       ShowFlags
@@ -2237,15 +2240,15 @@ Detailed map of segments
  0001:0003DF78       StrUtils
  0002:00001170       Styles
  0001:0007E554       SubKey
- 0001:0000C818       Supports
  0001:0000C83C       Supports
+ 0001:0000C818       Supports
  0002:00002854       SyncEvent
  0002:0000050C       SyncList
  0001:0002DD74       SyncObjs
  0001:0000031C       SysAllocStringLen
  0001:0000657C       SysConst
- 0002:00001140       SysConsts
  0002:00001138       SysConsts
+ 0002:00001140       SysConsts
  0001:0000A804       SysErrorMessage
  0001:000012D0       SysFreeMem
  0001:0000032C       SysFreeString
@@ -2634,8 +2637,8 @@ Detailed map of segments
  0001:00018960       TCollectionItem.SetCollection
  0001:00018988       TCollectionItem.SetDisplayName
  0001:00018990       TCollectionItem.SetIndex
- 0001:0007C4F4       TComboBoxExActionLink.AddItem
  0001:0007C564       TComboBoxExActionLink.AddItem
+ 0001:0007C4F4       TComboBoxExActionLink.AddItem
  0001:0007C598       TComboBoxExEnumerator.Clone
  0001:0007C5DC       TComboBoxExEnumerator.Create
  0001:0007C618       TComboBoxExEnumerator.GetCount
@@ -4039,29 +4042,28 @@ Detailed map of segments
  0001:00026170       TFont.SetPitch
  0001:00026110       TFont.SetSize
  0001:0002613C       TFont.SetStyle
- 0001:0009A3B8       TForm1.BtnCancelClick
- 0001:0009A000       TForm1.BtnSaveClick
- 0001:0009AC90       TForm1.Button1Click
- 0001:0009B10C       TForm1.Button2Click
- 0001:000994C0       TForm1.DeviceCloseUp
- 0001:0009B634       TForm1.Eintraglschen1Click
- 0001:0009B014       TForm1.FillPhonebook
- 0001:00099928       TForm1.FormClose
- 0001:0009957C       TForm1.FormCreate
- 0001:000993B4       TForm1.GetDeviceList
- 0001:0009B1EC       TForm1.PageControl1Change
- 0001:00099EF4       TForm1.Panel2Click
- 0001:0009A77C       TForm1.ParseCallList
- 0001:0009B278       TForm1.PopupMenu1Popup
- 0001:0009B778       TForm1.reloadCallerListClick
- 0001:0009B698       TForm1.ReloadPhonebookClick
- 0001:0009B378       TForm1.searchNumberClick
- 0001:00098F70       TForm1.SocketMessage
- 0001:00098E68       TForm1.StartSocket
- 0001:00098F64       TForm1.StopSocket
- 0001:00099A18       TForm1.TimerTimer
- 0001:00099EE0       TForm1.TrayMouseDown
- 0001:0009B004       TForm1.viewstatsClick
+ 0001:0009A804       TForm1.BtnCancelClick
+ 0001:0009A44C       TForm1.BtnSaveClick
+ 0001:0009BC58       TForm1.Button1Click
+ 0001:0009990C       TForm1.DeviceCloseUp
+ 0001:0009B964       TForm1.Eintraglschen1Click
+ 0001:0009B458       TForm1.FillPhonebook
+ 0001:00099D74       TForm1.FormClose
+ 0001:000999C8       TForm1.FormCreate
+ 0001:00099800       TForm1.GetDeviceList
+ 0001:0009B550       TForm1.PageControl1Change
+ 0001:0009A340       TForm1.Panel2Click
+ 0001:0009ABC8       TForm1.ParseCallList
+ 0001:0009B5DC       TForm1.PopupMenu1Popup
+ 0001:0009BAB4       TForm1.reloadCallerListClick
+ 0001:0009B9C8       TForm1.ReloadPhonebookClick
+ 0001:0009B6DC       TForm1.searchNumberClick
+ 0001:000993BC       TForm1.SocketMessage
+ 0001:000992B4       TForm1.StartSocket
+ 0001:000993B0       TForm1.StopSocket
+ 0001:00099E64       TForm1.TimerTimer
+ 0001:0009A32C       TForm1.TrayMouseDown
+ 0001:0009B448       TForm1.viewstatsClick
  0001:0006AA24       TGlyphCache.Create
  0001:0006AA68       TGlyphCache.Destroy
  0001:0006AB1C       TGlyphCache.Empty
@@ -4095,8 +4097,8 @@ Detailed map of segments
  0001:0001AA38       THandleStream.Create
  0001:0001AA74       THandleStream.Read
  0001:0001AA94       THandleStream.Seek
- 0001:0001AAD4       THandleStream.SetSize
  0001:0001AAC0       THandleStream.SetSize
+ 0001:0001AAD4       THandleStream.SetSize
  0001:0001AA84       THandleStream.Write
  0001:00022E04       THashedStringList.Changed
  0001:00022E18       THashedStringList.Destroy
@@ -4171,7 +4173,7 @@ Detailed map of segments
  0001:00091940       THttpCli.LocationSessionClosed
  0001:0008E59C       THttpCli.Login
  0001:0008EEEC       THttpCli.Logout
- 0001:00092BCC       THttpCli.PostASync
+ 0001:00092BCC       THttpCli.Post
  0001:0008E0E0       THttpCli.PrepareBasicAuth
  0001:0008DD88       THttpCli.PrepareNTLMAuth
  0001:0008EF08       THttpCli.SendCommand
@@ -4269,8 +4271,8 @@ Detailed map of segments
  0001:00017D0C       TList.Clear
  0001:00017D24       TList.Delete
  0001:00017CB8       TList.Destroy
- 0001:00017DC4       TList.Error
  0001:00017D8C       TList.Error
+ 0001:00017DC4       TList.Error
  0001:00017E18       TList.Expand
  0001:00017E30       TList.First
  0001:00017E38       TList.Get
@@ -4285,8 +4287,8 @@ Detailed map of segments
  0001:00017FD4       TList.Remove
  0001:00018020       TList.SetCapacity
  0001:0001805C       TList.SetCount
- 0001:0006E5EC       TListActionLink.AddItem
  0001:0006E5F0       TListActionLink.AddItem
+ 0001:0006E5EC       TListActionLink.AddItem
  0001:0006E3A4       TListActionLink.IsActiveLinked
  0001:0006E3B8       TListActionLink.IsImagesLinked
  0001:0006E498       TListActionLink.RefreshControl
@@ -4375,15 +4377,15 @@ Detailed map of segments
  0001:000763C4       TListItems.SetCount
  0001:00076428       TListItems.SetUpdateState
  0001:00076B8C       TListItems.WriteItemData
- 0001:0007C410       TListViewActionLink.AddItem
  0001:0007C488       TListViewActionLink.AddItem
+ 0001:0007C410       TListViewActionLink.AddItem
  0001:0007C4C0       TListViewActionLink.SetImages
  0002:0000266C       tlsBuffer
  0001:0000537C       TlsGetValue
  0002:0000009C       TlsIndex
- 0002:FFB63038       TlsLast
+ 0002:FFB62038       TlsLast
  0001:00005384       TlsSetValue
- 0001:0009BC60       TM
+ 0001:0009C044       TM
  0001:000592EC       TMainMenu.GetHandle
  0001:000592C0       TMainMenu.ItemChanged
  0001:0005922C       TMainMenu.MenuChanged
@@ -4871,9 +4873,9 @@ Detailed map of segments
  0001:00008DA0       TryStrToCurr
  0001:0000A6A4       TryStrToDate
  0001:0000A774       TryStrToDateTime
+ 0001:00008D48       TryStrToFloat
  0001:00008D74       TryStrToFloat
  0001:00008D2C       TryStrToFloat
- 0001:00008D48       TryStrToFloat
  0001:00007904       TryStrToInt
  0001:00007924       TryStrToInt64
  0001:0000A70C       TryStrToTime
@@ -4972,11 +4974,11 @@ Detailed map of segments
  0001:0001A618       TStream.GetSize
  0001:0001A810       TStream.ReadBuffer
  0001:0001A974       TStream.ReadComponent
- 0001:0001A7A0       TStream.Seek
  0001:0001A71C       TStream.Seek
+ 0001:0001A7A0       TStream.Seek
  0001:0001A604       TStream.SetPosition
- 0001:0001A67C       TStream.SetSize
  0001:0001A664       TStream.SetSize
+ 0001:0001A67C       TStream.SetSize
  0001:0001A668       TStream.SetSize64
  0001:0001A848       TStream.WriteBuffer
  0001:0001A9D4       TStream.WriteComponent
@@ -5041,8 +5043,8 @@ Detailed map of segments
  0001:00018F58       TStrings.Destroy
  0001:000191F8       TStrings.EndUpdate
  0001:0001920C       TStrings.Equals
- 0001:000192B8       TStrings.Error
  0001:000192F0       TStrings.Error
+ 0001:000192B8       TStrings.Error
  0001:00019348       TStrings.Exchange
  0001:00019434       TStrings.ExtractName
  0001:000194B0       TStrings.GetCapacity
@@ -5132,11 +5134,11 @@ Detailed map of segments
  0001:0002EBB8       TThemeServices.DrawIcon
  0001:0002EC00       TThemeServices.DrawParentBackground
  0001:0002EC68       TThemeServices.DrawText
+ 0001:0002ECD0       TThemeServices.GetElementDetails
  0001:0002ED54       TThemeServices.GetElementDetails
+ 0001:0002ED90       TThemeServices.GetElementDetails
  0001:0002EF44       TThemeServices.GetElementDetails
  0001:0002EE2C       TThemeServices.GetElementDetails
- 0001:0002ED90       TThemeServices.GetElementDetails
- 0001:0002ECD0       TThemeServices.GetElementDetails
  0001:0002EA28       TThemeServices.GetTheme
  0001:0002EA68       TThemeServices.GetThemesEnabled
  0001:0002F2D0       TThemeServices.PaintBorder
@@ -5580,8 +5582,8 @@ Detailed map of segments
  0001:00005844       VirtualAlloc
  0001:00000388       VirtualAlloc
  0001:00000390       VirtualFree
- 0001:00000314       VirtualQuery
  0001:0000584C       VirtualQuery
+ 0001:00000314       VirtualQuery
  0001:00067A48       VVGetAdaptersInfo
  0001:00067B24       VVGetIfTable
  0001:00005854       WaitForSingleObject
@@ -5612,8 +5614,8 @@ Detailed map of segments
  0002:00002D90       WM_TASKBARCREATED
  0002:00000E54       WndProcPtrAtom
  0002:000008E4       WordWraps
- 0002:000008E0       WordWraps
  0002:00000940       WordWraps
+ 0002:000008E0       WordWraps
  0002:00001388       WrapText
  0001:00017B28       WriteCollection
  0001:0001F8B4       WriteCollectionProp
@@ -5731,7 +5733,7 @@ Detailed map of segments
 
   Address         Publics by Value
 
- 0002:FFB63038       TlsLast
+ 0002:FFB62038       TlsLast
  0001:0000023C       GetStdHandle
  0001:00000244       RaiseException
  0001:0000024C       RtlUnwind
@@ -10468,7 +10470,7 @@ Detailed map of segments
  0001:00092A4C       THttpCli.StartProxyAuthBasic
  0001:00092B38       THttpCli.SocketDataSent
  0001:00092BB4       THttpCli.Get
- 0001:00092BCC       THttpCli.PostASync
+ 0001:00092BCC       THttpCli.Post
  0001:00092BE4       GetBaseUrl
  0001:00092C6C       THttpCli.SetRequestVer
  0001:00092D08       EncodeStr
@@ -10543,36 +10545,38 @@ Detailed map of segments
  0001:00098310       Unit2
  0001:00098674       Finalization
  0001:000986A4       statistics
- 0001:00098E68       TForm1.StartSocket
- 0001:00098F64       TForm1.StopSocket
- 0001:00098F70       TForm1.SocketMessage
- 0001:000992E4       GetSessionTraffic
- 0001:000993B4       TForm1.GetDeviceList
- 0001:000994C0       TForm1.DeviceCloseUp
- 0001:0009957C       TForm1.FormCreate
- 0001:00099928       TForm1.FormClose
- 0001:00099A18       TForm1.TimerTimer
- 0001:00099EE0       TForm1.TrayMouseDown
- 0001:00099EF4       TForm1.Panel2Click
- 0001:0009A000       TForm1.BtnSaveClick
- 0001:0009A3B8       TForm1.BtnCancelClick
- 0001:0009A77C       TForm1.ParseCallList
- 0001:0009A9D0       ParsePhoneBook
- 0001:0009AC90       TForm1.Button1Click
- 0001:0009AE48       DeleteEntry
- 0001:0009B004       TForm1.viewstatsClick
- 0001:0009B014       TForm1.FillPhonebook
- 0001:0009B10C       TForm1.Button2Click
- 0001:0009B1EC       TForm1.PageControl1Change
- 0001:0009B278       TForm1.PopupMenu1Popup
- 0001:0009B378       TForm1.searchNumberClick
- 0001:0009B634       TForm1.Eintraglschen1Click
- 0001:0009B698       TForm1.ReloadPhonebookClick
- 0001:0009B778       TForm1.reloadCallerListClick
- 0001:0009B944       Finalization
- 0001:0009B9A0       main
- 0001:0009B9A8       Finalization
- 0001:0009BC60       TM
+ 0001:00098E38       httpget
+ 0001:00099064       httppost
+ 0001:000992B4       TForm1.StartSocket
+ 0001:000993B0       TForm1.StopSocket
+ 0001:000993BC       TForm1.SocketMessage
+ 0001:00099730       GetSessionTraffic
+ 0001:00099800       TForm1.GetDeviceList
+ 0001:0009990C       TForm1.DeviceCloseUp
+ 0001:000999C8       TForm1.FormCreate
+ 0001:00099D74       TForm1.FormClose
+ 0001:00099E64       TForm1.TimerTimer
+ 0001:0009A32C       TForm1.TrayMouseDown
+ 0001:0009A340       TForm1.Panel2Click
+ 0001:0009A44C       TForm1.BtnSaveClick
+ 0001:0009A804       TForm1.BtnCancelClick
+ 0001:0009ABC8       TForm1.ParseCallList
+ 0001:0009AE1C       ParsePhoneBook
+ 0001:0009B0DC       AddEntry
+ 0001:0009B2F8       DeleteEntry
+ 0001:0009B448       TForm1.viewstatsClick
+ 0001:0009B458       TForm1.FillPhonebook
+ 0001:0009B550       TForm1.PageControl1Change
+ 0001:0009B5DC       TForm1.PopupMenu1Popup
+ 0001:0009B6DC       TForm1.searchNumberClick
+ 0001:0009B964       TForm1.Eintraglschen1Click
+ 0001:0009B9C8       TForm1.ReloadPhonebookClick
+ 0001:0009BAB4       TForm1.reloadCallerListClick
+ 0001:0009BC58       TForm1.Button1Click
+ 0001:0009BD28       Finalization
+ 0001:0009BD84       main
+ 0001:0009BD8C       Finalization
+ 0001:0009C044       TM
  0002:00000000       ExitCode
  0002:00000004       ErrorAddr
  0002:00000008       FileMode
@@ -12459,8 +12463,8 @@ Line numbers for HttpProt(httpprot.pas) segment .text
   3636 0001:00092B49  3637 0001:00092B61  3638 0001:00092B65  3639 0001:00092B6C
   3640 0001:00092B76  3643 0001:00092B78  3644 0001:00092B7C  3645 0001:00092B89
   3646 0001:00092B9B  3648 0001:00092BAE  3654 0001:00092BB4  3655 0001:00092BB7
-  3656 0001:00092BBF  3657 0001:00092BC9  3716 0001:00092BCC  3717 0001:00092BCF
-  3718 0001:00092BD7  3719 0001:00092BE1  3743 0001:00092BE4  3744 0001:00092BEE
+  3656 0001:00092BBF  3657 0001:00092BC9  3672 0001:00092BCC  3673 0001:00092BCF
+  3674 0001:00092BD7  3675 0001:00092BE1  3743 0001:00092BE4  3744 0001:00092BEE
   3746 0001:00092BF5  3745 0001:00092BFF  3747 0001:00092C21  3749 0001:00092C2D
   3748 0001:00092C37  3750 0001:00092C58  3751 0001:00092C67  3756 0001:00092C6C
   3757 0001:00092C75  3758 0001:00092C84  3759 0001:00092CA0  3761 0001:00092CAF
@@ -12838,107 +12842,115 @@ Line numbers for statistics(statistics.pas) segment .text
 
 Line numbers for main(main.pas) segment .text
 
-   148 0001:00098E68   149 0001:00098E7F   150 0001:00098EAA   151 0001:00098ED1
-   152 0001:00098EE1   153 0001:00098F03   157 0001:00098F64   158 0001:00098F6F
-   164 0001:00098F70   165 0001:00098F96   167 0001:00098FA0   168 0001:00098FAE
-   169 0001:00098FBA   171 0001:00098FE0   172 0001:00098FEE   173 0001:00098FFA
-   175 0001:0009901B   177 0001:0009903D   178 0001:00099054   179 0001:00099078
-   180 0001:0009909C   181 0001:000990D0   185 0001:000990E1   188 0001:00099110
-   190 0001:00099132   191 0001:00099149   192 0001:0009916D   193 0001:000991B8
-   194 0001:000991EC   196 0001:000991F8   198 0001:000991FF   199 0001:00099228
-   207 0001:000992E4   208 0001:000992F3   209 0001:000992F8   210 0001:000992FD
-   211 0001:0009930C   212 0001:0009931A   213 0001:00099328   216 0001:0009932E
-   217 0001:0009933D   219 0001:0009934A   220 0001:0009935D   222 0001:0009936E
-   223 0001:0009937D   225 0001:0009938C   217 0001:0009938D   228 0001:0009939D
-   230 0001:000993AD   236 0001:000993B4   237 0001:000993D1   238 0001:000993DF
-   240 0001:000993EA   241 0001:000993F8   242 0001:000993FE   244 0001:00099404
-   245 0001:0009945A   241 0001:00099462   248 0001:00099477   249 0001:0009949E
-   253 0001:000994C0   254 0001:000994D7   255 0001:000994F7   256 0001:00099514
-   258 0001:00099530   259 0001:0009955E   265 0001:0009957C   266 0001:0009959E
-   268 0001:000995AD   270 0001:000995E4   271 0001:000995EB   273 0001:00099605
-   274 0001:00099621   275 0001:0009966D   273 0001:0009967E   277 0001:00099683
-   278 0001:0009968C   280 0001:00099697   284 0001:000996AB   286 0001:000996E0
-   287 0001:00099715   288 0001:00099727   292 0001:00099730   293 0001:00099738
-   294 0001:00099740   295 0001:00099748   296 0001:00099750   297 0001:00099758
-   298 0001:00099760   299 0001:00099768   300 0001:00099770   301 0001:0009977C
-   302 0001:00099788   305 0001:00099796   306 0001:0009979E   307 0001:000997A6
-   308 0001:000997AE   309 0001:000997B6   311 0001:000997C7   312 0001:000997D7
-   313 0001:000997E7   314 0001:00099807   316 0001:00099827   317 0001:0009983B
-   318 0001:00099856   320 0001:00099887   324 0001:00099928   325 0001:00099942
-   326 0001:0009997A   327 0001:00099992   328 0001:000999AA   329 0001:000999BC
-   331 0001:000999C3   333 0001:000999CE   334 0001:000999FB   345 0001:00099A18
-   347 0001:00099A48   348 0001:00099A4C   350 0001:00099A5D   351 0001:00099A69
-   353 0001:00099A75   354 0001:00099ABB   356 0001:00099B01   357 0001:00099B22
-   359 0001:00099B43   360 0001:00099B75   362 0001:00099BA7   364 0001:00099BC9
-   365 0001:00099BE3   366 0001:00099BFD   367 0001:00099C17   368 0001:00099C30
-   370 0001:00099C4D   372 0001:00099C53   373 0001:00099C60   375 0001:00099C6D
-   376 0001:00099C79   377 0001:00099C8C   378 0001:00099CA5   379 0001:00099CC2
-   380 0001:00099CD6   381 0001:00099CEE   382 0001:00099D02   385 0001:00099D18
-   387 0001:00099D22   389 0001:00099D2E   390 0001:00099D34   392 0001:00099D49
-   394 0001:00099D64   395 0001:00099D6A   397 0001:00099D85   399 0001:00099D98
-   402 0001:00099DE8   404 0001:00099E1F   408 0001:00099EE0   409 0001:00099EE3
-   410 0001:00099EEE   413 0001:00099EF4   414 0001:00099EF7   416 0001:00099F03
-   417 0001:00099F22   418 0001:00099F2F   419 0001:00099F3C   420 0001:00099F43
-   424 0001:00099F55   425 0001:00099F74   426 0001:00099F81   427 0001:00099F8C
-   428 0001:00099F93   430 0001:00099FA3   434 0001:0009A000   437 0001:0009A01E
-   438 0001:0009A036   440 0001:0009A052   441 0001:0009A071   442 0001:0009A095
-   443 0001:0009A0C1   444 0001:0009A0DA   445 0001:0009A0FE   446 0001:0009A122
-   447 0001:0009A154   449 0001:0009A16E   450 0001:0009A192   451 0001:0009A1B9
-   452 0001:0009A1E5   453 0001:0009A20F   456 0001:0009A21A   458 0001:0009A248
-   459 0001:0009A297   462 0001:0009A3B8   463 0001:0009A3D5   464 0001:0009A3F5
-   466 0001:0009A408   467 0001:0009A42F   469 0001:0009A457   470 0001:0009A47E
-   471 0001:0009A4A5   473 0001:0009A4DB   474 0001:0009A502   475 0001:0009A52D
-   477 0001:0009A558   478 0001:0009A582   480 0001:0009A5AB   481 0001:0009A5D5
-   483 0001:0009A5FE   484 0001:0009A64A   496 0001:0009A77C   497 0001:0009A7A9
-   498 0001:0009A7B7   499 0001:0009A7C5   501 0001:0009A7D3   504 0001:0009A7E8
-   505 0001:0009A7F4   506 0001:0009A813   507 0001:0009A822   508 0001:0009A82F
-   510 0001:0009A83C   512 0001:0009A84C   513 0001:0009A859   514 0001:0009A87B
-   516 0001:0009A886   518 0001:0009A89E   519 0001:0009A8A5   520 0001:0009A8BF
-   522 0001:0009A8CB   523 0001:0009A8D6   524 0001:0009A8ED   525 0001:0009A8F6
-   527 0001:0009A900   516 0001:0009A903   530 0001:0009A908   531 0001:0009A90F
-   533 0001:0009A916   534 0001:0009A922   535 0001:0009A93A   536 0001:0009A94D
-   538 0001:0009A983   547 0001:0009A9D0   549 0001:0009A9F2   551 0001:0009A9FD
-   553 0001:0009AA0B   554 0001:0009AA28   555 0001:0009AA36   556 0001:0009AA42
-   558 0001:0009AA4E   559 0001:0009AA5A   560 0001:0009AA74   561 0001:0009AA8F
-   563 0001:0009AAAE   564 0001:0009AAD2   565 0001:0009AAE0   566 0001:0009AB19
-   567 0001:0009AB53   568 0001:0009AB8D   569 0001:0009ABC7   560 0001:0009ABCA
-   575 0001:0009ABD3   576 0001:0009ABDA   579 0001:0009AC0E   585 0001:0009AC90
-   586 0001:0009ACA5   587 0001:0009ACCA   588 0001:0009ACE4   589 0001:0009ACEB
-   590 0001:0009ACFE   591 0001:0009AD0F   593 0001:0009AD1D   594 0001:0009AD3D
-   595 0001:0009AD57   596 0001:0009AD5E   597 0001:0009AD6F   598 0001:0009AD80
-   599 0001:0009ADA3   622 0001:0009AE48   624 0001:0009AE86   627 0001:0009AEB5
-   628 0001:0009AED1   629 0001:0009AEEC   630 0001:0009AF03   631 0001:0009AF1D
-   632 0001:0009AF3D   633 0001:0009AF7D   638 0001:0009B004   639 0001:0009B010
-   650 0001:0009B014   652 0001:0009B02D   654 0001:0009B03B   655 0001:0009B047
-   657 0001:0009B053   658 0001:0009B068   660 0001:0009B076   663 0001:0009B08B
-   665 0001:0009B092   666 0001:0009B0A5   667 0001:0009B0B5   669 0001:0009B0C5
-   670 0001:0009B0D0   671 0001:0009B0DA   673 0001:0009B0EA   660 0001:0009B0EB
-   676 0001:0009B105   679 0001:0009B10C   680 0001:0009B110   681 0001:0009B135
-   682 0001:0009B14F   683 0001:0009B156   684 0001:0009B167   685 0001:0009B16E
-   686 0001:0009B17F   687 0001:0009B18D   690 0001:0009B1EC   691 0001:0009B1EF
-   693 0001:0009B206   694 0001:0009B213   696 0001:0009B222   698 0001:0009B22E
-   699 0001:0009B239   703 0001:0009B248   705 0001:0009B256   706 0001:0009B263
-   711 0001:0009B274   715 0001:0009B278   716 0001:0009B291   718 0001:0009B2A2
-   719 0001:0009B2CF   720 0001:0009B2EC   722 0001:0009B30A   723 0001:0009B349
-   729 0001:0009B378   732 0001:0009B395   733 0001:0009B3C2   735 0001:0009B3DF
-   736 0001:0009B3ED   737 0001:0009B405   738 0001:0009B41F   739 0001:0009B426
-   740 0001:0009B42E   741 0001:0009B443   742 0001:0009B46C   743 0001:0009B477
-   744 0001:0009B483   746 0001:0009B491   747 0001:0009B4B1   750 0001:0009B4C5
-   751 0001:0009B4D1   753 0001:0009B4DF   754 0001:0009B4FF   757 0001:0009B513
-   758 0001:0009B524   759 0001:0009B532   760 0001:0009B55B   763 0001:0009B634
-   765 0001:0009B638   767 0001:0009B649   768 0001:0009B674   771 0001:0009B693
-   774 0001:0009B698   775 0001:0009B69C   776 0001:0009B6C1   777 0001:0009B6DB
-   778 0001:0009B6E2   779 0001:0009B6F3   780 0001:0009B6FA   781 0001:0009B70B
-   782 0001:0009B719   786 0001:0009B778   787 0001:0009B78D   788 0001:0009B7A5
-   789 0001:0009B7C5   791 0001:0009B7D0   792 0001:0009B7DA   794 0001:0009B7E8
-   795 0001:0009B808   796 0001:0009B822   797 0001:0009B829   798 0001:0009B83C
-   799 0001:0009B84D   800 0001:0009B85B   801 0001:0009B87D   803 0001:0009B9A0
-   803 0001:0009B9A7
+   145 0001:00098E38   146 0001:00098E5A   148 0001:00098E67   151 0001:00098E77
+   153 0001:00098E83   154 0001:00098E90   155 0001:00098EA0   156 0001:00098EB0
+   157 0001:00098EB7   158 0001:00098EC7   159 0001:00098ED3   160 0001:00098EDF
+   161 0001:00098EE6   162 0001:00098EF0   163 0001:00098EFA   164 0001:00098F04
+   168 0001:00098F11   169 0001:00098F1F   170 0001:00098F33   172 0001:00098F3A
+   173 0001:00098F49   175 0001:00098F60   176 0001:00098F6B   178 0001:00098F73
+   179 0001:00098F97   183 0001:00099064   184 0001:00099090   187 0001:000990A0
+   188 0001:000990AC   189 0001:000990BA   190 0001:000990C7   191 0001:000990D7
+   192 0001:000990E7   193 0001:000990EE   194 0001:000990FE   195 0001:0009910A
+   196 0001:00099116   197 0001:0009911D   198 0001:00099127   199 0001:00099131
+   200 0001:0009913B   204 0001:00099148   205 0001:0009915C   206 0001:00099177
+   207 0001:00099186   208 0001:00099198   209 0001:000991A6   211 0001:000991AD
+   212 0001:000991B8   213 0001:000991C0   214 0001:000991E9   217 0001:000992B4
+   218 0001:000992CB   219 0001:000992F6   220 0001:0009931D   221 0001:0009932D
+   222 0001:0009934F   226 0001:000993B0   227 0001:000993BB   233 0001:000993BC
+   234 0001:000993E2   236 0001:000993EC   237 0001:000993FA   238 0001:00099406
+   240 0001:0009942C   241 0001:0009943A   242 0001:00099446   244 0001:00099467
+   246 0001:00099489   247 0001:000994A0   248 0001:000994C4   249 0001:000994E8
+   250 0001:0009951C   254 0001:0009952D   257 0001:0009955C   259 0001:0009957E
+   260 0001:00099595   261 0001:000995B9   262 0001:00099604   263 0001:00099638
+   265 0001:00099644   267 0001:0009964B   268 0001:00099674   276 0001:00099730
+   277 0001:0009973F   278 0001:00099744   279 0001:00099749   280 0001:00099758
+   281 0001:00099766   282 0001:00099774   285 0001:0009977A   286 0001:00099789
+   288 0001:00099796   289 0001:000997A9   291 0001:000997BA   292 0001:000997C9
+   294 0001:000997D8   286 0001:000997D9   297 0001:000997E9   299 0001:000997F9
+   305 0001:00099800   306 0001:0009981D   307 0001:0009982B   309 0001:00099836
+   310 0001:00099844   311 0001:0009984A   313 0001:00099850   314 0001:000998A6
+   310 0001:000998AE   317 0001:000998C3   318 0001:000998EA   322 0001:0009990C
+   323 0001:00099923   324 0001:00099943   325 0001:00099960   327 0001:0009997C
+   328 0001:000999AA   334 0001:000999C8   335 0001:000999EA   337 0001:000999F9
+   339 0001:00099A30   340 0001:00099A37   342 0001:00099A51   343 0001:00099A6D
+   344 0001:00099AB9   342 0001:00099ACA   346 0001:00099ACF   347 0001:00099AD8
+   349 0001:00099AE3   353 0001:00099AF7   355 0001:00099B2C   356 0001:00099B61
+   357 0001:00099B73   361 0001:00099B7C   362 0001:00099B84   363 0001:00099B8C
+   364 0001:00099B94   365 0001:00099B9C   366 0001:00099BA4   367 0001:00099BAC
+   368 0001:00099BB4   369 0001:00099BBC   370 0001:00099BC8   371 0001:00099BD4
+   374 0001:00099BE2   375 0001:00099BEA   376 0001:00099BF2   377 0001:00099BFA
+   378 0001:00099C02   380 0001:00099C13   381 0001:00099C23   382 0001:00099C33
+   383 0001:00099C53   385 0001:00099C73   386 0001:00099C87   387 0001:00099CA2
+   389 0001:00099CD3   393 0001:00099D74   394 0001:00099D8E   395 0001:00099DC6
+   396 0001:00099DDE   397 0001:00099DF6   398 0001:00099E08   400 0001:00099E0F
+   402 0001:00099E1A   403 0001:00099E47   414 0001:00099E64   416 0001:00099E94
+   417 0001:00099E98   419 0001:00099EA9   420 0001:00099EB5   422 0001:00099EC1
+   423 0001:00099F07   425 0001:00099F4D   426 0001:00099F6E   428 0001:00099F8F
+   429 0001:00099FC1   431 0001:00099FF3   433 0001:0009A015   434 0001:0009A02F
+   435 0001:0009A049   436 0001:0009A063   437 0001:0009A07C   439 0001:0009A099
+   441 0001:0009A09F   442 0001:0009A0AC   444 0001:0009A0B9   445 0001:0009A0C5
+   446 0001:0009A0D8   447 0001:0009A0F1   448 0001:0009A10E   449 0001:0009A122
+   450 0001:0009A13A   451 0001:0009A14E   454 0001:0009A164   456 0001:0009A16E
+   458 0001:0009A17A   459 0001:0009A180   461 0001:0009A195   463 0001:0009A1B0
+   464 0001:0009A1B6   466 0001:0009A1D1   468 0001:0009A1E4   471 0001:0009A234
+   473 0001:0009A26B   477 0001:0009A32C   478 0001:0009A32F   479 0001:0009A33A
+   482 0001:0009A340   483 0001:0009A343   485 0001:0009A34F   486 0001:0009A36E
+   487 0001:0009A37B   488 0001:0009A388   489 0001:0009A38F   493 0001:0009A3A1
+   494 0001:0009A3C0   495 0001:0009A3CD   496 0001:0009A3D8   497 0001:0009A3DF
+   499 0001:0009A3EF   503 0001:0009A44C   506 0001:0009A46A   507 0001:0009A482
+   509 0001:0009A49E   510 0001:0009A4BD   511 0001:0009A4E1   512 0001:0009A50D
+   513 0001:0009A526   514 0001:0009A54A   515 0001:0009A56E   516 0001:0009A5A0
+   518 0001:0009A5BA   519 0001:0009A5DE   520 0001:0009A605   521 0001:0009A631
+   522 0001:0009A65B   525 0001:0009A666   527 0001:0009A694   528 0001:0009A6E3
+   531 0001:0009A804   532 0001:0009A821   533 0001:0009A841   535 0001:0009A854
+   536 0001:0009A87B   538 0001:0009A8A3   539 0001:0009A8CA   540 0001:0009A8F1
+   542 0001:0009A927   543 0001:0009A94E   544 0001:0009A979   546 0001:0009A9A4
+   547 0001:0009A9CE   549 0001:0009A9F7   550 0001:0009AA21   552 0001:0009AA4A
+   553 0001:0009AA96   565 0001:0009ABC8   566 0001:0009ABF5   567 0001:0009AC03
+   568 0001:0009AC11   570 0001:0009AC1F   573 0001:0009AC34   574 0001:0009AC40
+   575 0001:0009AC5F   576 0001:0009AC6E   577 0001:0009AC7B   579 0001:0009AC88
+   581 0001:0009AC98   582 0001:0009ACA5   583 0001:0009ACC7   585 0001:0009ACD2
+   587 0001:0009ACEA   588 0001:0009ACF1   589 0001:0009AD0B   591 0001:0009AD17
+   592 0001:0009AD22   593 0001:0009AD39   594 0001:0009AD42   596 0001:0009AD4C
+   585 0001:0009AD4F   599 0001:0009AD54   600 0001:0009AD5B   602 0001:0009AD62
+   603 0001:0009AD6E   604 0001:0009AD86   605 0001:0009AD99   607 0001:0009ADCF
+   616 0001:0009AE1C   618 0001:0009AE3E   620 0001:0009AE49   622 0001:0009AE57
+   623 0001:0009AE74   624 0001:0009AE82   625 0001:0009AE8E   627 0001:0009AE9A
+   628 0001:0009AEA6   629 0001:0009AEC0   630 0001:0009AEDB   632 0001:0009AEFA
+   633 0001:0009AF1E   634 0001:0009AF2C   635 0001:0009AF65   636 0001:0009AF9F
+   637 0001:0009AFD9   638 0001:0009B013   629 0001:0009B016   644 0001:0009B01F
+   645 0001:0009B026   648 0001:0009B05A   654 0001:0009B0DC   655 0001:0009B115
+   656 0001:0009B12B   662 0001:0009B1C5   663 0001:0009B22A   668 0001:0009B2F8
+   669 0001:0009B333   671 0001:0009B362   672 0001:0009B3C2   677 0001:0009B448
+   678 0001:0009B454   689 0001:0009B458   691 0001:0009B471   693 0001:0009B47F
+   694 0001:0009B48B   696 0001:0009B497   697 0001:0009B4AC   699 0001:0009B4BA
+   702 0001:0009B4CF   704 0001:0009B4D6   705 0001:0009B4E9   706 0001:0009B4F9
+   708 0001:0009B509   709 0001:0009B514   710 0001:0009B51E   712 0001:0009B52E
+   699 0001:0009B52F   715 0001:0009B549   718 0001:0009B550   719 0001:0009B553
+   721 0001:0009B56A   722 0001:0009B577   724 0001:0009B586   726 0001:0009B592
+   727 0001:0009B59D   731 0001:0009B5AC   733 0001:0009B5BA   734 0001:0009B5C7
+   739 0001:0009B5D8   743 0001:0009B5DC   744 0001:0009B5F5   746 0001:0009B606
+   747 0001:0009B633   748 0001:0009B650   750 0001:0009B66E   751 0001:0009B6AD
+   759 0001:0009B6DC   763 0001:0009B6FA   764 0001:0009B727   766 0001:0009B744
+   768 0001:0009B752   769 0001:0009B763   770 0001:0009B773   772 0001:0009B77E
+   773 0001:0009B786   774 0001:0009B792   775 0001:0009B7A6   776 0001:0009B7B1
+   777 0001:0009B7BD   779 0001:0009B7CB   780 0001:0009B7EB   783 0001:0009B7FF
+   784 0001:0009B80B   786 0001:0009B819   787 0001:0009B839   790 0001:0009B84D
+   791 0001:0009B855   792 0001:0009B88B   795 0001:0009B964   797 0001:0009B968
+   799 0001:0009B979   800 0001:0009B9A4   803 0001:0009B9C3   808 0001:0009B9C8
+   809 0001:0009B9E4   810 0001:0009B9F5   811 0001:0009BA12   813 0001:0009BA1D
+   814 0001:0009BA25   815 0001:0009BA2C   816 0001:0009BA51   822 0001:0009BAB4
+   823 0001:0009BAD0   824 0001:0009BAE1   825 0001:0009BAFE   826 0001:0009BB09
+   827 0001:0009BB11   829 0001:0009BB1B   830 0001:0009BB2C   831 0001:0009BB49
+   832 0001:0009BB54   833 0001:0009BB5E   834 0001:0009BB6B   835 0001:0009BB90
+   839 0001:0009BC58   841 0001:0009BC7A   842 0001:0009BC87   843 0001:0009BC94
+   844 0001:0009BCA1   845 0001:0009BCAE   846 0001:0009BCB5   848 0001:0009BCB9
+   850 0001:0009BCE4   852 0001:0009BD84   852 0001:0009BD8B
 
 Line numbers for TM(C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\TM.dpr) segment .text
 
-    11 0001:0009BC60    12 0001:0009BC70    13 0001:0009BC7C    14 0001:0009BC94
-    15 0001:0009BCAC    16 0001:0009BCC4    17 0001:0009BCD0
+    11 0001:0009C044    12 0001:0009C054    13 0001:0009C060    14 0001:0009C078
+    15 0001:0009C090    16 0001:0009C0A8    17 0001:0009C0B4
 
 Bound resource files
 
@@ -12952,4 +12964,4 @@ TM.res
 TM.drf
 
 
-Program entry point at 0001:0009BC60
+Program entry point at 0001:0009C044

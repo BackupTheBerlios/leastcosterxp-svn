@@ -102,7 +102,7 @@ object Form1: TForm1
             Width = 185
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             ItemIndex = 0
             TabOrder = 0
             Text = 'Upload + Download'
@@ -117,7 +117,7 @@ object Form1: TForm1
             Width = 185
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             ItemIndex = 2
             TabOrder = 1
             Text = 'Month'
@@ -229,7 +229,7 @@ object Form1: TForm1
               Width = 57
               Height = 21
               Style = csDropDownList
-              ItemHeight = 0
+              ItemHeight = 13
               ItemIndex = 0
               TabOrder = 0
               Text = '1st'
@@ -281,7 +281,7 @@ object Form1: TForm1
             Width = 313
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             TabOrder = 0
             OnCloseUp = DeviceCloseUp
           end
@@ -330,24 +330,6 @@ object Form1: TForm1
           TabOrder = 2
           Text = '1012'
         end
-        object Button1: TButton
-          Left = 224
-          Top = 168
-          Width = 75
-          Height = 25
-          Caption = 'Button1'
-          TabOrder = 3
-          OnClick = Button1Click
-        end
-        object Button2: TButton
-          Left = 224
-          Top = 136
-          Width = 75
-          Height = 25
-          Caption = 'Button2'
-          TabOrder = 4
-          OnClick = Button2Click
-        end
         object Memo1: TMemo
           Left = 16
           Top = 144
@@ -355,7 +337,16 @@ object Form1: TForm1
           Height = 89
           Lines.Strings = (
             'Memo1')
-          TabOrder = 5
+          TabOrder = 3
+        end
+        object Button1: TButton
+          Left = 304
+          Top = 128
+          Width = 75
+          Height = 25
+          Caption = 'Button1'
+          TabOrder = 4
+          OnClick = Button1Click
         end
       end
     end
@@ -365,7 +356,7 @@ object Form1: TForm1
     Top = 0
     Width = 416
     Height = 275
-    ActivePage = TabSheet3
+    ActivePage = TabSheet2
     Align = alTop
     PopupMenu = PopupMenu1
     TabOrder = 2
@@ -566,24 +557,6 @@ object Form1: TForm1
     OnMouseDown = TrayMouseDown
     Left = 344
     Top = 352
-  end
-  object Http: THttpCli
-    LocalAddr = '192.168.178.1'
-    ProxyPort = '80'
-    Agent = 'Mozilla/4.0 (compatible; ICS)'
-    Accept = 'image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*'
-    NoCache = False
-    ContentTypePost = 'application/x-www-form-urlencoded'
-    MultiThreaded = False
-    RequestVer = '1.0'
-    FollowRelocation = True
-    LocationChangeMaxCount = 5
-    BandwidthLimit = 10000
-    BandwidthSampling = 1000
-    Options = []
-    SocksAuthentication = socksNoAuthentication
-    Left = 336
-    Top = 384
   end
   object PopupMenu1: TPopupMenu
     OnPopup = PopupMenu1Popup

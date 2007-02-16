@@ -74,13 +74,15 @@ type
     FBIP: TLabeledEdit;
     FBPort: TLabeledEdit;
     Label7: TLabel;
-    Button1: TButton;
-    Http: THttpCli;
-    Button2: TButton;
     Memo1: TMemo;
+    PopupMenu1: TPopupMenu;
+    searchNumber: TMenuItem;
+    PopupMenu2: TPopupMenu;
+    Eintraglschen1: TMenuItem;
+    ReloadPhonebook: TMenuItem;
+    reloadCallerList: TMenuItem;
     PageControl1: TPageControl;
     TabSheet2: TTabSheet;
-    TabSheet3: TTabSheet;
     Label8: TLabel;
     Label9: TLabel;
     LimitLabel: TLabel;
@@ -88,25 +90,20 @@ type
     Edit2: TEdit;
     Edit3: TEdit;
     Edit4: TEdit;
-    CallerList: TListView;
     viewstats: TBitBtn;
+    TabSheet3: TTabSheet;
+    CallerList: TListView;
     TabSheet4: TTabSheet;
     PhoneBookList: TListView;
-    PopupMenu1: TPopupMenu;
-    searchNumber: TMenuItem;
-    PopupMenu2: TPopupMenu;
-    Eintraglschen1: TMenuItem;
-    ReloadPhonebook: TMenuItem;
-    reloadCallerList: TMenuItem;
+    Button1: TButton;
+    procedure Button1Click(Sender: TObject);
     procedure reloadCallerListClick(Sender: TObject);
     procedure ReloadPhonebookClick(Sender: TObject);
     procedure Eintraglschen1Click(Sender: TObject);
     procedure searchNumberClick(Sender: TObject);
     procedure PopupMenu1Popup(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
     procedure viewstatsClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure BtnCancelClick(Sender: TObject);
     procedure BtnSaveClick(Sender: TObject);
     procedure Panel2Click(Sender: TObject);
@@ -139,10 +136,82 @@ var
   PhoneBook: array of TPerson;
   Caller   : array of TCaller;
   BoxAdress: string;
-  
+
 implementation
 uses RegExpr, Unit2, statistics;
 
+procedure httpget(URL: string; var str: TStringStream);
+var Http: THttpCli;
+begin
+  if BoxAdress = '' then exit;
+
+  Http := THttpCli.Create(nil);
+  with Http do
+  begin
+    Name := 'Http';
+//    LocalAddr := BoxAdress;
+    ProxyPort := '80';
+    Agent := 'Mozilla/4.0 (compatible; ICS)';
+    Accept := 'image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*';
+    NoCache := true;
+    ContentTypePost := 'application/x-www-form-urlencoded';
+    MultiThreaded := False;
+    RequestVer := '1.0';
+    FollowRelocation := True;
+    LocationChangeMaxCount := 5;
+    BandwidthLimit := 10000;
+    BandwidthSampling := 1000;
+    Options := [];
+//    SocksAuthentication := socksNoAuthentication;
+  end;
+
+  http.URL:= URL;
+  http.RcvdStream:= TStringStream.Create('');
+  http.get;
+
+  http.RcvdStream.Position:= 0;
+  str.CopyFrom(http.RcvdStream,http.RcvdStream.size);
+
+  http.RcvdStream.free;
+  http.RcvdStream:= nil;
+
+  http.Free;
+end;
+
+procedure httppost(URL,Data: string);
+var Http: THttpCli;
+begin
+  Http := THttpCli.Create(nil);
+  with Http do
+  begin
+    Name := 'Http';
+    LocalAddr := BoxAdress;
+    ProxyPort := '80';
+    Agent := 'Mozilla/4.0 (compatible; ICS)';
+    Accept := 'image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*';
+    NoCache := true;
+    ContentTypePost := 'application/x-www-form-urlencoded';
+    MultiThreaded := False;
+    RequestVer := '1.0';
+    FollowRelocation := True;
+    LocationChangeMaxCount := 5;
+    BandwidthLimit := 10000;
+    BandwidthSampling := 1000;
+    Options := [];
+//    SocksAuthentication := socksNoAuthentication;
+  end;
+
+  Http.SendStream := TMemoryStream.Create;
+  Http.SendStream.Write(Data[1], Length(Data));
+  Http.SendStream.Seek(0, 0);
+  Http.RcvdStream := TMemoryStream.Create;
+  Http.URL := URL;
+  Http.Post;
+
+  http.RcvdStream.Free;
+  http.RcvdStream:= nil;
+  http.Free;
+end;
 
 procedure TForm1.StartSocket;
 begin
@@ -579,63 +648,33 @@ begin
 end;
 
 
-procedure TForm1.Button1Click(Sender: TObject);
-var stream: TMemoryStream;
-    s: string;
-begin
- http.URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/FRITZ!Box_Anrufliste.csv';
- http.RcvdStream:= TStringStream.Create('');
- http.get;
- ParseCallList(http.RcvdStream);
- http.RcvdStream.free;
- http.RcvdStream:= nil;
-
- http.URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/fon/ppFonbuch.html&var:lang=de';
- http.RcvdStream:= TStringStream.Create('');
- http.get;
- ParsePhonebook(http.RcvdStream);
- http.RcvdStream.free;
- http.RcvdStream:= nil;
-end;
-
 Procedure AddEntry(Entry: TPerson);
 var Data : String;
-    EName: string;  
+    EName: string;
 begin
  if entry.important then EName:= '!'+Entry.Name;
- Data := 'telcfg:settings/HotDialEntry'+inttostr(Entry.No)+'/Code='+ inttostr(Entry.No) + '&' +
+ Data := 'telcfg:settings/HotDialEntry'+inttostr(Entry.No)+'/Code=0'+ inttostr(Entry.No) + '&' +
          'telcfg:settings/HotDialEntry'+inttostr(Entry.No)+'/Vanity=' + '&' +
          'telcfg:settings/HotDialEntry'+inttostr(Entry.No)+'/Number='+Entry.Number + '&' +
          'telcfg:settings/HotDialEntry'+inttostr(Entry.No)+'/Name='+ EName + '&' +
          'Submit=Submit';
- Form1.Http.SendStream := TMemoryStream.Create;
- Form1.Http.SendStream.Write(Data[1], Length(Data));
- Form1.Http.SendStream.Seek(0, 0);
- Form1.Http.RcvdStream := TMemoryStream.Create;
- Form1.Http.URL := 'http://'+BoxAdress+'/cgi-bin/webcm';
- Form1.Http.PostAsync;
+
+ httppost('http://'+BoxAdress+'/cgi-bin/webcm', Data);
 end;
 
 Procedure DeleteEntry(Entry: TPerson);
 var
     Data : String;
 begin
-
     Data:= 'telcfg:command/HotDialEntry'+inttostr(Entry.No)+'=delete'+'&' +
            'Submit=Submit';
-//    showmessage(Data);
-    Form1.Http.SendStream := TMemoryStream.Create;
-    Form1.Http.SendStream.Write(Data[1], Length(Data));
-    Form1.Http.SendStream.Seek(0, 0);
-    Form1.Http.RcvdStream := TMemoryStream.Create;
-    Form1.Http.URL := 'http://'+BoxAdress+'/cgi-bin/webcm';
-    Form1.Http.PostAsync;
+    httppost('http://'+BoxAdress+'/cgi-bin/webcm', Data);
 end;
 
 
 procedure TForm1.viewstatsClick(Sender: TObject);
 begin
-stats.show;
+ stats.show;
 end;
 
 procedure TForm1.FillPhonebook;
@@ -673,17 +712,6 @@ begin
    end;
 
 
-end;
-
-procedure TForm1.Button2Click(Sender: TObject);
-begin
- http.URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/fon/ppFonbuch.html&var:lang=de';
- http.RcvdStream:= TStringStream.Create('');
- http.get;
- ParsePhonebook(http.RcvdStream);
- FillPhoneBook;
- http.RcvdStream.free;
- http.RcvdStream:= nil;
 end;
 
 procedure TForm1.PageControl1Change(Sender: TObject);
@@ -726,37 +754,41 @@ procedure TForm1.searchNumberClick(Sender: TObject);
 var s,s2: string;
     r: TRegExpr;
     number: string;
+    url: string;
+    str: TStringStream;
 begin
+
 //http://www1.dasoertliche.de/?form_name=search_inv&ph=%Number%
 
  number:=Callerlist.Items[Callerlist.itemindex].SubItems.strings[2];
  if length(number) <= 8 then number := '030' + number;
 
  r:= TRegExpr.create;
- http.URL:= 'http://www1.dasoertliche.de/?form_name=search_inv&ph='+number;
- http.RcvdStream:= TStringStream.Create('');
- http.get;
- s:= '';
- http.RcvdStream.Position:=0;
- s:= (http.RcvdStream as TStringStream).ReadString(http.RcvdStream.size);
- s2:= s;
- r.Expression:= '.*title=\"Details zu diesem Eintrag anzeigen\" class=\"entry\">([\w\s]*)</a>.*';
- if r.Exec(s) then
- begin
-   s:= r.Replace(s,'$1',true);
-   memo1.Lines.Add(s);
- end;
-// r.Expression:= '<\/div>([\w\s]*)<br>.*<input name=\"notepadItemsHitList\"';
- r.Expression:= '.*div>([\w\s]*)<br>.*';
- if r.Exec(s2) then
- begin
-   s2:= r.Replace(s2,'$1',true);
-   memo1.Lines.Add(s2);
- end;
 
- http.RcvdStream.free;
- http.RcvdStream:= nil;
- r.free;
+ str:= TStringStream.Create('');
+  URL:= 'http://www1.dasoertliche.de/?form_name=search_inv&ph='+number;
+  httpget(URL,str);
+
+  s:= '';
+  str.Position:=0;
+  s:= str.ReadString(str.size);
+  s2:= s;
+  r.Expression:= '.*title=\"Details zu diesem Eintrag anzeigen\" class=\"entry\">([\w\s]*)</a>.*';
+  if r.Exec(s) then
+  begin
+    s:= r.Replace(s,'$1',true);
+    memo1.Lines.Add(s);
+  end;
+ // r.Expression:= '<\/div>([\w\s]*)<br>.*<input name=\"notepadItemsHitList\"';
+  r.Expression:= '.*div>([\w\s]*)<br>.*';
+  if r.Exec(s2) then
+  begin
+    s2:= r.Replace(s2,'$1',true);
+    memo1.Lines.Add(s2);
+  end;
+
+  str.free;
+  r.free;
 end;
 
 procedure TForm1.Eintraglschen1Click(Sender: TObject);
@@ -771,33 +803,50 @@ begin
 end;
 
 procedure TForm1.ReloadPhonebookClick(Sender: TObject);
+var url: string;
+    str: TStringStream;
 begin
-  http.URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/fon/ppFonbuch.html&var:lang=de';
-  http.RcvdStream:= TStringStream.Create('');
-  http.get;
-  ParsePhonebook(http.RcvdStream);
-  FillPhoneBook;
-  http.RcvdStream.free;
-  http.RcvdStream:= nil;
+  str:= TStringStream.Create('');
+   URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/fon/ppFonbuch.html&var:lang=de';
+   httpget(URL,str);
+
+   ParsePhonebook(str);
+   FillPhoneBook;
+  str.free;
 end;
 
 procedure TForm1.reloadCallerListClick(Sender: TObject);
 var Data: string;
+    url: string;
+    str: TStringStream;
 begin
-     Http.RcvdStream := TMemoryStream.Create;
-     http.URL:=  'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/menus/menu2.html&var:lang=de&var:menu=fon&var:pagename=foncalls';
-     Http.Get;
-
+     str:= TStringStream.Create('');
+      URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/menus/menu2.html&var:lang=de&var:menu=fon&var:pagename=foncalls';
+      httpget(URL,str);
+      str.free;
      sleep(500);
-     http.RcvdStream:= nil;
 
-     http.URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/FRITZ!Box_Anrufliste.csv';
-     http.RcvdStream:= TStringStream.Create('');
-     http.get;
-     ParseCallList(http.RcvdStream);
-     http.RcvdStream.free;
-     http.RcvdStream:= nil;
-     callerlist.Tag:= 1;
+     str:= TStringStream.Create('');
+      URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/FRITZ!Box_Anrufliste.csv';
+      httpget(URL,str);
+      ParseCallList(str);
+      callerlist.Tag:= 1;
+     str.free;
+end;
+
+procedure TForm1.Button1Click(Sender: TObject);
+var e: TPerson;
+begin
+
+e.Name:= 'MaxMuster';
+e.Number:= '123456789';
+e.short:= '09';
+e.vanity:= 'abc';
+e.No:= 9;
+e.important:= true;
+
+AddEntry(e);
+
 end;
 
 end.
