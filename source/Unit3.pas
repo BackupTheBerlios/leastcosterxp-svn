@@ -1176,7 +1176,7 @@ or   (( (x - 6) < widthr ) and ( (x+6)>widthr) ))
 then liste_rand:= true else liste_rand:= false;
 
 if not liste_rand then
-GridEvents.OnMouseDown(sender, x,column, row, widthl, widthr);
+ GridEvents.OnMouseDown(sender, x,column, row, widthl, widthr);
 end;
 
 procedure Tauswert.GridDrawCell(Sender: TObject; ACol, ARow: Integer;

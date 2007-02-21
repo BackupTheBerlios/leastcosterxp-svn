@@ -18,7 +18,6 @@ var rect: Trect;
 begin
 with sender as TStringGrid do
 begin
-
 if ClickedRow = 0 then
   with Canvas do
   begin

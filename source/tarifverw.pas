@@ -262,7 +262,7 @@ var sections            : TStringlist;
     temptakt            : string[5];
     Stream              : TFileStream;
     header              : TTarifHeader;
-    Datensatz           : TTarif;
+//    Datensatz           : TTarif;
 begin
  UpdateFile:= false;
  //Rücksetzen des Arrays
@@ -433,7 +433,7 @@ begin
   header.Version:= 0;
   Header.programm:= '';
 
-  Stream.Read(header,sizeof(header));
+  Stream.ReadBuffer(header,sizeof(header));
 
   if header.programm <> 'LeastCosterXP' then
   begin
@@ -443,25 +443,25 @@ begin
       begin
          count:= count+1;
          setlength(hauptfenster.tarife, count);
-         Stream.Read( Hauptfenster.tarife[count-1].Tarif , SizeOf( Hauptfenster.tarife[count-1].Tarif ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].Tag , SizeOf( Hauptfenster.tarife[count-1].Tag ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].Nummer , SizeOf( Hauptfenster.tarife[count-1].Nummer ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].User , SizeOf( Hauptfenster.tarife[count-1].User ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].Passwort , SizeOf( Hauptfenster.tarife[count-1].Passwort ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].Editor, SizeOf( Hauptfenster.tarife[count-1].Editor ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].Webseite , SizeOf( Hauptfenster.tarife[count-1].Webseite ) ) ;
-         Stream.Read( temptakt , sizeof(temptakt) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].Preis , SizeOf( Hauptfenster.tarife[count-1].Preis ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].Einwahl , SizeOf( Hauptfenster.tarife[count-1].einwahl ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].Beginn , SizeOf( Hauptfenster.tarife[count-1].Beginn ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].ende , SizeOf( Hauptfenster.tarife[count-1].Ende ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].eingetragen , SizeOf( Hauptfenster.tarife[count-1].eingetragen ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].validfrom , SizeOf( Hauptfenster.tarife[count-1].validfrom ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].expires , SizeOf( Hauptfenster.tarife[count-1].expires ) ) ;
-         Stream.Read( Hauptfenster.tarife[count-1].DeleteWhenExpires , SizeOf( Hauptfenster.tarife[count-1].DeleteWhenexpires ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Tarif , SizeOf( Hauptfenster.tarife[count-1].Tarif ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Tag , SizeOf( Hauptfenster.tarife[count-1].Tag ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Nummer , SizeOf( Hauptfenster.tarife[count-1].Nummer ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].User , SizeOf( Hauptfenster.tarife[count-1].User ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Passwort , SizeOf( Hauptfenster.tarife[count-1].Passwort ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Editor, SizeOf( Hauptfenster.tarife[count-1].Editor ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Webseite , SizeOf( Hauptfenster.tarife[count-1].Webseite ) ) ;
+         Stream.ReadBuffer( temptakt , sizeof(temptakt) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Preis , SizeOf( Hauptfenster.tarife[count-1].Preis ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Einwahl , SizeOf( Hauptfenster.tarife[count-1].einwahl ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].Beginn , SizeOf( Hauptfenster.tarife[count-1].Beginn ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].ende , SizeOf( Hauptfenster.tarife[count-1].Ende ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].eingetragen , SizeOf( Hauptfenster.tarife[count-1].eingetragen ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].validfrom , SizeOf( Hauptfenster.tarife[count-1].validfrom ) ) ;
+         Stream.ReadBuffer( Hauptfenster.tarife[count-1].expires , SizeOf( Hauptfenster.tarife[count-1].expires ) ) ;
+         Stream.ReadBuffer(Hauptfenster.tarife[count-1].DeleteWhenExpires , SizeOf( Hauptfenster.tarife[count-1].DeleteWhenexpires ) ) ;
          TaktToInteger(temptakt,Hauptfenster.tarife[count-1].takt_a,Hauptfenster.tarife[count-1].takt_b);
          Hauptfenster.Tarife[count-1].mindestumsatz:= 0.0;
-        Stream.Position:= count * sizeof(Datensatz);
+        Stream.Position:= count * sizeof(TTarif);
       end;
     finally
       Stream.Free ;
@@ -479,7 +479,7 @@ begin
       begin
          count:= count+1;
          setlength(hauptfenster.tarife, count);
-         stream.Read(hauptfenster.tarife[count-1],sizeof(hauptfenster.tarife[count-1]));
+         stream.ReadBuffer(hauptfenster.tarife[count-1],sizeof(hauptfenster.tarife[count-1]));
       end;
      finally
       Stream.free;

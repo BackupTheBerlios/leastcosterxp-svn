@@ -301,7 +301,7 @@ if listbox.count > 0 then
     header.Version:= 0;
     Header.programm:= '';
 
-    Stream.Read(header,sizeof(header));
+    Stream.ReadBuffer(header,sizeof(header));
     Stream.Free;
 
    if header.programm <> 'LeastCosterXP' then
@@ -362,7 +362,7 @@ if listbox.count > 0 then
        Stream.Position:= sizeof(header);
        while Stream.Position < Stream.Size do
         begin
-         stream.Read(Daten02,sizeof(Daten02));
+         stream.ReadBuffer(Daten02,sizeof(Daten02));
 
          inc(count);
          progress.position:= count;
@@ -513,7 +513,7 @@ var DatenSatz: TTarif;
 begin
 
             Stream:= TFileStream.Create(cname,fmopenread);
-            Stream.Read(header,sizeof(header));
+            Stream.ReadBuffer(header,sizeof(header));
             stream.free;
             if header.programm <> 'LeastCosterXP' then
             begin
@@ -535,11 +535,11 @@ begin
             if (header.programm = 'LeastCosterXP') and (header.version=2) then
             begin
               Stream:= TFileStream.Create(cname,fmopenread);
-              Stream.Read(header,sizeof(header));
+              Stream.ReadBuffer(header,sizeof(header));
 
               while stream.position < stream.Size do
               begin
-               stream.read(Daten02, sizeof(Daten02));
+               stream.readbuffer(Daten02, sizeof(Daten02));
                  //Jeden tarif nur 1x hinzufügen
                if (wndlist.Listbox.Items.IndexOf(Daten02.Tarif) = -1)  then
                 begin

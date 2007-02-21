@@ -134,7 +134,6 @@ type
     MM1_5_1: TMenuItem;
     Tray: TCoolTrayIcon;
     PopupMenu1: TPopupMenu;
-    PM14: TMenuItem;
     PM12: TMenuItem;
     hinttimer: TTimer;
     call: TTimer;
@@ -147,19 +146,8 @@ type
     MM7_6: TMenuItem;
     MM7_4: TMenuItem;
     PM13: TMenuItem;
-    PM3: TMenuItem;
-    PM4: TMenuItem;
-    PM1: TMenuItem;
-    PM11: TMenuItem;
-    PM2: TMenuItem;
     Icons: TImageList;
-    PM15: TMenuItem;
-    PM5: TMenuItem;
-    PM6: TMenuItem;
-    PM7: TMenuItem;
-    PM8: TMenuItem;
-    PM10: TMenuItem;
-    PM9: TMenuItem;
+    TrayDisconnect: TMenuItem;
     MM2_2_2: TMenuItem;
     MM1_5: TMenuItem;
     sntptimer: TTimer;
@@ -372,8 +360,7 @@ type
     procedure closerTimer(Sender: TObject);
     procedure hiderTimer(Sender: TObject);
     procedure trenntickerChange(Sender: TObject);
-    procedure PopupMenu1Popup(Sender: TObject);
-    procedure PM15Click(Sender: TObject);
+    procedure TrayDisconnectClick(Sender: TObject);
     procedure TrayClick(Sender: TObject);
     procedure sntptimerTimer(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -1076,12 +1063,10 @@ if Assigned(floatingW) then
    IPAdress:=  MagRasCon.ClientIP;
    if selfdial then actnumber:= onlineset.Rufnummer
    else
-   begin
-     MagRasEdt.GetAllEntryProps(MagRasCon.CurConnName);
-     actnumber:= MagRasEdt.LocalPhoneNumber;
-   end;
-
-   Hauptfenster.PopupMenu1.Items.Items[2].Caption:='IP: ' +chr(9)+ IpAdress;
+     begin
+       MagRasEdt.GetAllEntryProps(MagRasCon.CurConnName);
+       actnumber:= MagRasEdt.LocalPhoneNumber;
+      end;
    status.SimpleText:= 'IP: '+ IpAdress+' | '+ misc(M07,'M07')+': '+ actnumber+ ' | '+misc(M08,'M08')+ MagRasCon.CurConnName;
  end;
 
@@ -1300,16 +1285,18 @@ end;
            pricewarning.BringToFront;
       end;
 
+   Tray.Hint:= 'LeastCosterXP' + #13#10+
+                'IP: ' + IpAdress + #13#10+
+                misc(M48,'M48')+': ' + ozeit.Caption  + #13#10+
+                misc(M49,'M49')+': ' + timetostr(strtotime(ozeit.caption)+settings.ReadTime('Tageskosten','Zeit',Encodetime(0,0,0,0))) + #13#10+
+                misc(M50,'M50')+': ' + format('%3m',[onlineset.kosten + settings.ReadFloat('Tageskosten','Kosten',0)]) + #13#10+
+                misc(M28,'M28')+': ' + chr(9) + Inttostr(settings.ReadInteger('Tageskosten','Verbindungen',0)+1) + #13#10+
+                misc(M12,'M12')+'/min: ' + format('%1.3f',[0.5* onlineset.kosten/(dauer/60) + 0.5 * settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
+
 oldtime:= now;
 
 //alle 5 min Verbindungsdaten auf die platte schreiben
-if (dauer > 0) and (dauer mod 300 = 0) then
-begin
- str:= TFileStream.create(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat',fmCreate);
- str.write(onlineset, sizeof(onlineset));
- str.free;
-end;
-
+if (dauer > 0) and (dauer mod 300 = 0) then WriteOnlinesetToHD;
 end;
 end;
 
@@ -1935,7 +1922,7 @@ var con     : TmemInifile;
     F       : string;
     reg     : TRegistry;
     langlist: TStringlist;
-    str     : TFileStream;
+    stream  : TFileStream;
     lastConn: OnlineWerte;  
 begin
 closeallowed := false;
@@ -2335,9 +2322,7 @@ end;
 
   if fileexists(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat') then
   begin //alte Verbindung noch zum Protokoll hinzufügen
-   str:= TFileStream.Create(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat', fmOpenRead);
-   str.Read(lastConn, sizeof(lastConn));
-   str.Free;
+   ReadOnlineSetFromHD(lastconn);
    Protokolle.SaveConnection(lastConn);
    SaveTrafficData(lastConn);
    SettingsTraffic.UpdateFile;//auf die Platte schreiben
@@ -2346,6 +2331,13 @@ end;
 
   if fileexists(ExtractFilepath(ParamStr(0)) + 'UpdatedFiles.dat') then
       CheckForUpdates;
+
+
+  Tray.Hint:= 'LeastCosterXP' + #13#10+
+                misc(M49,'M49')+ ': ' + timetostr(settings.ReadTime('Tageskosten','Zeit',Encodetime(0,0,0,0))) + #13#10+
+                misc(M50,'M50')+ ': ' + format('%3m',[settings.ReadFloat('Tageskosten','Kosten',0)]) + #13#10+
+                misc(M28,'M28')+ ': ' + Inttostr(settings.ReadInteger('Tageskosten','Verbindungen',0)) + #13#10+
+                misc(M12,'M12')+'/min :' + format('%1.3f',[settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
 
   StartPlugins('OnStart');
 end;
@@ -2418,26 +2410,7 @@ begin
 Autodiscled.ledon:= true;
 end;
 
-procedure THauptfenster.PopupMenu1Popup(Sender: TObject);
-begin
-if isOnline then
-   begin
-      hauptfenster.PopupMenu1.Items.Items[3].Caption:=misc(M48,'M48')+': ' +chr(9)+ ozeit.Caption;
-      Popupmenu1.Items.Items[6].Caption:= misc(M49,'M49')+':'+ chr(9) + timetostr(strtotime(ozeit.caption)+settings.ReadTime('Tageskosten','Zeit',Encodetime(0,0,0,0)));
-      Popupmenu1.Items.Items[7].Caption:= misc(M50,'M50')+':'+ chr(9) + format('%3m',[onlineset.kosten + settings.ReadFloat('Tageskosten','Kosten',0)]);
-      Popupmenu1.Items.Items[8].Caption:= misc(M28,'M28')+':'+ chr(9) + Inttostr(settings.ReadInteger('Tageskosten','Verbindungen',0)+1);
-      Popupmenu1.Items.Items[9].Caption:= misc(M12,'M12')+'/min:'+ chr(9) + format('%1.3f',[0.5* onlineset.kosten/(dauer/60) + 0.5 * settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
-   end
-   else
-    begin
-    Popupmenu1.Items.Items[6].Caption:= misc(M49,'M49')+ ':'+chr(9) + timetostr(settings.ReadTime('Tageskosten','Zeit',Encodetime(0,0,0,0)));
-    Popupmenu1.Items.Items[7].Caption:= misc(M50,'M50')+ ':'+chr(9) + format('%3m',[settings.ReadFloat('Tageskosten','Kosten',0)]);
-    Popupmenu1.Items.Items[8].Caption:= misc(M28,'M28')+ ':'+chr(9) + Inttostr(settings.ReadInteger('Tageskosten','Verbindungen',0));
-    Popupmenu1.Items.Items[9].Caption:= misc(M12,'M12')+'/min:'+ chr(9) + format('%1.3f',[settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
-    end;
-end;
-
-procedure THauptfenster.PM15Click(Sender: TObject);
+procedure THauptfenster.TrayDisconnectClick(Sender: TObject);
 begin
   Dialbtn.click;
 end;
@@ -3009,16 +2982,10 @@ begin
 
    //Ausblenden der OfflineElemente und Einblenden des online-Mode
     modes.setOnlinemode;
-
+    TrayDisconnect.Visible:= true;
     DialBtn.Font.Color     := clRed;
     DialBtn.Font.Size      := 8;
     DialBtn.caption        := misc(M82,'M82');
-
-    hauptfenster.PopupMenu1.Items.Items[0].Caption:='ONLINE';
-    hauptfenster.PopupMenu1.Items.Items[2].Visible:=true;
-    hauptfenster.PopupMenu1.Items.Items[3].Visible:=true;
-    hauptfenster.PopupMenu1.Items.Items[4].Visible:=true;
-    hauptfenster.PopupMenu1.Items.Items[14].Visible:=true;
     Tray.IconIndex:=1; //Online-Tray-Symbol setzen
 
     //Menü >Tools > Online
@@ -3099,6 +3066,7 @@ begin
            SetMultilink.Visible:= true else SetMultilink.Visible:= false;
 
           modes.setOfflineMode;
+    
 
           StatLED1.LEDon     := false;
           StatLED2.LEDon     := false;
@@ -3107,21 +3075,16 @@ begin
           status.SimpleText  := misc(M84,'M84')+': ' + ozeit.Caption;
           ozeit.caption      :='';
 
-          Aktualisieren.Enabled:= true;
+          TrayDisconnect.Visible  := false;
+          Aktualisieren.Enabled   := true;
           AktualisierenClick(nil);
-          Disconnecting        := false;
-          Dialbtn.Font.Color   := clWindowText;
-          Dialbtn.Font.Size    := 8;
-          DialBtn.caption      := misc(M24,'M24');
-          Tray.IconIndex       := 0; //setzen des Offline-Tray-Icons
+          Disconnecting           := false;
+          Dialbtn.Font.Color      := clWindowText;
+          Dialbtn.Font.Size       := 8;
+          DialBtn.caption         := misc(M24,'M24');
+          Tray.IconIndex          := 0; //setzen des Offline-Tray-Icons
 
-          hauptfenster.PopupMenu1.Items.Items[0].Caption :='OFFLINE';
-          hauptfenster.PopupMenu1.Items.Items[2].Visible :=false;
-          hauptfenster.PopupMenu1.Items.Items[3].Visible :=false;
-          hauptfenster.PopupMenu1.Items.Items[14].Visible:=false;
-
-
-          sntptimer.enabled               := false;
+           sntptimer.enabled               := false;  // Atimzeitupdate
 
           if selfdial then closer.Interval:= 500      //Autoexport und updaten
                       else closer.Interval:= 10000;
@@ -3133,25 +3096,25 @@ begin
           surfdauer.enabled               := true;
           Dialbtn.enabled                 := true;
 
-           //Logfile schreiben
-           Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M85,'M85')+#13#10;
-           webserv1.status:= buf;
-           webservform.logfile_add(buf);
+          //Logfile schreiben
+          Buf      := FormatDateTime(' DD.MM.YYYY HH:NN:SS ', Now) + #9+misc(M85,'M85')+#13#10;
+          webserv1.status:= buf;
+          webservform.logfile_add(buf);
 
-          // Programme bei offline starten
-           progcountoff:=0; loadprogsoff;
-           webzugriff:= false;
+         // Programme bei offline starten
+          progcountoff:=0; loadprogsoff;
+          webzugriff:= false;
 
-           OCostlabel.Visible:= false;
+          OCostlabel.Visible:= false;
 
-           //Menü >Tools > Online
-//           if isDSLOnline = false then
-           hauptfenster.MM2_3.Enabled:= false;
+          //Menü >Tools > Online
+//          if isDSLOnline = false then
+          hauptfenster.MM2_3.Enabled:= false;
 
-           DialStatus.Text:= misc(M85,'M85') + ' ('+timetostr(timeof(now))+')';
-           reload.enabled:= true;
+          DialStatus.Text:= misc(M85,'M85') + ' ('+timetostr(timeof(now))+')';
+          reload.enabled:= true;
 
-           refreshall;
+          refreshall;
 
           //Sound
           if fileexists(settings.readstring('LeastCoster','SoundOFF',  '' )) then
@@ -3171,6 +3134,14 @@ begin
 
           kontingenteWarned:= false;
           Kanalbuendelung:= false;
+
+          Tray.Hint:= 'LeastCosterXP' + #13#10+
+                      misc(M49,'M49')+ ': ' + timetostr(settings.ReadTime('Tageskosten','Zeit',Encodetime(0,0,0,0))) + #13#10+
+                      misc(M50,'M50')+ ': ' + format('%3m',[settings.ReadFloat('Tageskosten','Kosten',0)]) + #13#10+
+                      misc(M28,'M28')+ ': ' + Inttostr(settings.ReadInteger('Tageskosten','Verbindungen',0)) + #13#10+
+                      misc(M12,'M12')+'/min :' + format('%1.3f',[settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
+
+
           Hauptfenster.Cursor:= crDefault;
           aktualisieren.click;
           refreshall;
@@ -3851,10 +3822,10 @@ begin
 liste_last_x:= x;
 liste.MouseToCell(X,Y,Column,Row);
 
+liste.Repaint;
 
-//liste.Repaint;
 //if (row < 0) then exit;
-if (row > 0) then
+if (row = 0) then
 begin
   mousedownrow:= row;
 
@@ -3865,8 +3836,8 @@ begin
        for i:=leftcol to column-1 do widthl:= widthl + ColWidths[i] + 1 ;
        for i:=leftcol to column do widthr:= widthr + ColWidths[i] + 1;
   end;
+  GridEvents.OnMouseDown(liste, x,column, row, widthl, widthr);
 
-  GridEvents.OnMouseDown(sender, x,column, row, widthl, widthr);
 end;
 
 //rechtsklick abfangen -> Menü aufrufen
@@ -4452,9 +4423,15 @@ if AutoDialStatus.LEDON then
 end;
 
 procedure THauptfenster.Button1Click(Sender: TObject);
+var str: TFileStream;
 begin
-isontimer.enabled:= false;
-OnConnect;
+//isontimer.enabled:= false;
+//OnConnect;
+
+ onlineset.Tarif:= 'test';
+
+ WriteOnlinesetToHD;
+
 end;
 
 procedure THauptfenster.WebServClick(Sender: TObject);

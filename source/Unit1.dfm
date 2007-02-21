@@ -681,7 +681,7 @@ object Hauptfenster: THauptfenster
         Width = 177
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         Items.Strings = (
           'Tue nichts'
@@ -964,51 +964,8 @@ object Hauptfenster: THauptfenster
   end
   object PopupMenu1: TPopupMenu
     MenuAnimation = [maBottomToTop]
-    OnPopup = PopupMenu1Popup
-    Left = 312
-    Top = 96
-    object PM1: TMenuItem
-      Caption = 'OFFLINE'
-      RadioItem = True
-    end
-    object PM2: TMenuItem
-      Caption = '-'
-    end
-    object PM3: TMenuItem
-      Caption = 'IP'
-      Visible = False
-    end
-    object PM4: TMenuItem
-      Caption = 'Onlinedauer heute'
-      Visible = False
-    end
-    object PM5: TMenuItem
-      Caption = '-'
-      Visible = False
-    end
-    object PM6: TMenuItem
-      Caption = 'Statistik heute'
-    end
-    object PM7: TMenuItem
-      Caption = 'Dauer:'
-    end
-    object PM8: TMenuItem
-      Caption = 'Kosten:'
-    end
-    object PM9: TMenuItem
-      Caption = 'Verbindungen:'
-    end
-    object PM10: TMenuItem
-      Caption = 'Kosten/min:'
-    end
-    object PM11: TMenuItem
-      Caption = '-'
-      Visible = False
-    end
-    object PM12: TMenuItem
-      Caption = 'LeastCoster beenden'
-      OnClick = TrayMenueClick
-    end
+    Left = 120
+    Top = 8
     object PM13: TMenuItem
       Caption = 'Windows beenden'
       object PM13_1: TMenuItem
@@ -1032,14 +989,14 @@ object Hauptfenster: THauptfenster
         OnClick = TrayMenueClick
       end
     end
-    object PM14: TMenuItem
-      Caption = 'maximieren'
-      OnClick = PM14Click
-    end
-    object PM15: TMenuItem
+    object TrayDisconnect: TMenuItem
       Caption = 'Verbindung trennen'
       Visible = False
-      OnClick = PM15Click
+      OnClick = TrayDisconnectClick
+    end
+    object PM12: TMenuItem
+      Caption = 'LeastCoster beenden'
+      OnClick = TrayMenueClick
     end
   end
   object hinttimer: TTimer

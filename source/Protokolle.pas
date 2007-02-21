@@ -18,6 +18,8 @@ procedure monatshtml(path, filename: string);
 procedure CreateAllLogs;
 
 procedure WebAuswertungErstellen;
+procedure WriteOnlinesetToHD;
+procedure ReadOnlinesetFromHD(var data: OnlineWerte);
 
 
 implementation
@@ -443,5 +445,110 @@ begin
   closefile(uebersicht);
 end;
 
+
+Procedure WriteOnlineSetToHD;
+var str: TFileStream;
+    len: integer;
+begin
+
+ str:= TFileStream.create(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat',fmCreate);
+ len:= length(onlineset.Startzeit);
+ str.Write(len, sizeof(len));
+ str.Write(PChar(onlineset.Startzeit)^,len);
+
+ len:= length(onlineset.Dauer);
+ str.Write(len, sizeof(len));
+ str.Write(PChar( onlineset.Dauer)^,len);
+
+ len:= length(onlineset.Tarif);
+ str.Write(len, sizeof(len));
+ str.Write(PChar( onlineset.Tarif )^,len);
+
+ len:= length(onlineset.Rufnummer);
+ str.Write(len, sizeof(len));
+ str.Write(PChar( onlineset.Rufnummer)^,len);
+
+ len:= length(onlineset.Webseite);
+ str.Write(len, sizeof(len));
+ str.Write( PChar(onlineset.Webseite)^,len);
+
+ len:= length(onlineset.tag);
+ str.Write(len, sizeof(len));
+ str.Write(PChar( onlineset.tag)^,len);
+
+ str.Write( onlineset.takt_a, sizeof(onlineset.takt_a));
+ str.Write( onlineset.takt_b, sizeof(onlineset.takt_b));
+ str.Write( onlineset.mindestumsatz, sizeof(onlineset.mindestumsatz));
+ str.Write( onlineset.kosten_mindest, sizeof(onlineset.kosten_mindest));
+ str.Write( onlineset.Datum, sizeof(onlineset.Datum));
+ str.Write( onlineset.vbegin, sizeof(onlineset.vbegin));
+ str.Write( onlineset.vend, sizeof(onlineset.vend));
+ str.Write(  onlineset.Endzeit, sizeof(onlineset.Endzeit));
+ str.Write( onlineset.Einwahl2, sizeof(onlineset.Einwahl2));
+ str.Write( onlineset.Kosten, sizeof(onlineset.Kosten));
+ str.Write( onlineset.Preis, sizeof(onlineset.Preis));
+ str.Write( onlineset.Einwahl, sizeof(onlineset.Einwahl));
+ str.Write( onlineset.wechselpreis, sizeof(onlineset.wechselpreis));
+ str.Write( onlineset.wechseleinwahl,sizeof(onlineset.wechseleinwahl));
+ str.Write( onlineset.wechsel, sizeof(onlineset.wechsel));
+ str.Write( onlineset.upload, sizeof(onlineset.upload));
+ str.Write( onlineset.download, sizeof(onlineset.download));
+ str.Write( onlineset.gesamtdauer, sizeof(onlineset.gesamtdauer));
+ str.Write( onlineset.dauer_takt, sizeof(onlineset.dauer_takt));
+ str.free;
+end;
+
+procedure ReadOnlineSetFromHD(var data: OnlineWerte);
+var str: TFileStream;
+    len: integer;
+begin
+
+ str:= TFileStream.create(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat',fmOPenRead);
+ str.Read(len,sizeof(len));
+ setlength(data.Startzeit,len);
+ str.Read(PChar(data.Startzeit)^, Len);
+
+ str.Read(len,sizeof(len));
+ setlength(data.Dauer,len);
+ Str.Read(PChar(data.Dauer)^, Len);
+
+ str.Read(len,sizeof(len));
+ setlength(data.Tarif,len);
+ Str.Read(PChar(data.Tarif)^, Len);
+
+ str.Read(len,sizeof(len));
+ setlength(data.Rufnummer,len);
+ Str.Read(PChar(data.Rufnummer)^, Len);
+
+ str.Read(len,sizeof(len));
+ setlength(data.Webseite,len);
+ Str.Read(PChar(data.Webseite)^, Len);
+
+ str.Read(len,sizeof(len));
+ setlength(data.Tag,len);
+ Str.Read(PChar(data.Tag)^, Len);
+
+ str.Read( data.takt_a, sizeof(data.takt_a));
+ str.Read( data.takt_b, sizeof(data.takt_b));
+ str.Read( data.mindestumsatz, sizeof(data.mindestumsatz));
+ str.Read( data.kosten_mindest, sizeof(data.kosten_mindest));
+ str.Read( data.Datum, sizeof(data.Datum));
+ str.Read( data.vbegin, sizeof(data.vbegin));
+ str.Read( data.vend, sizeof(data.vend));
+ str.Read( data.Endzeit, sizeof(data.Endzeit));
+ str.Read( data.Einwahl2, sizeof(data.Einwahl2));
+ str.Read( data.Kosten, sizeof(data.Kosten));
+ str.Read( data.Preis, sizeof(data.Preis));
+ str.Read( data.Einwahl, sizeof(data.Einwahl));
+ str.Read( data.wechselpreis, sizeof(data.wechselpreis));
+ str.Read( data.wechseleinwahl,sizeof(data.wechseleinwahl));
+ str.Read( data.wechsel, sizeof(data.wechsel));
+ str.Read( data.upload, sizeof(data.upload));
+ str.Read( data.download, sizeof(data.download));
+ str.Read( data.gesamtdauer, sizeof(data.gesamtdauer));
+ str.Read( data.dauer_takt, sizeof(data.dauer_takt));
+
+ str.Free;
+end;
 
 end.
