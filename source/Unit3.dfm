@@ -15,7 +15,6 @@ object auswert: Tauswert
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  FormStyle = fsStayOnTop
   OldCreateOrder = False
   ParentBiDiMode = False
   Position = poDefault
@@ -200,6 +199,7 @@ object auswert: Tauswert
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
+        MaxLength = 10
         TabOrder = 4
         OnCloseUp = SortboxCloseUp
         OnDropDown = Datepick1DropDown
@@ -230,7 +230,6 @@ object auswert: Tauswert
         Style = csDropDownList
         ItemHeight = 13
         TabOrder = 5
-        OnCloseUp = SortboxCloseUp
         OnDropDown = Datepick1DropDown
         Items.Strings = (
           'HTML (Webseite)'
@@ -264,7 +263,7 @@ object auswert: Tauswert
       Height = 300
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 3
+      TabOrder = 2
       Visible = False
       object Grid: TStringGrid
         Tag = -5
@@ -290,6 +289,7 @@ object auswert: Tauswert
         OnColumnMoved = GridColumnMoved
         OnDblClick = GridDblClick
         OnDrawCell = GridDrawCell
+        OnGetEditMask = GridGetEditMask
         OnMouseDown = GridMouseDown
         OnMouseUp = GridMouseUp
         OnSelectCell = GridSelectCell
@@ -329,31 +329,14 @@ object auswert: Tauswert
         OnMouseUp = deletelistMouseUp
       end
     end
-    object ProgressPanel: TPanel
-      Left = 187
-      Top = 217
-      Width = 225
-      Height = 50
-      BevelInner = bvRaised
-      BevelOuter = bvLowered
-      BevelWidth = 2
-      Locked = True
-      TabOrder = 2
+    object Progress1: TProgressBar
+      Left = 6
+      Top = 446
+      Width = 585
+      Height = 17
+      Align = alBottom
+      TabOrder = 3
       Visible = False
-      object Progress1: TProgressBar
-        Left = 8
-        Top = 27
-        Width = 209
-        Height = 17
-        TabOrder = 0
-      end
-      object Progress2: TProgressBar
-        Left = 8
-        Top = 5
-        Width = 209
-        Height = 17
-        TabOrder = 1
-      end
     end
   end
   object SaveDialog1: TSaveDialog

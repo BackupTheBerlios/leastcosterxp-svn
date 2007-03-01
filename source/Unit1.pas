@@ -930,7 +930,6 @@ var h,m,s                     : word;
     curxmit, currecv, interval: LongWORD ;
     noerror                   : boolean;
     beginn, ende              : TDateTime;
-    str                       : TFileStream;
 begin
 MagRasCon.GetConnections;
 //suche aktive Verbindungen > Achtung Win9x meldet Verbindungen als aktiv, die mit dem Wählen beginnen> Fehler werden nicht erkannt
@@ -2590,9 +2589,7 @@ end;
 procedure THauptfenster.DialBtnClick(Sender: TObject);
 var buf: string;
     foundRasConn: boolean;
-//    taktstring: string;
 begin
-
 if isonline then
   begin  // schon online
    status.SimpleText:=misc(M54,'M54')+' ' + verbindungsname+ ' '+misc(M55,'M55');
@@ -2805,7 +2802,8 @@ tarifverw.loadlist;
 
 if beliebig_check.checked then
 begin
- Sort(liste,TarifProgress,liste.tag,1,liste.RowCount, true, sort_descending);
+ GridSort(liste, Tarifprogress, 1,liste.RowCount-1, 7, 7, false);
+// Sort(liste,TarifProgress,liste.tag,1,liste.RowCount);
  liste.Row:=1;
  listeclick(self);
 end;
@@ -3825,10 +3823,10 @@ liste.MouseToCell(X,Y,Column,Row);
 liste.Repaint;
 
 //if (row < 0) then exit;
+mousedownrow:= row;
+  
 if (row = 0) then
 begin
-  mousedownrow:= row;
-
   widthl:=0;
   widthr:=0;
   with liste do
@@ -3837,7 +3835,6 @@ begin
        for i:=leftcol to column do widthr:= widthr + ColWidths[i] + 1;
   end;
   GridEvents.OnMouseDown(liste, x,column, row, widthl, widthr);
-
 end;
 
 //rechtsklick abfangen -> Menü aufrufen
@@ -4274,10 +4271,12 @@ end;
 
 procedure THauptfenster.ListeMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
-var i: integer;
+var i               : integer;
     thiscol, thisrow: integer;
-    selectedtext: string;
-    selrow,c: integer;
+    selectedtext    : string;
+    selrow,c        : integer;
+    inverse         : boolean;
+    leftcol         : integer;
 begin
 liste.MouseToCell(x,y,thiscol, thisrow);
 
@@ -4286,17 +4285,26 @@ if row < 0 then begin liste.repaint; exit; end;
 for i:=0 to liste.ColCount -1 do
   if (liste.ColWidths[i] > liste.width) then liste.ColWidths[i]:= liste.Width-15;
 
-if ((row = 0) and (abs(x-liste_last_x) <3)) then
+if ((row = 0) and (abs(x-liste_last_x) <3)) then //sortieren
   begin
+     liste.DefaultDrawing:= false;
      selectedtext:= liste.cells[1,liste.row];
-
+     leftcol:= liste.LeftCol;
      if liste.Tag = column then sort_descending:= not sort_descending else sort_descending:= false;
-      liste.Tag:= column;
+     inverse:= (liste.tag = column);
+
+     liste.Tag:= column;
 
      case column of
-    -1: begin end;
-    4,5,7:Sort(liste,TarifProgress,column,1,liste.RowCount, true, sort_descending);
-     else Sort(liste,TarifProgress,column,1,liste.RowCount, false, sort_descending); end;
+      -1           : //keine Spalte ausgewählt
+                      begin end;
+      4,5,15,16,18 : //numerische Sortierung
+                     GridSort(liste,Tarifprogress,1,liste.rowcount-1, column, 0,inverse);
+        7          : //kostenspalte
+                     GridSort(liste, Tarifprogress, 1,liste.RowCount-1, 7, 7, inverse);
+      else        //alphanumerisch sortieren
+                     GridSort(liste,Tarifprogress,1,liste.rowcount-1, column, 1,inverse);//Sort(liste,TarifProgress,column,1,liste.RowCount, false, sort_descending);
+     end;
 
      //selektierten Eintrag wieder selektieren
      selrow:= 1;
@@ -4304,15 +4312,18 @@ if ((row = 0) and (abs(x-liste_last_x) <3)) then
      for c:= 1 to liste.rowcount -1 do if (selectedtext = liste.cells[1, c]) then begin selrow:= c; break; end;
 
      liste.Row:= selrow;
+     liste.LeftCol:= leftcol;
      //alle deselektieren
      for c:= 0 to length(selected) -1 do selected[c]:= false;
      selected[selrow]:= true;
 
-   liste.Repaint;
+     liste.DefaultDrawing:= true;
+     liste.Refresh;
+//      liste.Repaint;
   end
 else
 begin
-
+//showmessage(inttostr(row));
 //wenn nicht ctrl gedrückt, dann alle anderen selektions vergessen
 if not (ssctrl in shift) then
   begin

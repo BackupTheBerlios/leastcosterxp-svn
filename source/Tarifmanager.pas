@@ -733,7 +733,8 @@ end;
 pbar.Visible:= false;
 
 if tarifliste.RowCount > 2 then //wenn mehr als eine Zeile vorhanden ist
-  gridEvents.Sort(Tarifliste,pBar,{column}1,1,tarifliste.RowCount,false,false);
+//  gridEvents.Sort(Tarifliste,pBar,{column}1,1,tarifliste.RowCount,false,false);
+   gridEvents.GridSort(Tarifliste,pBar,1,tarifliste.RowCount-1,1,1,false);
   
 tarifliste.Tag:= 1;
 sort_descending:= false;
@@ -1062,7 +1063,8 @@ end;
 
 procedure TTaVerwaltung.TariflisteMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var i: integer;
+var i      : integer;
+    inverse: boolean;
 begin
 if not liste_clicked then exit;
 liste_clicked:= false;
@@ -1087,12 +1089,13 @@ if row <> 0 then exit;
 if (row <> 0) and (abs(x-last_x)>5) then exit;
 
 if Tarifliste.Tag = column then sort_descending:= not sort_descending else sort_descending:= false;
+inverse := (Tarifliste.Tag = column);
 Tarifliste.Tag:= column;
 Tarifliste.repaint;
 
 case column of
-3,4,6: GridEvents.Sort(Tarifliste, pbar,column,1,tarifliste.RowCount,true,sort_descending);
-else GridEvents.Sort(Tarifliste,pbar,column,1,tarifliste.RowCount,false, sort_descending);
+3,4,6:  gridEvents.GridSort(Tarifliste,pBar,1,tarifliste.RowCount-1,column,0,false); //numerisch
+else    gridEvents.GridSort(Tarifliste,pBar,1,tarifliste.RowCount-1,column,1,false); //numerisch
 end;
 
 end;

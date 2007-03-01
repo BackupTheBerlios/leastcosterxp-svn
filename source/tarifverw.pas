@@ -713,7 +713,8 @@ begin
     end;  //Ende der For-Schleife
 
 if not hauptfenster.beliebig_check.checked then
- Sort(hauptfenster.liste,hauptfenster.tarifprogress,7,1,hauptfenster.liste.RowCount, true, false);
+  GridSort(Hauptfenster.liste, hauptfenster.tarifprogress, 1,hauptfenster.liste.RowCount-1, 7, 7, false);
+
 
 //Markierung der Tabelle
 setlength(hauptfenster.Selected, hauptfenster.Liste.RowCount);
@@ -1006,7 +1007,7 @@ begin
  changelist:= TStringlist.Create;
 
  for i:= 1 to length(hauptfenster.selected) -1 do
-  if hauptfenster.selected[i] then changelist.Add(hauptfenster.Liste.Cells[1,i]);
+   if hauptfenster.selected[i] then changelist.Add(hauptfenster.Liste.Cells[1,i]);
 
  //im speicher ändern
  with hauptfenster do
@@ -1044,7 +1045,7 @@ end;
 function computecosts(Kanalbuendelung: boolean): boolean;
 begin
 
- if (onlineset.wechsel <= now) then //Tariffenster wechselt
+ if (onlineset.wechsel <= now) then //Tarif-fenster wechselt
   Tarifwechseln;
 
  //wenn der preis unbekannt ist, dann negativ, dann aber Fehler melden
