@@ -42,9 +42,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, HttpProt, ComCtrls, TFlatSpinEditUnit,
-  TFlatProgressBarUnit, TFlatEditUnit, TFlatButtonUnit, ExtCtrls, SRGrad,
-  BMDThread, AppEvnts, TFlatCheckBoxUnit;
+  Dialogs, StdCtrls, HttpProt, ComCtrls, ExtCtrls, SRGrad,
+  BMDThread, AppEvnts, FloatSpinEdit;
 
 type
 
@@ -83,22 +82,22 @@ type
   TForm1 = class(TForm)
     Http: THttpCli;
     Label1: TLabel;
-    maxE: TFlatSpinEditFloat;
-    Progress: TFlatProgressBar;
-    maxP: TFlatSpinEditFloat;
     Label2: TLabel;
-    Start: TFlatButton;
     Bevel1: TBevel;
     Status: TStatusBar;
     SRGradient1: TSRGradient;
     Label3: TLabel;
-    FlatButton1: TFlatButton;
     Timer1: TTimer;
-    FlatButton2: TFlatButton;
     BMDThread1: TBMDThread;
     ApplicationEvents1: TApplicationEvents;
-    ResetB: TFlatButton;
-    deleteit: TFlatCheckBox;
+    Start: TButton;
+    ResetB: TButton;
+    FlatButton1: TButton;
+    FlatButton2: TButton;
+    Progress: TProgressBar;
+    deleteit: TCheckBox;
+    Label4: TLabel;
+    procedure Label4Click(Sender: TObject);
     procedure ResetBClick(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure BMDThread1Terminate(Sender: TObject; Thread: TBMDExecuteThread;
@@ -130,6 +129,8 @@ type
 
 var
   Form1: TForm1;
+  maxP : TFloatSpinEdit;
+  maxE : TFloatSpinEdit;
 
 implementation
 uses RegExpr, StrUtils, DateUtils, IniFiles, zlib;
@@ -406,6 +407,37 @@ var i  : integer;
 begin
  form1.tag:= 0;
 
+  maxP := TFloatSpinEdit.Create(Self);
+  with maxP do
+  begin
+    Name := 'maxP';
+    Parent := Self;
+    Left := 128;
+    Top := 39;
+    Width := 121;
+    Height := 22;
+    AutoSize := False;
+    Increment := 0.100000000000000000;
+    ParentColor := True;
+    TabOrder := 1;
+  end;
+
+  maxE := TFloatSpinEdit.Create(Self);
+  with maxE do
+  begin
+    Name := 'maxE';
+    Parent := Self;
+    Left := 264;
+    Top := 39;
+    Width := 121;
+    Height := 22;
+    AutoSize := False;
+    Increment := 0.100000000000000000;
+    ParentColor := True;
+    TabOrder := 1;
+  end;
+
+
  ini:= TInifile.create(ExtractFilepath(paramstr(0)) + 'BonGoBon.ini');
   MaxP.Value      := ini.Readfloat('settings','MaxPreis',1.0);
   MaxE.Value      := ini.Readfloat('settings','MaxEinwahl',3.0);
@@ -424,8 +456,6 @@ begin
  end;
  
  if not(form1.Tag = 2) then form1.WindowState:=wsNormal;
-
-
 end;
 
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -451,6 +481,8 @@ ini.WriteDateTime('settings','lastdate', lastdate);
 ini.WriteBool('settings', 'AutoDelete', deleteit.checked );
 
 ini.free;
+if assigned(maxE) then maxE.Free;
+if assigned(maxP) then maxP.Free;
 
 end;
 
@@ -636,6 +668,11 @@ end;
 procedure TForm1.ResetBClick(Sender: TObject);
 begin
  lastdate:= EncodeDate(1970,01,02) + timeof(now);
+end;
+
+procedure TForm1.Label4Click(Sender: TObject);
+begin
+deleteit.checked:= not deleteit.checked
 end;
 
 end.

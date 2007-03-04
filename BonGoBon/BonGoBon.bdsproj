@@ -121,7 +121,7 @@
 			<Directories Name="PackageDCPOutputDir"></Directories>
 			<Directories Name="SearchPath"></Directories>
 			<Directories Name="Packages">vcl;rtl;vclx;VclSmp;vclshlctrls</Directories>
-			<Directories Name="Conditionals"></Directories>
+			<Directories Name="Conditionals">madExcept</Directories>
 			<Directories Name="DebugSourceDirs">F:\Programme\Borland\Delphi7\Projects\lcr\;C:\Programme\Indy 10 for Delphi 7\Source\System\</Directories>
 			<Directories Name="UsePackages">False</Directories>
 		</Directories>
