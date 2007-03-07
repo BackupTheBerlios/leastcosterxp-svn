@@ -39,7 +39,7 @@ object TaVerwaltung: TTaVerwaltung
     object Caption: TLabel
       Left = 6
       Top = 6
-      Width = 136
+      Width = 721
       Height = 24
       Align = alTop
       Alignment = taCenter
@@ -113,7 +113,7 @@ object TaVerwaltung: TTaVerwaltung
       Left = 1
       Top = 1
       Width = 384
-      Height = 13
+      Height = 40
       Align = alClient
       Alignment = taCenter
       Color = clBtnFace
@@ -1046,7 +1046,7 @@ object TaVerwaltung: TTaVerwaltung
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = [fsBold]
-    ItemHeight = 0
+    ItemHeight = 13
     ParentFont = False
     Sorted = True
     TabOrder = 7

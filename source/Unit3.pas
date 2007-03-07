@@ -351,7 +351,8 @@ with grid do
     begin
       case sortbox.itemindex of
        0   : GridSort2in1(grid, progress1, 1, grid.rowcount-1, column,timecol, 2);//sortby2Col(grid,column,nrcol);
-       4,5 : GridSort2(grid, progress1, 1, grid.rowcount-1, column, nrcol, 1,0);//sortby2Col(grid,column,nrcol);Sortby2Col(Grid,column,timecol);
+       4   : GridSort2(grid, progress1, 1, grid.rowcount-1, column, nrcol, 1,0);//sortby2Col(grid,column,nrcol);Sortby2Col(Grid,column,timecol);
+       5   : GridSort2(grid, progress1, 1, grid.rowcount-1, column, tarifcol, 1,1);//sortby2Col(grid,column,nrcol);Sortby2Col(Grid,column,timecol);
        3,6 : begin //numerisch sortieren
                GridSort(grid, progress1,1, grid.rowcount-1, column, 0, inverse);
              end;

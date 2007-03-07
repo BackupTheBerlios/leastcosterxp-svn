@@ -13,7 +13,7 @@ object PriceWarning: TPriceWarning
   Font.Style = []
   FormStyle = fsStayOnTop
   OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poMainFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
@@ -95,7 +95,7 @@ object PriceWarning: TPriceWarning
     object info1: TLabel
       Left = 6
       Top = 6
-      Width = 240
+      Width = 509
       Height = 16
       Align = alTop
       Alignment = taCenter
@@ -110,7 +110,7 @@ object PriceWarning: TPriceWarning
     object info3: TLabel
       Left = 6
       Top = 38
-      Width = 232
+      Width = 509
       Height = 16
       Align = alTop
       Alignment = taCenter
@@ -125,7 +125,7 @@ object PriceWarning: TPriceWarning
     object Label1: TLabel
       Left = 6
       Top = 118
-      Width = 5
+      Width = 509
       Height = 10
       Align = alTop
       Constraints.MaxHeight = 10
@@ -134,7 +134,7 @@ object PriceWarning: TPriceWarning
     object neu3: TLabel
       Left = 6
       Top = 168
-      Width = 87
+      Width = 509
       Height = 16
       Align = alTop
       Alignment = taCenter

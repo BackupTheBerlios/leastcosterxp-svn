@@ -14,7 +14,7 @@ object shutter: Tshutter
   Font.Style = []
   FormStyle = fsStayOnTop
   OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poMainFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
@@ -64,7 +64,7 @@ object shutter: Tshutter
     object Label1: TLabel
       Left = 6
       Top = 6
-      Width = 190
+      Width = 216
       Height = 20
       Align = alTop
       Alignment = taCenter

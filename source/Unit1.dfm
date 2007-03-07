@@ -47,7 +47,7 @@ object Hauptfenster: THauptfenster
   Menu = Menu
   OldCreateOrder = False
   ParentBiDiMode = False
-  Position = poDesktopCenter
+  Position = poScreenCenter
   ScreenSnap = True
   ShowHint = True
   SnapBuffer = 20

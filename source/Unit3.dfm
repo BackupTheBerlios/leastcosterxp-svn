@@ -17,7 +17,6 @@ object auswert: Tauswert
   Font.Style = []
   OldCreateOrder = False
   ParentBiDiMode = False
-  Position = poDefault
   ScreenSnap = True
   OnClose = FormClose
   OnCreate = FormCreate

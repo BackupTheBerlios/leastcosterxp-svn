@@ -1026,18 +1026,15 @@ begin//Onlinezeitmessung
  end else oCostlabel.Visible:= false;
 
  onlineset.Dauer:= ozeit.caption;
-// onlineset.Kosten:= -1.0; //wenn Kosten unbekannt, weil nicht selbst gewählt
 
  if selfdial then
  if noerror then
  begin
   OCostlabel.Font.Color:= clGreen;
   OCostLabel.Caption:= Format('%.4m',[onlineset.kosten]);
-//  onlineset.Kosten:= onlineset.kostenbisjetzt;
  end
  else
  begin
-//  onlineset.Kosten:= onlineset.kostenbisjetzt;
   OCostlabel.Font.Color:= clRed;
   OCostLabel.Caption:= Format('> %.4m',[onlineset.kosten]);
  end;
@@ -1284,6 +1281,7 @@ end;
            pricewarning.BringToFront;
       end;
 
+   if dauer > 0 then
    Tray.Hint:= 'LeastCosterXP' + #13#10+
                 'IP: ' + IpAdress + #13#10+
                 misc(M48,'M48')+': ' + ozeit.Caption  + #13#10+
@@ -2529,7 +2527,7 @@ begin
   begin
   if setmultilink.checked then //wenn Kanalbuendelung
   begin
-   onlineset.kosten:= onlineset.einwahl; //Einwahl 1x mehr berechnen
+   onlineset.kosten:= onlineset.einwahl/100; //Einwahl 1x mehr berechnen
    MagRasCon.SubEntry:= 0;
   end
   else

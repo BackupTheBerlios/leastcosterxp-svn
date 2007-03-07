@@ -14,7 +14,7 @@ object LCXPSettings: TLCXPSettings
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
-  Position = poDesktopCenter
+  Position = poMainFormCenter
   Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
@@ -498,7 +498,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'In welchem Modus soll das Programm ausgef'#252'hrt werden ?'
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           Sorted = True
@@ -1432,7 +1432,7 @@ object LCXPSettings: TLCXPSettings
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1672,7 +1672,7 @@ object LCXPSettings: TLCXPSettings
           AutoComplete = False
           Style = csDropDownList
           DropDownCount = 13
-          ItemHeight = 13
+          ItemHeight = 0
           ItemIndex = 7
           TabOrder = 6
           Text = 't'#228'glich'
