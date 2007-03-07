@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2007.02.09 08:00:04.171.pas,C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\InternetMonitor\test\Unit3.pas=C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\InternetMonitor\test\statistics.pas</Transaction>
+    <Transaction>2007.02.09 08:00:04.187.dfm,C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\InternetMonitor\test\Unit3.dfm=C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\InternetMonitor\test\statistics.dfm</Transaction>
+    <Transaction>2007.03.02 08:35:49.671.pas,C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\Unit1.pas=C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\tools.pas</Transaction>
+    <Transaction>2007.03.03 22:12:18.359.pas,C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\Unit3.pas=C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\settings.pas</Transaction>
+    <Transaction>2007.03.03 22:12:18.375.dfm,C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\Unit3.dfm=C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\settings.dfm</Transaction>
+    <Transaction>2007.03.03 22:20:31.093.pas,C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\Unit1.pas=C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\SocketUtils.pas</Transaction>
+    <Transaction>2007.03.03 22:23:44.000.pas,C:\Dokumente und Einstellungen\jesus\Eigene Dateien\Borland Studio-Projekte\Fritz\SocketUtils.pas=</Transaction>
+  </Transactions>
+</BorlandProject>

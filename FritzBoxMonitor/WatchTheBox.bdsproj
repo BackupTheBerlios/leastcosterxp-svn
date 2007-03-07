@@ -10,7 +10,7 @@
 	</PersonalityInfo>
 	<Delphi.Personality>
 		<Source>
-			<Source Name="MainSource">TM.dpr</Source>
+			<Source Name="MainSource">WatchTheBox.dpr</Source>
 		</Source>
 		<FileVersion>
 			<FileVersion Name="Version">7.0</FileVersion>
@@ -112,7 +112,7 @@
 			<Linker Name="MinStackSize">16384</Linker>
 			<Linker Name="MaxStackSize">1048576</Linker>
 			<Linker Name="ImageBase">4194304</Linker>
-			<Linker Name="ExeDescription"></Linker>
+			<Linker Name="ExeDescription">WatchTheBox</Linker>
 		</Linker>
 		<Directories>
 			<Directories Name="OutputDir"></Directories>
@@ -121,7 +121,7 @@
 			<Directories Name="PackageDCPOutputDir"></Directories>
 			<Directories Name="SearchPath">C:\Programme\Borland\BDS\3.0\lib\CoolTrayIcon;C:\Programme\Borland\BDS\3.0\lib\ics\Delphi\Vc32</Directories>
 			<Directories Name="Packages">vclx;vcl;VclSmp;rtl;vclactnband;vclshlctrls;madBasic_;madDisAsm_;madExcept_;xmlrtl;IcsDel90;AdvLED;BrowseFolder;CHComponentsD2005;CoolTrayIcon_D6plus;BomeOneInst;magras90;SchUpdater;BMThreadDsnD9;BMThreadPkgD9;IniLang;FlatStyle_D6</Directories>
-			<Directories Name="Conditionals"></Directories>
+			<Directories Name="Conditionals">madExcept</Directories>
 			<Directories Name="DebugSourceDirs"></Directories>
 			<Directories Name="UsePackages">False</Directories>
 		</Directories>
@@ -133,11 +133,11 @@
 			<Parameters Name="DebugCWD"></Parameters>
 		</Parameters>
 		<VersionInfo>
-			<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+			<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 			<VersionInfo Name="AutoIncBuild">False</VersionInfo>
-			<VersionInfo Name="MajorVer">1</VersionInfo>
+			<VersionInfo Name="MajorVer">0</VersionInfo>
 			<VersionInfo Name="MinorVer">0</VersionInfo>
-			<VersionInfo Name="Release">0</VersionInfo>
+			<VersionInfo Name="Release">1</VersionInfo>
 			<VersionInfo Name="Build">0</VersionInfo>
 			<VersionInfo Name="Debug">False</VersionInfo>
 			<VersionInfo Name="PreRelease">False</VersionInfo>
@@ -150,7 +150,7 @@
 		<VersionInfoKeys>
 			<VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
 			<VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
-			<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+			<VersionInfoKeys Name="FileVersion">0.0.1.0</VersionInfoKeys>
 			<VersionInfoKeys Name="InternalName"></VersionInfoKeys>
 			<VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
 			<VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
