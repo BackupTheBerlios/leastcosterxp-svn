@@ -115,7 +115,6 @@ Delete(fname,1,5);
 delete(fname,3,4);
 monat:= strtoint(fname);
 
-
 maxcost:=0.;
 Maxtime:=0;
 maxtimecost:=0.;
