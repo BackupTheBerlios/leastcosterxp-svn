@@ -310,11 +310,9 @@ type
     S_17: TMenuItem;
     ForceDial: TMenuItem;
     AutoDialStatus: TAMAdvLed;
-    Button1: TButton;
     WebServ: TMenuItem;
     S_18: TMenuItem;
     procedure WebServClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
     procedure AutoDialStatusLedStateChanged(Sender: TObject; LedOn: Boolean;
       NumSwitch: Integer);
     procedure AutoDialStatusClick(Sender: TObject);
@@ -4429,18 +4427,6 @@ if AutoDialStatus.LEDON then
     AutoDialStatus.hint:= misc(M114,'M114')
   else
     AutoDialStatus.hint:= misc(M115,'M115');
-end;
-
-procedure THauptfenster.Button1Click(Sender: TObject);
-var str: TFileStream;
-begin
-//isontimer.enabled:= false;
-//OnConnect;
-
- onlineset.Tarif:= 'test';
-
- WriteOnlinesetToHD;
-
 end;
 
 procedure THauptfenster.WebServClick(Sender: TObject);

@@ -733,7 +733,6 @@ end;
 pbar.Visible:= false;
 
 if tarifliste.RowCount > 2 then //wenn mehr als eine Zeile vorhanden ist
-//  gridEvents.Sort(Tarifliste,pBar,{column}1,1,tarifliste.RowCount,false,false);
    gridEvents.GridSort(Tarifliste,pBar,1,tarifliste.RowCount-1,1,1,false);
   
 tarifliste.Tag:= 1;

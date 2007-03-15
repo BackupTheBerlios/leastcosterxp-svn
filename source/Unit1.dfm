@@ -681,7 +681,7 @@ object Hauptfenster: THauptfenster
         Width = 177
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         Items.Strings = (
           'Tue nichts'
@@ -712,16 +712,6 @@ object Hauptfenster: THauptfenster
     ShowHint = False
     TabOrder = 19
     Visible = False
-  end
-  object Button1: TButton
-    Left = 80
-    Top = 216
-    Width = 75
-    Height = 25
-    Caption = 'SetOnline'
-    TabOrder = 20
-    Visible = False
-    OnClick = Button1Click
   end
   object Menu: TMainMenu
     Left = 288
