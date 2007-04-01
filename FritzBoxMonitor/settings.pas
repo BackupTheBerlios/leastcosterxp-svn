@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ComCtrls, Buttons;
+  Dialogs, StdCtrls, ExtCtrls, ComCtrls, Buttons, Spin;
 
 type
   TForm3 = class(TForm)
@@ -41,6 +41,14 @@ type
     startHidden: TCheckBox;
     monout: TCheckBox;
     revpath: TLabeledEdit;
+    CurrLabel: TLabel;
+    closefinished: TCheckBox;
+    closetimer: TCheckBox;
+    closeafter: TSpinEdit;
+    Label8: TLabel;
+    tmenabled: TCheckBox;
+    OneMSN: TCheckBox;
+    MSN: TEdit;
     procedure FBPortKeyPress(Sender: TObject; var Key: Char);
     procedure PriceKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -63,7 +71,7 @@ var
   Form3: TForm3;
 
 implementation
-uses main,StrUtils,
+uses main,StrUtils, tools, 
      IpHlpApi,IpIfConst,IpRtrMib,ipFunctions,iptypes;
 {$R *.dfm}
 
@@ -117,28 +125,41 @@ begin
  if PriceMB.Checked then PUnit := 0 else PUnit:= 1;
 
  sett.WriteBool('program','minimized',startHidden.checked);
-
+ sett.WriteBool('Traffic','enabled',tmenabled.Checked);
  sett.WriteInteger('Traffic','VolumeMode',ULDLSelect.ItemIndex);
  sett.WriteInteger('Traffic','VolumeLimit',strtoint(limit.text));
  sett.WriteInteger('Traffic','VolumeUnit',VUnit);
  sett.WriteInteger('Traffic','PeriodStart',Period.ItemIndex);
-// sett.WriteInteger('Traffic','PeriodUnit',MoWeSelect.ItemIndex);
  sett.WriteFloat('Traffic','Price',StrToFloat(price.text));
  sett.WriteInteger('Traffic','PriceUnit',PUnit);
 
  sett.WriteBool('FritzBox','useMonitor',FBMon.Checked);
  sett.WriteBool('FritzBox','monout',monout.checked);
+ sett.WriteBool('FritzBox','AutoClose',closefinished.checked);
+ sett.WriteBool('FritzBox','CloseTimer',closetimer.checked);
+ sett.WriteInteger('FritzBox','CloseTime',closeafter.value);
  sett.writestring('Fritzbox','IP',FBIP.Text);
  sett.WriteInteger('FritzBox','Port',strtoint(FBPort.text));
  sett.writeString('FritzBox','reverse', revpath.Text);
+
+ sett.WriteBool('FritzBox','OneMSN', OneMSN.checked);
+ sett.WriteString('FritzBox','MSN', MSN.text);
 
  BoxAdress:= sett.ReadString('FritzBox','IP','192.168.178.1');
  sett.UpdateFile;
 
  //FritzBox Listener starten
- if FBMon.Checked and not socket.Active then begin form1.stopMySocket; Form1.StartMySocket; end
+ if FBMon.Checked and not MySocket.Active then begin form1.stopMySocket; Form1.StartMySocket; end
  else //oder beenden falls er noch läuft
- if not FBMOn.Checked and socket.Active then Form1.StopMySocket;
+ if not FBMOn.Checked and MySocket.Active then Form1.StopMySocket;
+
+ Form1.tab2.tabvisible:= FBMOn.Checked;
+ Form1.tab3.tabvisible:= FBMOn.Checked;
+
+ Form1.timer.enabled:= tmenabled.Checked;
+ Form1.tab1.tabvisible:= tmenabled.Checked;
+ Form1.PageControl1Change(self);
+
  form3.Close;
 end;
 
@@ -147,24 +168,33 @@ begin
  NDev.tag            := sett.ReadInteger('Traffic','Device',0);
  NDev.ItemIndex      := NDev.Tag;
 
- ULDLSelect.ItemIndex:= sett.ReadInteger('Traffic','VolumeMode',0);
- limit.text          := sett.ReadString('Traffic','VolumeLimit','0');
+ StartHidden.Checked   := sett.ReadBool('program','minimized',false);
+ tmenabled.Checked     := sett.ReadBool('Traffic','enabled',false);
+ ULDLSelect.ItemIndex  := sett.ReadInteger('Traffic','VolumeMode',0);
+ limit.text            := sett.ReadString('Traffic','VolumeLimit','0');
 
 // MoWeSelect.ItemIndex:= sett.ReadInteger('Traffic','PeriodUnit',2);
- Period.ItemIndex    := sett.ReadInteger('Traffic','PeriodStart',0);
- price.text          := FloattoStr(sett.ReadFloat('Traffic','Price',0.0));
+ Period.ItemIndex      := sett.ReadInteger('Traffic','PeriodStart',0);
+ price.text            := FloattoStr(sett.ReadFloat('Traffic','Price',0.0));
 
- FBMon.Checked       := sett.ReadBool('FritzBox','useMonitor', false);
- monout.checked      := sett.ReadBool('FritzBox','monout',true);
- FBIP.Text           := sett.readstring('Fritzbox','IP','192.168.178.1');
- FBPort.text         := sett.ReadString('FritzBox','Port','1012');
- revpath.text        := sett.ReadString('FritzBox','reverse', 'http://www1.dasoertliche.de/?form_name=search_inv&ph=%NUMBER%');
+ FBMon.Checked         := sett.ReadBool('FritzBox','useMonitor', false);
+ monout.checked        := sett.ReadBool('FritzBox','monout',true);
+ FBIP.Text             := sett.readstring('Fritzbox','IP','192.168.178.1');
+ FBPort.text           := sett.ReadString('FritzBox','Port','1012');
 
- RadioMB.Checked     := (sett.ReadInteger('Traffic','VolumeUnit',1) = 0);
- RadioGB.Checked     := (sett.ReadInteger('Traffic','VolumeUnit',1) = 1);
+ closefinished.Checked := sett.ReadBool('FritzBox','AutoClose',true);
+ closetimer.Checked    := sett.ReadBool('FritzBox','CloseTimer',false);
+ closeafter.value      := sett.ReadInteger('FritzBox','CloseTime',15);
+ revpath.text          := sett.ReadString('FritzBox','reverse', 'http://www1.dasoertliche.de/?form_name=search_inv&ph=%NUMBER%');
 
- PriceMB.Checked     := (sett.ReadInteger('Traffic','PriceUnit',1) = 0);
- PriceGB.Checked     := (sett.ReadInteger('Traffic','PriceUnit',1) = 1);
+ OneMSN.checked        := sett.ReadBool('FritzBox','OneMSN', false );
+ MSN.text              := sett.ReadString('FritzBox','MSN', MSN.text);
+
+ RadioMB.Checked       := (sett.ReadInteger('Traffic','VolumeUnit',1) = 0);
+ RadioGB.Checked       := (sett.ReadInteger('Traffic','VolumeUnit',1) = 1);
+
+ PriceMB.Checked       := (sett.ReadInteger('Traffic','PriceUnit',1) = 0);
+ PriceGB.Checked       := (sett.ReadInteger('Traffic','PriceUnit',1) = 1);
 
  BoxAdress:= sett.ReadString('FritzBox','IP','192.168.178.1');
 
@@ -173,17 +203,8 @@ end;
 
 procedure TForm3.FormCreate(Sender: TObject);
 var i: integer;
-    Deviceindex: integer;
 begin
-exit;
-  DeviceIndex:= 0;
-  Form3.GetDeviceList;
-   for i:= 0 to NDev.Items.Count-1 do
-       if AnsiContainsStr(NDev.Items.Strings[i],' ['+ inttostr(DeviceIndex)+']')
-         then NDev.itemindex:= i; //letztes Device einstellen
-
-//  NDev.OnCloseUp(self); //Device setzen
-  Form3.BtnCancelClick(Self);
+  CurrLabel.Caption:= CurrencyString;
 end;
 
 procedure TForm3.FormShow(Sender: TObject);
@@ -196,9 +217,7 @@ GetDeviceList;
        if AnsiContainsStr(NDev.Items.Strings[i],' ['+ inttostr(NetworkDevice)+']')
          then NDev.itemindex:= i; //letztes Device einstellen
 
-//  NDev.OnCloseUp(self); //Device setzen
   Form3.BtnCancelClick(Self);
-
 end;
 
 procedure TForm3.FormClose(Sender: TObject; var Action: TCloseAction);

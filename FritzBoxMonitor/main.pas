@@ -7,14 +7,14 @@ uses
   Dialogs, StdCtrls,
   IpHlpApi,IpIfConst,IpRtrMib,ipFunctions,iptypes, ExtCtrls, StrUtils,
   scktcomp, CoolTrayIcon, ComCtrls, Buttons, inifiles, HttpProt, Menus, ImgList,
-  ToolWin, Gauges;
+  ToolWin, Gauges, BomeOneInstance;
 
 type
 
   TTraffic = Record
       StartOfPeriod: TDateTime;
-      TIn: Cardinal;
-      TOut: Cardinal;
+      TotalIn: Cardinal;
+      TotalOut: Cardinal;
       todayU,thisweekU, thismonthU : Cardinal;
       todayD,thisweekD, thismonthD : Cardinal;
       DateofToday: TDateTime;
@@ -31,13 +31,15 @@ type
    end;
 
    TCaller = Record
-      Typ             : string;
-      Datum           : string;
-      Name            : string;
+      Date            : string;
+      typ             : string;
+      ConnID          : string;
       Rufnummer       : string;
       Nebenstelle     : string;
-      EigeneRufnummer : string;
+      MSN             : string;
       Dauer           : string;
+      Name            : string;
+      Start           : cardinal;
     end;
 
   TForm1 = class(TForm)
@@ -90,6 +92,8 @@ type
     reset: TButton;
     Website: TLabel;
     ToolButton9: TToolButton;
+    OneInstance: TBomeOneInstance;
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure ToolButton9Click(Sender: TObject);
     procedure WebsiteClick(Sender: TObject);
     procedure WebsiteMouseLeave(Sender: TObject);
@@ -121,6 +125,8 @@ type
     procedure FormCreate(Sender: TObject);
 
     procedure TimerTimer(Sender: TObject);
+    procedure Socketconn(Sender: TObject; Socket: TCustomWinSocket);
+    procedure SocketErr(Sender:TObject; Socket: TCustomWinSocket; ErrorEvent: TErrorEvent; var ErrorCode: integer);
     Procedure SocketMessage(Sender: TObject; Socket: TCustomWinSocket);
     Procedure DocData(sender: TObject; Buffer: Pointer; len: integer);
     Procedure ParseCallList(s:TStream; filterindex: integer);
@@ -130,6 +136,9 @@ type
     Procedure StopMySocket;
     function  AskForUpdate: boolean;
     Procedure UpdatePhonebook;
+    procedure httpget(URL: string; var str: TStringStream);
+    procedure httppost(URL,Data: string);
+    procedure SaveTrafficData;
   private
     { Private-Deklarationen }
     PBselected: integer;
@@ -139,13 +148,15 @@ type
     { Public-Deklarationen }
   end;
 
+const mykey = 'Ein sehr langer KEY, den jeder beim Zählen von 12345 versteht';
+
 var
   Form1              : TForm1;
   sett               : TMemInifile;
-  Socket             : TClientSocket;
+  MySocket             : TClientSocket;
   PhoneBook          : array of TPerson;
   PhoneBook_new      : array of TPerson;
-  Caller             : array of TCaller;
+  ActiveCalls        : array of TCaller;
   BoxAdress          : string;
   Phonebookliste     : TListitems;
   CallerListe        : TListitems;
@@ -156,21 +167,35 @@ var
   LastIN, LastOUT    : cardinal;
 
 implementation
-uses RegExpr, Unit2, statistics, settings, DateUtils, shellapi;
+uses RegExpr, Unit2, statistics, settings, DateUtils, shellapi, tools, password,
+     CallManagement;
 
 {$R arrows.res}
 
 procedure TForm1.StartMySocket;
 begin
- Socket.Host:= sett.readstring('Fritzbox','IP','192.168.178.1');
- Socket.Port:= sett.ReadInteger('FritzBox','Port',1012);
- Socket.OnRead:= SocketMessage;
- Socket.Open;
+ MySocket.Host    := sett.readstring('Fritzbox','IP','192.168.178.1');
+ MySocket.Port    := sett.ReadInteger('FritzBox','Port',1012);
+ MySocket.Open;
+end;
+
+procedure tForm1.SocketConn(Sender: TObject; Socket: TCustomWinSocket);
+begin
+ Status.Simpletext:= 'Fritz!Box connected';
+end;
+
+procedure TForm1.SocketErr(Sender:TObject; Socket: TCustomWinSocket; ErrorEvent: TErrorEvent; var ErrorCode: integer);
+begin
+ If ErrorCode <> 0 then
+ begin
+    Status.Simpletext:= 'Could not connect to your Fritz!Box';
+    ErrorCode:= 0;
+ end;   
 end;
 
 procedure TForm1.StopMySocket;
 begin
- Socket.Close;
+ MySocket.Close;
 end;
 
 function findnames(number: string): string;
@@ -186,47 +211,103 @@ begin
   end;
 end;
 
+procedure ShowNotification;
+begin
+ if not assigned(CallIN) then
+ begin
+   Application.CreateForm(TCallIn, CallIn);
+   CallIn.Show;
+ end;
+end;
+
 Procedure TForm1.SocketMessage(Sender: TObject; Socket: TCustomWinSocket);
-var m: string;
-    s: TStringlist;
-    r: TRegExpr;
+var m    : string;
+    s    : TStringlist;
+    r    : TRegExpr;
+    Call : TCaller;
+    count: integer;
 begin
  m:= Socket.ReceiveText;
-//Zustandegekommene Verbindung: datum;CONNECT;ConnectionID;Nebenstelle;Nummer;
  r:= TRegExpr.Create;
  r.Expression:= ';';
-if AnsiContainsStr(m,';RING;')  or AnsiContainsStr(m,';DISCONNECT;') or AnsiContainsStr(m,';CALL;')then
+if AnsiContainsStr(m,';RING;')  or AnsiContainsStr(m,';DISCONNECT;') or AnsiContainsStr(m,';CALL;')or AnsiContainsStr(m,';CONNECT;')then
  begin
   s:= TStringlist.Create;
   r.Split(m,s);
-  CallIn.Date.Caption:=  s.Strings[0];
+  //CallIn.Date.Caption:=  s.Strings[0];
  //Eingehende Anrufe: datum;RING;ConnectionID;Anrufer-Nr;Angerufene-Nummer;
   if s.strings[1] = 'RING' then
     begin
-      CallIn.CallType.caption:= 'Incoming Call';
-
-      CallIn.info2.caption   := FindNames(s.strings[3]);
-      CallIn.Call:= s.strings[3];
-      CallIn.info3.caption   := s.strings[4];
-      CallIn.info4.caption   := 'ID: ' + s.strings[2];
-      ConnectionID           := s.strings[2];
-      CallIn.show;
+      Call.typ        := 'Incoming Call';
+      Call.Date       := s.Strings[0];
+      Call.ConnID     := s.strings[2];
+      Call.Rufnummer  := s.strings[3];
+      Call.Name       := FindNames(s.strings[3]);
+      Call.Nebenstelle:= '';
+      Call.MSN        := s.strings[4];
+      Call.Dauer      := '';
+      Call.Start      :=  0;
+      if (sett.Readbool('FritzBox','OneMSN',false)=false)
+         or
+       ( (sett.Readbool('FritzBox','OneMSN',false)=true and (Call.MSN = sett.ReadString('FritzBox','MSN',''))))
+      then
+      begin
+        count:= AddACall(Call);
+        if count = 1 then ShowNotification;
+        Callin.ShowCall(count - 1);
+      end;
     end
    else
 //Ausgehende Anrufe: datum;CALL;ConnectionID;Nebenstelle;GenutzteNummer;AngerufeneNummer;
-  if ( sett.ReadBool('FritzBox','monout',true) and (s.strings[1] = 'CALL')) then
+  if (sett.ReadBool('FritzBox','monout',true) and (s.strings[1] = 'CALL')) then
     begin
-      CallIn.CallType.caption:= 'Outgoing Call';
-      CallIn.info2.caption   := FindNames(s.strings[5]);
-      CallIn.Call            := s.strings[5];
-      CallIn.info3.caption   := s.strings[3]+'@'+s.strings[4];
-      CallIn.info4.caption   := 'ID: ' + s.strings[2];
-      ConnectionID           := s.strings[2];
-      CallIn.show;
+      Call.typ        := 'Outgoing Call';
+      Call.Date       := s.Strings[0];
+      Call.ConnID     := s.strings[2];
+      Call.Rufnummer  := s.strings[5];
+      Call.Name       := FindNames(s.strings[5]);
+      Call.Nebenstelle:= s.strings[3];
+      Call.MSN        := s.strings[4];
+      Call.Dauer      := '';
+      Call.Start      :=  0;
+      if (sett.Readbool('FritzBox','OneMSN',false)= false)
+         or
+         (sett.Readbool('FritzBox','OneMSN',false)=true and (Call.MSN = sett.ReadString('FritzBox','MSN','')))
+      then
+      begin
+        count := AddACall(Call);
+        if Count = 1 then ShowNotification;
+        Callin.ShowCall(count -1);
+      end;
     end
    else
 //Ende der Verbindung: datum;DISCONNECT;ConnectionID;dauerInSekunden;
-  if (s.strings[1] = 'DISCONNECT') and (s.strings[2] = ConnectionID) then CallIn.Hide;
+  if (s.strings[1] = 'DISCONNECT') then //  if (s.strings[1] = 'DISCONNECT') and (s.strings[2] = ConnectionID) then CallIn.Hide;
+    begin
+      Call.Date       := s.Strings[0];
+      Call.ConnID     := s.strings[2];
+      Call.Dauer      := s.strings[3];;
+      count:=  RemoveACall(Call);
+      if assigned(CallIn) then 
+        if Count > 0 then Callin.ShowCall(0);  //den ersten Anruf zeigen, wenn der letzte wegfällt
+
+      if sett.ReadBool('FritzBox','AutoClose',true) and (count = 0)
+          then
+            if assigned(callIn) then CallIn.close;         //Fenster schließen, wenn alle Anrufe beendet sind
+    end
+  else
+ //Zustandegekommene Verbindung: datum;CONNECT;ConnectionID;Nebenstelle;Nummer;
+  if (s.strings[1] = 'CONNECT') then
+   begin
+      Call.Date       := s.Strings[0];
+      Call.ConnID     := s.strings[2];
+      Call.Nebenstelle:= s.strings[3];
+      Call.Rufnummer     := s.strings[3];
+      Call.Start      := getTickCount;
+      count := StartAConnection(Call);
+      if assigned(callIn) then
+        CallIn.ShowCall(count);
+   end;
 
   s.free;
  end;
@@ -239,7 +320,7 @@ begin
   status.simpletext:= inttostr(RcvdCount) + ' bytes received.';
 end;
 
-procedure httpget(URL: string; var str: TStringStream);
+procedure TForm1.httpget(URL: string; var str: TStringStream);
 var Http: THttpCli;
 begin
   if BoxAdress = '' then exit;
@@ -249,7 +330,6 @@ begin
   with Http do
   begin
     Name := 'Http';
-//    LocalAddr := BoxAdress;
     ProxyPort := '80';
     Agent := 'Mozilla/4.0 (compatible; ICS)';
     Accept := 'image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*';
@@ -262,7 +342,6 @@ begin
     BandwidthLimit := 10000;
     BandwidthSampling := 1000;
     Options := [];
-//    SocksAuthentication := socksNoAuthentication;
   end;
 
   http.URL:= URL;
@@ -278,7 +357,7 @@ begin
   http.Free;
 end;
 
-procedure httppost(URL,Data: string);
+procedure TForm1.httppost(URL,Data: string);
 var Http: THttpCli;
 begin
   Http := THttpCli.Create(nil);
@@ -314,6 +393,21 @@ begin
   http.Free;
 end;
 
+function CheckForPassword: boolean;
+var str: TStringStream;
+begin
+str:= TStringStream.Create('');
+form1.httpget('http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/index.html', str);
+str.Position:=0;
+if ansicontainstext(str.DataString,'login:command/password')
+then
+  Result:= true
+else
+  Result:= false;
+
+  str.Free;
+end;
+
 procedure GetSessionTraffic(var Tin, Tout:Cardinal);
 var
   IfTable: PMIB_IFTABLE;
@@ -329,7 +423,7 @@ begin
     if IfTable <> nil then
     begin
 
-     index:= Networkdevice; //form3.device.tag;                     //dwIndex muss vorher festgelegt werden und mit index verglichen werden
+    index:= Networkdevice; //form3.device.tag;                     //dwIndex muss vorher festgelegt werden und mit index verglichen werden
      for i := 0 to IfTable.dwNumEntries - 1 do
       begin
            if IfTable.table[i].dwType <> MIB_IF_TYPE_LOOPBACK then
@@ -351,18 +445,26 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 var f: TFileStream;
 begin
-//  form1.ClientHeight:= 290;
-  unsaved_phonebook:= false;
-  PBSelected:= -1;
-  PhonebookListe := Tlistitems.Create(PhonebookList);
-  CallerListe := Tlistitems.Create(CallerList);
+
+  unsaved_phonebook := false;
+  PBSelected        := -1;
+  PhonebookListe    := Tlistitems.Create(PhonebookList);
+  CallerListe       := Tlistitems.Create(CallerList);
 
   sett:= TMemIniFile.Create(ExtractFilePath(ParamStr(0)) + 'settings.cfg');
+
+  Timer.Enabled   := sett.ReadBool('Traffic','enabled',false);
+  tab1.tabvisible := sett.ReadBool('Traffic','enabled',false);
 
   NetWorkDevice:= Sett.ReadInteger('Traffic','Device',0);
   BoxAdress    := sett.ReadString('FritzBox','IP','192.168.178.1');
 
   Application.ShowMainForm:= not sett.Readbool('program','minimized',false); //Mainform nicht anzeigen
+
+  Form1.Left   := sett.Readinteger('MainForm','left',0);
+  Form1.top    := sett.Readinteger('MainForm','top',0);
+  Form1.width  := sett.Readinteger('MainForm','width',464);
+  Form1.height := sett.Readinteger('MainForm','height',404);
 
  if fileexists(ExtractFilePath(ParamStr(0)) + 'traffic.dat') then
     begin
@@ -372,8 +474,8 @@ begin
     end
    else
    begin
-    TData.tin          := 0;
-    TData.tout         := 0;
+    TData.TotalIn          := 0;
+    TData.TotalOut         := 0;
     TData.todayD       := 0;
     TData.thisweekD    := 0;
     TData.thismonthD   := 0;
@@ -396,36 +498,65 @@ begin
 
  edit1.Text:= '0';
  edit2.Text:= '0';
- edit3.Text:= inttostr(TData.TIn);
- edit4.Text:= inttostr(TData.TOut);
+ edit3.Text:= inttostr(TData.TotalIn);
+ edit4.Text:= inttostr(TData.TotalOut);
 
- Socket:= TClientSocket.Create(self);
- if sett.ReadBool('FritzBox','useMonitor',false) then //Fritz!Box Listener starten
-   StartMySocket;
+ tab2.tabvisible:= sett.ReadBool('FritzBox','useMonitor',false);
+ tab3.tabvisible:= sett.ReadBool('FritzBox','useMonitor',false);
 
- LoadCallersFromFile(0);  
+ LoadCallersFromFile(0);
  LoadPhonebookFromFile;
 
- PageControl1.ActivePageIndex:= 0;
+ if tab1.Visible then
+   PageControl1.ActivePageIndex:= 0
+ else
+ if tab2.Visible then
+   PageControl1.ActivePageIndex:= 1;
+
+ PageControl1Change(self);
+
+ MySocket          := TClientSocket.Create(self);
+ MySocket.OnError  := SocketErr;
+ MySocket.OnConnect:= SocketConn;
+ MySocket.OnRead   := SocketMessage;
+
+ if sett.ReadBool('FritzBox','useMonitor',false) then
+     StartMySocket; //Fritz!Box Listener starten
 
 end;
 
-procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+
+procedure TForm1.SaveTrafficData;
 var f: TFileStream;
 begin
+  f:= TFileStream.Create(ExtractFilePath(ParamStr(0)) + 'traffic.dat',fmCreate);
+   TData.TotalIn :=  TData.TotalIn  + TIn-OffsetIN;  //Summe abspeichern
+   TData.TotalOut:=  TData.TotalOut + TOut-OffsetOUT;
+   f.Write(TData, sizeof(TData));
+  f.Free;
+end;
 
+procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  canclose:= false;
   if unsaved_phonebook then AskforUpdate;
 
-  f:= TFileStream.Create(ExtractFilePath(ParamStr(0)) + 'traffic.dat',fmCreate);
-  TData.TIn :=  TData.TIn  + TIn-OffsetIN;  //Summe abspeichern
-  TData.TOut:=  TData.TOut + TOut-OffsetOUT;
-  f.Write(TData, sizeof(TData));
-  f.Free;
+  SaveTrafficData;
 
+  sett.WriteInteger( 'MainForm','left'  ,Form1.Left);
+  sett.Writeinteger( 'MainForm','top'   ,Form1.top);
+  sett.Writeinteger( 'MainForm','width' ,Form1.width);
+  sett.Writeinteger( 'MainForm','height',Form1.height);
+  sett.UpdateFile;
+  canclose:= true;
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
   sett.Free;
   Phonebookliste.Free;
   Callerliste.Free;
-  Socket.Free;
+  MySocket.Free;
 end;
 
 procedure MakeArrowsBlink(diffIn, DiffOut: longint; threshold: integer);
@@ -458,13 +589,13 @@ begin
         writeln(f, 'date' +#9+ 'kB in' +#9+ 'kb out' +#9+ 'price');
      end;
 
-   TData.TIn :=  TData.TIn  + TIn-OffsetIN;  //Summe abspeichern
-   TData.TOut:=  TData.TOut + TOut-OffsetOUT;
-   writeln(f, DateTostr(now) + #9 + Format('%.2f',[TData.TIn/1024]) + #9 + Format('%.2f',[TData.TOut/1024]) +#9 +Format('%.4f',[TData.Price]));
+   TData.TotalIn :=  TData.TotalIn  + TIn-OffsetIN;  //Summe abspeichern
+   TData.TotalOut:=  TData.TotalOut + TOut-OffsetOUT;
+   writeln(f, DateTostr(now) + #9 + Format('%.2f',[TData.TotalIn/1024]) + #9 + Format('%.2f',[TData.TotalOut/1024]) +#9 +Format('%.4f',[TData.Price]));
    closefile(f);
 
-   TData.TIn  := 0;
-   TData.TOut := 0;
+   TData.TotalIn  := 0;
+   TData.TotalOut := 0;
    TData.Price:= 0;
    TIn        := 0;
    TOut       := 0;
@@ -497,7 +628,6 @@ end;
 
 procedure TForm1.TimerTimer(Sender: TObject);
 var inCurrent, outCurrent: cardinal;
-    lastReset            : TDateTime;
     ULDL, VUnit, PUnit   : byte;
     limitreached         : boolean;
     limit                : cardinal;
@@ -507,7 +637,12 @@ var inCurrent, outCurrent: cardinal;
     PStart               : integer;
 begin
   limitreached:= false;
-  GetSessionTraffic(TIn,Tout);
+  try
+   GetSessionTraffic(TIn,Tout);
+  except
+   Tin := 0;
+   Tout:= 0;
+  end; 
 
   inCurrent   := TIn-OffsetIN;
   outCurrent  := TOut-OffsetOUT;
@@ -524,8 +659,8 @@ begin
   edit1.text  := Format('%.2f MB', [inCurrent / 1024 / 1024]);
   edit2.text  := Format('%.2f MB', [outCurrent / 1024 / 1024]);
 
-  allIn       :=  (TData.TIn + inCurrent) / 1024 / 1024; //in MB
-  allOut      := (TData.TOut+ outCurrent) / 1024 / 1024;
+  allIn       := (TData.TotalIn + inCurrent ) / 1024 / 1024; //in MB
+  allOut      := (TData.TotalOut+ outCurrent) / 1024 / 1024;
 
   edit3.text  := Format('%.2f MB', [allIn]);
   edit4.text  := Format('%.2f MB', [allOut]);
@@ -585,6 +720,12 @@ begin
 
    edtprice.text:= Format('%.4m',[TData.Price]);
 
+   timer.Tag:= timer.tag + 1;
+   if (timer.tag = 600) then
+   begin
+    SaveTrafficData; timer.Tag:= 0;
+   end;
+   
    ResetData;
 end;
 
@@ -619,7 +760,7 @@ begin
    r.Expression:= sep;
 
    for i:= 2 to sl.count -1 do
-   begin
+   begin //die zweite Zeile ist die Beschreibungszeile, daher erst beim index 2 beginnen
     cl.Clear;
     r.Split(sl.strings[i],cl);
     if cl.Count = 7 then
@@ -639,14 +780,14 @@ SL.Free;
 CL.Free;
 end;
 
-function ParsePhoneBook(s:TStream): integer;
+function ParsePhoneBook(s:TStream): boolean;
 var data: string;
     r: TRegExpr;
     SL: TStringList;
     i: integer;
     len: integer;
 begin
-
+ Result:=false;
  s.Position:= 0;
 
  SL:= TSTringlist.Create;
@@ -661,6 +802,7 @@ begin
  for i:=0 to SL.Count-1 do
   if r.Exec(SL.strings[i]) then
   begin
+    Result:= true;
     setlength(Phonebook, length(Phonebook)+1);
     len:= Length(phonebook) -1;
     Phonebook[len].Name   := r.Replace(SL.strings[i],'$1',true);
@@ -873,19 +1015,20 @@ end;
 
 
 procedure TForm1.ReloadPhonebookClick(Sender: TObject);
-var url: string;
-    str: TStringStream;
-    f  : TFileStream;
+var url : string;
+    str : TStringStream;
+    f   : TFileStream;
 begin
  Phonebooklist.Cursor:= crHourGlass;
  Phonebooklist.Enabled:= false;
 
  if unsaved_phonebook then
   begin
-    showmessage(booltostr(unsaved_phonebook));
    if AskforUpdate then exit;
   end;
   str:= TStringStream.Create('');
+
+   if CheckForPassword then PWForm.showmodal;
 
    URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/fon/ppFonbuch.html&var:lang=de';
    httpget(URL,str);
@@ -912,10 +1055,13 @@ begin
  Callerlist.Cursor:= crHourGlass;
  Callerlist.Enabled:= false;
      str:= TStringStream.Create('');
+
+     if CheckForPassword then PWForm.showmodal;
+
       URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/menus/menu2.html&var:lang=de&var:menu=fon&var:pagename=foncalls';
       httpget(URL,str);
       str.free;
-     sleep(500);
+//     sleep(500);
 
      str:= TStringStream.Create('');
       URL:= 'http://'+BoxAdress+'/cgi-bin/webcm?getpage=../html/de/FRITZ!Box_Anrufliste.csv';
@@ -957,8 +1103,9 @@ var i: integer;
     ok: boolean;
     namestr: string;
 begin
+  if PBName.text = '' then exit;
+  
   ok:= true;
-
   if PBimportant.Checked then
       NameStr:= '!'+PBName.text
   else
@@ -1046,12 +1193,14 @@ var i: integer;
 begin
    Form1.Phonebooklist.Cursor:= crHourGlass;
    Form1.Phonebooklist.Enabled:= false;
+
+   if CheckForPassword then PWForm.showmodal;
+
     //Alles löschen
     Data:= '';
     for i:= 99 downto 0 do
     Data:= Data + 'telcfg:command/HotDialEntry'+inttostr(i)+'=delete'+'&';
     Data:= Data + 'Submit=Submit';
-
     httppost('http://'+BoxAdress+'/cgi-bin/webcm', Data);
 
     Data:= '';
@@ -1126,7 +1275,7 @@ begin
          'telcfg:settings/HotDialEntry'+inttostr(Entry.No)+'/Name='+ EName + '&' +
          'Submit=Submit';
 
- httppost('http://'+BoxAdress+'/cgi-bin/webcm', Data);
+ form1.httppost('http://'+BoxAdress+'/cgi-bin/webcm', Data);
 end;
 
 Procedure DeleteEntry(Entry: TPerson);
@@ -1135,7 +1284,7 @@ var
 begin
     Data:= 'telcfg:command/HotDialEntry'+inttostr(Entry.No)+'=delete'+'&' +
            'Submit=Submit';
-    httppost('http://'+BoxAdress+'/cgi-bin/webcm', Data);
+    form1.httppost('http://'+BoxAdress+'/cgi-bin/webcm', Data);
 end;
 
 

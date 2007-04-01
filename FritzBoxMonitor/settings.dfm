@@ -4,7 +4,7 @@ object Form3: TForm3
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsToolWindow
   Caption = 'settings'
-  ClientHeight = 312
+  ClientHeight = 323
   ClientWidth = 335
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -24,7 +24,7 @@ object Form3: TForm3
     Left = 0
     Top = 0
     Width = 335
-    Height = 273
+    Height = 281
     ActivePage = TabSheet1
     Align = alTop
     Style = tsFlatButtons
@@ -45,9 +45,9 @@ object Form3: TForm3
       Caption = 'Traffic'
       object GroupBox2: TGroupBox
         Left = 0
-        Top = 57
+        Top = 65
         Width = 327
-        Height = 96
+        Height = 88
         Align = alTop
         Caption = 'Traffic Volume'
         TabOrder = 0
@@ -119,7 +119,7 @@ object Form3: TForm3
         Left = 0
         Top = 153
         Width = 327
-        Height = 89
+        Height = 83
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 1
@@ -127,7 +127,7 @@ object Form3: TForm3
           Left = 0
           Top = 0
           Width = 168
-          Height = 89
+          Height = 83
           Align = alLeft
           Caption = 'Prices'
           TabOrder = 0
@@ -137,6 +137,12 @@ object Form3: TForm3
             Width = 45
             Height = 13
             Caption = 'Price per '
+          end
+          object CurrLabel: TLabel
+            Left = 96
+            Top = 49
+            Width = 3
+            Height = 13
           end
           object PriceMB: TRadioButton
             Left = 64
@@ -157,7 +163,7 @@ object Form3: TForm3
             TabStop = True
           end
           object Price: TEdit
-            Left = 40
+            Left = 24
             Top = 46
             Width = 65
             Height = 21
@@ -169,7 +175,7 @@ object Form3: TForm3
           Left = 174
           Top = 0
           Width = 153
-          Height = 89
+          Height = 83
           Align = alRight
           Caption = 'Period settings'
           TabOrder = 1
@@ -235,18 +241,26 @@ object Form3: TForm3
         Left = 0
         Top = 0
         Width = 327
-        Height = 57
+        Height = 65
         Align = alTop
         Caption = 'Network device'
         TabOrder = 2
         object NDev: TComboBox
           Left = 6
-          Top = 24
+          Top = 36
           Width = 313
           Height = 21
           ItemHeight = 13
           TabOrder = 0
           Text = 'NDev'
+        end
+        object tmenabled: TCheckBox
+          Left = 7
+          Top = 15
+          Width = 138
+          Height = 17
+          Caption = 'enable traffic monitor'
+          TabOrder = 1
         end
       end
     end
@@ -254,14 +268,21 @@ object Form3: TForm3
       Caption = 'Fritz!Box Monitor'
       ImageIndex = 1
       object Label7: TLabel
-        Left = 184
-        Top = 8
-        Width = 117
-        Height = 78
+        Left = 19
+        Top = 76
+        Width = 268
+        Height = 26
         Caption = 
           'Before the first use you have to activate the monitoring service' +
           ' on your Fritz!Box by dialling the code : #96*5*.'
         WordWrap = True
+      end
+      object Label8: TLabel
+        Left = 240
+        Top = 147
+        Width = 39
+        Height = 13
+        Caption = 'seconds'
       end
       object FBMon: TCheckBox
         Left = 16
@@ -273,7 +294,7 @@ object Form3: TForm3
       end
       object FBIP: TLabeledEdit
         Left = 16
-        Top = 112
+        Top = 47
         Width = 153
         Height = 21
         EditLabel.Width = 94
@@ -284,7 +305,7 @@ object Form3: TForm3
       end
       object FBPort: TLabeledEdit
         Left = 184
-        Top = 112
+        Top = 47
         Width = 121
         Height = 21
         EditLabel.Width = 20
@@ -296,7 +317,7 @@ object Form3: TForm3
       end
       object monout: TCheckBox
         Left = 16
-        Top = 144
+        Top = 104
         Width = 153
         Height = 17
         Caption = 'monitor outgoing calls, too'
@@ -304,33 +325,74 @@ object Form3: TForm3
       end
       object revpath: TLabeledEdit
         Left = 16
-        Top = 184
+        Top = 212
         Width = 289
         Height = 21
         EditLabel.Width = 224
         EditLabel.Height = 13
         EditLabel.Caption = 'reverse lookup (use %NUMBER% as identifier)'
+        TabOrder = 9
+      end
+      object closefinished: TCheckBox
+        Left = 16
+        Top = 125
+        Width = 249
+        Height = 17
+        Caption = 'close notification when all calls are terminated'
         TabOrder = 4
+      end
+      object closetimer: TCheckBox
+        Left = 16
+        Top = 147
+        Width = 129
+        Height = 17
+        Caption = 'close notification after'
+        TabOrder = 5
+      end
+      object closeafter: TSpinEdit
+        Left = 154
+        Top = 143
+        Width = 73
+        Height = 22
+        MaxValue = 0
+        MinValue = 0
+        TabOrder = 6
+        Value = 15
+      end
+      object OneMSN: TCheckBox
+        Left = 16
+        Top = 174
+        Width = 121
+        Height = 17
+        Caption = 'monitor only one MSN'
+        TabOrder = 7
+      end
+      object MSN: TEdit
+        Left = 144
+        Top = 170
+        Width = 121
+        Height = 21
+        TabOrder = 8
       end
     end
   end
   object BtnCancel: TBitBtn
     Left = 112
-    Top = 280
+    Top = 288
     Width = 97
     Height = 25
     Caption = 'Cancel'
-    TabOrder = 1
+    TabOrder = 2
     OnClick = BtnCancelClick
     Kind = bkCancel
   end
   object BtnSave: TBitBtn
     Left = 16
-    Top = 280
+    Top = 288
     Width = 75
     Height = 25
     Caption = 'Apply'
-    TabOrder = 2
+    TabOrder = 1
     OnClick = BtnSaveClick
     Kind = bkOK
   end
