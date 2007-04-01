@@ -646,6 +646,7 @@ begin
 
 
 progress.min:= 0;
+progress.Position:= 0;
 progress.max:= length(hauptfenster.tarife)-1;
 progress.visible:= true;
 

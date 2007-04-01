@@ -885,10 +885,9 @@ var restzeit: integer;
 begin
 if Hauptfenster.AutoDialStatus.LEDOn then
 begin
-
  delay:= 10;
  check:= CheckAutoConnect(restzeit);
- 
+
 //Automatische Einwahl
  if check and not isonline and (restzeit > 10 + delay) and (not Hauptfenster.dialing) then
     begin
@@ -2760,7 +2759,9 @@ end;
 
 procedure THauptfenster.AktualisierenClick(Sender: TObject);
 var i: integer;
+    found: boolean;
 begin
+found:= false;
 if dialing then exit;
 
 if neuladen then
@@ -2799,14 +2800,23 @@ tarifverw.loadlist;
 if beliebig_check.checked then
 begin
  GridSort(liste, Tarifprogress, 1,liste.RowCount-1, 7, 7, false);
-// Sort(liste,TarifProgress,liste.tag,1,liste.RowCount);
  liste.Row:=1;
  listeclick(self);
 end;
 //tarif auswählen
 if onlineset.tarif <> '' then
+begin
   for i:= 0 to liste.rowcount-1 do
-   if liste.cells[1,i] = onlineset.tarif then liste.row:= i;
+   if liste.cells[1,i] = onlineset.tarif then
+    begin
+     liste.row:= i;
+     found:= true;
+     break;
+    end;
+
+ if (not found) and ForceDial.Checked
+    then ForceDial.Checked:= false;   
+end;
 
 liste.Repaint;
 end;
