@@ -264,25 +264,27 @@ myidentindex:=0;
 errormsg.caption:= '';
 error:= false;
 fehlertext:= '';
+code:=0;
 
-checkbox1.Font.color:= clWindowText;
-checkbox2.Font.color:= clWindowText;
-checkbox3.Font.color:= clWindowText;
-checkbox4.Font.color:= clWindowText;
-checkbox5.Font.color:= clWindowText;
-checkbox6.Font.color:= clWindowText;
-checkbox7.Font.color:= clWindowText;
-label1.Font.Color:=clWindowText;
-label2.Font.Color:=clWindowText;
-label3.Font.Color:=clWindowText;
-label4.Font.Color:=clWindowText;
-label5.Font.Color:=clWindowText;
-label6.Font.Color:=clWindowText;
-label7.Font.Color:=clWindowText;
-label8.Font.Color:=clWindowText;
-label9.Font.Color:=clWindowText;
-label10.Font.Color:=clWindowText;
-label11.Font.Color:=clWindowText;
+checkbox1.Font.color                := clWindowText;
+checkbox2.Font.color                := clWindowText;
+checkbox3.Font.color                := clWindowText;
+checkbox4.Font.color                := clWindowText;
+checkbox5.Font.color                := clWindowText;
+checkbox6.Font.color                := clWindowText;
+checkbox7.Font.color                := clWindowText;
+label1.Font.Color                   := clWindowText;
+label2.Font.Color                   := clWindowText;
+label3.Font.Color                   := clWindowText;
+label4.Font.Color                   := clWindowText;
+label5.Font.Color                   := clWindowText;
+label6.Font.Color                   := clWindowText;
+label7.Font.Color                   := clWindowText;
+label8.Font.Color                   := clWindowText;
+label9.Font.Color                   := clWindowText;
+label10.Font.Color                  := clWindowText;
+label11.Font.Color                  := clWindowText;
+taMindestUmsatz.EditLabel.Font.color:= clWindowText;
 
 if (taName.text ='') then
 begin
@@ -290,17 +292,42 @@ begin
   error:=true;
 end;
 
-if (taPrice.text ='') then
+try
+strtofloat(taprice.text);
+except
+ code:= 1;
+end;
+
+if (taPrice.text = '') or (code <> 0) then
 begin
   label8.font.color:= clred;
   error:=true;
 end;
+code:= 0;
 
-if (taEinwahl.text ='') then
+try
+strtofloat(taEinwahl.text);
+except
+ code:= 1;
+end;
+if (taEinwahl.text = '') or (code <> 0)  then
 begin
   label11.font.color:= clred;
   error:=true;
 end;
+code:= 0;
+
+try
+strtofloat(taMindestumsatz.text);
+except
+ code:= 1;
+end;
+if (taMindestumsatz.text = '') or (code <> 0)  then
+begin
+  taMindestUmsatz.EditLabel.Font.color:= clred;
+  error:=true;
+end;
+code:= 0;
 
 if taNumber.text ='' then
 begin
@@ -617,11 +644,11 @@ begin
 with sender as Tedit do
 if not ansicontainstext(text,DecimalSeparator) then
 begin
-   if not (Key in ['0'..'9',DecimalSeparator, Char(VK_BACK)]) then
+   if not (Key in ['0'..'9',DecimalSeparator,Char(22), Char(VK_BACK)]) then
      Key := #0;            //  dann sofort löschen
 end
 else
-   if not (Key in ['0'..'9', Char(VK_BACK)]) then
+   if not (Key in ['0'..'9',Char(22), Char(VK_BACK)]) then
      Key := #0;            //  dann sofort löschen
 end;
 
@@ -1604,7 +1631,8 @@ end;
 
 procedure TTaVerwaltung.TaNumberKeyPress(Sender: TObject; var Key: Char);
 begin
-if not (Key in ['0'..'9', Char(VK_BACK)]) then
+//showmessage(inttostr(ord(key)) + ' ' + key);
+if not (Key in ['0'..'9',Char(22), Char(VK_BACK)]) then
      Key := #0;            //  dann sofort löschen
 end;
 
@@ -1702,11 +1730,11 @@ begin
 with sender as TLabeledEdit do
 if not ansicontainstext(text,DecimalSeparator) then
 begin
-   if not (Key in ['0'..'9',DecimalSeparator, Char(VK_BACK)]) then
+   if not (Key in ['0'..'9',DecimalSeparator, Char(22), Char(VK_BACK)]) then
      Key := #0;            //  dann sofort löschen
 end
 else
-   if not (Key in ['0'..'9', Char(VK_BACK)]) then
+   if not (Key in ['0'..'9', Char(22), Char(VK_BACK)]) then
      Key := #0;            //  dann sofort löschen
 end;
 

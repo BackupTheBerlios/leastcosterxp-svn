@@ -630,13 +630,15 @@ if not closeallowed then
      else
      if (webservform.HttpServer1.tag = 5) then msg := misc(M05,'M05');
 
-     if not autoclose then      //Meldung machen
+//Auskommentiert ... wer LCXP schließt, sollte eigentlich wissen, dass er dann nicht mehr im Web zur Verfügung steht
+ {    if not autoclose then      //Meldung machen
      begin
       if MessageDlg(msg, mtConfirmation,[mbYes, mbNo], 0) = mrYes then
         CanClose:= true
        else
         begin CanClose:= false; closeallowed:= false; end;
-     end else {AutoClose} canClose:= true;
+     end else //AutoClose    }
+     canClose:= true;
     end;
    end;
 

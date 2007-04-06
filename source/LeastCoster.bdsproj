@@ -138,7 +138,7 @@
 			<VersionInfo Name="MajorVer">1</VersionInfo>
 			<VersionInfo Name="MinorVer">4</VersionInfo>
 			<VersionInfo Name="Release">1</VersionInfo>
-			<VersionInfo Name="Build">0</VersionInfo>
+			<VersionInfo Name="Build">1</VersionInfo>
 			<VersionInfo Name="Debug">False</VersionInfo>
 			<VersionInfo Name="PreRelease">False</VersionInfo>
 			<VersionInfo Name="Special">False</VersionInfo>
@@ -150,7 +150,7 @@
 		<VersionInfoKeys>
 			<VersionInfoKeys Name="CompanyName">Stefan Fruhner</VersionInfoKeys>
 			<VersionInfoKeys Name="FileDescription">LeastCoster XP</VersionInfoKeys>
-			<VersionInfoKeys Name="FileVersion">1.4.1.0</VersionInfoKeys>
+			<VersionInfoKeys Name="FileVersion">1.4.1.1</VersionInfoKeys>
 			<VersionInfoKeys Name="InternalName"></VersionInfoKeys>
 			<VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
 			<VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
