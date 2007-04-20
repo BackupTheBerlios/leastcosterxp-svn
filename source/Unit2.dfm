@@ -282,7 +282,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'Welches Modem wird verwendet, um ins Internet zu gehen ?'
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
@@ -324,7 +324,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'Welches Modem wird verwendet, um ins Internet zu gehen ?'
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           TabOrder = 3
@@ -457,7 +457,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = '... Liste aller bereits eingerichteten Programme.'
           DropDownCount = 20
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
@@ -498,7 +498,7 @@ object LCXPSettings: TLCXPSettings
           Height = 21
           Hint = 'In welchem Modus soll das Programm ausgef'#252'hrt werden ?'
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           Sorted = True
@@ -961,7 +961,7 @@ object LCXPSettings: TLCXPSettings
           Top = 54
           Width = 145
           Height = 21
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 3
           Text = 'Serverliste'
           OnEnter = ServerboxEnter
@@ -1432,7 +1432,7 @@ object LCXPSettings: TLCXPSettings
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           Items.Strings = (
             'Tue nichts'
@@ -1672,7 +1672,7 @@ object LCXPSettings: TLCXPSettings
           AutoComplete = False
           Style = csDropDownList
           DropDownCount = 13
-          ItemHeight = 0
+          ItemHeight = 13
           ItemIndex = 7
           TabOrder = 6
           Text = 't'#228'glich'
@@ -2032,21 +2032,21 @@ object LCXPSettings: TLCXPSettings
           168)
       end
       object holiday_delete: TButton
-        Left = 56
-        Top = 352
-        Width = 145
-        Height = 25
-        Caption = 'Eintrag l'#246'schen'
-        TabOrder = 1
-        OnClick = holiday_deleteClick
-      end
-      object holiday_insert: TButton
         Left = 216
         Top = 352
         Width = 145
         Height = 25
-        Caption = 'Zeile hinzuf'#252'gen'
+        Caption = 'Eintrag l'#246'schen'
         TabOrder = 2
+        OnClick = holiday_deleteClick
+      end
+      object holiday_insert: TButton
+        Left = 58
+        Top = 352
+        Width = 145
+        Height = 25
+        Caption = 'Zeile hinzuf'#252'gen'
+        TabOrder = 1
         OnClick = holiday_insertClick
       end
     end

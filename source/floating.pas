@@ -108,9 +108,8 @@ var bgfile: string;
     H: HWnd;
     Taskbar: TRect;
 begin
-
 CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
- if CL<>nil then fillProps([floatingW],CL);
+if CL<>nil then fillProps([floatingW],CL);
 
 if (MagRasOSVersion < OSW2K) then
 begin
@@ -186,9 +185,6 @@ begin
 end;
 
 floatingW.visible:= true;
-
-fillcustomini;
-
 end;
 
 procedure TfloatingW.visbarChange(Sender: TObject);

@@ -2505,7 +2505,12 @@ end;
 
 procedure TLCXPSettings.holiday_deleteClick(Sender: TObject);
 begin
-  Holidays.DeleteRow(holidays.row);
+
+ if holidays.rowcount > 2 then
+    Holidays.DeleteRow(holidays.row)
+ else
+ if holidays.Values[holidays.Keys[holidays.Row]] <> '' then
+    Holidays.DeleteRow(holidays.row)
 end;
 
 procedure TLCXPSettings.holiday_insertClick(Sender: TObject);

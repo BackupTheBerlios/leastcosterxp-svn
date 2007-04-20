@@ -192,6 +192,7 @@ var i: integer;
     anfang, ende: TTime;
     expdate, startdate: TDate;
 begin
+
 //negativ initialisieren
 mo:= '[error]';
 di:= '[error]';
@@ -306,6 +307,7 @@ if listbox.count > 0 then
 
    if header.programm <> 'LeastCosterXP' then
    begin
+
     assignfile(Datei,Importfile);
     reset(Datei);
     progress.min:=0;
@@ -334,7 +336,7 @@ if listbox.count > 0 then
 
      inc(count);
      progress.position:= count;
-     if (listbox.Items.IndexOf(Datensatz.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Datensatz.tarif)] then
+     if (listbox.Items.IndexOf(Daten02.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Daten02.tarif)] then
        if tarifisvalid(Daten02) then
        begin
          pos:= length(hauptfenster.tarife);
@@ -343,12 +345,12 @@ if listbox.count > 0 then
        end
        else  //wenn Tarif nicht geschrieben wurde
        begin
-          if notimported.IndexOf(Datensatz.tarif) = -1 then
+          if notimported.IndexOf(Daten02.tarif) = -1 then
             begin
-              if (NotImported.IndexOf(Datensatz.Tarif)= -1) then
-                  NotImported.Append(Datensatz.Tarif);
-              if AllNames.IndexOf(Datensatz.Tarif)> -1 then
-                   AllNames.Delete(AllNames.IndexOf(DatenSatz.Tarif));
+              if (NotImported.IndexOf(Daten02.Tarif)= -1) then
+                  NotImported.Append(Daten02.Tarif);
+              if AllNames.IndexOf(Daten02.Tarif)> -1 then
+                   AllNames.Delete(AllNames.IndexOf(Daten02.Tarif));
             end;
        end;
     end;
@@ -366,7 +368,9 @@ if listbox.count > 0 then
 
          inc(count);
          progress.position:= count;
-         if (listbox.Items.IndexOf(Datensatz.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Datensatz.tarif)] then
+//         if (listbox.Items.IndexOf(Datensatz.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Datensatz.tarif)]
+         if (listbox.Items.IndexOf(Daten02.tarif) > -1) and listbox.Selected[listbox.Items.IndexOf(Daten02.tarif)]
+         then
          if tarifisvalid(Daten02) then
           begin
              pos:= length(hauptfenster.tarife);
@@ -375,12 +379,12 @@ if listbox.count > 0 then
           end
           else  //wenn Tarif nicht geschrieben wurde
            begin
-            if notimported.IndexOf(Datensatz.tarif) = -1 then
+            if notimported.IndexOf(Daten02.tarif) = -1 then
               begin
-                if (NotImported.IndexOf(Datensatz.Tarif)= -1) then
-                    NotImported.Append(Datensatz.Tarif);
-                if AllNames.IndexOf(Datensatz.Tarif)> -1 then
-                    AllNames.Delete(AllNames.IndexOf(DatenSatz.Tarif));
+                if (NotImported.IndexOf(Daten02.Tarif)= -1) then
+                    NotImported.Append(Daten02.Tarif);
+                if AllNames.IndexOf(Daten02.Tarif)> -1 then
+                    AllNames.Delete(AllNames.IndexOf(Daten02.Tarif));
               end;
            end;
         end;
@@ -647,7 +651,11 @@ begin
 
 progress.min:= 0;
 progress.Position:= 0;
-progress.max:= length(hauptfenster.tarife)-1;
+if length(hauptfenster.tarife) > 0 then
+  progress.max:= length(hauptfenster.tarife)-1
+else
+  progress.Max:= 10;
+  
 progress.visible:= true;
 
 for i:= 0 to length(hauptfenster.tarife)-1 do
