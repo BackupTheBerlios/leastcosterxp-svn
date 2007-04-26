@@ -681,7 +681,7 @@ object Hauptfenster: THauptfenster
         Width = 177
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
         Items.Strings = (
           'Tue nichts'
@@ -720,7 +720,6 @@ object Hauptfenster: THauptfenster
       Caption = '&Datei'
       object MM1_1: TMenuItem
         Caption = '&Lade Tarife ...'
-        Default = True
         ShortCut = 16460
         OnClick = MainMenueClick
       end
@@ -836,7 +835,6 @@ object Hauptfenster: THauptfenster
       Caption = '&Einstellungen'
       object MM3_1: TMenuItem
         Caption = '&Programmeinstellungen'
-        Default = True
         ShortCut = 16464
         OnClick = MainMenueClick
       end
@@ -866,7 +864,6 @@ object Hauptfenster: THauptfenster
       end
       object MM5_2: TMenuItem
         Caption = '&Hilfe'
-        Default = True
         ShortCut = 112
         OnClick = MainMenueClick
       end

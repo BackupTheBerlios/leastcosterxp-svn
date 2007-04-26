@@ -570,22 +570,26 @@ procedure ShowUsersWebStart;
 var Http: THttpCli;
     Outfile: TStringStream;
 begin
+ //jeden User nur einmal am Tag zählen
+ if (dateof(now) <> settings.ReadDate('Dialer','stat', Dateof(yesterday))) then
+ begin
+  http:= ThttpCli.Create(nil);
 
-http:= ThttpCli.Create(nil);
+   //Zähler für die Einwahlen >>> Quelltext im Forum erfragen
+   http.URL:=  'http://darkempire.funpic.de/php/count/count.php?user=LCXP';
 
- //Zähler für die Einwahlen >>> Quelltext im Forum erfragen
- http.URL:=  'http://darkempire.funpic.de/php/count/count.php?user=LCXP';
+   outfile:= TStringStream.Create('');
+   http.RcvdStream := outfile;
+   try
+     http.Get;
+   except
 
- outfile:= TStringStream.Create('');
- http.RcvdStream := outfile;
- try
-   http.Get;
- except
+   end;
+   settings.WriteDate('Dialer','stat', Dateof(now));
+   http.free;
+   outfile.free;
 
  end;
-
- http.free;
- outfile.free;
 
  if settings.readbool('Dialer','OpenWeb',true) then
    Shellexecute(0, 'open', Pchar(onlineset.webseite), nil, nil, SW_SHOWmaximized);
@@ -3676,6 +3680,15 @@ begin
 status.simpletext:= errmessage;
 end;
 
+procedure DrawColoredRect(var liste: TStringGrid; Rect: TRect; Acol, Arow: integer; color: string);
+begin
+  if ((color = '') or (color = 'none')) then exit;
+
+  Liste.Canvas.Brush.Color := StringToColor(color);
+  Liste.Canvas.FillRect(Rect);
+  Liste.Canvas.TextOut(Rect.Left+2, Rect.Top+2, Liste.Cells[Acol, Arow]);
+end;
+
 procedure THauptfenster.ListeDrawCell(Sender: TObject; ACol, ARow: Integer;
   Rect: TRect; State: TGridDrawState);
 var kosten: real;
@@ -3698,55 +3711,35 @@ if selected[arow] and (arow > 0) then
   begin
      Canvas.Brush.Color := clHighlight;//RGB(250,250,250);
      Canvas.FillRect(Rect);
-     Canvas.Font.Color  := clHighlightText;
+     Canvas.Font.Color := clHighlightText;
      Canvas.TextOut(Rect.Left+2, Rect.Top+2, Cells[Acol, Arow]);
   end
 else
 if (useColors and ( arow >0 )) then
 begin
-  if liste.cells[7,arow] = misc(M98,'M98') then
-  begin
-     Canvas.Brush.Color := StringToColor(settings.ReadString('Basics','Color_A', ColortoString(RGB(255,220,220))));
-     Canvas.FillRect(Rect);
-     Canvas.TextOut(Rect.Left+2, Rect.Top+2, Cells[Acol, Arow]);
-  end
+  if liste.cells[7,arow] = misc(M98,'M98') //abgelaufen
+    then DrawColoredRect(liste,Rect,Acol, Arow,settings.ReadString('Basics','Color_A', ColortoString(RGB(255,220,220))))
   else
-  if liste.cells[7,arow] = 'Blacklist' then
-  begin
-     Canvas.Brush.Color := StringToColor(settings.ReadString('Basics','Color_K', ColortoString(RGB(255,220,200))));
-     Canvas.FillRect(Rect);
-     Canvas.TextOut(Rect.Left+2, Rect.Top+2, Cells[Acol, Arow]);
-  end
+  if (liste.cells[7,arow] = 'Blacklist')
+    then DrawColoredRect(liste,Rect,Acol, Arow,settings.ReadString('Basics','Color_K', ColortoString(RGB(255,220,200))))
   else
-  if ((cells[7,arow] <> '' ) {and (cells[7,arow] <> 'Error!!!')} and (kosten = 0.0) ) then
-  begin
-     Canvas.Brush.Color := StringToColor(settings.ReadString('Basics','Color_K', ColortoString(RGB(230,230,250))));
-     Canvas.FillRect(Rect);
-     Canvas.TextOut(Rect.Left+2, Rect.Top+2, Cells[Acol, Arow]);
-  end
+  if ((cells[7,arow] <> '' ) {and (cells[7,arow] <> 'Error!!!')} and (kosten = 0.0) )
+    then DrawColoredRect(liste,Rect,Acol, Arow,settings.ReadString('Basics','Color_K', ColortoString(RGB(230,230,250))))
   else
-  if ((cells[5,arow] <> '') and (strtofloat(cells[5,arow]) <> 0.0)) then
-  begin
-     Canvas.Brush.Color := StringToColor(settings.ReadString('Basics','Color_E', ColortoString(RGB(250,250,200))));
-     Canvas.FillRect(Rect);
-     Canvas.TextOut(Rect.Left+2, Rect.Top+2, Cells[Acol, Arow]);
-  end
+  if ((cells[5,arow] <> '') and (strtofloat(cells[5,arow]) <> 0.0))
+    then DrawColoredRect(liste,Rect,Acol, Arow,settings.ReadString('Basics','Color_E', ColortoString(RGB(250,250,200))))
   else
-  begin
-     Canvas.Brush.Color := StringToColor(settings.ReadString('Basics','Color_N', ColortoString(RGB(200,230,220))));
-     Canvas.FillRect(Rect);
-     Canvas.TextOut(Rect.Left+2, Rect.Top+2, Cells[Acol, Arow]);
-  end;
+     DrawColoredRect(liste,Rect,Acol, Arow,settings.ReadString('Basics','Color_N', ColortoString(RGB(200,230,220))));
+
   //Persönliche Farben
   if length(Scores) > 0 then
   for l:= 0 to length(Scores)-1 do
   begin
-   if (liste.cells[1,arow] = Scores[l].Name) and (Scores[l].Color<> 'none') and (not selected[arow]) then
-    begin
-     Canvas.Brush.Color := StringToColor(Scores[l].Color);
-     Canvas.FillRect(Rect);
-     Canvas.TextOut(Rect.Left+2, Rect.Top+2, Cells[Acol, Arow]);
-    end
+
+   if (Scores[l].Color = '') then Scores[l].Color := 'none';
+   if (liste.cells[1,arow] = Scores[l].Name) and (Scores[l].Color<>'none') and (not selected[arow])
+     then DrawColoredRect(liste, rect, acol,arow, Scores[l].Color);
+
   end;
 
 end //usecolors
@@ -3816,23 +3809,18 @@ with Liste.Canvas do
         Floodfill(rect.right  - 10, rect.top +8 ,clNavy,fsBorder);
         brush.color:= clBlack;
   end;
-
 end;
 
 procedure THauptfenster.ListeMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var i, widthl, widthr: integer;
 begin
-//liste_clicked := true;
-
 liste_last_x:= x;
 liste.MouseToCell(X,Y,Column,Row);
-
 liste.Repaint;
 
-//if (row < 0) then exit;
 mousedownrow:= row;
-  
+
 if (row = 0) then
 begin
   widthl:=0;
