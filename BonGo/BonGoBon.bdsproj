@@ -119,9 +119,9 @@
 			<Directories Name="UnitOutputDir"></Directories>
 			<Directories Name="PackageDLLOutputDir"></Directories>
 			<Directories Name="PackageDCPOutputDir"></Directories>
-			<Directories Name="SearchPath"></Directories>
+			<Directories Name="SearchPath">C:\Programme\Borland\BDS\3.0\Bin\BPL;C:\Programme\ZipMaster\Source</Directories>
 			<Directories Name="Packages">vcl;rtl;vclx;VclSmp;vclshlctrls</Directories>
-			<Directories Name="Conditionals">madExcept</Directories>
+			<Directories Name="Conditionals"></Directories>
 			<Directories Name="DebugSourceDirs">F:\Programme\Borland\Delphi7\Projects\lcr\;C:\Programme\Indy 10 for Delphi 7\Source\System\</Directories>
 			<Directories Name="UsePackages">False</Directories>
 		</Directories>
@@ -136,8 +136,8 @@
 			<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 			<VersionInfo Name="AutoIncBuild">True</VersionInfo>
 			<VersionInfo Name="MajorVer">0</VersionInfo>
-			<VersionInfo Name="MinorVer">0</VersionInfo>
-			<VersionInfo Name="Release">6</VersionInfo>
+			<VersionInfo Name="MinorVer">2</VersionInfo>
+			<VersionInfo Name="Release">0</VersionInfo>
 			<VersionInfo Name="Build">0</VersionInfo>
 			<VersionInfo Name="Debug">False</VersionInfo>
 			<VersionInfo Name="PreRelease">False</VersionInfo>
@@ -150,7 +150,7 @@
 		<VersionInfoKeys>
 			<VersionInfoKeys Name="CompanyName">Stefan Fruhner</VersionInfoKeys>
 			<VersionInfoKeys Name="FileDescription">BonGoBon</VersionInfoKeys>
-			<VersionInfoKeys Name="FileVersion">0.0.6.0</VersionInfoKeys>
+			<VersionInfoKeys Name="FileVersion">0.2.0.0</VersionInfoKeys>
 			<VersionInfoKeys Name="InternalName"></VersionInfoKeys>
 			<VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
 			<VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>

@@ -3,7 +3,7 @@ object Form1: TForm1
   Top = 107
   BorderStyle = bsNone
   Caption = 'BonGoBon 0.1'
-  ClientHeight = 133
+  ClientHeight = 132
   ClientWidth = 415
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -23,7 +23,7 @@ object Form1: TForm1
     Left = 0
     Top = 16
     Width = 415
-    Height = 117
+    Height = 116
     Align = alClient
     BevelWidth = 1
     BevelStyle = bvNone
@@ -38,7 +38,7 @@ object Form1: TForm1
     Left = 0
     Top = 16
     Width = 415
-    Height = 117
+    Height = 116
     Align = alClient
     Shape = bsFrame
     Style = bsRaised
@@ -161,7 +161,7 @@ object Form1: TForm1
     TabOrder = 5
   end
   object Http: THttpCli
-    URL = 'http://www.bongosoft.de/Preistabelle-lang.txt'
+    URL = 'http://www.bongosoft.de/Preistabelle-bs.txt'
     LocalAddr = '0.0.0.0'
     ProxyPort = '80'
     Agent = 'Mozilla/4.0 (compatible; ICS)'
@@ -196,6 +196,6 @@ object Form1: TForm1
   object ApplicationEvents1: TApplicationEvents
     OnIdle = ApplicationEvents1Idle
     Left = 192
-    Top = 88
+    Top = 80
   end
 end

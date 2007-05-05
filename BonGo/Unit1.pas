@@ -43,7 +43,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, HttpProt, ComCtrls, ExtCtrls, SRGrad,
-  BMDThread, AppEvnts, FloatSpinEdit;
+  BMDThread, AppEvnts, FloatSpinEdit, shellapi;
 
 type
 
@@ -97,6 +97,7 @@ type
     Progress: TProgressBar;
     deleteit: TCheckBox;
     Label4: TLabel;
+    procedure Label5Click(Sender: TObject);
     procedure Label4Click(Sender: TObject);
     procedure ResetBClick(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
@@ -131,11 +132,38 @@ var
   Form1: TForm1;
   maxP : TFloatSpinEdit;
   maxE : TFloatSpinEdit;
+  CountDate: TDate;
 
 implementation
 uses RegExpr, StrUtils, DateUtils, IniFiles, zlib;
 
 {$R *.dfm}
+
+procedure CountUsers;
+var Http: THttpCli;
+    Outfile: TStringStream;
+begin
+ //jeden User nur einmal am Tag zählen
+ if (dateof(now) <> CountDate) then
+ begin
+  http:= ThttpCli.Create(nil);
+
+   //Zähler für die Einwahlen >>> Quelltext im Forum erfragen
+   http.URL:=  'http://darkempire.funpic.de/php/countBonGo/count.php?user=LCXP';
+
+   outfile:= TStringStream.Create('');
+   http.RcvdStream := outfile;
+   try
+     http.Get;
+   except
+
+   end;
+   CountDate:= dateof(now);
+   http.free;
+   outfile.free;
+
+ end;
+end;
 
 procedure TaktToInteger(takt: string; var tleft, tright: integer);
 var taktstring: string;
@@ -159,38 +187,32 @@ begin
   end;
 end;
 
-procedure Compress(InputFileName, OutputFileName: string);
-var InputStream, OutputStream: TFileStream;
+procedure CompressFromMem(Input: TMemoryStream; OutputFileName: string);
+var OutputStream: TFileStream;
   CompressionStream: ZLib.TCompressionStream;
 begin
-  InputStream:=TFileStream.Create(InputFileName, fmOpenRead);
-  try
     OutputStream:=TFileStream.Create(OutputFileName, fmCreate);
     try
       CompressionStream:=TCompressionStream.Create(clMax, OutputStream);
       try
-        CompressionStream.CopyFrom(InputStream, InputStream.Size);
+        Input.Position:= 0;
+        CompressionStream.CopyFrom(Input, Input.Size);
       finally
         CompressionStream.Free;
       end;
     finally
       OutputStream.Free;
     end;
-  finally
-    InputStream.Free;
-  end;
 end;
 
-procedure Decompress(InputFileName, OutputFileName: string);
-var InputStream, OutputStream: TFileStream;
+procedure DecompressToMem(InputFileName: string; var  Output: TMemoryStream);
+var InputStream: TFileStream;
   DeCompressionStream: ZLib.TDeCompressionStream;
   Buf: array[0..4095] of Byte;
   Count: Integer;
 begin
   InputStream:=TFileStream.Create(InputFileName, fmOpenRead);
   try
-    OutputStream:=TFileStream.Create(OutputFileName, fmCreate);
-    try
       DecompressionStream := TDecompressionStream.Create(InputStream);
       try
         while true do
@@ -199,19 +221,16 @@ begin
           if Count = 0 then
             break
           else
-            OutputStream.Write(Buf[0], Count);
+            Output.Write(Buf[0], Count);
         end;
       finally
         DecompressionStream.Free;
       end;
-    finally
-      OutputStream.Free;
-    end;
   finally
     InputStream.Free;
+    output.Position:= 0;
   end;
 end;
-
 
 procedure TForm1.WMNCHitTest (var M: TWMNCHitTest);
 begin
@@ -232,6 +251,7 @@ var r                 : TRegExpr;
     Tarife            : array of TTarif02;
 //    Datei           : file of TTarif02;
     Stream            : TFileStream;
+    fNameMem          : TMemoryStream;
     header            : TTarifheader;
     fname, cname      : string;
 
@@ -322,20 +342,19 @@ begin
  if fileexists('..\..\Tarife.lcx') then
  begin
    cname:='..\..\Tarife.lcx';
-   fname:=changeFileExt(fname, '.$$$');
-   Decompress(cname, fname);
 
-   Stream:= TFileStream.Create(fname,fmOpenRead);
+   fNameMem:= TMemoryStream.Create;
+   DecompressToMem(cname, fnameMem);
 
-   Stream.Read(header, sizeof(header));
+   FNameMem.Read(header, sizeof(header));
 
    Progress.min:= 0;
-   Progress.Max:= Stream.size;
+   Progress.Max:= fNameMem.size;
 
    if (header.programm = 'LeastCosterXP') and (header.Version = 2) then
-   while stream.position < Stream.size do
+   while fNameMem.position < FNameMem.size do
     begin
-     Stream.Read(Datensatz, sizeof(datensatz));
+     fNameMem.Read(Datensatz, sizeof(datensatz));
      //nur speichern wenn nicht schon ein Bongotarif
      if not (DatenSatz.Editor = 'BonGo') then
       begin //anhängen
@@ -344,11 +363,10 @@ begin
         //an der neuen freien Stelle hinzufügen
           Tarife[length(Tarife)-1] := DatenSatz;
       end;
-      Progress.Position:= stream.position;
+      Progress.Position:= fNameMem.position;
     end;
-    
-   Stream.Free;
-   DeleteFile(fname);
+
+   fNameMem.Free;
    RenameFile('..\..\Tarife.lcx','..\..\Tarife.lcx.bak');
  end; //if fileExists
 
@@ -358,33 +376,30 @@ begin
   begin
 
     cname:='..\..\Tarife.lcx';
-    fname:=changeFileExt(fname, '.$$$');
 
-    stream:= TFileStream.Create(fname,fmCreate);
-
+    fnameMem:= TMemoryStream.Create;
     header.programm:= 'LeastCosterXP';
     header.Version := 2;
     header.Datum   := now;
 
-    stream.write(header,sizeof(header));
-
+    fNameMem.Write(header,sizeof(header));
     Progress.min   := 0;
     Progress.Max   := length(tarife);
 
     For i:= 0 to length(tarife)-1 do
     begin
-      Stream.Write(Tarife[i], sizeof(tarife[i]));
+      fNameMem.Write(Tarife[i], sizeof(tarife[i]));
       progress.position:= Progress.Position + 1;
     end;
-    Stream.free;
 
-    Compress(fname, cname);
-    DeleteFile(fname);
+    CompressFromMem(fnameMem, cname);
+    fNameMem.Free;
+
   end;
 
  //Sicherungskopie löschen
  if fileexists('..\..\Tarife.lcx.bak') then deletefile('..\..\Tarife.lcx.bak');
- 
+
  split.Free;
 
  r.Free;
@@ -447,6 +462,7 @@ begin
 
   lastdate        := ini.ReadDateTime('settings','lastdate', encodedate(1970,02,02));
   deleteit.checked:= ini.ReadBool('settings', 'AutoDelete', false );
+  CountDate       := ini.ReadDate('settings','stat', Dateof(yesterday));
  ini.free;
 
  for i:= 0 to paramcount do
@@ -479,6 +495,7 @@ ini.writeinteger('settings','left', form1.left);
 
 ini.WriteDateTime('settings','lastdate', lastdate);
 ini.WriteBool('settings', 'AutoDelete', deleteit.checked );
+ini.WriteDate('settings','stat', CountDate);
 
 ini.free;
 if assigned(maxE) then maxE.Free;
@@ -507,6 +524,8 @@ procedure TForm1.BMDThread1Execute(Sender: TObject; Thread: TBMDExecuteThread ; 
 var txt:TStringStream;
     datum: TDateTime;
 begin
+ CountUsers;
+
 //initialisieren
  Datum            := 0;
  TXT              := TStringStream.Create('');
@@ -571,6 +590,7 @@ function DownloadStart(var lastdate:TDateTime; http:THttpCli):boolean  ;
 var r: TRegExpr;
     TempString: String;
     unix: Cardinal;
+    DataStr: TStringStream;
 begin
   Result := false;
 
@@ -588,6 +608,7 @@ begin
  r:= TRegExpr.Create;
    r.Expression:= '.* Preistabelle-lang.txt version=\"1.0\" timestamp=\"(.{1,10}).{0,}\".*';
    tempstring:= (http.RcvdStream As TStringStream).DataString;
+
    if r.exec(tempstring) then
    begin
     Result  := true;
@@ -673,6 +694,11 @@ end;
 procedure TForm1.Label4Click(Sender: TObject);
 begin
 deleteit.checked:= not deleteit.checked
+end;
+
+procedure TForm1.Label5Click(Sender: TObject);
+begin
+  Shellexecute(handle, 'open', Pchar('http://www.billiger-surfen.de'), nil, nil, SW_SHOWMaximized);
 end;
 
 end.
