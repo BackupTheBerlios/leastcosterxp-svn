@@ -117,8 +117,8 @@ var zeilen: TStringlist;
     mailtext: string;
     neu: string;
     Datensatz: TTarif02;
-    FName, CName: String;
-    Stream: TFileStream;
+    CName: String;
+    Stream: TMemoryStream;
     header: TTarifHeader;
 begin
 
@@ -136,14 +136,15 @@ begin
 
   if zeilen.count > 0 then //wenn mehr als eine Zeile selektiert
   begin
-    fName:= changeFileExt(SaveDialog.FileName,'.$$$');
+//    fName:= changeFileExt(SaveDialog.FileName,'.$$$');
     cName:= SaveDialog.FileName;
 
     header.programm:= 'LeastCosterXP';
     header.datum:= now;
     header.Version:= 2;
 
-    Stream := TFileStream.Create(fname , fmCreate ) ;
+//    Stream := TFileStream.Create(fname , fmCreate ) ;
+    Stream:= TMemoryStream.Create;
     Stream.write(header, sizeof(header));
 
     for i:= 0 to length(Hauptfenster.tarife) -1 do
@@ -153,10 +154,11 @@ begin
         DatenSatz.Editor:= ''; //editor jetzt vergessen
         Stream.write(Datensatz,sizeof(Datensatz));
      end;
-    stream.Free;
 
-    Compress(fName, cName);
-    DeleteFile(PChar(fName));
+//    Compress(fName, cName);
+    CompressFromMem(Stream,cname);
+    stream.Free;
+//    DeleteFile(PChar(fName));
 
   end;  
   zeilen.free;
@@ -515,7 +517,6 @@ var DatenSatz: TTarif;
     Stream: TFileStream;
     header: TTarifheader;
 begin
-
             Stream:= TFileStream.Create(cname,fmopenread);
             Stream.ReadBuffer(header,sizeof(header));
             stream.free;
@@ -631,54 +632,56 @@ keine.checked:= false;
 end;
 
 procedure TWndlist.WriteDataToHD;
-var fName,cname: string;
+var cname: string;
     i          : integer;
     header     : TTarifHeader;
-    Stream     : TFileStream;
+    Stream     : TMemoryStream;
 begin
- fName:= ExtractfilePath(paramstr(0)) + 'Tarife.$$$';
+// fName:= ExtractfilePath(paramstr(0)) + 'Tarife.$$$';
  cName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
 
  header.programm:= 'LeastCosterXP';
  header.datum:= now;
  header.Version:= 2;
 
- Stream := TFileStream.Create(fname , fmCreate ) ;
+// Stream := TFileStream.Create(fname , fmCreate ) ;
+ Stream:= TMemoryStream.Create;
 
  Stream.write(header, sizeof(header));
   for i:= 0 to length(hauptfenster.tarife)-1 do
 
+ progress.min:= 0;
+ progress.Position:= 0;
+ if length(hauptfenster.tarife) > 0 then
+   progress.max:= length(hauptfenster.tarife)-1
+ else
+   progress.Max:= 10;
 
-progress.min:= 0;
-progress.Position:= 0;
-if length(hauptfenster.tarife) > 0 then
-  progress.max:= length(hauptfenster.tarife)-1
-else
-  progress.Max:= 10;
-  
-progress.visible:= true;
+ progress.visible:= true;
 
-for i:= 0 to length(hauptfenster.tarife)-1 do
-begin
+ for i:= 0 to length(hauptfenster.tarife)-1 do
+ begin
  Stream.write(Hauptfenster.tarife[i], sizeof(hauptfenster.tarife[i]));
 
- //neuen Tarif zu Scores hinzufügen - wenn noch nicht drin
- if IndexofScores(hauptfenster.tarife[i].Tarif) = -1 then
- begin
-  setlength(hauptfenster.Scores, length(hauptfenster.Scores)+1);
-  hauptfenster.Scores[length(hauptfenster.Scores)-1].Name:=hauptfenster.tarife[i].Tarif; //neues in den Score aufnehmen
-  hauptfenster.Scores[length(hauptfenster.Scores)-1].erfolgreich:=0; //neues in den Score aufnehmen
-  hauptfenster.Scores[length(hauptfenster.Scores)-1].gesamt:=0; //neues in den Score aufnehmen
-  hauptfenster.Scores[length(hauptfenster.Scores)-1].State:=0; //neues in den Score aufnehmen
-  hauptfenster.Scores[length(hauptfenster.Scores)-1].Color:='none'; //neues in den Score aufnehmen
+  //neuen Tarif zu Scores hinzufügen - wenn noch nicht drin
+  if IndexofScores(hauptfenster.tarife[i].Tarif) = -1 then
+  begin
+   setlength(hauptfenster.Scores, length(hauptfenster.Scores)+1);
+   hauptfenster.Scores[length(hauptfenster.Scores)-1].Name:=hauptfenster.tarife[i].Tarif; //neues in den Score aufnehmen
+   hauptfenster.Scores[length(hauptfenster.Scores)-1].erfolgreich:=0; //neues in den Score aufnehmen
+   hauptfenster.Scores[length(hauptfenster.Scores)-1].gesamt:=0; //neues in den Score aufnehmen
+   hauptfenster.Scores[length(hauptfenster.Scores)-1].State:=0; //neues in den Score aufnehmen
+   hauptfenster.Scores[length(hauptfenster.Scores)-1].Color:='none'; //neues in den Score aufnehmen
+  end;
+
+ progress.position:= i;
  end;
 
-progress.position:= i;
-end;
-Stream.free;
-Compress(fName, cName);
-DeleteFile(PChar(fName));
-progress.visible:= false;
+//Compress(fName, cName);
+ CompressFromMem(stream,cname);
+ Stream.free;
+//DeleteFile(PChar(fName));
+ progress.visible:= false;
 end;
 
 procedure Twndlist.NotImported_OverWriteClick(Sender: TObject);

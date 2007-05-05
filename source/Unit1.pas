@@ -570,9 +570,9 @@ procedure ShowUsersWebStart;
 var Http: THttpCli;
     Outfile: TStringStream;
 begin
- //jeden User nur einmal am Tag zählen
- if (dateof(now) <> settings.ReadDate('Dialer','stat', Dateof(yesterday))) then
- begin
+//jeden User nur einmal am Tag zählen
+// if (dateof(now) <> settings.ReadDate('Dialer','stat', Dateof(yesterday))) then
+// begin
   http:= ThttpCli.Create(nil);
 
    //Zähler für die Einwahlen >>> Quelltext im Forum erfragen
@@ -585,11 +585,11 @@ begin
    except
 
    end;
-   settings.WriteDate('Dialer','stat', Dateof(now));
+//   settings.WriteDate('Dialer','stat', Dateof(now));
    http.free;
    outfile.free;
 
- end;
+// end;
 
  if settings.readbool('Dialer','OpenWeb',true) then
    Shellexecute(0, 'open', Pchar(onlineset.webseite), nil, nil, SW_SHOWmaximized);

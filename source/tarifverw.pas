@@ -260,7 +260,7 @@ var sections            : TStringlist;
     UpdateFile          : boolean;
     dd,mm,yy            : integer;
     temptakt            : string[5];
-    Stream              : TFileStream;
+    Stream              : TMemoryStream;
     header              : TTarifHeader;
 //    Datensatz           : TTarif;
 begin
@@ -426,9 +426,9 @@ end
 else //lcx nur laden, wenn keine Tarife.ini vorhanden war
 if FileExists(extractfilepath(paramstr(0))+'Tarife.lcx') then
 begin
-  DeCompress(extractfilepath(paramstr(0))+'Tarife.lcx',extractfilepath(paramstr(0))+'Tarife.$$$');
+  Stream:= TMemoryStream.Create;
+  DecompressToMem(extractfilepath(paramstr(0))+'Tarife.lcx',stream);
 
-  Stream := TFileStream.Create(extractfilepath(paramstr(0))+'Tarife.$$$' , fmOpenRead ) ;
   count:= 0;
   header.Version:= 0;
   Header.programm:= '';
@@ -485,8 +485,6 @@ begin
       Stream.free;
      end;
   end;
-
-  DeleteFile(PChar(extractfilepath(paramstr(0))+'Tarife.$$$'));
 end;
 
 //abgelaufene Tarife löschen
@@ -533,7 +531,6 @@ begin
    if sections.strings[k] <> hauptfenster.tarife[i].tarif then SettingsTraffic.EraseSection(sections.strings[k]);
  end;
 end;
-
 
 sections.free;
 
@@ -1129,29 +1126,26 @@ if Kanalbuendelung then
 end;
 
 procedure WriteTarifeToHD;
-var fName,cName: string;
+var cName: string;
     i: integer;
     header: TTarifHeader;
-    stream: TFileStream;
+    stream: TMemoryStream;
 begin
 
   header.programm:= 'LeastCosterXP';
   header.datum:= now;
   header.Version:= 2;
 
-  fName:= ExtractfilePath(paramstr(0)) + 'Tarife.$$$';
   cName:= ExtractfilePath(paramstr(0)) + 'Tarife.lcx';
 
-  Stream := TFileStream.Create(fname , fmCreate) ;
+  Stream:= TMemoryStream.Create;
 
   Stream.write(header, sizeof(header));
   for i:= 0 to length(hauptfenster.tarife)-1 do
     Stream.write(Hauptfenster.tarife[i], sizeof(hauptfenster.tarife[i]));
+
+  CompressFromMem(stream,cname);
   Stream.free;
-
-  Compress(fName, cName);
-  DeleteFile(PChar(fName));
-
 end;
 
 Procedure LoadAutoDialTimes;

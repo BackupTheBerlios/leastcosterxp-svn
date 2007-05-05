@@ -16,6 +16,8 @@ procedure verzeichnis_erzeugen(FolderName: string);
 function DeleteFileToRecycleBin(const AFile: string): boolean;
 procedure Compress(InputFileName, OutputFileName: string);
 procedure Decompress(InputFileName, OutputFileName: string);
+procedure CompressFromMem(Input: TMemoryStream; OutputFileName: string);
+procedure DecompressToMem(InputFileName: string; var  Output: TMemoryStream);
 
 IMPLEMENTATION
 
@@ -267,6 +269,50 @@ begin
   end;
 end;
 
+procedure CompressFromMem(Input: TMemoryStream; OutputFileName: string);
+var OutputStream: TFileStream;
+  CompressionStream: ZLib.TCompressionStream;
+begin
+    OutputStream:=TFileStream.Create(OutputFileName, fmCreate);
+    try
+      CompressionStream:=TCompressionStream.Create(clMax, OutputStream);
+      try
+        Input.Position:= 0;
+        CompressionStream.CopyFrom(Input, Input.Size);
+      finally
+        CompressionStream.Free;
+      end;
+    finally
+      OutputStream.Free;
+    end;
+end;
+
+procedure DecompressToMem(InputFileName: string; var  Output: TMemoryStream);
+var InputStream: TFileStream;
+  DeCompressionStream: ZLib.TDeCompressionStream;
+  Buf: array[0..4095] of Byte;
+  Count: Integer;
+begin
+  InputStream:=TFileStream.Create(InputFileName, fmOpenRead);
+  try
+      DecompressionStream := TDecompressionStream.Create(InputStream);
+      try
+        while true do
+        begin
+          Count := DecompressionStream.Read(Buf[0], SizeOf(Buf));
+          if Count = 0 then
+            break
+          else
+            Output.Write(Buf[0], Count);
+        end;
+      finally
+        DecompressionStream.Free;
+      end;
+  finally
+    InputStream.Free;
+    output.Position:= 0;
+  end;
+end;
 
 
 BEGIN
