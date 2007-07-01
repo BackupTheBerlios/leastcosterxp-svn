@@ -704,7 +704,6 @@ end;
 
 Procedure AddStrFloat(var f: real; add: string);
 var fadd : real;
-    code: integer;  
 begin
  try
   fadd:= strtofloat(add);
@@ -717,7 +716,6 @@ end;
 
 Procedure AddStrTime(var t: TTime; add: string);
 var tadd : TTime;
-    code: integer;
 begin
  try
   tadd:= strtotime(add);
@@ -730,7 +728,6 @@ end;
 
 Procedure AddStrDateTime(var t: TDateTime ; add: string);
 var tadd : TTime;
-    code: integer;
 begin
  try
   tadd:= strtoDatetime(add);

@@ -35,7 +35,10 @@ uses
   RSSReader in 'RSSReader.pas',
   Protokolle in 'Protokolle.pas',
   donation in 'donation.pas' {DonateWindow},
-  messagestrings in 'messagestrings.pas';
+  messagestrings in 'messagestrings.pas',
+  Zeitupdate in 'Zeitupdate.pas',
+  Tarifaktualisierung in 'Tarifaktualisierung.pas',
+  password in 'password.pas' {PWForm};
 
 {$R *.res}
 
@@ -49,6 +52,8 @@ begin
   Application.CreateForm(THauptfenster, Hauptfenster);
   Application.CreateForm(TWebServForm, WebServForm);
   Application.CreateForm(TDonateWindow, DonateWindow);
+  Application.CreateForm(TPWForm, PWForm);
+  Application.CreateForm(TPWForm, PWForm);
   Application.Run;
 
 end.

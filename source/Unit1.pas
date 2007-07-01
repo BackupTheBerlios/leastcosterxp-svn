@@ -12,14 +12,16 @@ uses
   SRLabel, SRGrad,
   magrascon, magrasper, magrasedt, magrasapi,magsubs1, AppEvnts, Registry,
   LibXmlParser, LibXmlComps, Spin,
-  AMAdvLed, uSchUpdater,
-  SNTPSend, BMDThread, inilang, messagestrings;
+  AMAdvLed,
+  inilang, messagestrings,
+  Tarifaktualisierung,
+  Zeitupdate;
 
 type
 
  TMyThread = class(TThread)
  protected
-   procedure Execute; override;
+  // procedure Execute; override;
  end;
 
  TExecuteWaitEvent = procedure(const ProcessInfo: TProcessInformation;
@@ -154,7 +156,6 @@ type
     MM2_3_2: TMenuItem;
     MM2_3_4: TMenuItem;
     MM5: TMenuItem;
-    UpdateTimer: TTimer;
     MM2_1: TMenuItem;
     MM2_4: TMenuItem;
     Liste: TStringGrid;
@@ -223,7 +224,6 @@ type
     N1Kanal1: TMenuItem;
     rennen2: TMenuItem;
     Verbinden2Methode1: TMenuItem;
-    MM2_8: TMenuItem;
     TarifStatus: TPopupMenu;
     TS1: TMenuItem;
     TS4: TMenuItem;
@@ -259,7 +259,6 @@ type
     OneInstance: TBomeOneInstance;
     MM1_9: TMenuItem;
     TS2_5: TMenuItem;
-    AtomzeitThread: TBMDThread;
     TS3: TMenuItem;
     TS3_1: TMenuItem;
     TS3_2: TMenuItem;
@@ -312,6 +311,8 @@ type
     AutoDialStatus: TAMAdvLed;
     WebServ: TMenuItem;
     S_18: TMenuItem;
+    MM2_3_5: TMenuItem;
+    procedure MM2_3_5Click(Sender: TObject);
     procedure WebServClick(Sender: TObject);
     procedure AutoDialStatusLedStateChanged(Sender: TObject; LedOn: Boolean;
       NumSwitch: Integer);
@@ -328,8 +329,6 @@ type
       var CanSelect: Boolean);
 
     procedure TrayMenueClick(Sender: TObject);
-    procedure AtomzeitThreadExecute(Sender: TObject; Thread: TBMDExecuteThread;
-      var Data: Pointer);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure ExecuteFile(const AFilename: String;
@@ -377,10 +376,9 @@ type
     procedure beliebig_timeChange(Sender: TObject);
     procedure OneInstanceInstanceStarted(Sender: TObject;params: TStringList);
     procedure ReloadTimer(Sender: TObject);
-    procedure PlugInClick(Sender: TObject);
+
     procedure LangClick(Sender: TObject);
     procedure RsstimerTimer(Sender: TObject);
-    procedure UpdateTimerTimer(Sender: TObject);
     procedure FormHide(Sender: TObject);
     procedure ApplicationEvents1ShortCut(var Msg: TWMKey;
       var Handled: Boolean);
@@ -410,8 +408,6 @@ type
     procedure AutoBaseChange(Sender: TObject);
     procedure ipemailTimer(Sender: TObject);
     procedure CheckForUpdates;
-    procedure UpdaterError(Sender: TObject;
-              ErrorCode: TSchSimpleUpdaterError; Parameter, ErrMessage: String);
     procedure ListeDrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
     procedure ListeMouseDown(Sender: TObject; Button: TMouseButton;
@@ -429,7 +425,7 @@ type
     procedure TarifStatusPopup(Sender: TObject);
     procedure WaitOnDisconnectTimer(Sender: TObject);
     procedure ScoreTimerTimer(Sender: TObject);
-    procedure StartPlugIns(event: string);
+
     procedure MM3_2Click(Sender: TObject);
     procedure TarifStatusClick(Sender: TObject);
     procedure MainMenueClick(Sender: TObject);
@@ -464,11 +460,6 @@ type
     dialing, sort_descending: boolean;
     liste_last_x: integer;
 
-    actevent: String;
-    FTerminate: Boolean;
-    procedure DoOnExecuteWait(const ProcessInfo: TProcessInformation;
-                                   var ATerminate: Boolean);
-
     public
     { Public declarations }
       Selected: array of boolean;
@@ -483,7 +474,7 @@ type
       ConnectionCostVisible: boolean;
       MinimizeonClose: boolean;
       IPAdress: string;
-      lastpluginclicked: string;
+
       disconnectseconds: integer;
       DisconnectStopped: boolean;
       ctrlcount: integer;
@@ -510,7 +501,7 @@ type
       SetupModems: boolean;
       Scores : array of TScores;
       TarifeDisabled,neuladen: boolean;
-      pluglist: TStringlist;
+
       rssrunning: boolean; //läuft RSS-Update ?
       AutoDialTimes: array of TAutoDial;
   end;
@@ -556,6 +547,8 @@ var
 
   Kontingente: Array of Kontingentdatensatz;
   kontingentindex: integer;
+  TarifdateiLaden: TTarifThread;
+  UhrzeitEinstellen: TZeitThread;
 implementation
 
 uses Unit2, Unit4, WebServ1, shutdown, Unit3, tarifverw,
@@ -634,14 +627,6 @@ if not closeallowed then
      else
      if (webservform.HttpServer1.tag = 5) then msg := misc(M05,'M05');
 
-//Auskommentiert ... wer LCXP schließt, sollte eigentlich wissen, dass er dann nicht mehr im Web zur Verfügung steht
- {    if not autoclose then      //Meldung machen
-     begin
-      if MessageDlg(msg, mtConfirmation,[mbYes, mbNo], 0) = mrYes then
-        CanClose:= true
-       else
-        begin CanClose:= false; closeallowed:= false; end;
-     end else //AutoClose    }
      canClose:= true;
     end;
    end;
@@ -735,12 +720,6 @@ begin
   end;
 end;
 
-
-procedure THauptfenster.PlugInClick(Sender: TObject);
-begin
- lastpluginclicked:= stripHotkey((sender as TMenuItem).caption);
- StartPlugins('menu');
-end;
 
 procedure THauptfenster.langClick(Sender: TObject);
 var language: string;
@@ -1077,12 +1056,13 @@ if Assigned(floatingW) then
           if selfdial then
           begin
            ShowUsersWebStart;
-           StartPlugIns('OnConnect');
-          end;
-          // erst Atomzeit, dann Update
+           if settings.ReadBool('Tariflisten','aktiv',false) then
+             MM2_3_5Click(self);   //Tarifdaten laden
+          end; 
+
+          //Atomzeit-Update
           sntptimer.interval:= 2000;
           sntptimer.enabled:= settings.ReadBool('Onlinecheck','Atomzeit', false);
-          updatetimer.Enabled:= settings.ReadBool('Onlinecheck','Update', true);
 
           rsstimer.interval:= 5000; //5 sekunden abwarten
           rsstimer.enabled:= true;
@@ -1916,14 +1896,12 @@ begin
 end;
 
 procedure THauptfenster.FormCreate(Sender: TObject);
-var con     : TmemInifile;
-    i       : integer;
+var i       : integer;
     sr      : TSearchRec;
     F       : string;
     reg     : TRegistry;
     langlist: TStringlist;
-    stream  : TFileStream;
-    lastConn: OnlineWerte;  
+    lastConn: OnlineWerte;
 begin
 closeallowed := false;
 autoclose    := false;
@@ -1937,6 +1915,9 @@ reg:= TRegistry.Create;
   if reg.keyexists('.lcz') then UnInstallExt('.lcz');
 reg.Free;
 
+//  if isDSLOnline then
+//hauptfenster.MM2_3.Enabled:= true;
+//(wieder auskommentieren)
 Rssread:= TRss.Create;
 
 //gradienten erzeugen
@@ -2108,30 +2089,7 @@ end;
   if not directoryexists(F + 'www\files')then mkdir(F + 'www\files');
   if not directoryexists(F + 'www\img')  then mkdir(F + 'www\img');
   if not directoryexists(F + 'RSS')      then mkdir(F + 'RSS');
-  if not directoryexists(F + 'PlugIns')  then mkdir(F + 'PlugIns');
   if not directoryexists(F + 'lang')     then mkdir(F + 'lang');
-
-pluglist:= TStringlist.Create;
-//einlesen aller PlugInverzeichnisse
-if FindFirst(ExtractFilePath(paramStr(0))+ 'PlugIns\*.*', faAnyFile, SR) = 0 then
-    repeat
-       if ((Sr.Attr and faDirectory) <> 0) then
-        if ( (sr.name <> '.') and (sr.name<>'..')) then begin pluglist.Append(sr.name); end;
-    until FindNext(SR) <> 0;
-findclose(sr);
-
-//einlesen der manuellen PlugIns-Menüpunkte
-for i:= 0 to pluglist.Count -1 do
-begin
- if fileexists(ExtractFilePath(paramStr(0))+ 'PlugIns\'+pluglist.Strings[i]+'\'+pluglist.Strings[i]+'.ini') then
- begin
-  con:= TmeminiFile.Create(ExtractFilePath(paramStr(0))+ 'PlugIns\'+pluglist.Strings[i]+'\'+pluglist.Strings[i]+'.ini');
-   if con.readbool('General','enabled', false)=true then
-     if con.SectionExists('menu') then
-      mm2_8.Add(NewItem(pluglist.strings[i],TextToShortCut(''),False,True,PlugInClick,0,'Item1'));
-  con.Free;
- end;
-end;
 
 //einlesen aller Sprachdateien
 langlist:= TStringlist.Create;
@@ -2318,8 +2276,6 @@ end;
    else
    status.SimpleText:= misc(M47,'M47');
 
-//  if isDSLOnline then hauptfenster.MM2_3.Enabled:= true;
-
   if fileexists(ExtractFilepath(ParamStr(0)) + 'activeConnection.dat') then
   begin //alte Verbindung noch zum Protokoll hinzufügen
    ReadOnlineSetFromHD(lastconn);
@@ -2339,7 +2295,6 @@ end;
                 misc(M28,'M28')+ ': ' + Inttostr(settings.ReadInteger('Tageskosten','Verbindungen',0)) + #13#10+
                 misc(M12,'M12')+'/min :' + format('%1.3f',[settings.ReadFloat('Tageskosten','Mittelwert',0)*100]);
 
-  StartPlugins('OnStart');
 end;
 
 //wird nach dem Trennen ausgeführt ... hier wird alles gespeichert
@@ -2430,9 +2385,18 @@ end;
 
 procedure THauptfenster.sntptimerTimer(Sender: TObject);
 begin
- sntptimer.enabled:= false;
- timeupdaterunning:= true;
- AtomzeitThread.Start;
+// if not assigned(Uhrzeiteinstellen) then
+if not timeupdaterunning then 
+ begin
+   sntptimer.enabled:= false;
+   timeupdaterunning:= true;
+   UhrzeitEinstellen:=TZeitThread.Create(true);
+   UhrzeitEinstellen.Priority:=tpLower;
+   UhrzeitEinstellen.FreeOnTerminate:=true;
+   UhrzeitEinstellen.OnTerminate:= UhrzeitEinstellen.MyTerminate;
+   UhrzeitEinstellen.Resume;
+ end;
+// AtomzeitThread.Start;
 end;
 
 procedure THauptfenster.FormDestroy(Sender: TObject);
@@ -2442,7 +2406,7 @@ if assigned(atomserver) then atomserver.Free;
 
 parameters.free;
 kill_list.free;
-pluglist.free;
+
 
 //alles auf die platte schreiben - BEGIN
 
@@ -2770,29 +2734,6 @@ begin
 found:= false;
 if dialing then exit;
 
-if neuladen then
-begin
-
- neuladen:= false;
- save_cfg;
-
- tarifverw.LadeTarife;
-
-{ if not disconnecting then //prüfen, ob der Tarif noch in der Datenbank steht
- if isonline and (onlineset.tarif <> '') and (tarifverw.CheckOnlineset = false) then //Tarif nicht mehr vorhanden
- begin
-   if assigned(disconnect_leerlauf) then disconnect_leerlauf.close;
-    Application.CreateForm(Tdisconnect_leerlauf, disconnect_leerlauf);
-    disconnect_leerlauf.usetimer      := true;
-    disconnect_leerlauf.timer1.tag    := 30;
-    disconnect_leerlauf.Label1.Caption:= misc(M68,'M68');
-    disconnect_leerlauf.grad.endcolor := $009191DB; //rot
-    disconnect_leerlauf.Show;
- end;
-}
-
-end; //if neuladen ...
-
 if not isonline then begin reload.enabled:= false; reload.enabled:= true; end;
 
 if not beliebig_check.checked then
@@ -3018,7 +2959,6 @@ begin
     webserv1.status:= buf;
     webservform.logfile_add(buf);
 
-    progcount:=0;
     loadprogs;             //Programme starten
 
     reload.enabled:= true; //aktualisieren der tariftabelle wieder aktivieren
@@ -3070,7 +3010,6 @@ begin
           takt1.tag          := 0;
 
           rsstimer.enabled   :=false;
-          updatetimer.enabled:= false;
 
           if (allow_multilink and (modemname2<>'')) then
            SetMultilink.Visible:= true else SetMultilink.Visible:= false;
@@ -3155,7 +3094,6 @@ begin
           Hauptfenster.Cursor:= crDefault;
           aktualisieren.click;
           refreshall;
-          StartPlugins('Disconnect');
 end;
 
 procedure THauptfenster.Aktualisieren_timerTimer(Sender: TObject);
@@ -3291,16 +3229,16 @@ begin
 rsstimer.enabled:= false;
 if not nofeeds then
 begin
-if isonline and not rssrunning
-    then
-     RssReader.StartRssUpdate
-    else
-      if not isonline then
-      begin
-        ledrss.coloroff := clMaroon;
-        ledtimer.enabled:= false;
-        LEDRSS.Hint     := misc(M87,'M87')+' ( ' + timetostr(timeof(now)) + ' )';
-      end;
+//if isonline and not rssrunning
+if not rssrunning then
+     RssReader.StartRssUpdate;
+//    else
+//      if not isonline then
+//      begin
+//        ledrss.coloroff := clMaroon;
+//        ledtimer.enabled:= false;
+//        LEDRSS.Hint     := misc(M87,'M87')+' ( ' + timetostr(timeof(now)) + ' )';
+//      end;
 
 if rss_update > 0 then
   begin
@@ -3308,15 +3246,6 @@ if rss_update > 0 then
    rsstimer.enabled  := true;
   end;
 end;
-end;
-
-procedure THauptfenster.UpdateTimerTimer(Sender: TObject);
-begin
-updatetimer.Enabled:= false;
-if not isexerunning('update.exe') then
-  if settings.ReadBool('Onlinecheck','Update', true) then
-    ShellExecute(handle,'open',Pchar(extractfilepath(paramstr(0))+'update.exe'),Pchar ('') ,nil,SW_SHOWNORMAL)
-else updatetimer.Enabled:= true;
 end;
 
 procedure THauptfenster.FormHide(Sender: TObject);
@@ -3601,84 +3530,12 @@ end;
 end;
 
 procedure THauptfenster.CheckForUpdates;
-var Files: TStringlist;
-    value, path: string;
-    i, j: integer;
-    Updater: TSchupdater;
 begin
-hauptfenster.Cursor:= crHourglass;
-Updater:= TSchUpdater.Create(self);
-Updater.Language:= sulaDeutsch;
-Updater.AutoRestartApp:= false;
+  hauptfenster.Cursor:= crHourglass;
 
-Updater.SaveOriginalFiles:= settings.Readbool('Onlinecheck','BackUpUpdate', true);
-
-if settings.Readbool('Onlinecheck','BackUpUpdate', true) //wenn Backup erstellen
-  and settings.Readbool('Onlinecheck','BackUpLast', true) //und nur das letzte Backup behalten
-  then //dann jetzt den BackUp-Ordner löschen
-     if DirectoryExists(extractfilepath(paramstr(0)) + 'BackUp') then
-        deldir(extractfilepath(paramstr(0)) + 'BackUp');
-
-
-Updater.UpdateSrc:= ExtractFilepath(ParamStr(0)) + 'Updates';
-
-if fileexists(ExtractFilepath(ParamStr(0)) + 'UpdatedFiles.dat') then
-begin
-  Files:= TStringList.create;
-  Files.LoadFromFile(ExtractFilepath(ParamStr(0)) + 'UpdatedFiles.dat');
-
-  //gehe alle strings durch
-  for i:= 0 to Files.count -1 do
-  begin
-   value:= '';
-   path:= '';
-   j:= AnsiPos('|',Files.strings[i]);
-
-   value:= Files.strings[i];
-   Delete(Value,j, length(value)-j+1);
-
-   if (j < length(Files.strings[i])+1) then
-   begin
-    Path:= Files.strings[i];
-    Delete(Path,1,j);
-   end;
-
-   if not AnsiContainstext(Value,'LeastCoster.exe') then
-   begin
-   Updater.AppendToOtherFiles(ExtractFileName(Value),path);
-   end;
-  end; //ende For schleife
-
-  Files.Free;
-  if not AutoDialLED.LEDon then
-  if MessageDlg(misc(M97,'M97'), mtConfirmation,
-      [mbYes, mbNo], 0) = mrYes then
-      begin
-      Updater.AutoRestartApp:= true;
-      autoclose:= true;    //beenden auch zulassen
-      closeallowed:= true; //beenden auch zulassen
-      end;
-  Updater.UpdateSrc := ExtractFilePath(ParamStr(0)) + 'Updates';
-  Updater.SaveDir:= ExtractFilePath(ParamStr(0)) + 'BackUp';
-  Updater.SaveOriginalFiles:= true;
-  Updater.DeleteUpdateSrc:= false;
-
-  if (Updater.DoUpdate = true) then
-  begin
-  Updater.DeleteUpdateDirectory;
-  DeleteFile(ExtractFilepath(ParamStr(0)) + 'UpdatedFiles.dat');
-  end;
-
-  Updater.free;
   Hauptfenster.Cursor:= crDefault;
 end;
 
-end;
-procedure THauptfenster.UpdaterError(Sender: TObject;
-  ErrorCode: TSchSimpleUpdaterError; Parameter, ErrMessage: String);
-begin
-status.simpletext:= errmessage;
-end;
 
 procedure DrawColoredRect(var liste: TStringGrid; Rect: TRect; Acol, Arow: integer; color: string);
 begin
@@ -3705,9 +3562,11 @@ begin
     kosten := strtofloat(kostenstring);
 end;
 
-with liste do
+
 //wenn selektiert, dann highlighten
-if selected[arow] and (arow > 0) then
+//showmessage(inttostr(length(selected)));
+with liste do
+if (arow > 0) and selected[arow] then
   begin
      Canvas.Brush.Color := clHighlight;//RGB(250,250,250);
      Canvas.FillRect(Rect);
@@ -3945,90 +3804,6 @@ Scoretimer.enabled:= false;
     inc(Scores[IndexOfScores(onlineset.tarif)].erfolgreich);
 end;
 
-//Plugins <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-procedure TMyThread.Execute;
-var ini2: TIniFile;
-    i: integer;
-    name: string;
-    wait, disableTarife, LoadTarife, Hidden: boolean;
-    run, params: string;
-    enabled: boolean;
-begin
-
-  if Hauptfenster.pluglist.count > 0 then
-   for i:= 0 to Hauptfenster.pluglist.count-1 do
-   begin
-
-      name:= Hauptfenster.pluglist.strings[i];
-      if (hauptfenster.actevent = 'menu') and (hauptfenster.lastpluginclicked <> name) then continue;
-
-      if FileExists(ExtractFilePath(ParamStr(0)) + 'PlugIns\' + name +'\'+ name+'.ini') then
-      begin
-       ini2:= TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'PlugIns\' + name +'\'+ name+'.ini');
-
-        wait          := ini2.ReadBool(hauptfenster.actevent,'wait', false);
-        LoadTarife    := ini2.ReadBool(hauptfenster.actevent,'GetProviderList', false);
-        disableTarife := ini2.ReadBool(hauptfenster.actevent,'DisableProviderSettings', false);
-
-        run           := ini2.ReadString(hauptfenster.actevent, 'run', '');
-        hidden        := ini2.ReadBool(hauptfenster.actevent, 'hidden', false);
-        params        := ini2.ReadString(hauptfenster.actevent, 'params', '');
-
-        enabled:= ini2.ReadBool('General', 'enabled', true);
-       ini2.Free;
-
-       if not enabled then continue;
-
-       if isonline then
-       begin
-        params :=  Ansireplacestr(params,'%DB',ExtractFilepath(Paramstr(0)) + 'Tarife.lcx');
-        params :=  Ansireplacestr(params,'%IP',hauptfenster.IPAdress);
-        params :=  Ansireplacestr(params,'%Tarif',onlineset.Tarif);
-       end;
-
-       hauptfenster.TarifeDisabled:= disableTarife;
-       //wenn disabled dann warten
-       if disableTarife then wait:= true;
-
-       hauptfenster.FTerminate := False;
-
-       if loadtarife then WriteTarifeToHD;   //falls das PlugIN die Tarifdatenbank benötigt, zuerst alle Tarife auf die Platte schreiben
-
-       hauptfenster.ExecuteFile(ExtractFilePath(ParamStr(0)) + 'PlugIns\' + name+'\'+run, params, '', wait,hidden, nil{DoOnExecuteWait});
-
-//       fertig:
-       //Tarifmanager wieder aktivieren
-       hauptfenster.TarifeDisabled:= false;
-
-       //tarife einlesen
-       hauptfenster.neuladen:= loadtarife;
-     end;
-
-      //wenn Klick aus dem hauptmenu, dann kommt ide Schleife hier nur beim richtigen PlugIn an
-      // dann abbrechen
-      if hauptfenster.actevent = 'menu' then break;
-   end;
-   hauptfenster.lastpluginclicked:= '';
-end;
-
-procedure THauptfenster.StartPlugIns(event: string);
-var
- MyThread: TMyThread;
-begin
- actevent:= event;
- MyThread:=TMyThread.Create(true);
- MyThread.Priority:=tpLower;
- MyThread.FreeOnTerminate:=true;
- MyThread.Resume;
-end;
-
-procedure THauptfenster.DoOnExecuteWait(const ProcessInfo: TProcessInformation;
-                                   var ATerminate: Boolean);
-begin
-  ATerminate := FTerminate;
-end;
-
 //Profi-Einstellungen umschalten
 procedure THauptfenster.MM3_2Click(Sender: TObject);
 begin
@@ -4087,100 +3862,6 @@ begin
 end;
 
 
-end;
-
-//Atomzeit-Update
-procedure THauptfenster.AtomzeitThreadExecute(Sender: TObject;
-  Thread: TBMDExecuteThread; var Data: Pointer);
-var   log: textfile;
-      Time: TSntpSend;
-      error: boolean;
-      oldtime: TDateTime;
-begin
-
-error:= false;
-
-LedTime.ColorOff:= clGray;
-LedTime.Hint:= misc(M103,'M103') +' ('+ timetostr(timeof(now)) + ' )';
-
-if not isonline or (atomserver.count = 0) then
-begin //wenn offline tue nix
-      MM2_3_2.Enabled:= true; //Atomzeitabgleich im Menü aktivieren
-      timeupdaterunning:= false;
-      exit;
-end;
-
-MM2_3_2.Enabled:= false; //Atomzeitabgleich im Menü deaktivieren
-
-if (IPAdress = '0.0.0.0') or (IPAdress='') then
-begin // wenn keine IP, dann setze eine Runde aus
-      MM2_3_2.Enabled:= true; //Atomzeitabgleich im Menü aktivieren
-      sntptimer.interval:= 5000;
-      sntptimer.Enabled:= true;
-      timeupdaterunning:= false;
-      exit;
-end;
-
-//Atomzeitserver setzen
- if atomcount < atomserver.Count then
- begin
-
-//Datei anlegen, wenn sie nicht existiert und öffnen
-     assignfile(log,extractfilepath(paramstr(0))+'log\atomzeit.txt');
-     if fileexists( extractfilepath(paramstr(0))+'log\atomzeit.txt') then
-      append(log)
-     else
-     begin
-      rewrite(log);
-      writeln(log,misc(M105,'M105') + #9 + misc(M106,'M106') + #9 + misc(M107,'M107')+ #9 + misc(M108,'M108'));
-     end;
- //zeile hinzufügen
-      writeln(log,datetimetostr(now) +#9+misc(M104,'M104')+' ' + atomserver.strings[atomcount]);
-
-     time:= TSNTPSend.Create;
-   try
-     time.TargetHost:= atomserver.strings[atomcount];
-     time.SyncTime:= true;
-     time.Timeout:= 10000;
-     time.MaxSyncDiff:= 1.7*10E308;
-
-     atomcount:= atomcount+1;
-     if atomcount = atomserver.Count then atomcount:= 0;
-
-    oldtime:= now;
-    if time.GetSNTP = true then
-     begin
-      writeln(log,datetimetostr(oldtime) +chr(9)+datetimetostr(now)+ chr(9)+timetostr(now-oldtime) + chr(9) + time.targethost);
-      MM2_3_2.Enabled:= true; //Atomzeitabgleich im Menü aktivieren
-
-      LEDTime.ColorOff:= cllime;
-      LEDTime.ledon:= false;
-      LedTime.Hint:= misc(M109,'M109')+ ' ('+ timetostr(timeof(now)) +')';
-   end
-   else //wenn nicht erfolgreiches update
-   begin
-    writeln(log,datetimetostr(now) + #9 + misc(M110,'M110')+' '+time.targethost );
-    sntptimer.interval:= 5000;
-    error:= true;
-   end;
-
-  finally
-    time.Free;
-    closefile(log);
-   end;
-  end;
-
- if error then
- begin
-     sntptimer.Enabled:= true; //wenn nicht erfolgreich nochmal starten
-     timeupdaterunning:= false;
-     exit;
- end;
-//wenn erfolgreich, dann neues Interval setzen
-sntptimer.interval:= settings.ReadInteger('Onlinecheck','Atominterval', 60)*60000;
-//nur neu starten, wenn wiederholt werden soll
-sntptimer.Enabled:= settings.ReadBool('Onlinecheck','AtomRepeat',false);
-timeupdaterunning:= false;
 end;
 
 // Menüs #######################################################################
@@ -4315,7 +3996,6 @@ if ((row = 0) and (abs(x-liste_last_x) <3)) then //sortieren
 
      liste.DefaultDrawing:= true;
      liste.Refresh;
-//      liste.Repaint;
   end
 else
 begin
@@ -4432,6 +4112,23 @@ end;
 procedure THauptfenster.WebServClick(Sender: TObject);
 begin
 WebServForm.visible:= true;
+end;
+
+procedure THauptfenster.MM2_3_5Click(Sender: TObject);
+begin
+ TarifdateiLaden:=TTarifThread.Create(true);
+ TarifdateiLaden.Priority:=tpLower;
+ TarifdateiLaden.FreeOnTerminate:=true;
+ TarifdateiLaden.OnTerminate:= TarifdateiLaden.MyTerminate;
+ Tarifdateiladen.maxPreis:= settings.ReadFloat('Tariflisten','maxPreis',3.0);
+ Tarifdateiladen.maxEinwahl:= settings.ReadFloat('Tariflisten','maxEinwahl',10.0);
+ TarifdateiLaden.TarifUrl:= settings.ReadString('Tariflisten','Url','http://darkempire.da.funpic.de/php/Tarife/Preistabelle-LCXP.php');
+ TarifDateiLaden.lastDate:= settings.ReadDateTime('Tariflisten','TarifDatum',0);
+ TarifDateiLaden.AutoDel:= settings.ReadBool('Tariflisten','AutoDel',false);
+
+//    URL := 'http://www.bongosoft.de/Preistabelle-lang.txt';
+ TarifdateiLaden.Resume;
+
 end;
 
 end.

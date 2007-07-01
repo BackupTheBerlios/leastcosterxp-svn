@@ -1,11 +1,1 @@
-LeastCosterXP=http://rss.groups.yahoo.com/group/leastcosterxp/rss
-Mein Forum=http://darkempire.funpic.de/phpBB2/rdf.php
-Onlinekosten=http://www.onlinekosten.de/news/ticker.php?format=rdf
-Teltarif=http://www.teltarif.de/db/news.rss
-Aktuelle Nachrichten=http://www.tagesschau.de/newsticker.rdf
-ZDF heute=http://www.heute.de/ZDFheute/infoservices/rss-feed
-Pro-Physik=http://www.pro-physik.de/Phy/forschungfeed.xml
-Heise=http://www.heise.de/newsticker/heise.rdf
-Telefontarifrechner=http://www.telefontarifrechner.de/index.xml
-SkateNightForum=http://www.skate-night-berlin.com/forum/rss-news.php
-GetJAR=http://www.getjar.com/rss/Sony-Ericsson--K700.xml
+telespiegel=http://www.telespiegel.de/rss-xml/telespiegel-news.xml

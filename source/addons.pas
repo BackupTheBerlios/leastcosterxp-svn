@@ -36,6 +36,10 @@ function DelDir(Dir : String) : Boolean;
 
 procedure Quick_Sort(var A: array of Integer);
 
+function encrypt(text, key: String):String;
+function decrypt(text, key: String):String;
+
+
 implementation
 
 function GetWinVersion: string;
@@ -295,5 +299,33 @@ procedure Quick_Sort(var A: array of Integer);
 begin
  QuickSort(A, Low(A), High(A));
 end;
+
+function encrypt(text, key: String):String;
+var i,keypos:integer;
+begin
+  keypos:=1;
+  for i:=1 to length(text) do
+  begin
+    Result:=Result+char(byte(ord(text[i])+ord(key[keypos])));
+    inc(keypos);
+    if keypos > length(key) then
+      keypos:=1;
+  end;
+end;
+
+function decrypt(text, key: String):String;
+var i,keypos:integer;
+begin
+  keypos:=1;
+  for i:=1 to length(text) do
+  begin
+    Result:=Result+char(byte(ord(text[i])-ord(key[keypos])));
+    inc(keypos);
+    if keypos > length(key) then
+      keypos:=1;
+  end;
+end;
+
+
 
 end.

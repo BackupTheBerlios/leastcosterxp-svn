@@ -25,16 +25,16 @@ with hauptfenster do
       end
     else
     if Sender = TS2_1 then
-     ResetExpireDate(liste.cells[1,row], Dateof(yesterday))
+     ResetExpireDate(liste.cells[1,row],liste.cells[8,row],liste.cells[12,row],liste.cells[13,row], Dateof(yesterday))
     else
     if Sender = TS2_2 then
-     ResetExpireDate(liste.cells[1,row], Dateof(now))
+     ResetExpireDate(liste.cells[1,row],liste.cells[8,row],liste.cells[12,row],liste.cells[13,row], Dateof(now))
     else
     if Sender = TS2_3 then
-     ResetExpireDate(liste.cells[1,row], Dateof(tomorrow))
+     ResetExpireDate(liste.cells[1,row],liste.cells[8,row],liste.cells[12,row],liste.cells[13,row], Dateof(tomorrow))
     else
     if Sender = TS2_4 then
-     ResetExpireDate(liste.cells[1,row], Dateof(incday(now,7)))
+     ResetExpireDate(liste.cells[1,row],liste.cells[8,row],liste.cells[12,row],liste.cells[13,row], Dateof(incday(now,7)))
     else
     if Sender = TS2_5 then
      begin
@@ -42,7 +42,7 @@ with hauptfenster do
         repeat
          tag:= tag-1;
         until tryencodedate(yearof(now), monthof(now),tag, datum) = true;
-        ResetExpireDate(liste.cells[1,row], Dateof(datum));
+        ResetExpireDate(liste.cells[1,row],liste.cells[8,row],liste.cells[12,row],liste.cells[13,row], Dateof(datum));
      end
     else
     if sender = TS3_1 then //neue Farben hinzufügen
@@ -135,7 +135,7 @@ with hauptfenster do
     else
     if sender = TS5 then
     begin
-      LoescheTarif(liste.cells[1, row]);
+      LoescheTarif(liste.cells[1, row],liste.cells[8,row],liste.cells[12,row],liste.cells[13,row]);
     end
     else
     if sender = TS6_1 then//keine Einwahl

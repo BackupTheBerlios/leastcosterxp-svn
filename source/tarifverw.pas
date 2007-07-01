@@ -17,12 +17,12 @@ procedure LoadListaddline(var rows:integer;i: integer; var Einwahl,Preis: real; 
 function CheckOnlineset: boolean;
 
 function isFeiertag(date: TDate): string;
-procedure LoescheTarif(tarif: string);
+procedure LoescheTarif(tarif ,Nummer, ab, bis: string);
 procedure LoescheAbgelaufeneTarife;
 //procedure SaveTrafficData(Tarif: string; Dauer: Integer; download, upload: longint);
 procedure SaveTrafficData(Data: OnlineWerte);
 procedure Kontingente_Laden;
-procedure ResetExpireDate(Tarif: String;Datum: TDate);
+procedure ResetExpireDate(Tarif,Nummer, ab, bis: String;Datum: TDate);
 
 function computecosts(Kanalbuendelung: boolean): boolean;
 
@@ -877,19 +877,19 @@ begin
   Result:= temp;
 end;
 
-procedure LoescheTarif(tarif: string);
+procedure LoescheTarif(tarif, nummer, ab, bis: string);
 var i: integer;
     Deletelist: TStringlist;
 begin
 DeleteList:= TStringList.Create;
 
 for i := hauptfenster.liste.RowCount-1 downto 1   do
-     if (hauptfenster.Selected[i]) then begin Deletelist.Add(hauptfenster.Liste.Cells[1,i]);  end;
+     if (hauptfenster.Selected[i]) then begin Deletelist.Add(Tarif + '|'+Nummer+'|'+ab+'|'+bis);  end;
 
 // in der Datenbank löschen
 with Hauptfenster do
 for i:= length(Tarife)-1 downto 0 do
-if (Deletelist.IndexOf(Tarife[i].Tarif) > -1) then
+if (Deletelist.IndexOf(Tarife[i].Tarif + '|'+Tarife[i].Nummer+'|'+DateToStr(Tarife[i].validfrom)+'|'+DateToStr(Tarife[i].expires)) > -1) then
 begin
   tarife[i] := Tarife[length(tarife) -1]; //letzten Datensatz an stelle
   setlength(tarife, length(tarife)-1); //um eine Stelle kürzen
@@ -997,19 +997,24 @@ with Hauptfenster do begin
  end;
 end;
 
-procedure ResetExpireDate(Tarif: String;Datum: TDate);
+procedure ResetExpireDate(Tarif,Nummer, ab, bis: String;Datum: TDate);
 var i: integer;
     changelist: TStringlist;
 begin
  changelist:= TStringlist.Create;
 
+// showmessage(Tarif + ' ' + ab+ ' ' + bis);
+
  for i:= 1 to length(hauptfenster.selected) -1 do
-   if hauptfenster.selected[i] then changelist.Add(hauptfenster.Liste.Cells[1,i]);
+   if hauptfenster.selected[i] then changelist.add(Tarif + '|'+Nummer+'|'+ab+'|'+bis);
+
+//   changelist.Add(hauptfenster.Liste.Cells[1,i]);
 
  //im speicher ändern
  with hauptfenster do
  for i:= 0 to length(hauptfenster.tarife) -1 do
- if  (changelist.IndexOf(Tarife[i].Tarif) <> -1) then
+ if  (changelist.IndexOf(Tarife[i].Tarif + '|'+Tarife[i].Nummer+'|'+DateToStr(Tarife[i].validfrom)+'|'+DateToStr(Tarife[i].expires)) <> -1) then
+// if  (changelist.IndexOf(Tarife[i].Tarif) <> -1) then
  begin
   Tarife[i].expires:= Datum;
   if Datum > Dateof(now) then
@@ -1064,7 +1069,7 @@ if Kanalbuendelung then
      then onlineset.dauer_takt:= onlineset.dauer_takt +  taktlaenge;
 
 //wenn noch Volumenkontingente vorhanden, dann abbrechen .. keine Kosten berechnen
- if ((length(kontingente) > 0) and (kontingente[kontingentindex].freikb > 0) and (kontingentindex > -1))
+ if ((length(kontingente) > 0) and (kontingentindex > -1) and (kontingente[kontingentindex].freikb > 0))
  then begin result:= true; exit; end;
 
  //aktuelle Freisekundenanzahl ermitteln -> wichtig: nachdem auf Volumenkontingente geprüft wurde

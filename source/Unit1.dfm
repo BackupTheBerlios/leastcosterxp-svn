@@ -802,6 +802,10 @@ object Hauptfenster: THauptfenster
           Caption = 'Auf Programmupdates pr'#252'fen'
           OnClick = MainMenueClick
         end
+        object MM2_3_5: TMenuItem
+          Caption = 'Taridaten laden'
+          OnClick = MM2_3_5Click
+        end
       end
       object MM2_4: TMenuItem
         Caption = '&Programme'
@@ -826,9 +830,6 @@ object Hauptfenster: THauptfenster
           Caption = 'Verkn'#252'pfungen entfernen'
           OnClick = MainMenueClick
         end
-      end
-      object MM2_8: TMenuItem
-        Caption = 'Plugins'
       end
     end
     object MM3: TMenuItem
@@ -1168,13 +1169,6 @@ object Hauptfenster: THauptfenster
     Left = 80
     Top = 72
   end
-  object UpdateTimer: TTimer
-    Enabled = False
-    Interval = 60000
-    OnTimer = UpdateTimerTimer
-    Left = 48
-    Top = 72
-  end
   object IsOntimer: TTimer
     OnTimer = IsOntimerTimer
     Left = 160
@@ -1190,8 +1184,8 @@ object Hauptfenster: THauptfenster
   object Reload: TTimer
     Interval = 60000
     OnTimer = ReloadTimer
-    Left = 224
-    Top = 408
+    Left = 304
+    Top = 400
   end
   object Rsstimer: TTimer
     Enabled = False
@@ -1325,8 +1319,8 @@ object Hauptfenster: THauptfenster
     Enabled = False
     Interval = 60000
     OnTimer = ipemailTimer
-    Left = 16
-    Top = 104
+    Left = 48
+    Top = 72
   end
   object Time: TTimer
     Enabled = False
@@ -1573,12 +1567,6 @@ object Hauptfenster: THauptfenster
     OnInstanceStarted = OneInstanceInstanceStarted
     Left = 8
     Top = 8
-  end
-  object AtomzeitThread: TBMDThread
-    UpdateEnabled = False
-    OnExecute = AtomzeitThreadExecute
-    Left = 120
-    Top = 96
   end
   object ColorDialog: TColorDialog
     Options = [cdFullOpen, cdSolidColor, cdAnyColor]

@@ -544,16 +544,6 @@ const
               +'Es werden nur die xx neuesten Meldungen angezeigt.';
  Help93= 'alte News' +cr
               +'Ist diese Option aktiviert, werden auch News gezeigt, die nicht mehr durch den Feed verbreitet werden.';
- Help94= 'PlugIns' +cr
-              +'Es könne hier PlugIns eingebunden werden, die zum Beispiel die Tarifliste bearbeiten.';
- Help95= 'PlugIns aktivieren' +cr
-              +'PlugIns müssen aktiviert werden, damit sie Ihre Funktion erfüllen.';
- Help96= 'Installieren' +cr
-              +'Hier können sie PlugIns installieren, die im *lcp-Format vorliegen.';
- Help97= 'Deinstallieren' +cr
-              +'Hier können sie das ausgewählte PlugIn deinstallieren.';
- Help98= 'Einstellungen' +cr
-              +'Rufen Sie hier die Einstellungen des gewählten PlugIns auf.';
 
 implementation
 

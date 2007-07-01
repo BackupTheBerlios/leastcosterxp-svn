@@ -23,11 +23,12 @@ uses
   StrUtils,
   {$ENDIF}
   IniFiles, StdCtrls, ExtCtrls, WinSock, WSocket, WSocketS, HttpSrv,
-  Buttons, CHCrypt, DateUtils, icsMD5, inilang, messagestrings;
+  Buttons, DateUtils, icsMD5, inilang, messagestrings, addons;
 
 const
   WebServVersion     = 109;
   NO_CACHE           = 'Pragma: no-cache' + #13#10 + 'Expires: -1' + #13#10;
+  EncCode            = 'LeastCosterXP';
 
 type
   { This component is used for client connection instead of default one.    }
@@ -161,7 +162,7 @@ type
 
 
   public
-     crypter: TCHCrypt;
+
  end;
 
 var
@@ -261,46 +262,46 @@ begin
    UserSettings.ReadSections(sections);
 
    for i:=0 to sections.Count-1 do
-   if (sections.Strings[i] <>'active') and (sections.Strings[i] <> crypter.Doencrypt(user)) then
+   if (sections.Strings[i] <>'active') and (sections.Strings[i] <> encrypt(user, EncCode)) then
    if not selector then
    begin
-        options:=options+'<option selected>'+crypter.DoDecrypt(sections.Strings[i])+'</option>';
+        options:=options+'<option selected>'+Decrypt(sections.Strings[i], EncCode)+'</option>';
         selector:= true;
    end
-   else options:=options+'<option>'+crypter.DoDecrypt(sections.Strings[i])+'</option>';
+   else options:=options+'<option>'+encrypt(sections.Strings[i], EncCode)+'</option>';
 
-   count:=UserSettings.ReadInteger(crypter.DoEncrypt(user),'count',0);
+   count:=UserSettings.ReadInteger(Encrypt(user, EncCode),'count',0);
    nachrichten:= '<tr><td><b><a name="lesen">'+misc(M225,'M225')+'</a></b><hr></td></tr>';
 
    if count >0 then
    for i:= count downto 1 do
    begin
 
-   if (crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),'')) <> '') then
-        anhang:= '<b>'+misc(M226,'M226')+': <a href="files\'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'">'+ crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('file'+inttostr(i)),''))+'</a></b> &nbsp;</b>'
+   if (Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('file'+inttostr(i), EncCode),''), EncCode) <> '') then
+        anhang:= '<b>'+misc(M226,'M226')+': <a href="files\'+ Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('file'+inttostr(i), EncCode),''), EncCode)+'">'+ Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('file'+inttostr(i), EncCode),''), EncCode)+'</a></b> &nbsp;</b>'
    else anhang:= '';
 
-   if (UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('gelesen'+inttostr(i)),'1')) = '0'
+   if (UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('gelesen'+inttostr(i), EncCode),'1')) = '0'
    then
     begin
     nachrichten:= nachrichten +'<tr><td><b>'+
         '<input type="checkbox" name="delete'+inttostr(i)+'" value="'+inttostr(i)+'">'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('zeitpunkt'+inttostr(i)),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0)))) + '&nbsp; von : '+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('sender'+inttostr(i)),''))+'</b> &nbsp;'+
+        Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('zeitpunkt'+inttostr(i), EncCode),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0))), EncCode) + '&nbsp; von : '+
+        Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('sender'+inttostr(i), EncCode),''), EncCode)+'</b> &nbsp;'+
         anhang+
         '</td></tr><tr><td><b>'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('nachricht'+inttostr(i)),'no message')) +
+        Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('nachricht'+inttostr(i), EncCode),'no message'), EncCode) +
         '</b><hr><br></td></tr>';
-        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.DoEncrypt('gelesen'+inttostr(i)) )
+        UserSettings.DeleteKey(Encrypt(user, EncCode),Encrypt('gelesen'+inttostr(i), EncCode) )
     end
     else
     nachrichten:= nachrichten + '<tr><td>'+
         '<input type="checkbox" name="delete'+inttostr(i)+'" value="'+inttostr(i)+'">'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('zeitpunkt'+inttostr(i)),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0)))) + '&nbsp; '+misc(M227,'M227')+' : '+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('sender'+inttostr(i)),''))+ '</b> &nbsp;'+
+        Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('zeitpunkt'+inttostr(i), EncCode),DateTimetoStr(EncodeDateTime(1970,01,01,0,0,0,0))), EncCode) + '&nbsp; '+misc(M227,'M227')+' : '+
+        Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('sender'+inttostr(i), EncCode),''), EncCode)+ '</b> &nbsp;'+
         anhang+
         '</td></tr>'+ '<tr><td>'+
-        crypter.DoDecrypt(UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('nachricht'+inttostr(i)),'no message')) +
+        Decrypt(UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('nachricht'+inttostr(i), EncCode),'no message'), EncCode) +
         '<br><hr></td></tr>';
    end;
   sections.Free;
@@ -412,11 +413,11 @@ begin
   Result:= AnsireplaceStr(Result,'%%USER_DIALING%%',   settings.ReadString('server','dialtimeuser','!_niemand_!'));
   Result:= AnsireplaceStr(Result,'%%USER_ALLOW_CONNECT_IN%%',   inttostr(300 - secondsbetween(settings.ReadDateTime('server','dialtime', EncodeDatetime(3000,1,1,0,0,0,0)),now)));
 
-  count:= UserSettings.ReadInteger(Webservform.crypter.DoEncrypt(user),'count',0);
+  count:= UserSettings.ReadInteger(Encrypt(user, EncCode),'count',0);
 
   if AnsiContainsSTR(Result,'%%IF_NEW_MESSAGE_BEGIN%%') then
   begin
-    if (UserSettings.ReadString(Webservform.crypter.DoEncrypt(user),Webservform.crypter.DoEncrypt('gelesen'+inttostr(count)),'1') = '0') then
+    if (UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('gelesen'+inttostr(count), EncCode),'1') = '0') then
       begin //Neue Nachrichten
         Result:= AnsiReplaceStr(Result,'%%IF_NEW_MESSAGE_BEGIN%%','');
         Result:= AnsiReplaceStr(Result,'%%IF_NEW_MESSAGE_END%%'  ,'');
@@ -495,20 +496,6 @@ end;
 procedure TWebServForm.FormCreate(Sender: TObject);
 begin
   httpserver1.tag:= 0;
-
-  crypter := TCHCrypt.Create(Self);
-  with crypter do
-  begin
-    Name := 'crypter';
-    Base := 2;
-    CryptMode := cmIniExtended;
-    CryptChar := ccAll;
-    Key1 := 56;
-    Key2 := 84;
-    Key3 := 23;
-    Key4 := 40;
-  end;
-
    //Webinterface automatisch starten
   if settings.ReadBool('Server','Autostart', false) then
     begin
@@ -521,7 +508,6 @@ end;
 procedure TWebServForm.FormDestroy(Sender: TObject);
 begin
   httpserver1.Stop;
-  if assigned(crypter) then crypter.free;
 end;
 
 
@@ -1020,13 +1006,13 @@ begin
      end;
 
       //nachricht schreiben
-    count:= UserSettings.ReadInteger(webservform.crypter.DoEncrypt(user),'count',0);
+    count:= UserSettings.ReadInteger(Encrypt(user, EncCode),'count',0);
 
-    UserSettings.WriteString(webservform.crypter.DoEncrypt(user),webservform.crypter.doencrypt('nachricht'+inttostr(count+1)),webservform.crypter.DoEncrypt('Sie haben vergessen sich auszuloggen !!!'));
-    UserSettings.WriteString(webservform.crypter.DoEncrypt(user),webservform.crypter.doencrypt('zeitpunkt'+inttostr(count+1)),webservform.crypter.DoEncrypt(datetimetostr(now)));
-    UserSettings.WriteString(webservform.crypter.DoEncrypt(user),webservform.crypter.doencrypt('sender'+inttostr(count+1)),webservform.crypter.DoEncrypt('LeastCoster XP'));
-    UserSettings.WriteBool(webservform.crypter.DoEncrypt(user),webservform.crypter.doencrypt('gelesen'+inttostr(count+1)),false);
-    UserSettings.WriteInteger(webservform.crypter.DoEncrypt(user),'count',count+1);
+    UserSettings.WriteString( Encrypt(user, EncCode),Encrypt('nachricht'+inttostr(count+1), EncCode),Encrypt('Sie haben vergessen sich auszuloggen !!!', EncCode));
+    UserSettings.WriteString( Encrypt(user, EncCode),Encrypt('zeitpunkt'+inttostr(count+1), EncCode),Encrypt(datetimetostr(now), EncCode));
+    UserSettings.WriteString( Encrypt(user, EncCode),Encrypt('sender'+inttostr(count+1)   , EncCode),Encrypt('LeastCoster XP', EncCode));
+    UserSettings.WriteBool(   Encrypt(user, EncCode),Encrypt('gelesen'+inttostr(count+1)  , EncCode),false);
+    UserSettings.WriteInteger(Encrypt(user, EncCode),'count',count+1);
 
 { Build the record to write to data file }
 
@@ -1049,7 +1035,7 @@ var user: string;
 begin
     user:= ansireplacestr(clientcnx.FParams,'=','');
 
-    UserSettings.WriteString(crypter.DoEncrypt(user),crypter.DoEncrypt('lasttimeon'), crypter.DoEncrypt(datetimetostr(now)));
+    UserSettings.WriteString(Encrypt(user, EncCode),Encrypt('lasttimeon', EncCode), Encrypt(datetimetostr(now), EncCode));
 
     usercount:= UserSettings.Readinteger('active','count',0);
     if usercount>0 then
@@ -1495,7 +1481,7 @@ begin
     Buffer := 'Sorry no password to read:'+pass + #0;
 
   if ((user<>'') and (pass<>'')
-    and(GetMD5(@Buffer[1], Length(Buffer) - 1) = UserSettings.ReadString(crypter.DoEncrypt(user),crypter.DoEncrypt('pass'),'nicht gefunden !!!!')))
+    and(GetMD5(@Buffer[1], Length(Buffer) - 1) = UserSettings.ReadString(Encrypt(user, EncCode),Encrypt('pass', EncCode),'nicht gefunden !!!!')))
   then
     begin
 
@@ -1737,14 +1723,14 @@ begin
     HostName := ClientCnx.PeerAddr;
 
     //nachricht schreiben
-    count:= UserSettings.ReadInteger(crypter.DoEncrypt(touser),'count',0);
+    count:= UserSettings.ReadInteger(Encrypt(touser, EncCode),'count',0);
 
-    UserSettings.WriteString(crypter.DoEncrypt(touser),crypter.doencrypt('nachricht'+inttostr(count+1)),crypter.DoEncrypt(text));
-    UserSettings.WriteString(crypter.DoEncrypt(touser),crypter.doencrypt('zeitpunkt'+inttostr(count+1)),crypter.DoEncrypt(datetimetostr(now)));
-    UserSettings.WriteString(crypter.DoEncrypt(touser),crypter.doencrypt('sender'+inttostr(count+1)),crypter.DoEncrypt(user));
-    UserSettings.WriteString(crypter.DoEncrypt(touser),crypter.doencrypt('file'+inttostr(count+1)),crypter.DoEncrypt(extractfilename(filename)));
-    UserSettings.WriteBool(crypter.DoEncrypt(touser),crypter.doencrypt('gelesen'+inttostr(count+1)),false);
-    UserSettings.WriteInteger(crypter.DoEncrypt(touser),'count',count+1);
+    UserSettings.WriteString(Encrypt(touser, EncCode),Encrypt('nachricht'+inttostr(count+1), EncCode),Encrypt(text, EncCode));
+    UserSettings.WriteString(Encrypt(touser, EncCode),Encrypt('zeitpunkt'+inttostr(count+1), EncCode),Encrypt(datetimetostr(now), EncCode));
+    UserSettings.WriteString(Encrypt(touser, EncCode),Encrypt('sender'+inttostr(count+1), EncCode),Encrypt(user, EncCode));
+    UserSettings.WriteString(Encrypt(touser, EncCode),Encrypt('file'+inttostr(count+1), EncCode),Encrypt(extractfilename(filename), EncCode));
+    UserSettings.WriteBool(Encrypt(touser, EncCode),Encrypt('gelesen'+inttostr(count+1), EncCode),false);
+    UserSettings.WriteInteger(Encrypt(touser, EncCode),'count',count+1);
 
     { Here is the place to check for valid input data and produce a HTML }
 
@@ -1775,7 +1761,7 @@ begin
     user:= ansireplacestr(user,'?','');
 
     //nachrichtenanzahl auslesen
-    count:= UserSettings.ReadInteger(crypter.DoEncrypt(user),'count',0);
+    count:= UserSettings.ReadInteger(Encrypt(user, EncCode),'count',0);
 
     { Extract fields from posted data. }
     for i:= 1 to count do
@@ -1785,14 +1771,14 @@ begin
 
       if strtoint(value) > 0 then
       begin
-        filename:= crypter.DoDecrypt(UserSettings.Readstring(crypter.DoEncrypt(user),crypter.doencrypt('file'+value),'nichts eingetragen !!!'));
+        filename:= Decrypt(UserSettings.Readstring(Encrypt(user, EncCode),encrypt('file'+value, EncCode),'nichts eingetragen !!!'), EncCode);
         if fileexists(Extractfilepath(paramstr(0)) + 'www\files\'+filename) then
             Deletefile(Extractfilepath(paramstr(0)) + 'www\files\'+filename);
-        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('file'+value));
-        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+value));
-        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('sender'+value));
-        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('zeitpunkt'+value));
-        UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('gelesen'+value));
+        UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('file'+value, EncCode));
+        UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('nachricht'+value, EncCode));
+        UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('sender'+value, EncCode));
+        UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('zeitpunkt'+value, EncCode));
+        UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('gelesen'+value, EncCode));
       end;
     end;
     position:=1;
@@ -1800,27 +1786,27 @@ begin
     For i:=1 to count do
     begin
 
-      if (UserSettings.ValueExists(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+inttostr(i)))) then
+      if (UserSettings.ValueExists(Encrypt(user, EncCode),Encrypt('nachricht'+inttostr(i), EncCode))) then
       begin
        if i > position then
         begin
-           UserSettings.WriteString(crypter.DoEncrypt(user),crypter.doencrypt('file'+inttostr(position)),  UserSettings.ReadString( crypter.DoEncrypt(user), crypter.doencrypt('file'+inttostr(i)),'') );
-           UserSettings.WriteString(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+inttostr(position)),  UserSettings.ReadString( crypter.DoEncrypt(user), crypter.doencrypt('nachricht'+inttostr(i)),'') );
-           UserSettings.WriteString(crypter.DoEncrypt(user),crypter.doencrypt('zeitpunkt'+inttostr(position)), UserSettings.ReadString(crypter.DoEncrypt(user),crypter.doencrypt('zeitpunkt'+inttostr(i)),'') );
-           UserSettings.WriteString(crypter.DoEncrypt(user),crypter.doencrypt('gelesen'+inttostr(position)), UserSettings.ReadString(crypter.DoEncrypt(user),crypter.doencrypt('gelesen'+inttostr(i)),'') );
-           UserSettings.WriteString(crypter.DoEncrypt(user),crypter.doencrypt('sender'+inttostr(position)), UserSettings.ReadString(crypter.DoEncrypt(user),crypter.doencrypt('sender'+inttostr(i)),'') );
+           UserSettings.WriteString(Encrypt(user, EncCode),encrypt('file'+inttostr(position), EncCode),  UserSettings.ReadString( Encrypt(user, EncCode), encrypt('file'+inttostr(i), EncCode),'') );
+           UserSettings.WriteString(Encrypt(user, EncCode),encrypt('nachricht'+inttostr(position), EncCode),  UserSettings.ReadString( Encrypt(user, EncCode), encrypt('nachricht'+inttostr(i), EncCode),'') );
+           UserSettings.WriteString(Encrypt(user, EncCode),encrypt('zeitpunkt'+inttostr(position), EncCode), UserSettings.ReadString(Encrypt(user, EncCode),encrypt('zeitpunkt'+inttostr(i), EncCode),'') );
+           UserSettings.WriteString(Encrypt(user, EncCode),encrypt('gelesen'+inttostr(position), EncCode), UserSettings.ReadString(Encrypt(user, EncCode),encrypt('gelesen'+inttostr(i), EncCode),'') );
+           UserSettings.WriteString(Encrypt(user, EncCode),encrypt('sender'+inttostr(position), EncCode), UserSettings.ReadString(Encrypt(user, EncCode),encrypt('sender'+inttostr(i), EncCode),'') );
 
-           UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('file'+inttostr(i)));
-           UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('nachricht'+inttostr(i)));
-           UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('sender'+inttostr(i)));
-           UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('zeitpunkt'+inttostr(i)));
-           UserSettings.DeleteKey(crypter.DoEncrypt(user),crypter.doencrypt('gelesen'+inttostr(i)));
+           UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('file'+inttostr(i), EncCode));
+           UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('nachricht'+inttostr(i), EncCode));
+           UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('sender'+inttostr(i), EncCode));
+           UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('zeitpunkt'+inttostr(i), EncCode));
+           UserSettings.DeleteKey(Encrypt(user, EncCode),encrypt('gelesen'+inttostr(i), EncCode));
            position:= position +1;
         end else position:= position+1;
       end;
 
     end;
-    UserSettings.WriteInteger(crypter.DoEncrypt(user),'count',position-1);
+    UserSettings.WriteInteger(Encrypt(user, EncCode),'count',position-1);
 
     HostName := ClientCnx.PeerAddr; { client's IP address}
 
@@ -1861,16 +1847,16 @@ begin
   oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
   pw_buf:= 'Sorry no password to read:'+pw.Text + #0;
 
-  if UserSettings.sectionexists(webservform.crypter.doencrypt(username.text)) then
+  if UserSettings.sectionexists(encrypt(username.text, EncCode)) then
   begin
-  if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1) = UserSettings.readstring(webservform.crypter.doencrypt(username.text),webservform.crypter.doencrypt('pass'),'no password!!')) then
-    if (pw.text=pw2.text) then UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1))
+  if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1) = UserSettings.readstring(encrypt(username.text, EncCode),encrypt('pass', EncCode),'no password!!')) then
+    if (pw.text=pw2.text) then UserSettings.writestring(Encrypt(username.text, EncCode),encrypt('pass', EncCode),GetMD5(@pw_buf[1], Length(pw_buf) - 1))
       else showmessage(misc(M124,'M124'))
     else showmessage(misc(M125,'M125')) //falsches PW
   end
   else if (pw.text=pw2.text) then
   begin
-    UserSettings.writestring(webservform.crypter.DoEncrypt(username.text),webservform.crypter.doencrypt('pass'),GetMD5(@pw_buf[1], Length(pw_buf) - 1));
+    UserSettings.writestring(Encrypt(username.text, EncCode),encrypt('pass', EncCode),GetMD5(@pw_buf[1], Length(pw_buf) - 1));
     username.Text:='';
     oldpw.Text:='';
     pw.Text:= '';
@@ -1893,7 +1879,7 @@ begin
 
   if userbox.Items.count >0 then for counter:=0 to userbox.Items.Count-1 do
   begin
-    userbox.items[counter]:=Webservform.crypter.DoDecrypt(userbox.items[counter])
+    userbox.items[counter]:=Decrypt(userbox.items[counter], EncCode)
   end;
   userbox.items.Append(misc(M118,'M118'));
   userbox.ItemIndex := 0;
@@ -1913,11 +1899,11 @@ begin
 if username.text <> '' then
 begin
 
-if UserSettings.sectionexists(webservform.crypter.doencrypt(username.text)) then
+if UserSettings.sectionexists(encrypt(username.text, EncCode)) then
   begin
   oldpw_buf:= 'Sorry no password to read:'+oldpw.text + #0;
-  if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1)) = UserSettings.readstring(webservform.crypter.doencrypt(username.text),webservform.crypter.doencrypt('pass'),'no password!!') then
-    UserSettings.erasesection(webservform.crypter.DoEncrypt(username.text))
+  if (GetMD5(@oldpw_buf[1], Length(oldpw_buf) - 1)) = UserSettings.readstring(encrypt(username.text, EncCode),encrypt('pass', EncCode),'no password!!') then
+    UserSettings.erasesection(Encrypt(username.text, EncCode))
       else showmessage(misc(M125,'M125'))
   end;
 end;

@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, Menus, StdCtrls, Buttons, ExtCtrls, StrUtils,
   Spin, Grids, shellapi, files, inifiles,webserv1,
-  ICSMD5, ValEdit,mmsystem, ComCtrls, magsubs1;
+  ICSMD5, ValEdit,mmsystem, ComCtrls, magsubs1, FloatSpinEdit;
 
 var editpath: string;
 
@@ -154,10 +154,6 @@ type
     Label36: TLabel;
     opendays: TSpinEdit;
     Label38: TLabel;
-    GroupBox22: TGroupBox;
-    keepfiles: TCheckBox;
-    updatebox: TCheckBox;
-    Button10: TButton;
     Label39: TLabel;
     DisconnectSeconds: TSpinEdit;
     TabSheet9: TTabSheet;
@@ -173,18 +169,6 @@ type
     GroupBox23: TGroupBox;
     DFUE: TButton;
     DFUE2: TButton;
-    keepfiles_one: TCheckBox;
-    TabSheet10: TTabSheet;
-    GroupBox24: TGroupBox;
-    unregister: TButton;
-    register: TButton;
-    readme: TMemo;
-    PlugBox: TListBox;
-    Label46: TLabel;
-    Label47: TLabel;
-    plugSettings: TButton;
-    State: TStaticText;
-    activate: TButton;
     GroupBox25: TGroupBox;
     InfoBG: TLabel;
     ColorBox1: TColorBox;
@@ -220,20 +204,23 @@ type
     holicheck: TLabel;
     holiday_delete: TButton;
     holiday_insert: TButton;
+    TabSheet5: TTabSheet;
+    MaxPreis: TFloatSpinEdit;
+    MaxEinwahl: TFloatSpinEdit;
+    delwhenexpires: TCheckBox;
+    TarifUrl: TLabeledEdit;
+    Label1: TLabel;
+    Label5: TLabel;
+    Label7: TLabel;
+    TarifDatum: TLabeledEdit;
+    TarifdatumReset: TButton;
+    Tarifdownload: TCheckBox;
+    procedure TarifdatumResetClick(Sender: TObject);
+    procedure TarifdownloadClick(Sender: TObject);
     procedure holiday_insertClick(Sender: TObject);
     procedure holiday_deleteClick(Sender: TObject);
     procedure holidaysValidate(Sender: TObject; ACol, ARow: Integer;
       const KeyName, KeyValue: string);
-    procedure plugSettingsMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure unregisterMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure registerMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure activateMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
-    procedure GroupBox24MouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
     procedure Rss_oldItemsMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure Rss_maxitemsMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -434,14 +421,6 @@ type
     procedure setupmodemsClick(Sender: TObject);
     procedure DFUEClick(Sender: TObject);
     procedure DFUE2Click(Sender: TObject);
-    procedure keepfilesClick(Sender: TObject);
-    procedure registerClick(Sender: TObject);
-    procedure PlugBoxMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
-    procedure unregisterClick(Sender: TObject);
-    procedure plugSettingsClick(Sender: TObject);
-    procedure activateClick(Sender: TObject);
-    Procedure PlugOnMouseUp;
     procedure LoadAutoL;
 
    private
@@ -460,7 +439,7 @@ var
 
 implementation
 
-uses Unit1, addons, registry, floating, DateUtils, ZLIBArchive, RegExpr, tarifverw, inilang, messagestrings;
+uses Unit1, addons, registry, floating, DateUtils,{ ZLIBArchive,} RegExpr, tarifverw, inilang, messagestrings;
 
 {$R *.dfm}
 
@@ -711,13 +690,16 @@ begin
 
   if (assigned(floatingW)and (not isonline)) then floatingW.Close;
 
-  //Atomzeit und Update
-   settings.writeBool('Onlinecheck','Atomzeit',Atombox.Checked);
-   settings.writeBool('Onlinecheck','Update',Updatebox.Checked);
-   settings.writebool('Onlinecheck','BackUpUpdate', keepfiles.checked);
-   settings.writebool('Onlinecheck','BackUpLast', keepfiles_one.checked);
-   settings.writeInteger('Onlinecheck','AtomInterval',AtomInterval.Value);
-   settings.writeBool('Onlinecheck','AtomRepeat',AtomRepeat.Checked);
+  //Atomzeit
+  settings.writeBool('Onlinecheck','Atomzeit',Atombox.Checked);
+  settings.writeInteger('Onlinecheck','AtomInterval',AtomInterval.Value);
+  settings.writeBool('Onlinecheck','AtomRepeat',AtomRepeat.Checked);
+
+  settings.WriteBool('Tariflisten','aktiv',TarifDownload.checked);
+  settings.WriteFloat('Tariflisten','maxPreis',maxPreis.Value);
+  settings.WriteFloat('Tariflisten','maxEinwahl', maxEinwahl.value);
+  settings.WriteString('Tariflisten','Url',Tarifurl.Text);
+  settings.WriteBool('Tariflisten','AutoDel',delwhenexpires.checked);
 
    if (settings.ReadBool('Onlinecheck','Atomzeit', false) <> Atombox.Checked) then
    with hauptfenster.ledTime do
@@ -901,16 +883,20 @@ procedure TLCXPSettings.Button4Click(Sender: TObject);
 var filename: string;
     f: textfile;
 begin
-if (rsslist.Keys[RSSList.row]<>'LeastCosterXP') then
-begin
+
 filename:= extractfilepath(paramstr(0)) + 'RSS\'+rsslist.Keys[rsslist.row] + '.xml';
-RssList.DeleteRow(rsslist.Row);
+if (rsslist.row > 0) and (rsslist.RowCount > 1) then
+try
+  RssList.DeleteRow(rsslist.Row)
+except
+end;
+
 if fileexists(filename) then
   begin
     assignfile(f,filename);
     erase(f);
   end;
-end;
+
 end;
 
 procedure TLCXPSettings.rssupClick(Sender: TObject);
@@ -920,8 +906,7 @@ begin
 activerow:= rsslist.row;
 key:= rsslist.Keys[rsslist.row-1];
 value:= rsslist.Values[rsslist.Keys[rsslist.row-1]];
-if (key<>'LeastCosterXP') and (key<>'Name') then
-begin
+
      if rsslist.Row < rsslist.RowCount-1 then
         begin
              rsslist.DeleteRow(rsslist.Row-1);
@@ -934,7 +919,7 @@ begin
              rsslist.InsertRow(Key, value,true);
         end;
      rsslist.row:= activerow-1;
-end;
+
 end;
 
 procedure TLCXPSettings.rssdownClick(Sender: TObject);
@@ -944,8 +929,7 @@ begin
 activerow:= rsslist.row;
 key:= rsslist.Keys[rsslist.row];
 value:= rsslist.Values[rsslist.Keys[rsslist.row]];
-if not (key='LeastCosterXP') then
-begin
+
 if rsslist.Row < rsslist.RowCount-2 then
 begin
 rsslist.DeleteRow(rsslist.Row);
@@ -959,7 +943,7 @@ rsslist.DeleteRow(rsslist.Row);
 rsslist.InsertRow(Key, value,true);
 rsslist.Row:= rsslist.rowcount-1;
 end;
-end;
+
 end;
 
 procedure TLCXPSettings.ColorBox1Change(Sender: TObject);
@@ -1074,11 +1058,9 @@ programs.itemindex:= programs.Items.IndexOf(activate);
 end;
 
 procedure TLCXPSettings.FormCreate(Sender: TObject);
-var leastcosterrow: integer;
-    i: integer;
+var i: integer;
 begin
 
-leastcosterrow:=0;
 hauptfenster.Enabled:= false;
 
 CL:=loadIni('lang\'+settings.readstring('LeastCoster','language',''));
@@ -1100,9 +1082,6 @@ tabsheet6.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet7.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet8.tabVisible :=  hauptfenster.MM3_2.checked;
 tabsheet9.tabVisible :=  hauptfenster.MM3_2.checked;
-
-for i:= 0 to hauptfenster.pluglist.count-1 do
-    Plugbox.Items.Append(hauptfenster.pluglist.strings[i]);
 
 memo1.Text:= Misc(Help00,'Help00');
 
@@ -1159,10 +1138,6 @@ OpenWebsite.checked := settings.readbool('Dialer','OpenWeb',true);
 
 //Onlineaktionen
 atombox.Checked      := settings.ReadBool('Onlinecheck','Atomzeit', false);
-updatebox.Checked    := settings.ReadBool('Onlinecheck','Update', true);
-keepfiles.checked    := settings.Readbool('Onlinecheck','BackUpUpdate', true);
-keepfiles_one.checked:= settings.Readbool('Onlinecheck','BackUpLast', true);
-keepfilesclick(self);
 
 AtomInterval.Value:= settings.ReadInteger('Onlinecheck','Atominterval', 60);
 AtomRepeat.Checked:= settings.ReadBool('Onlinecheck','AtomRepeat',false);
@@ -1226,6 +1201,14 @@ Setonlineinfowidth.checked:= settings.ReadBool('OnlineInfo', 'AutoWidth', true);
   AutoConnectInterval.Value  := settings.Readinteger('AutoConnect','Interval', 60);
   AutoSurfdauer.Position     := settings.Readinteger('AutoConnect','Basiszeit',1);
 
+  TarifDownload.Checked := settings.ReadBool('Tariflisten','aktiv',false);
+  maxPreis.Value        := settings.ReadFloat('Tariflisten','maxPreis',3.0);
+  maxEinwahl.value      := settings.ReadFloat('Tariflisten','maxEinwahl',10.0);
+  Tarifurl.Text         := settings.ReadString('Tariflisten','Url','http://darkempire.da.funpic.de/php/Tarife/Preistabelle-LCXP2.php');
+  TarifDatum.text       := settings.ReadString('Tariflisten','TarifDatum','');
+  delwhenexpires.checked:= settings.ReadBool('Tariflisten','AutoDel',false);
+  TarifDownloadclick(nil);
+  
   AutoD.Checked       := settings.ReadBool    ('AutoConnect','atTime', false);
   LoadAutoL;
   Autodclick(self);
@@ -1246,14 +1229,7 @@ rot.Text:= settings.ReadString('Kostengrenzen','rot','15'); {Kostengrenzen rot/ 
 gelb.text:= settings.ReadString('Kostengrenzen','gelb','10');
 
 if fileexists(extractfilepath(paramstr(0))+'Rsslist.txt') then
-begin
  rssList.Strings.LoadFromFile(extractfilepath(paramstr(0))+'Rsslist.txt');
- if not rsslist.FindRow('LeastCosterXP', LeastCosterRow) then
- begin
- rsslist.row:= 1;
- rsslist.InsertRow('LeastCosterXP','http://darkempire.funpic.de/phpBB2/rdf.php?f=3',false);
- end;
-end;
 
 //"Programme starten"
 onlineprogs:= TStringlist.create;
@@ -1264,12 +1240,6 @@ SettingsOffline.ReadSections(offlineprogs);
 loadprogramstrings('');
 programs_style.ItemIndex:= 2;
 programs_online.checked:= true;
-
-if hauptfenster.pluglist.Count > 0 then
-begin
-  plugbox.Selected[0]:= true;
-  PlugOnMouseUp;
-end;
 
 if length(holidaylist) > 0 then
   for i:= 0 to length(holidaylist)-1 do
@@ -1695,164 +1665,6 @@ begin
   finally
     regist.free;
   end;
-end;
-
-
-procedure TLCXPSettings.keepfilesClick(Sender: TObject);
-begin
-keepfiles_one.enabled:= keepfiles.checked;
-end;
-
-procedure TLCXPSettings.registerClick(Sender: TObject);
-var folder: string;
-    arch: TZLBArchive;
-begin
- open.Filter:= 'LeastCosterXP PlugIn|*.lcp';
- if open.execute then
- begin
-
-  folder:= ExtractFileName(open.FileName);  //Dateiname
-  folder:= AnsiReplaceText(folder,'.lcp',''); //-> Ordner extrahieren
-
-  if not directoryExists(Extractfilepath(Paramstr(0)) + 'PlugIns') then
-   mkdir(Extractfilepath(Paramstr(0)) + 'PlugIns');
-
-  if not directoryExists(Extractfilepath(Paramstr(0)) + 'PlugIns\'+folder) then
-  begin
-   mkdir(Extractfilepath(Paramstr(0)) + 'PlugIns\'+folder);
-
-   //Kompressor erzeugen
-    arch := TZLBArchive.Create(Self);
-    with arch do
-    begin
-      Name := 'arch';
-      CompressionLevel := fcMaximum;
-      SavePaths := True;
-      ExtractWithPath:= true;
-    end;
-
-   arch.OpenArchive(open.filename);
-   try
-     arch.ExtractAll(Extractfilepath(Paramstr(0)) + 'PlugIns\'+folder);
-   finally
-     arch.CloseArchive;
-     arch.free;
-   end;
-   hauptfenster.pluglist.Append(folder);
-   Plugbox.Items.Append(folder);
-   plugbox.selected[plugbox.Items.IndexOf(folder)]:= true;
-   PlugOnMouseUp;
-  end;
- end;
-end;
-
-Procedure TLCXPSettings.PlugOnMouseUp;
-var i: integer;
-    ini:TiniFile;
-begin
-with LCXPSettings do
-begin
-readme.Clear;
-plugsettings.enabled:= false;
-for i:= 0 to Plugbox.Count-1 do
-  if Plugbox.Selected[i] then
-  begin
-
-     if fileexists(ExtractFilePath(paramstr(0)) + 'PlugIns\'+plugbox.Items.Strings[i]+'\readme.txt')
-     then readme.Lines.LoadFromFile(ExtractFilePath(paramstr(0)) + 'PlugIns\'+plugbox.Items.Strings[i]+'\readme.txt');
-
-     if fileexists(ExtractFilePath(ParamStr(0)) + 'PlugIns\'+plugbox.items.Strings[i]+'\'+plugbox.items.Strings[i]+'.ini') then
-            begin
-              ini:= TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'PlugIns\'+plugbox.items.Strings[i]+'\'+plugbox.items.Strings[i]+'.ini');
-
-              plugsettings.Enabled:= ini.SectionExists('Settings');
-
-              if ini.ReadBool('General', 'enabled', true) then
-              begin
-                   state.caption:= misc(M130,'M130');
-                   activate.caption:= misc(M133,'M133');
-                   state.font.color:= clgreen;
-                   activate.Tag:= 1;
-              end
-              else
-              begin
-                   state.caption:= misc(M132,'M132');
-                   activate.caption:= misc(M131,'M131');
-                   state.font.color:= clred;
-                   activate.Tag:= 0;
-              end;
-              ini.Free;
-              end;
-  end;
-end;
-end;
-
-procedure TLCXPSettings.PlugBoxMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-begin
-  plugOnMouseUp;
-end;
-
-procedure TLCXPSettings.unregisterClick(Sender: TObject);
-var i: integer;
-begin
-for i:= 0 to PlugBox.Count-1 do
-    if plugbox.Selected[i] then
-    begin
-     if not DelDir(extractfilepath(paramStr(0)) + 'PlugIns\'+plugbox.items.Strings[i])
-      then showmessage(misc(M134,'M134')+' PlugIns\'+ plugbox.items.strings[i]);
-     hauptfenster.pluglist.Delete(hauptfenster.pluglist.IndexOf(plugbox.items.Strings[i]));
-     plugbox.DeleteSelected;
-     if plugbox.count > 0 then plugbox.selected[0]:= true;
-     PlugOnMouseUp;
-     break;
-    end;
-end;
-
-procedure TLCXPSettings.plugSettingsClick(Sender: TObject);
-var i: integer;
-    ini: TInifile;
-    run, param: string;
-begin
-
-for i:=0 to plugbox.Count-1 do
- if plugbox.Selected[i] then
- begin
-  if fileexists(ExtractFilePath(ParamStr(0)) + 'PlugIns\'+plugbox.items.Strings[i]+'\'+plugbox.items.Strings[i]+'.ini') then
-  begin
-  run:= ExtractFilepath(paramstr(0)) + 'PlugIns\'+ plugbox.items.strings[i]+'\';
-
-  ini:= TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'PlugIns\'+plugbox.items.Strings[i]+'\'+plugbox.items.Strings[i]+'.ini');
-
-  if ini.SectionExists('Settings') then
-  begin
-     run:= run + ini.ReadString('Settings','run','');
-     param:= ini.ReadString('Settings','param','');
-     ShellExecute(0,'open',Pchar(run),Pchar(param) ,nil,SW_SHOWNORMAL);
-  end;
-   ini.Free;
-  end;
- end;
-
-end;
-
-procedure TLCXPSettings.activateClick(Sender: TObject);
-var ini: TIniFile;
-    i: integer;
-begin
-
-for i:= 0 to PlugBox.Count-1 do
-    if plugbox.Selected[i] then
-    begin
-     ini:= TIniFile.Create(ExtractFilePath(ParamStr(0)) + 'PlugIns\'+plugbox.items.Strings[i]+'\'+plugbox.items.Strings[i]+'.ini');
-
-      if activate.tag = 0 then
-         ini.WriteBool('General', 'enabled', true)
-       else
-           ini.WriteBool('General', 'enabled', false);
-     ini.free;
-     plugOnmouseup;
-    end;
 end;
 
 procedure TLCXPSettings.FontBClick(Sender: TObject);
@@ -2456,36 +2268,6 @@ begin
   memo1.text:= misc(Help93,'Help93');
 end;
 
-procedure TLCXPSettings.GroupBox24MouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-  memo1.text:= misc(Help94,'Help94');
-end;
-
-procedure TLCXPSettings.activateMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-  memo1.text:= misc(Help95,'Help95');
-end;
-
-procedure TLCXPSettings.registerMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-  memo1.text:= misc(Help96,'Help96');
-end;
-
-procedure TLCXPSettings.unregisterMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
-begin
-  memo1.text:= misc(Help97,'Help97');
-end;
-
-procedure TLCXPSettings.plugSettingsMouseMove(Sender: TObject;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  memo1.text:= misc(Help98,'Help98');
-end;
-
 procedure TLCXPSettings.holidaysValidate(Sender: TObject; ACol, ARow: Integer;
   const KeyName, KeyValue: string);
 //var d: TDate;
@@ -2521,6 +2303,22 @@ begin
   holidays.Row:= holidays.row+1;
   holidays.InsertRow('','',false);
 end else holidays.InsertRow('','',true);
+end;
+
+procedure TLCXPSettings.TarifdownloadClick(Sender: TObject);
+begin
+maxPreis.enabled:= Tarifdownload.Checked;
+maxEinwahl.enabled:= Tarifdownload.Checked;
+Tarifurl.Enabled:= Tarifdownload.Checked;
+TarifDatum.enabled:= Tarifdownload.Checked;
+TarifdatumReset.Enabled:= Tarifdownload.Checked;
+delwhenexpires.enabled:= Tarifdownload.Checked;
+end;
+
+procedure TLCXPSettings.TarifdatumResetClick(Sender: TObject);
+begin
+ Tarifdatum.Text:= '';
+ settings.DeleteKey('Tariflisten','TarifDatum');
 end;
 
 end.

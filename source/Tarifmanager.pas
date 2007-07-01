@@ -17,92 +17,14 @@ type
     BitBtn1: TBitBtn;
     Tarifliste: TStringGrid;
     Tarifbox: TComboBox;
-    PageControl1: TPageControl;
-    TabSheet2: TTabSheet;
-    TabSheet1: TTabSheet;
-    Konti_tarif: TStaticText;
-    Freikontingente: TGroupBox;
-    Konti_upvol: TSpinEdit;
-    konti_up: TLabel;
-    konti_down: TLabel;
-    Verbrauch: TGroupBox;
-    konti_change: TButton;
-    konti_zaehler: TEdit;
-    reset: TButton;
-    Label15: TLabel;
-    Label16: TLabel;
-    Label17: TLabel;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton3: TRadioButton;
-    Label18: TLabel;
-    Label19: TLabel;
-    Label20: TLabel;
-    Label21: TLabel;
-    konti_tag: TSpinEdit;
-    Label24: TLabel;
-    Panel2: TPanel;
-    konti_voltype_both: TRadioButton;
-    konti_voltype_down: TRadioButton;
-    konti_zeit: TSpinEdit;
-    Label25: TLabel;
-    Label26: TLabel;
-    GroupBox1: TGroupBox;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label11: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
-    Label7: TLabel;
-    Label13: TLabel;
-    Label10: TLabel;
-    TaNumber: TEdit;
-    TaName: TEdit;
-    TaStart: TDateTimePicker;
-    ganztags: TCheckBox;
-    TaEnd: TDateTimePicker;
-    TaPrice: TEdit;
-    TaEinwahl: TEdit;
-    TaTaktbox: TComboBox;
-    TaTakt_a: TEdit;
-    TaUser: TEdit;
-    TaPass: TMaskEdit;
-    TaWebsite: TEdit;
-    CheckBox1: TCheckBox;
-    CheckBox2: TCheckBox;
-    CheckBox3: TCheckBox;
-    CheckBox4: TCheckBox;
-    CheckBox5: TCheckBox;
-    CheckBox6: TCheckBox;
-    CheckBox7: TCheckBox;
-    CheckBox10: TCheckBox;
-    CheckBox9: TCheckBox;
-    CheckBox8: TCheckBox;
-    TaStarts: TDateTimePicker;
-    Taexpires: TDateTimePicker;
-    Button2: TButton;
-    Button1: TButton;
     GroupBox3: TGroupBox;
     butBatchExport: TBitBtn;
     ButBatchImport: TBitBtn;
-    nextreset: TLabel;
-    radio_zeit: TRadioButton;
-    Radio_Vol: TRadioButton;
-    radio_NO: TRadioButton;
     Panel3: TPanel;
     errormsg: TLabel;
     GroupBox2: TGroupBox;
     DelAll: TBitBtn;
-    Tadelend: TCheckBox;
     blinker: TTimer;
-    Freikontis_online: TGroupBox;
-    Label14: TLabel;
-    konti_min: TSpinEdit;
-    Label22: TLabel;
     Blacklist: TBitBtn;
     Icons: TImageList;
     Vordergrund: TCheckBox;
@@ -110,31 +32,106 @@ type
     Eingabemode: TPanel;
     tarifliste_size: TPanel;
     PBar: TProgressBar;
+    TabSheet3: TTabSheet;
+    PageControl1: TPageControl;
+    TabSheet2: TTabSheet;
+    GroupBox1: TGroupBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label9: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label13: TLabel;
+    Label10: TLabel;
+    Label27: TLabel;
+    TaNumber: TEdit;
+    TaProvider: TEdit;
+    TaTaktbox: TComboBox;
+    TaTakt_a: TEdit;
+    TaUser: TEdit;
+    TaPass: TMaskEdit;
+    TaWebsite: TEdit;
+    TaStarts: TDateTimePicker;
+    Taexpires: TDateTimePicker;
+    Tadelend: TCheckBox;
+    TaTakt_b: TEdit;
+    SheetKontis: TTabSheet;
+    Konti_tarif: TStaticText;
+    Freikontingente: TGroupBox;
+    konti_up: TLabel;
+    konti_down: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label26: TLabel;
+    nextreset: TLabel;
+    Label22: TLabel;
+    Konti_upvol: TSpinEdit;
+    konti_change: TButton;
+    konti_tag: TSpinEdit;
+    Panel2: TPanel;
+    konti_voltype_both: TRadioButton;
+    konti_voltype_down: TRadioButton;
+    konti_zeit: TSpinEdit;
+    radio_zeit: TRadioButton;
+    Radio_Vol: TRadioButton;
+    radio_NO: TRadioButton;
+    konti_min: TSpinEdit;
+    Verbrauch: TGroupBox;
+    Label15: TLabel;
+    Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label19: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
     Label12: TLabel;
     Label23: TLabel;
+    konti_zaehler: TEdit;
+    reset: TButton;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    RadioButton3: TRadioButton;
+    Freikontis_online: TGroupBox;
+    Label14: TLabel;
+    SheetPreise: TTabSheet;
     TaMindestumsatz: TLabeledEdit;
-    TaTakt_b: TEdit;
-    Label27: TLabel;
+    Button1: TButton;
+    Button2: TButton;
+    BitBtn2: TBitBtn;
+    TaName: TEdit;
+    Label3: TLabel;
+    TaTag: TComboBox;
+    Label4: TLabel;
+    BitBtn3: TBitBtn;
+    Label8: TLabel;
+    Label11: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    Label30: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    procedure BitBtn3Click(Sender: TObject);
+    procedure BitBtn2Click(Sender: TObject);
+    procedure InsertPriceList(Tarif,Tag, Num, User, Pass: string; starts, ends: TDate);
     procedure TaMindestumsatzKeyPress(Sender: TObject; var Key: Char);
     procedure tarifliste_sizeClick(Sender: TObject);
     procedure EingabemodeClick(Sender: TObject);
     procedure applicationevents1Deactivate(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure CheckBox8Click(Sender: TObject);
-    procedure CheckBox9Click(Sender: TObject);
     procedure TaPriceKeyPress(Sender: TObject; var Key: Char);
-    procedure TaTakt_aKeyPress(Sender: TObject; var Key: Char);
+    procedure OnlyInt(Sender: TObject; var Key: Char);
     procedure AddItemstoTarifbox(index: integer);
     procedure AddItemstoTarifListe;
     procedure TarifboxCloseUp(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    function isDataValid(tag: string; myident: string): boolean;
+//    function isDataValid(tag: string; myident: string): boolean;
     procedure DeleteSelection(item: integer);
     procedure Button4Click(Sender: TObject);
     procedure ChangeData;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure ganztagsClick(Sender: TObject);
     procedure TaTaktboxChange(Sender: TObject);
     procedure TariflisteMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -154,8 +151,7 @@ type
     procedure RadioButton3Click(Sender: TObject);
     procedure resetClick(Sender: TObject);
     procedure radio_zeitClick(Sender: TObject);
-    procedure ChangeValue(anfang: integer; ende:integer; Bezeichner, WertalsString: string);
-    procedure TaNameChange(Sender: TObject);
+    procedure TaProviderChange(Sender: TObject);
     procedure DelAllClick(Sender: TObject);
     procedure blinkerTimer(Sender: TObject);
     procedure TariflisteMouseDown(Sender: TObject; Button: TMouseButton;
@@ -179,50 +175,108 @@ type
     last_x: integer;
   public
     { Public declarations }
+    EditArray: array [0..23] of array [0..3] of TEdit;
+    oldProv, OldTarif, oldNumber, oldUser, OldPass: string;
+    oldFrom, oldUntil: TDate;
   end;
 
 var
   TaVerwaltung: TTaVerwaltung;
   myident: string;
+  selectedItems: array of integer;
 
 implementation
 
-uses Unit3, Unit1, tarifverw, auswertung, math, GridEvents, addons, inilang, messagestrings;
+uses Unit3, Unit1, tarifverw, auswertung, math, GridEvents, addons, inilang, messagestrings,
+     HttpProt, password;
 
 {$R *.dfm}
 
+procedure TTaVerwaltung.InsertPriceList(Tarif, tag, Num, User, Pass: string; starts, ends: TDate);
+var i,cnt: integer;
+    temptag: string;
+begin
+cnt:= 0;
+
+if (tag = 'Mo-Fr') then temptag:= '[Mo][Di][Mi][Do][Fr]'
+else
+if (tag = 'Sa+So+Fe') then temptag:= '[Sa][So][feiertags]'
+else
+if (tag = 'Sa') then temptag:= '[Sa]'
+else
+if (tag = 'So') then temptag:= '[So]'
+else
+if (tag = 'ganze Woche') then temptag:= '[Mo][Di][Mi][Do][Fr][Sa][So][feiertags]';
+
+setlength(selectedItems,0);
+
+for i:= 0 to length(hauptfenster.tarife)-1 do
+begin
+  if ((hauptfenster.tarife[i].tarif = Tarif)
+     and
+     (hauptfenster.tarife[i].tag = TempTag)
+     and
+     (hauptfenster.tarife[i].Nummer = Num)
+     and
+     (hauptfenster.tarife[i].User = User)
+     and
+     (hauptfenster.tarife[i].passwort = Pass)
+     and
+     (datetostr(hauptfenster.tarife[i].expires) = DateToStr(ends))
+     and
+     (datetostr(hauptfenster.tarife[i].validfrom) = datetostr(starts))
+     )
+       then
+  begin
+     EditArray[cnt][0].text := inttostr(hourof(hauptfenster.tarife[i].Beginn));
+     EditArray[cnt][1].text := inttostr(hourof(hauptfenster.tarife[i].Ende));
+     EditArray[cnt][2].text := Format('%.2f',[hauptfenster.tarife[i].Preis]);
+     EditArray[cnt][3].text := Format('%.2f',[hauptfenster.tarife[i].Einwahl]);
+
+     inc(cnt);
+     setlength(selectedItems, cnt);
+     selectedItems[cnt-1] :=i;
+  end;
+end;
+if cnt < 23 then
+for i:= cnt to 23 do
+begin
+ EditArray[i][0].text:= '';
+ EditArray[i][1].text:= '';
+ EditArray[i][2].text:= '';
+ EditArray[i][3].text:= '';
+end;
+
+end;
+
 procedure EnableEdits(edit:boolean);
+var i: shortint;
 begin
 with TaVerwaltung do
 begin
+ TaProvider.Enabled     := edit;
  TaName.Enabled         := edit;
  TaNumber.Enabled       := edit;
- TaStart.Enabled        := edit;
- TAEnd.Enabled          := edit;
- TaPrice.Enabled        := edit;
- TaEinwahl.Enabled      := edit;
  TaTakt_a.Enabled       := edit;
  TaTakt_b.Enabled       := edit;
  TaTaktbox.Enabled      := edit;
  TaUser.Enabled         := edit;
  TaPass.Enabled         := edit;
  TaWebsite.Enabled      := edit;
- CheckBox1.Enabled      := edit;
- CheckBox2.Enabled      := edit;
- CheckBox3.Enabled      := edit;
- CheckBox4.Enabled      := edit;
- CheckBox5.Enabled      := edit;
- CheckBox6.Enabled      := edit;
- CheckBox7.Enabled      := edit;
- CheckBox8.Enabled      := edit;
- CheckBox9.Enabled      := edit;
- CheckBox10.Enabled     := edit;
+ TaTag.Enabled     := edit;
  Taexpires.Enabled      := edit;
  TaStarts.Enabled       := edit;
  Tadelend.Enabled       := edit;
  button1.Enabled        := edit;
  TaMindestumsatz.Enabled:= edit;
- ganztags.enabled       := edit;
+
+ for i:= 0 to 23 do
+ begin
+  EditArray[i][0].enabled:= edit;
+  EditArray[i][1].enabled:= edit;
+  EditArray[i][2].enabled:= edit;
+  EditArray[i][3].enabled:= edit;
+ end; 
 end;
 end;
 
@@ -251,71 +305,46 @@ begin
 end;
 
 procedure TTaVerwaltung.Button1Click(Sender: TObject);
-var temptag: string;
-    fehlertext: string;
-    error, written: boolean;
-    rand: integer;
+var temptag       : string;
+    fehlertext    : string;
+    error         : boolean;
     dummy, code, i: integer;
-    wert: string;
-    changedvalues: TStringlist;
-    myidentindex: integer;
+    k             : integer;
+    Tarif         : String;
 begin
-myidentindex:=0;
+
 errormsg.caption:= '';
 error:= false;
 fehlertext:= '';
 code:=0;
 
-checkbox1.Font.color                := clWindowText;
-checkbox2.Font.color                := clWindowText;
-checkbox3.Font.color                := clWindowText;
-checkbox4.Font.color                := clWindowText;
-checkbox5.Font.color                := clWindowText;
-checkbox6.Font.color                := clWindowText;
-checkbox7.Font.color                := clWindowText;
+TaTag.Font.color                    := clWindowText;
 label1.Font.Color                   := clWindowText;
 label2.Font.Color                   := clWindowText;
 label3.Font.Color                   := clWindowText;
-label4.Font.Color                   := clWindowText;
 label5.Font.Color                   := clWindowText;
 label6.Font.Color                   := clWindowText;
 label7.Font.Color                   := clWindowText;
-label8.Font.Color                   := clWindowText;
 label9.Font.Color                   := clWindowText;
 label10.Font.Color                  := clWindowText;
-label11.Font.Color                  := clWindowText;
+label8.font.color                   := clWindowText;
+label11.font.color                  := clWindowText;
+label30.font.color                  := clWindowText;
+label31.font.color                  := clWindowText;
+
 taMindestUmsatz.EditLabel.Font.color:= clWindowText;
 
-if (taName.text ='') then
+if (taProvider.text ='') then
 begin
   label1.font.color:= clred;
   error:=true;
 end;
 
-try
-strtofloat(taprice.text);
-except
- code:= 1;
-end;
-
-if (taPrice.text = '') or (code <> 0) then
+if (taName.text ='') then
 begin
-  label8.font.color:= clred;
+  label3.font.color:= clred;
   error:=true;
 end;
-code:= 0;
-
-try
-strtofloat(taEinwahl.text);
-except
- code:= 1;
-end;
-if (taEinwahl.text = '') or (code <> 0)  then
-begin
-  label11.font.color:= clred;
-  error:=true;
-end;
-code:= 0;
 
 try
 strtofloat(taMindestumsatz.text);
@@ -342,32 +371,33 @@ val(Trim(TaNumber.Text), Dummy, Code);
   error:=true;
  end;
 
-if (not checkbox1.checked and not checkbox2.checked and not checkbox3.checked and not checkbox4.checked and not checkbox5.checked and not checkbox6.checked and not checkbox7.checked and not checkbox10.checked) then
-begin
- checkbox1.Font.color:= clred;
- checkbox2.Font.color:= clred;
- checkbox3.Font.color:= clred;
- checkbox4.Font.color:= clred;
- checkbox5.Font.color:= clred;
- checkbox6.Font.color:= clred;
- checkbox7.Font.color:= clred;
- error:=true;
-end;
-
 if (TaWebsite.text='') then
 begin
   errormsg.caption:= misc(M157,'M157');
   label7.font.color:= clgreen;
 end;
 
-if ((TaStart.time= TaEnd.time) and (not ganztags.checked)) then
-begin
-  errormsg.caption:= misc(M158,'M158');
-  label3.font.color:= clgreen;
-  label4.font.color:= clgreen;
-  tastart.time:= Encodetime(0,0,0,0);
-  taend.time:= Encodetime(0,0,0,0);
-end;
+//falls Zeiten größer als 24 eingegeben
+for k:= 0 to 23 do
+  if( ((EditArray[k][0].text <> '')  and (strtoint(EditArray[k][0].text) > 24))
+      or
+      ((EditArray[k][1].text <> '')  and (strtoint(EditArray[k][1].text) > 24)) )
+  then
+  begin
+   label8.font.color:= clred;
+   label11.font.color:= clred;
+   label30.font.color:= clred;
+   label31.font.color:= clred;
+   error:=true;
+  end;
+//if ((TaStart.time= TaEnd.time) and (not ganztags.checked)) then
+//begin
+//  errormsg.caption:= misc(M158,'M158');
+//  label3.font.color:= clgreen;
+//  label4.font.color:= clgreen;
+//  tastart.time:= Encodetime(0,0,0,0);
+//  taend.time:= Encodetime(0,0,0,0);
+//end;
 
 if (TaExpires.date < TAStarts.date) then
 begin
@@ -382,131 +412,57 @@ begin
 end;
 
 temptag:= '';
+case (Tatag.ItemIndex) of
+    0: temptag:= '[Mo][Di][Mi][Do][Fr]';
+    1: temptag:= '[Sa][So][feiertags]';
+    2: temptag:= '[Sa]';
+    3: temptag:= '[So]';
+    4: temptag:= '[Mo][Di][Mi][Do][Fr][Sa][So][feiertags]';
+   end;
 
-if checkbox1.checked then temptag:= temptag +'[Mo]';
-if checkbox2.checked then temptag:= temptag +'[Di]';
-if checkbox3.checked then temptag:= temptag +'[Mi]';
-if checkbox4.checked then temptag:= temptag +'[Do]';
-if checkbox5.checked then temptag:= temptag +'[Fr]';
-if checkbox6.checked then temptag:= temptag +'[Sa]';
-if checkbox7.checked then temptag:= temptag +'[So]';
-if checkbox10.checked then temptag:= temptag +'[feiertags]';
-
-if not isdatavalid(temptag, myident) then
-    begin
-      errormsg.Caption:= misc(M160,'M160');
-      exit;
-    end;
+//if not isdatavalid(temptag, myident) then
+//    begin
+//      errormsg.Caption:= misc(M160,'M160');
+//      exit;
+//    end;
 
 //################ Fehler abgearbeitet ##########################
-// geänderte Werte neu setzen
-if myident <> '' then myidentindex:= strtoint(myident);
-
-changedvalues:= TStringlist.create;
-if myident <> '' then //neuer Datensatz
-begin
-     //feststellen welche Felder verändert wurden und merken
-     if (TaName.Text            <> tarifbox.Items.Strings[tarifbox.itemindex]) then changedvalues.Append('Tarif');
-     if (TaNumber.Text          <> tarifliste.cells[6,tarifliste.row]) then changedvalues.Append('Nummer');
-     if (Timetostr(TaStart.time)<> tarifliste.Cells[1,tarifliste.row]) then changedvalues.Append('Beginn');
-     if (Timetostr(TaEnd.time)  <> tarifliste.Cells[2,tarifliste.row]) then changedvalues.Append('Ende');
-     if (TaPrice.text           <> tarifliste.Cells[3,tarifliste.row]) then changedvalues.Append('Preis');
-     if (TaEinwahl.text         <> tarifliste.Cells[4,tarifliste.row]) then changedvalues.Append('Einwahl');
-     if (Format('%s/%s',[taTakt_a.Text,taTakt_b.Text])    <> tarifliste.cells[5,tarifliste.row]) then changedvalues.Append('Takt');
-     if (taUser.text            <> tarifliste.cells[7,tarifliste.row]) then changedvalues.Append('User');
-     if (taPass.text            <> tarifliste.cells[8,tarifliste.row]) then changedvalues.Append('Passwort');
-     if (taWebsite.text         <> tarifliste.cells[9,tarifliste.row]) then changedvalues.Append('Webseite');
-     if (taStarts.Date          <> strtodate(tarifliste.cells[10,tarifliste.row]) ) then changedvalues.Append('start');
-     if (taexpires.Date         <> strtodate(tarifliste.cells[11,tarifliste.row]) ) then changedvalues.Append('expires');
-     if (temptag                <> tarifliste.cells[0,tarifliste.row] ) then changedvalues.Append('Tag');
-     if (TaMindestumsatz.text   <> tarifliste.cells[16,tarifliste.row] ) then changedvalues.Append('Mindestumsatz');
-
-     if (TaDelEnd.checked and (tarifliste.cells[14,tarifliste.row] =  misc(M162,'M162'))) then changedvalues.Append('DeleteWhenExpires')
-     else
-     if (not TaDelEnd.checked and (tarifliste.cells[14,tarifliste.row] = misc(M161,'M161'))) then changedvalues.Append('DeleteWhenExpires');
-
-     //werte ändern
-     if ((changedvalues.count > 0)   and (myident <> ''))
-       then
-       for i:= 0 to changedvalues.count-1 do
-       begin
-       if changedvalues.strings[i] = 'Tarif' then
-          wert:= TaName.Text
-       else
-       if changedvalues.Strings[i] = 'Beginn' then
-          begin
-               wert:= timetostr(TaStart.time);
-               changevalue(tarifliste.Selection.TopLeft.Y, tarifliste.Selection.TopLeft.Y, changedvalues.Strings[i], wert);
-               continue;
-          end
-       else
-       if changedvalues.Strings[i] = 'Ende' then
-          begin
-               wert:= timetostr(TaEnd.time);
-               changevalue(tarifliste.Selection.TopLeft.Y, tarifliste.Selection.TopLeft.Y, changedvalues.Strings[i], wert);
-               continue;
-               end
-          else
-          if changedvalues.Strings[i] = 'Nummer' then
-               wert:= TaNumber.Text
-          else
-          if changedvalues.Strings[i] = 'Preis' then
-          wert:= TaPrice.text
-          else
-          if changedvalues.Strings[i] = 'Einwahl' then
-          wert:= TaEinwahl.Text
-          else
-          if changedvalues.Strings[i] = 'Takt' then
-          wert:= Format('%s/%s',[TaTakt_a.Text,taTakt_b.Text])
-          else
-          if changedvalues.Strings[i] = 'User' then
-          wert:= TaUser.Text
-          else
-          if changedvalues.Strings[i] = 'Passwort' then
-          wert:= TaPass.Text
-          else
-          if changedvalues.Strings[i] = 'Webseite' then
-          wert:= TaWebsite.Text
-          else
-          if changedvalues.Strings[i] = 'start' then
-          wert:= datetostr(Tastarts.Date)
-          else
-          if changedvalues.Strings[i] = 'Mindestumsatz' then
-          wert:= TaMindestumsatz.text
-          else
-          if changedvalues.Strings[i] = 'expires' then
-          wert:= datetostr(Taexpires.Date)
-          else
-          if changedvalues.Strings[i] = 'Tag' then
-          wert:= temptag
-          else
-          if changedvalues.Strings[i] = 'DeleteWhenExpires' then
-          begin
-             if TaDelEnd.Checked then wert:= '1' else wert:= '0';
-          end;
-       //setzen der Änderungen
-       changevalue(tarifliste.Selection.TopLeft.Y, tarifliste.Selection.BottomRight.Y, changedvalues.Strings[i], wert);
-
-       //"beginnt am"-Datum updaten, wenn der Tarif schon gültig ist
-       if changedvalues.Strings[i] = 'expires' then
-        if Tastarts.date <= dateof(Now) then
-              changevalue(tarifliste.Selection.TopLeft.Y, tarifliste.Selection.BottomRight.Y, 'start', datetostr(dateof(now)));
-end;
-end;
 
 //hinzufügen
-if myident='' then
+
+if length(selecteditems) > 0 then //zu ändernde Datensätze jetzt löschen
+for i:= length(selectedItems)-1 downto 0 do
 begin
+  Hauptfenster.tarife[selecteditems[i]] := Hauptfenster.Tarife[length(Hauptfenster.tarife) -1]; //letzten Datensatz an stelle
+  setlength(Hauptfenster.tarife, length(Hauptfenster.tarife)-1); //um eine Stelle kürzen
+end;
+
+setlength(selecteditems,0);
+
+
+//alle editfelder durchgehen
+for k:= 0 to 23 do
+  if (
+      ( EditArray[k][0].text <> '') and
+      ( EditArray[k][1].text <> '') and
+      ( EditArray[k][2].text <> '') and
+      ( EditArray[k][3].text <> '')
+     )
+  then
+  begin
+
+  If EditArray[k][0].text = '24' then EditArray[k][0].text:= '0';
+  If EditArray[k][1].text = '24' then EditArray[k][1].text:= '0';
 
   setlength(hauptfenster.tarife, length(hauptfenster.tarife)+1);
   with hauptfenster.tarife[length(hauptfenster.tarife)-1] do
   begin
-    Tarif            := TaName.text;
-    Beginn           := TaStart.time;
-    Ende             := TaEnd.time;
+    Tarif            := AnsireplaceStr(TaProvider.text,' ','_')+' '+AnsireplaceStr(TaName.text,' ','_');
+    Beginn           := Encodetime(strtoint(EditArray[k][0].text),0,0,0);
+    Ende             := Encodetime(strtoint(EditArray[k][1].text),0,0,0);
     Nummer           := TaNumber.text;
-    Preis            := StrToFloat(TaPrice.Text);
-    Einwahl          := StrToFloat(TaEinwahl.Text);
+    Preis            := StrToFloat(EditArray[k][2].text);
+    Einwahl          := StrToFloat(EditArray[k][3].text);
     takt_a           := StrToInt(TaTakt_a.Text);
     takt_b           := StrToInt(TaTakt_b.Text);
     User             := TaUser.Text;
@@ -519,54 +475,35 @@ begin
     DeleteWhenExpires:= TaDelEnd.checked;
     Mindestumsatz    := strtofloat(TaMindestumsatz.Text);
   end;
-
+ tarif:= AnsireplaceStr(TaProvider.text,' ','_')+' '+AnsireplaceStr(TaName.text,' ','_');
  //neuen Tarif hinzufügen - wenn noch nicht drin
- if IndexofScores(TaName.text) = -1 then
+ if IndexofScores(Tarif) = -1 then
  begin
   setlength(hauptfenster.Scores, length(hauptfenster.Scores)+1);
-  hauptfenster.Scores[length(hauptfenster.Scores)-1].Name:=TaName.Text; //neues in den Score aufnehmen
+  hauptfenster.Scores[length(hauptfenster.Scores)-1].Name:=Tarif; //neues in den Score aufnehmen
   hauptfenster.Scores[length(hauptfenster.Scores)-1].erfolgreich:=0; //neues in den Score aufnehmen
   hauptfenster.Scores[length(hauptfenster.Scores)-1].gesamt:=0; //neues in den Score aufnehmen
   hauptfenster.Scores[length(hauptfenster.Scores)-1].State:=0; //neues in den Score aufnehmen
   hauptfenster.Scores[length(hauptfenster.Scores)-1].Color:='none'; //neues in den Score aufnehmen
  end;
-end
-else //ident zum ändern
-hauptfenster.tarife[myidentindex].beginn:= TaStart.time;
-
-if myident='' then
-begin
- AddItemstoTarifbox(-10);
- Additemstotarifliste;
-end
-else
-begin
-//wenn name geändert wurde dann tarifbox wechseln
-if changedvalues.IndexOf('Tarif') <> -1 then
-begin
-  //neuen Tarif hinzufügen
- setlength(hauptfenster.Scores, length(hauptfenster.Scores)+1);
-  hauptfenster.Scores[length(hauptfenster.Scores)-1].Name:=TaName.Text; //neues in den Score aufnehmen
-    hauptfenster.Scores[length(hauptfenster.Scores)-1].erfolgreich:=0; //neues in den Score aufnehmen
-      hauptfenster.Scores[length(hauptfenster.Scores)-1].gesamt:=0; //neues in den Score aufnehmen
-        hauptfenster.Scores[length(hauptfenster.Scores)-1].State:=0; //neues in den Score aufnehmen
-
- AddItemstoTarifbox(tarifbox.itemindex); //neu einlesen
- if TarifKickedOut then tarifbox.Items.Delete(tarifbox.itemindex); //altes Element löschen
- tarifbox.itemindex:= tarifbox.items.indexof(TaName.Text); //index des neuen Names
 end;
+
+
+AddItemstoTarifbox(tarifbox.itemindex); //neu einlesen
+Additemstotarifliste;
+tarifbox.itemindex:= tarifbox.items.indexof(Tarif); //index des neuen Names
 
 button2.Click; //Felder löschen
 button1.caption:=misc(M163,'M163');
 tarifboxCloseUp(self);
-changedvalues.Free;
-end;
+
 
 end;
 
 procedure TTaVerwaltung.FormCreate(Sender: TObject);
 var i: word;
     large: boolean;
+    thetop, theleft, j: integer;
 begin
 hauptfenster.enabled:= false;
 sort_descending:= false;
@@ -596,6 +533,34 @@ tarifliste.cells[14,0]:=misc(M177,'M177');
 tarifliste.cells[15,0]:=misc(M178,'M178');
 tarifliste.cells[16,0]:=misc(M268,'M268');
 
+theTop:= 1;
+theLeft:= 25;
+For i:= 0 to 23 do
+begin
+if i = 12 then
+begin theleft := 155; thetop:= 1; end;
+thetop:= thetop + 20;
+//if (i mod 2 = 0) then
+//begin thetop:= thetop + 20; theleft:= 25; end else theleft:= theleft + 130;
+ for j:= 0 to 3 do
+  begin
+   EditArray[I][j]:=TEdit.Create(Self);
+   EditArray[I][j].Parent:=SheetPreise;
+   EditArray[I][j].Left:=theleft + j*30;
+   EditArray[I][j].Top:= theTop ;
+   EditArray[I][j].width:=30;
+   EditArray[I][j].height:=20;
+   EditArray[I][j].visible:= true;
+   if ((j=2) or (j=3)) then EditArray[i][j].OnKeyPress:= TaPriceKeyPress;
+   case j of
+    0: begin Editarray[i][j].OnKeyPress:= OnlyInt; EditArray[I][j].text:= inttostr(i); EditArray[I][j].maxlength:= 2; end;
+    1: begin Editarray[i][j].OnKeyPress:= OnlyInt; EditArray[I][j].text:= inttostr(i+1); EditArray[I][j].maxlength:= 2; end;
+   end;
+ end;
+end;
+
+
+
 for i:= 0 to tarifliste.colcount-1 do
   Tarifliste.ColWidths[i] := settings.readinteger('Tarifmanager','Col'+inttostr(i),64);
 
@@ -606,37 +571,14 @@ if large then tarifliste_sizeclick(self);
 //IdentSpalte 'unsichtbar'
 tarifliste.ColWidths[13]:= -1;
 
-Taexpires.Date:= incday(dateof(now),7);
-taStarts.date:= dateof(now);
-tastart.ShowCheckbox:= true;
-taend.ShowCheckbox:= true;
 
 TaTaktbox.ItemIndex:=0;
 tataktboxchange(nil);
 
-TaStart.DateTime:= EncodeDateTime(1970,01,01,0,0,0,0);
-TaEnd.DateTime:= EncodeDateTime(1970,01,01,0,0,0,0);
-
-tastart.ShowCheckbox:= false;
-taend.ShowCheckbox:= false;
+Button2.Click;
 
 AddItemsToTarifbox(0);
 tarifboxcloseup(sender);
-end;
-
-procedure TTaVerwaltung.CheckBox8Click(Sender: TObject);
-begin
-  checkbox1.checked:= checkbox8.Checked;
-  checkbox2.checked:= checkbox8.Checked;
-  checkbox3.checked:= checkbox8.Checked;
-  checkbox4.checked:= checkbox8.Checked;
-  checkbox5.checked:= checkbox8.Checked;
-end;
-
-procedure TTaVerwaltung.CheckBox9Click(Sender: TObject);
-begin
-  checkbox6.checked:= checkbox9.checked;
-  checkbox7.checked:= checkbox9.checked;
 end;
 
 procedure TTaVerwaltung.TaPriceKeyPress(Sender: TObject; var Key: Char);
@@ -652,7 +594,7 @@ else
      Key := #0;            //  dann sofort löschen
 end;
 
-procedure TTaVerwaltung.TaTakt_aKeyPress(Sender: TObject; var Key: Char);
+procedure TTaVerwaltung.OnlyInt(Sender: TObject; var Key: Char);
 begin
 if not (Key in ['0'..'9', Char(VK_BACK)]) then
   Key := #0;
@@ -671,9 +613,9 @@ end;
 tarifbox.ItemIndex:=index;
 
 //-20 Tarifname geändert | -10 wenn neu hinzugefügt
-if (index=-10) then tarifbox.itemindex:= tarifbox.items.indexof(TAName.text)
+if (index=-10) then tarifbox.itemindex:= tarifbox.items.indexof(AnsireplaceStr(TaProvider.text,' ','_')+' '+AnsireplaceStr(TaName.text,' ','_'))
 else
-if (index=-20) then tarifbox.itemindex:= tarifbox.items.indexof(TaName.text);
+if (index=-20) then tarifbox.itemindex:= tarifbox.items.indexof(AnsireplaceStr(TaProvider.text,' ','_')+' '+AnsireplaceStr(TaName.text,' ','_'));
 end;
 
 procedure TTaVerwaltung.AddItemstoTarifListe;
@@ -732,7 +674,18 @@ begin
   if hauptfenster.tarife[i].tarif = Tarifbox.Items.Strings[Tarifbox.ItemIndex] then
   begin
      rows := rows+1;
-     Tarifliste.Cells[0,rows] := hauptfenster.tarife[i].Tag;
+
+   if (hauptfenster.tarife[i].Tag = '[Mo][Di][Mi][Do][Fr]') then Tarifliste.Cells[0,rows]:= 'Mo-Fr'
+   else
+   if (hauptfenster.tarife[i].Tag = '[Sa][So][feiertags]') then Tarifliste.Cells[0,rows]:= 'Sa+So+Fe'
+   else
+   if (hauptfenster.tarife[i].Tag = '[Sa]') then Tarifliste.Cells[0,rows]:= 'Sa'
+   else
+   if (hauptfenster.tarife[i].Tag = '[So]') then Tarifliste.Cells[0,rows]:= 'So'
+   else
+   if (hauptfenster.tarife[i].Tag = '[Mo][Di][Mi][Do][Fr][Sa][So][feiertags]') then Tarifliste.Cells[0,rows]:= 'ganze Woche';
+//     Tarifliste.Cells[0,rows] := hauptfenster.tarife[i].Tag;
+
      Tarifliste.Cells[1,rows] := TimeToStr(hauptfenster.tarife[i].Beginn);
      Tarifliste.Cells[2,rows] := TimeToStr(hauptfenster.tarife[i].Ende);
      Tarifliste.Cells[3,rows] := Format('%.2f',[hauptfenster.tarife[i].Preis]);
@@ -781,42 +734,35 @@ end;
 
 //alle Felder löschen
 procedure TTaVerwaltung.Button2Click(Sender: TObject);
+var i,j: integer;
 begin
+
 if sender = button2 then
 begin
   EnableEdits(true);
   button1.caption   := misc(M163,'M163');
 end;
+SetLength(selectedItems,0);
+
+oldNumber := '';
+oldUser   := '';
+oldPass   := '';
+oldProv   := '';
+oldTarif  := '';
 
 myident             := '';
 changename          := '';
 errormsg.Caption    := '';
-Taname.Text         :=  '';
+Taname.Text         := '';
+TaProvider.text     := '';
 TaNumber.Text       := '';
-tastart.ShowCheckbox:= true;
-taend.ShowCheckbox  := true;
-TaStart.DateTime    := EncodeDateTime(1970,01,01,0,0,0,0);
-TaEnd.DateTime      := EncodeDateTime(1970,01,01,0,0,0,0);
-tastart.ShowCheckbox:= false;
-taend.ShowCheckbox  := false;
-TaPrice.Text        := Format('%.2f',[0.0]);
-TaEinwahl.Text      := Format('%.2f',[0.0]);
 taMindestumsatz.text:= Format('%.2f',[0.0]);
 Tataktbox.ItemIndex := 0;
 tataktboxchange(nil);
 TaUSer.Text         := '';
 TaPass.Text         := '';
 TaWebsite.Text      := 'http://';
-checkbox1.Checked   := false;
-checkbox2.Checked   := false;
-checkbox3.Checked   := false;
-checkbox4.Checked   := false;
-checkbox5.Checked   := false;
-checkbox6.Checked   := false;
-checkbox7.Checked   := false;
-checkbox8.Checked   := false;
-checkbox9.Checked   := false;
-checkbox10.Checked  := false;
+TaTag.Itemindex:= 0;
 TaExpires.Date      := incday(now,7);
 TaStarts.Date       := Dateof(now);
 TaDelend.Checked    := false;
@@ -828,96 +774,99 @@ radiobutton1.Checked:= true;
 konti_tarif.caption := '';
 konti_zaehler.text  := '';
 nextreset.caption   := '';
-ganztags.Checked    := false;
-ganztagsclick(self);
+
+for i:= 0 to 23 do
+for j:= 0 to 3 do
+ editArray[i][j].Text:= '';
+
 end;
 
-function TTaVerwaltung.isDataValid(tag: string; myident: string): boolean;
-var i,id: integer;
-    temptime, temptimeend: TDateTime;
-    ergebnis: boolean;
-    mo,di,mi,don,fr,sa,so,feiertag: string;
-    vglstring: string;
-    anfang, ende: TTime;
-    expdate: TDate;
-begin
-mo:= '[error]';
-di:= '[error]';
-mi:= '[error]';
-don:='[error]';
-fr:= '[error]';
-sa:= '[error]';
-so:= '[error]';
-feiertag:= '[error]';
-
-if ansicontainstext(tag,'[Mo]') then mo:= '[Mo]';
-if ansicontainstext(tag,'[Di]') then di:= '[Di]';
-if ansicontainstext(tag,'[Mi]') then mi:= '[Mi]';
-if ansicontainstext(tag,'[Do]') then don:= '[Do]';
-if ansicontainstext(tag,'[Fr]') then fr:= '[Fr]';
-if ansicontainstext(tag,'[Sa]') then sa:= '[Sa]';
-if ansicontainstext(tag,'[So]') then so:= '[So]';
-if ansicontainstext(tag,'[feiertags]') then feiertag:= '[feiertags]';
-
-ergebnis:= true;
-
-try
-  id:= strtoint(myident);
-except
-  id:= -1;
-end;
-
-if (length(Hauptfenster.Tarife)> 0) then
-  for i:=0 to length(Hauptfenster.Tarife)-1 do
-  begin
-    expdate:= Hauptfenster.Tarife[i].expires;
-    //namen finden
-    if ( (TaName.text = Hauptfenster.Tarife[i].Tarif )
-    //und prüfen ob es derselbe Eintrag ist
-    and (id <> i)
-    and (TaStarts.date < expdate)
-    )
-    then
-      begin
-        vglstring:= Hauptfenster.Tarife[i].tag;
-         if ( //wenn der Tag enthalten ist
-          (vglstring = tag))
-            or (ansicontainstext(vglstring,mo))
-            or (ansicontainstext(vglstring,di))
-            or (ansicontainstext(vglstring,mi))
-            or (ansicontainstext(vglstring,don))
-            or (ansicontainstext(vglstring,fr))
-            or (ansicontainstext(vglstring,sa))
-            or (ansicontainstext(vglstring,so))
-            or (ansicontainstext(vglstring,feiertag)
-          )
-           then
-           begin
-            anfang      := Hauptfenster.Tarife[i].beginn;
-            ende        := Hauptfenster.Tarife[i].ende;
-            temptime   :=  EncodeDate(1970,01,01) + timeof(anfang);
-            temptimeend:=  EncodeDate(1970,01,01) + timeof(ende);
-
-            if (temptimeend < temptime) then temptimeend:= EncodeDate(1970,01,02) + ende;
-
-            //TaStart.time liegt im Intervall
-            if ((temptime <= (TaStart.datetime)) and (temptimeend > (TaStart.datetime)) )
-              then   ergebnis:= false;
-
-            //TaEnd.time liegt im Intervall
-            if ((temptimeend >= (TaEnd.datetime)) and (temptime < (TaEnd.datetime)))
-              then  ergebnis:= false;
-
-            //Intervall liegt zwischen TaStart.time und TaEnd.time
-            //oder Intervall ist gleich
-            if ((temptime >= (TaStart.datetime)) and (temptimeend <= (TaEnd.datetime)))
-              then ergebnis:= false;
-
-           end;
-        end;
-     end;
-isdatavalid:= ergebnis;
-end;
+//function TTaVerwaltung.isDataValid(tag: string; myident: string): boolean;
+//var i,id: integer;
+//    temptime, temptimeend: TDateTime;
+//    ergebnis: boolean;
+//    mo,di,mi,don,fr,sa,so,feiertag: string;
+//    vglstring: string;
+//    anfang, ende: TTime;
+//    expdate: TDate;
+//begin
+//mo:= '[error]';
+//di:= '[error]';
+//mi:= '[error]';
+//don:='[error]';
+//fr:= '[error]';
+//sa:= '[error]';
+//so:= '[error]';
+//feiertag:= '[error]';
+//
+//if ansicontainstext(tag,'[Mo]') then mo:= '[Mo]';
+//if ansicontainstext(tag,'[Di]') then di:= '[Di]';
+//if ansicontainstext(tag,'[Mi]') then mi:= '[Mi]';
+//if ansicontainstext(tag,'[Do]') then don:= '[Do]';
+//if ansicontainstext(tag,'[Fr]') then fr:= '[Fr]';
+//if ansicontainstext(tag,'[Sa]') then sa:= '[Sa]';
+//if ansicontainstext(tag,'[So]') then so:= '[So]';
+//if ansicontainstext(tag,'[feiertags]') then feiertag:= '[feiertags]';
+//
+//ergebnis:= true;
+//
+//try
+//  id:= strtoint(myident);
+//except
+//  id:= -1;
+//end;
+//
+//if (length(Hauptfenster.Tarife)> 0) then
+//  for i:=0 to length(Hauptfenster.Tarife)-1 do
+//  begin
+//    expdate:= Hauptfenster.Tarife[i].expires;
+//    //namen finden
+//    if ( (TaName.text = Hauptfenster.Tarife[i].Tarif )
+//    //und prüfen ob es derselbe Eintrag ist
+//    and (id <> i)
+//    and (TaStarts.date < expdate)
+//    )
+//    then
+//      begin
+//        vglstring:= Hauptfenster.Tarife[i].tag;
+//         if ( //wenn der Tag enthalten ist
+//          (vglstring = tag))
+//            or (ansicontainstext(vglstring,mo))
+//            or (ansicontainstext(vglstring,di))
+//            or (ansicontainstext(vglstring,mi))
+//            or (ansicontainstext(vglstring,don))
+//            or (ansicontainstext(vglstring,fr))
+//            or (ansicontainstext(vglstring,sa))
+//            or (ansicontainstext(vglstring,so))
+//            or (ansicontainstext(vglstring,feiertag)
+//          )
+//           then
+//           begin
+//            anfang      := Hauptfenster.Tarife[i].beginn;
+//            ende        := Hauptfenster.Tarife[i].ende;
+//            temptime   :=  EncodeDate(1970,01,01) + timeof(anfang);
+//            temptimeend:=  EncodeDate(1970,01,01) + timeof(ende);
+//
+//            if (temptimeend < temptime) then temptimeend:= EncodeDate(1970,01,02) + ende;
+//
+//            //TaStart.time liegt im Intervall
+////            if ((temptime <= (TaStart.datetime)) and (temptimeend > (TaStart.datetime)) )
+////              then   ergebnis:= false;
+//
+//            //TaEnd.time liegt im Intervall
+////            if ((temptimeend >= (TaEnd.datetime)) and (temptime < (TaEnd.datetime)))
+////              then  ergebnis:= false;
+//
+//            //Intervall liegt zwischen TaStart.time und TaEnd.time
+//            //oder Intervall ist gleich
+////            if ((temptime >= (TaStart.datetime)) and (temptimeend <= (TaEnd.datetime)))
+////              then ergebnis:= false;
+//
+//           end;
+//        end;
+//     end;
+//isdatavalid:= ergebnis;
+//end;
 
 procedure TTaVerwaltung.DeleteSelection(item: integer);
 begin
@@ -972,35 +921,20 @@ end;
 procedure TTaVerwaltung.changeData;
 var edit: boolean;
     t1,t2: integer;
+    Tarifname: string;
 begin
 button2Click(self);
 
 if tarifliste.Row < 1 then exit;
 button1.Caption:= misc(M128,'M128');
+//aus dem Namen Provider und Tarif bestimmen
+TarifName:= tarifbox.Items.Strings[tarifbox.itemindex];
+TaProvider.text := LeftStr(TarifName, pos(' ',Tarifname)-1);
+Taname.text     := RightStr(TarifName, length(Tarifname)-pos(' ',Tarifname));
 
-Taname.text:= tarifbox.Items.Strings[tarifbox.itemindex];
 myident:= tarifliste.Cells[13, tarifliste.row];  //ident-nr. merken
+changename:= TarifName;
 
-try
- TaStart.time:= strtotime(tarifliste.Cells[1,tarifliste.row]);
- except
- TaStart.time:= EncodeTime(0,0,0,0);
- end;
-try
- TaEnd.time:= strtotime(tarifliste.Cells[2,tarifliste.row]);
- except
- TaEnd.time:= EncodeTime(0,0,0,0);
- end;
-changename:= TaName.text;
-
-if tastart.time = taend.time then
-begin
-ganztags.Checked:= true;
-ganztagsClick(nil);
-end;
-
-TaPrice.text    := tarifliste.Cells[3,tarifliste.row];
-TaEinwahl.text  := tarifliste.Cells[4,tarifliste.row];
 TaktToInteger(tarifliste.cells[5,tarifliste.row],t1,t2);
 TaTakt_a.text   := inttostr(t1);
 TaTakt_b.text   := inttostr(t2);
@@ -1009,24 +943,40 @@ taNumber.Text   := tarifliste.cells[6,tarifliste.row];
 taUser.text     := tarifliste.cells[7,tarifliste.row];
 taPass.text     := tarifliste.cells[8,tarifliste.row];
 taWebsite.text  := tarifliste.cells[9,tarifliste.row];
+taStarts.ShowCheckbox:= true;
+Taexpires.ShowCheckbox:= true;
 taStarts.Date   := strtodate(tarifliste.cells[10,tarifliste.row]);
 taexpires.Date  := strtodate(tarifliste.cells[11,tarifliste.row]);
+taStarts.ShowCheckbox:= false;
+Taexpires.ShowCheckbox:= false;
 TaMindestumsatz.text := tarifliste.cells[16,tarifliste.row];
 
-//changeexpires:= taexpires.date;
-if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[Mo]') then checkbox1.checked:= true;
-if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[Di]') then checkbox2.checked:= true;
-if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[Mi]') then checkbox3.checked:= true;
-if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[Do]') then checkbox4.checked:= true;
-if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[Fr]') then checkbox5.checked:= true;
-if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[Sa]') then checkbox6.checked:= true;
-if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[So]') then checkbox7.checked:= true;
-if ansicontainsstr(tarifliste.cells[0,tarifliste.row],'[feiertags]') then checkbox10.checked:= true;
+oldProv   := TaProvider.Text;
+oldTarif  := taName.text;
+oldNumber := taNumber.Text;
+oldUser   := TaUser.text;
+oldPass   := TaPass.text;
+OldFrom   := TaStarts.Date;
+Olduntil  := TaExpires.Date;
+
+
+InsertPriceList(tarifbox.Items.Strings[tarifbox.itemindex],tarifliste.cells[0,tarifliste.row],tarifliste.cells[6,tarifliste.row], tarifliste.cells[7,tarifliste.row], tarifliste.cells[8,tarifliste.row], strtodate(tarifliste.cells[10,tarifliste.row]),strtodate(tarifliste.cells[11,tarifliste.row]));
+
+if (tarifliste.cells[0,tarifliste.row] = 'Mo-Fr') then TaTag.itemindex:= 0
+   else
+if (tarifliste.cells[0,tarifliste.row] = 'Sa+So+Fe') then TaTag.itemindex:= 1
+   else
+if (tarifliste.cells[0,tarifliste.row] = 'Sa') then TaTag.itemindex:= 2
+   else
+if (tarifliste.cells[0,tarifliste.row] = 'So') then TaTag.itemindex:= 3
+   else
+if (tarifliste.cells[0,tarifliste.row] = 'ganze Woche') then TaTag.itemindex:= 4;
 
 if tarifliste.cells[14,tarifliste.row] = misc(M161,'M161') then TaDelEnd.checked:= true else TadelEnd.Checked:= false;
 
-edit:= (tarifliste.cells[15,tarifliste.row] = '');
-if not edit then errormsg.caption:= misc(M182,'M182')+': '+ tarifliste.cells[15,tarifliste.row];
+//wenn der Editor leer ist oder USERLCXP
+edit:= ((tarifliste.cells[15,tarifliste.row] = '')or (tarifliste.cells[15,tarifliste.row] = 'UserLCXP') );
+if ((not edit) or (tarifliste.cells[15,tarifliste.row] = 'UserLCXP')) then errormsg.caption:= misc(M182,'M182')+': '+ tarifliste.cells[15,tarifliste.row];
 
 EnableEdits(edit);
 
@@ -1057,25 +1007,16 @@ settings.WriteInteger('Tarifmanager','Col' + inttostr(i),tarifliste.ColWidths[i]
 //breite der Tabelle
 settings.writebool('Tarifmanager','Tarifliste_large', (tarifliste.width > 369));
 
-TaVerwaltung.Release;
-TaVerwaltung:= nil;
-
+for i:= 0 to 23 do
+begin
+EditArray[i][0].Free;
+EditArray[i][1].Free;
+EditArray[i][2].Free;
+EditArray[i][3].Free;
 end;
 
-procedure TTaVerwaltung.ganztagsClick(Sender: TObject);
-begin
-if ganztags.checked then
-  begin
-    tastart.Time:=  Encodetime(0,0,0,0);
-    taend.Time:=  Encodetime(0,0,0,0);
-    tastart.Enabled:= false;
-    taend.Enabled:= false;
-   end
-else
-  begin
-    tastart.Enabled:= true;
-    taend.Enabled:= true;
-  end;
+TaVerwaltung.Release;
+TaVerwaltung:= nil;
 
 end;
 
@@ -1174,62 +1115,6 @@ posleft:= x;
 postop := y;
 end;
 
-procedure TTaVerwaltung.ChangeValue(anfang: integer; ende:integer; Bezeichner, WertalsString: string);
-var i, myidentindex: integer;
-begin
-     for i:= anfang to ende do
-     begin
-          myidentindex:= strtoint(TaVerwaltung.tarifliste.cells[13,i]);
-
-          if Bezeichner = 'Tarif' then
-           hauptfenster.tarife[myidentindex].Tarif:= WertAlsString
-          else
-          if Bezeichner = 'Beginn' then
-            hauptfenster.tarife[myidentindex].Beginn:= StrToTime(wertalsString)
-          else
-          if Bezeichner = 'Ende' then
-            hauptfenster.tarife[myidentindex].Ende:= StrToTime(wertalsstring)
-          else
-          if Bezeichner = 'Nummer' then
-            hauptfenster.tarife[myidentindex].Nummer:= wertalsstring
-          else
-          if Bezeichner = 'Preis' then
-            hauptfenster.tarife[myidentindex].Preis:= StrToFloat(wertalsstring)
-          else
-          if Bezeichner = 'Einwahl' then
-            hauptfenster.tarife[myidentindex].Einwahl:= StrToFloat(wertalsstring)
-          else
-          if Bezeichner = 'Takt' then
-           TaktToInteger(wertalsstring,hauptfenster.tarife[myidentindex].Takt_a,hauptfenster.tarife[myidentindex].Takt_b)
-//           hauptfenster.tarife[myidentindex].Takt:= wertalsstring
-          else
-          if Bezeichner = 'User' then
-            hauptfenster.tarife[myidentindex].User:= wertalsstring
-          else
-          if Bezeichner = 'Passwort' then
-            hauptfenster.tarife[myidentindex].Passwort:= wertalsstring
-          else
-          if Bezeichner = 'Webseite' then
-            hauptfenster.tarife[myidentindex].Webseite:= wertalsstring
-          else
-          if Bezeichner = 'start' then
-            hauptfenster.tarife[myidentindex].validfrom:= StrToDate(wertalsstring)
-          else
-          if Bezeichner = 'expires' then
-            hauptfenster.tarife[myidentindex].expires:= StrToDate(wertalsstring)
-          else
-          if Bezeichner = 'Tag' then
-            hauptfenster.tarife[myidentindex].Tag:= wertalsstring
-          else
-          if Bezeichner = 'Mindestumsatz' then
-            hauptfenster.tarife[myidentindex].Mindestumsatz:= strtofloat(wertalsstring)
-          else
-          if Bezeichner = 'DeleteWhenExpires' then
-            hauptfenster.tarife[myidentindex].DeleteWhenExpires:= strtobool(wertalsstring);
-     end;
-end;
-
-
 procedure TTaVerwaltung.newexpireDropDown(Sender: TObject);
 begin
   nomove:= true;
@@ -1250,6 +1135,7 @@ if (tarifliste.Row < 1) or (tarifliste.cells[0,tarifliste.row]='') then exit;
 button1.Caption:= misc(M163,'M163');
 
 myident:= '';  //keine ident merken
+setlength(selecteditems,0);
 enableedits(true);
 
 Tarifliste.Selection := TGridRect(Rect(0,Tarifliste.row,14,Tarifliste.row));
@@ -1319,9 +1205,13 @@ var bisher_gesurft: LongInt;
     hstring, mstring, sstring: string;
     factor:integer;
 begin
-if ((PageControl1.ActivePage = TabSheet1) and (tarifbox.items.count > 0)) then
-begin
 
+ Button1.Visible:= not (PageControl1.ActivePage = SheetKontis);
+ Button2.Visible:= not (PageControl1.ActivePage = SheetKontis);
+
+
+if ((PageControl1.ActivePage = SheetKontis) and (tarifbox.items.count > 0)) then
+begin
    Freikontingente.visible   := not isonline;
    Freikontis_Online.visible := isonline;
 
@@ -1441,7 +1331,7 @@ begin
 end
 end;
 
-procedure TTaVerwaltung.TaNameChange(Sender: TObject);
+procedure TTaVerwaltung.TaProviderChange(Sender: TObject);
 begin
 if myident <> '' then errormsg.caption:= misc(M189,'M189');
 end;
@@ -1736,6 +1626,18 @@ end
 else
    if not (Key in ['0'..'9', Char(22), Char(VK_BACK)]) then
      Key := #0;            //  dann sofort löschen
+end;
+
+procedure TTaVerwaltung.BitBtn2Click(Sender: TObject);
+begin
+PWForm.action:= 'add/change';
+PWForm.showmodal;
+end;
+
+procedure TTaVerwaltung.BitBtn3Click(Sender: TObject);
+begin
+PWForm.action:= 'delete';
+PWForm.showmodal;
 end;
 
 end.
