@@ -785,7 +785,6 @@ object Hauptfenster: THauptfenster
       end
       object MM2_3: TMenuItem
         Caption = '&Online'
-        Enabled = False
         object MM2_3_1: TMenuItem
           Caption = 'OnlineInfo anzeigen'
           OnClick = MainMenueClick

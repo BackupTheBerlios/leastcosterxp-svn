@@ -326,7 +326,7 @@ with hauptfenster do
    end
    else
    if sender = MM5_2 then //Hilfe
-    ShellExecute(Application.Handle, 'open',PChar('http://www.dsl-fuer-assamstadt.de/lcxp'), nil, nil, sw_ShowNormal)
+    ShellExecute(Application.Handle, 'open',PChar('http://leastcosterxp.xail.net/Hilfe'), nil, nil, sw_ShowNormal)
    else
    if sender = MM7_1 then //standby
    begin

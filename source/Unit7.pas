@@ -81,7 +81,7 @@ begin
         //wenn das Ende (zeitlich) noch in der Zukunft liegt, aber heutiges Datum hat
         if (dateof(now) + timeof(onlineset.vend) > now) then
                 hauptfenster.trennticker.datetime:= dateof(now) + timeof(onlineset.vend)
-        // wen Datumsgrenze überschritten wird
+        // wenn Datumsgrenze überschritten wird
            else
            if ansicontainstext(onlineset.tag, Hauptfenster.Stringvonmorgen(now)) then
             hauptfenster.trennticker.datetime:= incday(Dateof(now) + timeof(onlineset.vend),1)

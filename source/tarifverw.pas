@@ -92,7 +92,7 @@ with hauptfenster do
      SetWindowPos(pricewarning.handle,hwnd_topmost,pricewarning.left,pricewarning.Top,pricewarning.Width,pricewarning.Height,{swp_noactivate+swp_nomove+}swp_nosize);
    end;
 
-   if (price_then > price_now) then
+   if (price_then > price_now) then  //späterer Preis ist größer
    begin
      onlineset.wechsel:= dateof(checktime) + onlineset.vend;
      if thisprice_then <> misc(M149,'M149') then
@@ -100,13 +100,13 @@ with hauptfenster do
              onlineset.wechselpreis   := strtofloat(thisprice_then);
              onlineset.wechseleinwahl := strtofloat(thiseinwahl_then);
              onlineset.vbegin         := StrToTime(liste.cells[2,i]);
-             onlineset.vend           := StrToTime(liste.cells[3,i]);
+             onlineset.wechselend     := StrToTime(liste.cells[3,i]);
              onlineset.tag            := liste.cells[17,i];
         end
         else begin onlineset.wechselpreis := -1.; onlineset.wechseleinwahl:= 0; end;
     end
    else
-   if (price_then < price_now) then
+   if (price_then < price_now) then  //späterer Preis ist kleiner
    begin
      if onlineset.vend <> onlineset.vbegin then //nur wenn nicht ganztags
      onlineset.wechsel:= dateof(checktime) + onlineset.vend;
@@ -115,13 +115,13 @@ with hauptfenster do
              onlineset.wechselpreis   := strtofloat(thisprice_then);
              onlineset.wechseleinwahl := strtofloat(thiseinwahl_then);
              onlineset.vbegin         := StrToTime(liste.cells[2,i]);
-             onlineset.vend           := StrToTime(liste.cells[3,i]);
+             onlineset.wechselend     := StrToTime(liste.cells[3,i]);
              onlineset.tag            := liste.cells[17,i];
         end
        else begin onlineset.wechselpreis := -1.; onlineset.wechseleinwahl:=0; end;
    end
    else
-   if (thisprice_then = misc(M149,'M149')) then
+   if (thisprice_then = misc(M149,'M149')) then  //späterer Preis ist unbekannt
    begin
      onlineset.tag  := liste.cells[17,i];
      if onlineset.vend <> onlineset.vbegin then //nur wenn nicht ganztags
@@ -1029,6 +1029,7 @@ end;
 procedure Tarifwechseln;
 begin
      onlineset.preis:= onlineset.wechselpreis;
+     onlineset.vend:= onlineset.wechselend;
      onlineset.einwahl:= onlineset.wechseleinwahl;
      onlineset.einwahl2:= onlineset.wechseleinwahl;
      onlineset.wechselpreis:= 0;

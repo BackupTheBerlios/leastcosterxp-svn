@@ -108,7 +108,7 @@ type
       takt_a, takt_b: integer;
       mindestumsatz, kosten_mindest: real;
       Datum: TDateTime;
-      vbegin, vend, Endzeit: TTime;
+      vbegin,wechselend, vend, Endzeit: TTime;
       Einwahl2, Kosten,Preis,Einwahl: real;
       wechselpreis, wechseleinwahl: real;
       wechsel: TDatetime;
@@ -2326,6 +2326,7 @@ begin
     webseite      := '';
     vbegin        := EncodeTime(0,0,0,0);
     vend          := EncodeTime(0,0,0,0);
+    wechselend    := EncodeTime(0,0,0,0);
     tag           := '';
     wechsel       := EncodeDateTime(1970,01,01,0,0,0,0);
     kosten        := 0;
@@ -2650,7 +2651,7 @@ else
   onlineset.kosten_mindest:= 0.0;
   onlineset.tag           := liste.Cells[17,liste.row];
   onlineset.vbegin        := StrToTime(liste.Cells[2,liste.row]);
-  onlineset.vend            := StrToTime(liste.Cells[3,liste.row]);
+  onlineset.vend          := StrToTime(liste.Cells[3,liste.row]);
   onlineset.webseite      := liste.Cells[11,liste.row];
   onlineset.kosten        := 0;
   onlineset.wechsel       := incday(now, 10*365);

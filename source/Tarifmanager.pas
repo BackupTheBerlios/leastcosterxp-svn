@@ -311,6 +311,7 @@ var temptag       : string;
     dummy, code, i: integer;
     k             : integer;
     Tarif         : String;
+    textinside    : boolean;    
 begin
 
 errormsg.caption:= '';
@@ -377,11 +378,21 @@ begin
   label7.font.color:= clgreen;
 end;
 
+textinside:= false;
+for k:= 0 to 23 do
+  if ((EditArray[k][0].text <> '') and
+      (EditArray[k][1].text <> '') and
+      (EditArray[k][2].text <> '') and
+      (EditArray[k][3].text <> ''))
+  then textinside:= true;
+
+
 //falls Zeiten größer als 24 eingegeben
 for k:= 0 to 23 do
   if( ((EditArray[k][0].text <> '')  and (strtoint(EditArray[k][0].text) > 24))
       or
-      ((EditArray[k][1].text <> '')  and (strtoint(EditArray[k][1].text) > 24)) )
+      ((EditArray[k][1].text <> '')  and (strtoint(EditArray[k][1].text) > 24))
+      or not textinside )
   then
   begin
    label8.font.color:= clred;
@@ -390,16 +401,8 @@ for k:= 0 to 23 do
    label31.font.color:= clred;
    error:=true;
   end;
-//if ((TaStart.time= TaEnd.time) and (not ganztags.checked)) then
-//begin
-//  errormsg.caption:= misc(M158,'M158');
-//  label3.font.color:= clgreen;
-//  label4.font.color:= clgreen;
-//  tastart.time:= Encodetime(0,0,0,0);
-//  taend.time:= Encodetime(0,0,0,0);
-//end;
 
-if (TaExpires.date < TAStarts.date) then
+  if (TaExpires.date < TAStarts.date) then
 begin
  label10.Font.color:= clred;
  error:= true;
